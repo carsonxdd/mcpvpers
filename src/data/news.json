@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "date": "2026-03-30",
+    "title": "Server Launch!",
+    "body": "mc.pvpers.us is officially live! Join us on our brand-new Vanilla+ server. We're running Paper 1.21 with a curated set of quality-of-life plugins. Come explore, build, and make this community your home.",
+    "tags": ["Event"]
+  },
+  {
+    "id": 2,
+    "date": "2026-03-30",
+    "title": "Modpacks Available",
+    "body": "Our recommended client-side modpacks are now available on CurseForge. Choose between the full QoL pack or the FPS Boost Potato Edition for lower-end machines.",
+    "tags": ["Plugin Update"]
+  },
+  {
+    "id": 3,
+    "date": "2026-03-30",
+    "title": "World Border System Active",
+    "body": "The playtime-gated world border is now active. As the community plays more, the world expands! Check the BlueMap to see current boundaries.",
+    "tags": ["Map Expansion"]
+  }
+]

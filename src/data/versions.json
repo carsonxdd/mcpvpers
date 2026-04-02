@@ -1,0 +1,608 @@
+[
+  {
+    "version": "26.1",
+    "name": "Tiny Takeover",
+    "year": 2026,
+    "month": "March",
+    "summary": "All baby mobs get completely redesigned with unique textures and sounds instead of just being shrunken adults. Golden dandelions keep baby mobs young forever, and name tags are now craftable.",
+    "details": [
+      "Baby Mob Overhaul — every baby mob gets unique textures and sounds instead of being a scaled-down adult",
+      "Golden Dandelion — a rare flower that keeps baby mobs young forever when nearby",
+      "Craftable Name Tags — name tags can finally be crafted instead of only found as loot",
+      "Unique baby animations — each baby mob type has distinct behaviors and movement styles"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_26.1"
+  },
+  {
+    "version": "1.21.11",
+    "name": "Mounts of Mayhem",
+    "year": 2025,
+    "month": "December",
+    "summary": "The nautilus becomes the first rideable underwater mob, spears deal damage based on player speed, and zombie horses are finally obtainable in Survival mode.",
+    "details": [
+      "Nautilus — first rideable underwater mob, enables mounted ocean exploration",
+      "Spear — new weapon type whose damage scales with the player's movement speed",
+      "Zombie Horses — brought into Survival mode as obtainable mounts at last",
+      "New underwater combat mechanics — mounted combat works beneath the waves"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.11"
+  },
+  {
+    "version": "1.21.8",
+    "name": "The Copper Age",
+    "year": 2025,
+    "month": "September",
+    "summary": "Massive expansion of copper's usefulness with copper tools, weapons, armor, chests, and even a new copper golem mob.",
+    "details": [
+      "Copper Tools & Weapons — full tool set crafted from copper, offering a tier between stone and iron",
+      "Copper Armor — wearable copper armor set that oxidizes over time",
+      "Copper Chests — storage blocks with copper aesthetic, oxidize through stages",
+      "Copper Golem — new mob that presses copper buttons randomly, oxidizes and freezes over time"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.8"
+  },
+  {
+    "version": "1.21.6",
+    "name": "Chase the Skies",
+    "year": 2025,
+    "month": "June",
+    "summary": "The happy ghast steals the show — find dried ghasts in the Nether, hydrate them into ghastlings, and ride the grown happy ghast to fly around the world. Also adds craftable saddles and Vibrant Visuals.",
+    "details": [
+      "Happy Ghast — a friendly flying mob you can ride with a harness for aerial travel",
+      "Dried Ghast — found in the Nether, hydrate it to get a ghastling",
+      "Ghastling — baby happy ghast that grows into a rideable happy ghast",
+      "Craftable Saddles — saddles can now be crafted instead of only found as loot",
+      "Vibrant Visuals — graphical overhaul with improved lighting and shading (Bedrock)",
+      "Harness — new item used to ride the happy ghast"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.6"
+  },
+  {
+    "version": "1.21.5",
+    "name": "Spring to Life",
+    "year": 2025,
+    "month": "March",
+    "summary": "Mob variants for warm and cold biomes, updated spawn egg textures, and multiple new flowers and fauna bring the overworld to life.",
+    "details": [
+      "Mob Variants — warm and cold biome variants for existing mobs with unique textures",
+      "New Flowers — multiple new flower types added across biomes",
+      "Updated Spawn Eggs — all spawn egg textures redesigned",
+      "New Fauna — additional ambient creatures bring biomes to life"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.5"
+  },
+  {
+    "version": "1.21.4",
+    "name": "The Garden Awakens",
+    "year": 2024,
+    "month": "December",
+    "summary": "The creaking mob and pale garden biome. Pale oak wood, eyeblossoms, and resin blocks. The creaking heart block spawns creakings at night.",
+    "details": [
+      "Pale Garden — eerie new biome with pale oak trees and eyeblossoms that open at night",
+      "The Creaking — hostile mob that can only move when you're not looking at it",
+      "Creaking Heart — block that spawns and controls creakings, hidden in pale oak trees",
+      "Pale Oak — new full wood set with unique pale color",
+      "Resin — new material dropped when creakings are damaged, used for crafting",
+      "Eyeblossoms — flowers that open at night and close during the day"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=nFMPShIlFWg",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.4"
+  },
+  {
+    "version": "1.21.2",
+    "name": "Bundles of Bravery",
+    "year": 2024,
+    "month": "October",
+    "summary": "Bundles are finally fully released for inventory management. Hardcore mode comes to Bedrock Edition. Minecart improvements and redstone tweaks.",
+    "details": [
+      "Bundles — item storage bags that hold a full stack's worth of mixed items, finally out of experimental",
+      "Hardcore Mode on Bedrock — Bedrock Edition finally gets Hardcore mode",
+      "Minecart improvements — new physics and stacking behavior",
+      "Redstone tweaks — hardcoded changes to piston and observer behavior",
+      "New default skins — additional default player models",
+      "Gameplay balancing — various mob and combat adjustments"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.2"
+  },
+  {
+    "version": "1.21",
+    "name": "Tricky Trials",
+    "year": 2024,
+    "month": "June",
+    "summary": "Trial chambers, the Breeze mob, mace weapon, and new copper and tuff block variants. Ominous trials and vault rewards add a new dungeon-crawling loop.",
+    "details": [
+      "Trial Chambers — procedurally generated underground structures with combat challenges",
+      "The Breeze — wind-based hostile mob found in trial chambers, launches wind charges",
+      "Mace — new heavy weapon with devastating smash attacks, more damage the further you fall",
+      "Trial Spawner — spawns mobs based on nearby player count, rewards on completion",
+      "Vault — loot block in trial chambers, each player gets one reward per vault",
+      "Ominous Trials — harder variant triggered by Bad Omen, better loot",
+      "Wind Charge — throwable projectile that launches entities and interacts with redstone",
+      "Copper & Tuff block families — bulbs, grates, doors, trapdoors, chiseled variants",
+      "Breeze Rod — crafting material dropped by the Breeze",
+      "New banner patterns, pottery sherds, and armor trim templates"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=jLqFVxXAzEQ",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.21"
+  },
+  {
+    "version": "1.20.5",
+    "name": "Armored Paws",
+    "year": 2024,
+    "month": "April",
+    "summary": "The armadillo mob arrives along with armadillo scute for crafting wolf armor. Eight new wolf variants bring diversity to your canine companions.",
+    "details": [
+      "Armadillo — new passive mob that curls into a ball when threatened, drops armadillo scutes",
+      "Wolf Armor — craftable from armadillo scutes, protects your tamed wolves",
+      "8 Wolf Variants — wolves now have different appearances based on biome",
+      "Armadillo Scute — new material dropped by armadillos, used for wolf armor"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.20.5"
+  },
+  {
+    "version": "1.20.3",
+    "name": "Bats & Pots",
+    "year": 2023,
+    "month": "December",
+    "summary": "Updated bat model with a fresh new look, and decorated pots receive major improvements making them more useful and interactive.",
+    "details": [
+      "Bat Model Update — bats get a completely redesigned model and texture",
+      "Decorated Pot Improvements — pots can now store a single item stack, interact with hoppers and comparators",
+      "Breeze & Trial Spawner — added behind experimental toggle for upcoming 1.21",
+      "Various quality-of-life improvements and bug fixes"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.20.3"
+  },
+  {
+    "version": "1.20",
+    "name": "Trails & Tales",
+    "year": 2023,
+    "month": "June",
+    "summary": "Cherry grove biome, archaeology system with brush tool, armor trims for customization, camels, sniffers, decorated pots, and hanging signs. New bamboo wood set.",
+    "details": [
+      "Cherry Grove — beautiful pink biome with cherry blossom trees and falling petals",
+      "Archaeology — brush suspicious sand/gravel to find pottery sherds and rare items",
+      "Armor Trims — customize armor with smithing templates and materials for unique looks",
+      "Sniffer — ancient mob voted by players, digs up ancient seeds for new plants",
+      "Camels — two-player rideable mount that can dash and is too tall for most mobs to reach",
+      "Bamboo Wood — full wood set crafted from bamboo, plus bamboo raft",
+      "Hanging Signs — decorative signs that hang from blocks",
+      "Decorated Pots — craftable from pottery sherds found through archaeology",
+      "Calibrated Sculk Sensors — filtered vibration detection for redstone",
+      "Chiseled Bookshelf — functional bookshelf that stores up to 6 books"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=DnUitVPyYUg",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.20"
+  },
+  {
+    "version": "1.19",
+    "name": "The Wild Update",
+    "year": 2022,
+    "month": "June",
+    "summary": "Deep dark biome and ancient cities guarded by the Warden — Minecraft's scariest mob. Mangrove swamps, frogs, tadpoles, allays, and skulk blocks.",
+    "details": [
+      "The Warden — terrifying blind mob that detects vibrations, deals massive damage, basically unkillable",
+      "Deep Dark — underground biome covered in sculk, generates ancient cities",
+      "Ancient Cities — huge underground structures with loot and sculk shriekers that summon the Warden",
+      "Mangrove Swamp — new swamp variant with mangrove trees and mud",
+      "Frogs & Tadpoles — three frog variants based on biome temperature, eat small slimes and magma cubes",
+      "Allay — friendly mob that collects items matching what you give it, dances to note blocks",
+      "Sculk blocks — sensor, shrieker, catalyst, and vein blocks for vibration-based redstone",
+      "Mud & Mud Bricks — new building material, made by putting water on dirt",
+      "Recovery Compass — points to where you last died",
+      "Swift Sneak enchantment — move faster while crouching"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=or1DfCIZsHE",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.19"
+  },
+  {
+    "version": "1.18",
+    "name": "Caves & Cliffs Part 2",
+    "year": 2021,
+    "month": "November",
+    "summary": "Massive world generation overhaul. World height expanded from 256 to 384 blocks (-64 to 320). Huge caves, dramatic mountains, and new ore distribution.",
+    "details": [
+      "World height expanded — now -64 to 320 (384 total blocks of vertical space)",
+      "Completely new terrain generation — more dramatic, varied landscapes",
+      "Massive cave systems — cheese caves, spaghetti caves, and noodle caves",
+      "Lush Caves — underground biome with azalea, glow berries, dripleaf, and axolotls",
+      "Dripstone Caves — stalactites and stalagmites that grow over time",
+      "New mountain generation — jagged peaks, frozen peaks, stony peaks, meadows, groves",
+      "Ore distribution overhaul — ores generate at different heights, some more common deeper",
+      "Deepslate replaces stone below Y=0",
+      "Aquifers — underground water and lava lakes at various heights",
+      "Noise caves create enormous underground open spaces"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=nLtmEjqzg7M",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.18"
+  },
+  {
+    "version": "1.17",
+    "name": "Caves & Cliffs Part 1",
+    "year": 2021,
+    "month": "June",
+    "summary": "Axolotls, glow squids, goats, copper ore that oxidizes over time, amethyst geodes, spyglass, lightning rods, and deepslate.",
+    "details": [
+      "Axolotls — aquatic mobs that help you fight underwater enemies, come in 5 colors",
+      "Glow Squid — drops glow ink sacs for glowing signs and item frames",
+      "Goats — mountain mob that rams entities, drops goat horns",
+      "Copper — new ore that oxidizes through 4 stages over time, waxable with honeycomb",
+      "Amethyst Geodes — underground structures with budding amethyst, grow amethyst clusters",
+      "Spyglass — craftable zoom tool using copper and amethyst",
+      "Lightning Rod — copper rod that attracts lightning strikes",
+      "Deepslate — harder stone variant with full block family",
+      "Candles — stackable light source, up to 4 per block",
+      "Powder Snow — trap block that entities sink into, leather boots prevent sinking",
+      "Glow Berries — food and light source found in lush caves",
+      "Tinted Glass — glass that blocks light but you can see through"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=oMI072MNmcQ",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.17"
+  },
+  {
+    "version": "1.16",
+    "name": "Nether Update",
+    "year": 2020,
+    "month": "June",
+    "summary": "Complete Nether overhaul with four new biomes. Netherite gear surpasses diamond. Piglins, hoglins, striders, and bastion remnants.",
+    "details": [
+      "Crimson Forest — red nether biome with huge fungi, hoglins, and piglins",
+      "Warped Forest — blue nether biome, peaceful, with endermen",
+      "Soul Sand Valley — vast caverns with soul fire, ghasts, and skeletons",
+      "Basalt Deltas — volcanic biome with basalt columns and magma cubes",
+      "Netherite — new tier above diamond, found as ancient debris, fire/lava resistant",
+      "Piglins — barter with gold, attack if you're not wearing gold armor",
+      "Hoglins — hostile nether pigs, breedable, only nether food source",
+      "Striders — rideable lava-walking mob",
+      "Bastion Remnants — large piglin structures with treasure and pigstep music disc",
+      "Ruined Portals — naturally generating broken nether portals in both dimensions",
+      "Respawn Anchor — set spawn point in the Nether using glowstone charges",
+      "Lodestone — magnetic block that compasses can lock onto"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=1DhWXAiNgfQ",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.16"
+  },
+  {
+    "version": "1.15",
+    "name": "Buzzy Bees",
+    "year": 2019,
+    "month": "December",
+    "summary": "Bees, beehives, honey blocks, and honeycomb. Honey blocks have unique sticky/sliding mechanics. Major bug fix update.",
+    "details": [
+      "Bees — pollinate flowers and crops, produce honey, get angry when provoked",
+      "Bee Nests — naturally spawn in flower forests, plains, and sunflower plains",
+      "Beehives — craftable bee homes",
+      "Honey Blocks — sticky blocks with unique movement mechanics, great for redstone",
+      "Honeycomb Blocks — decorative building material",
+      "Honey Bottles — food item that cures poison",
+      "Iron Golem healing — feed iron ingots to heal iron golems",
+      "Over 100 bug fixes — massive stability and performance improvements"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=ulo6EC3It-E",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.15"
+  },
+  {
+    "version": "1.14",
+    "name": "Village & Pillage",
+    "year": 2019,
+    "month": "April",
+    "summary": "Complete villager overhaul with professions and workstations. Pillagers, ravagers, raids, crossbows, and new village structures.",
+    "details": [
+      "Villager rework — professions tied to workstations, better trading, schedules",
+      "Pillagers — hostile illager with crossbow, patrol the overworld",
+      "Raids — waves of illagers attack villages after you kill a patrol captain",
+      "Ravagers — massive illager beast that destroys crops and attacks",
+      "Wandering Trader — randomly appears with rare trades",
+      "Crossbow — new ranged weapon with multishot and piercing enchantments",
+      "Bamboo & Scaffolding — new building/utility blocks",
+      "Blast Furnace & Smoker — faster smelting for ores and food",
+      "Lectern — hold and display books, redstone output based on page",
+      "Loom — simplified banner crafting",
+      "New village architecture — unique designs per biome"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=fh3s09NOkro",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.14"
+  },
+  {
+    "version": "1.13",
+    "name": "Update Aquatic",
+    "year": 2018,
+    "month": "July",
+    "summary": "Ocean overhaul with coral reefs, kelp forests, sea turtles, dolphins, tridents, conduits, and shipwrecks. Swimming reworked. The Phantom added.",
+    "details": [
+      "Ocean biome variants — warm, lukewarm, cold, frozen, with unique generation",
+      "Coral Reefs — colorful underwater structures with 5 coral types",
+      "Kelp & Seagrass — underwater vegetation",
+      "Sea Turtles — lay eggs on beaches, drop scute for turtle helmet (water breathing)",
+      "Dolphins — lead you to shipwrecks and treasure, give speed boost",
+      "Drowned — underwater zombie variant, can spawn with tridents",
+      "Trident — versatile weapon with 4 unique enchantments (Riptide, Loyalty, Channeling, Impaling)",
+      "Conduit — underwater beacon that gives water breathing and attacks mobs",
+      "Shipwrecks & Underwater Ruins — loot structures on the ocean floor",
+      "Buried Treasure — found with treasure maps from shipwrecks",
+      "Phantom — flying undead that attacks if you don't sleep, drops phantom membrane",
+      "Swimming mechanic — sprint in water to swim, much faster movement",
+      "Heart of the Sea — rare conduit crafting item"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=QXZQ-EKoGEM",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.13"
+  },
+  {
+    "version": "1.12",
+    "name": "World of Color",
+    "year": 2017,
+    "month": "June",
+    "summary": "Concrete and glazed terracotta in all 16 colors. Parrots, advancements system, recipe book, and the narrator.",
+    "details": [
+      "Concrete — vibrant solid color blocks, made from concrete powder + water",
+      "Glazed Terracotta — 16 patterned decorative blocks with unique designs",
+      "Parrots — tameable birds that dance to music and mimic mob sounds",
+      "Advancements — replaced achievements with a tree-based progression system",
+      "Recipe Book — in-game crafting guide, auto-fills crafting grid",
+      "Narrator — accessibility feature that reads chat and UI",
+      "Illusioner — unused illager mob that casts blindness and creates duplicates",
+      "New colors for beds — beds in all 16 dye colors"
+    ],
+    "trailer": "https://www.youtube.com/watch?v=k2dQuIgCbEQ",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.12"
+  },
+  {
+    "version": "1.11",
+    "name": "Exploration Update",
+    "year": 2016,
+    "month": "November",
+    "summary": "Woodland mansions with vindicators and evokers. Shulker boxes for portable storage, totems of undying, llamas, and explorer maps.",
+    "details": [
+      "Woodland Mansions — rare massive structures in dark forests with unique rooms",
+      "Vindicators & Evokers — hostile illagers with axes and magic attacks",
+      "Vex — small flying hostile mobs summoned by evokers",
+      "Shulker Boxes — portable storage that keeps items when broken",
+      "Totem of Undying — held item that saves you from death once",
+      "Llamas — caravan animals that spit, can be decorated with carpets",
+      "Observer — block that detects state changes, outputs redstone pulse",
+      "Explorer Maps — bought from cartographers, lead to monuments and mansions",
+      "Curse enchantments — Curse of Binding and Curse of Vanishing"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.11"
+  },
+  {
+    "version": "1.10",
+    "name": "Frostburn Update",
+    "year": 2016,
+    "month": "June",
+    "summary": "Polar bears, husks, strays, magma blocks, nether wart blocks, bone blocks, and structure blocks.",
+    "details": [
+      "Polar Bears — neutral mob in ice biomes, aggressive when cubs are nearby",
+      "Husks — desert zombie variant that inflicts hunger, doesn't burn in sun",
+      "Strays — snowy skeleton variant that shoots slowness arrows",
+      "Magma Blocks — damage entities standing on them, pull down in water",
+      "Nether Wart Block — decorative block crafted from nether wart",
+      "Bone Blocks — decorative/structural, found in fossil structures",
+      "Structure Blocks — creative/command tool for saving and loading structures",
+      "Auto-Jump — controversial new default movement option"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.10"
+  },
+  {
+    "version": "1.9",
+    "name": "Combat Update",
+    "year": 2016,
+    "month": "February",
+    "summary": "Dual-wielding, attack cooldowns, shields, elytra wings, end cities, shulkers, and a completely revamped End dimension.",
+    "details": [
+      "Dual-Wielding — offhand slot for shields, torches, maps, food, and more",
+      "Attack Cooldown — weapons have a recharge timer, timing matters for full damage",
+      "Shields — block attacks, replace sword blocking",
+      "Sweep Attack — swords hit multiple mobs in a sweep when fully charged",
+      "Elytra — gliding wings found in end ships, revolutionary mobility",
+      "End Cities — tall structures in the outer End islands with shulkers and loot",
+      "End Ships — floating ships with elytra and dragon head",
+      "Shulkers — shell mob that levitates players with projectiles",
+      "Chorus Plants & Fruit — End vegetation, fruit teleports you randomly",
+      "Dragon's Breath — collectible from Ender Dragon, used for lingering potions",
+      "Lingering Potions — splash potions that leave an area effect cloud",
+      "End Gateway — portals to outer End islands after killing the dragon",
+      "Respawnable Ender Dragon — place end crystals to resummon the fight"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.9"
+  },
+  {
+    "version": "1.8",
+    "name": "Bountiful Update",
+    "year": 2014,
+    "month": "September",
+    "summary": "Ocean monuments with guardians, armor stands, banners, slime blocks, new stone types, sea lanterns, and spectator mode.",
+    "details": [
+      "Ocean Monuments — underwater temples guarded by guardians and elder guardians",
+      "Guardians — pufferfish-like mobs that shoot lasers",
+      "Elder Guardian — mini-boss that inflicts Mining Fatigue",
+      "Armor Stands — display armor and items, poseable with commands",
+      "Banners — decorative blocks with complex pattern layering system",
+      "Slime Blocks — bouncy, sticky blocks, foundation of flying machines",
+      "Granite, Diorite, Andesite — three new stone types with polished variants",
+      "Sea Lanterns — underwater light source",
+      "Prismarine — building blocks from ocean monuments in 3 variants",
+      "Spectator Mode — fly through blocks, see through mob eyes",
+      "Rabbits — small passive mob with multiple color variants",
+      "Depth Strider enchantment — faster underwater movement"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.8"
+  },
+  {
+    "version": "1.7",
+    "name": "The Update that Changed the World",
+    "year": 2013,
+    "month": "October",
+    "summary": "Massive biome overhaul adding mesa, mega taiga, roofed forest, savanna, ice spikes, and many more. Stained glass, new flowers, and amplified world type.",
+    "details": [
+      "New biomes — mesa, mega taiga, roofed forest, birch forest, savanna, sunflower plains, ice plains spikes, deep ocean, stone beach, flower forest, and more",
+      "Stained Glass — glass in all 16 colors, plus stained glass panes",
+      "New flowers — 10 new flower types including sunflowers, lilacs, peonies, rose bushes",
+      "Packed Ice — non-melting ice block found in ice spikes biome",
+      "Podzol — dirt variant found in mega taiga",
+      "Red Sand — found in mesa biomes",
+      "Amplified world type — exaggerated terrain for dramatic landscapes",
+      "New fishing mechanics — treasure and junk loot tables",
+      "Acacia & Dark Oak — two new wood types with full block sets",
+      "Command blocks rewrite — more powerful command system"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.7"
+  },
+  {
+    "version": "1.6",
+    "name": "Horse Update",
+    "year": 2013,
+    "month": "July",
+    "summary": "Horses, donkeys, mules with rideable mechanics and armor. Leads, hay bales, carpets, hardened clay, and resource packs.",
+    "details": [
+      "Horses — tameable, rideable, breedable with variable speed/jump/health stats",
+      "Donkeys & Mules — chest-carrying variants of horses",
+      "Horse Armor — iron, gold, and diamond armor for horses",
+      "Leads — rope to tie animals to fences or lead them around",
+      "Hay Bales — decorative and food for horses",
+      "Carpets — thin wool decoration for floors and llamas",
+      "Hardened Clay & Stained Clay — terracotta building material in 16 colors",
+      "Coal Blocks — compact coal storage, good fuel source",
+      "Resource Packs — replaced texture packs, can include sounds and models"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.6"
+  },
+  {
+    "version": "1.5",
+    "name": "Redstone Update",
+    "year": 2013,
+    "month": "March",
+    "summary": "Redstone overhaul with hoppers, droppers, comparators, daylight sensors, trapped chests, and quartz blocks.",
+    "details": [
+      "Hopper — transfers items between containers, essential for automation",
+      "Dropper — ejects items or feeds them into containers",
+      "Comparator — reads container fullness, signal strength, and compares signals",
+      "Daylight Sensor — outputs redstone based on time of day",
+      "Trapped Chest — outputs redstone signal when opened",
+      "Weighted Pressure Plates — gold and iron, output based on entity count",
+      "Block of Redstone — compact redstone storage, acts as power source",
+      "Nether Quartz — ore found in the Nether, used for quartz blocks and comparators",
+      "Quartz blocks — pillar, chiseled, and smooth variants",
+      "Minecart with Hopper & TNT — new minecart variants"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.5"
+  },
+  {
+    "version": "1.4",
+    "name": "Pretty Scary Update",
+    "year": 2012,
+    "month": "October",
+    "summary": "Witches, the Wither boss, bats, beacons, anvils, command blocks, and new food items. Night vision and invisibility potions.",
+    "details": [
+      "The Wither — second boss mob, summoned by placing soul sand and wither skulls",
+      "Beacons — powerful buff blocks powered by mineral pyramids",
+      "Witches — hostile mob that throws harmful potions and drinks healing potions",
+      "Wither Skeletons — nether fortress mob that drops skulls for Wither summoning",
+      "Anvil — repair and rename items, combine enchantments",
+      "Command Blocks — programmable blocks for map makers and servers",
+      "Bats — ambient cave mob",
+      "Carrots, Potatoes, Pumpkin Pie — new food items",
+      "Item Frames — display items on walls",
+      "Flower Pots — place flowers and saplings as decoration",
+      "Cobblestone Walls — fence-like walls from cobblestone and mossy cobblestone",
+      "Night Vision & Invisibility potions — new potion effects"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.4"
+  },
+  {
+    "version": "1.3",
+    "name": "The Adventure Update II",
+    "year": 2012,
+    "month": "August",
+    "summary": "Trading with villagers, emeralds, desert and jungle temples, ender chests, tripwire hooks, written books, and adventure mode.",
+    "details": [
+      "Villager Trading — buy and sell items with villagers using emeralds",
+      "Emeralds — new currency ore found in mountains",
+      "Desert Temples — loot structure with TNT trap",
+      "Jungle Temples — loot structure with arrow trap and puzzle",
+      "Ender Chests — shared storage accessible from any ender chest",
+      "Tripwire Hooks — redstone trap component using string",
+      "Written Books — sign books and share written content",
+      "Adventure Mode — can't break blocks without the right tool",
+      "Singleplayer runs on internal server — foundation for LAN play"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.3"
+  },
+  {
+    "version": "1.2",
+    "name": "The Jungle Update",
+    "year": 2012,
+    "month": "March",
+    "summary": "Jungle biome with ocelots and cocoa beans. World height doubled to 256. Iron golems, redstone lamps, and upside-down stairs.",
+    "details": [
+      "Jungle Biome — dense forest with tall trees, vines, and temple structures",
+      "Ocelots — tameable jungle cats that scare creepers",
+      "Cocoa Beans — farmable on jungle logs",
+      "World Height doubled — from 128 to 256 blocks",
+      "Iron Golems — village protectors, craftable from iron blocks and pumpkin",
+      "Redstone Lamps — toggleable light source",
+      "Upside-Down Stairs & Slabs — place on top of blocks",
+      "Fire Charge — fireball item, used as flint and steel alternative",
+      "Bottle o' Enchanting — throwable XP in survival"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.2"
+  },
+  {
+    "version": "1.1",
+    "name": "",
+    "year": 2012,
+    "month": "January",
+    "summary": "Superflat world type, spawn eggs in creative, bow enchantments, sheep regrow wool, and language translations.",
+    "details": [
+      "Superflat world type — flat terrain for creative building",
+      "Spawn Eggs — spawn mobs in creative mode",
+      "Bow enchantments — Power, Punch, Flame, Infinity",
+      "Sheep regrow wool — sheep eat grass to regrow sheared wool",
+      "56 language translations — Minecraft goes global",
+      "Beach biome improvements — better generation"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.1"
+  },
+  {
+    "version": "1.0",
+    "name": "The Official Release",
+    "year": 2011,
+    "month": "November",
+    "summary": "Minecraft officially leaves beta. The End dimension, Ender Dragon boss fight, enchanting, brewing, XP system, hardcore mode, and The End poem.",
+    "details": [
+      "The End — new dimension accessed through stronghold End Portals",
+      "Ender Dragon — first boss fight in Minecraft, credits roll on defeat",
+      "The End Poem — philosophical text displayed after defeating the dragon",
+      "Enchanting — spend XP at enchanting tables for gear buffs",
+      "Brewing — craft potions at brewing stands using nether wart and ingredients",
+      "XP System — experience orbs from mobs, mining, smelting",
+      "Hardcore Mode — one life, world deletes on death",
+      "Villagers — passive NPC mobs in villages (trading came in 1.3)",
+      "Snow Golems — craftable snowball-throwing mob",
+      "Mooshrooms — mushroom-covered cows on mushroom islands",
+      "Baby Animals — passive mobs can breed and have babies",
+      "Nether Fortress — structure with blaze spawners and nether wart"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_1.0.0"
+  }
+]

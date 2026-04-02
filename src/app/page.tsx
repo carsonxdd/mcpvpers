@@ -1,65 +1,110 @@
-import Image from "next/image";
+import Link from 'next/link';
+import CopyButton from '@/components/CopyButton';
+import GrassDivider from '@/components/GrassDivider';
+import CloudTitle from '@/components/CloudTitle';
+import CloudText from '@/components/CloudText';
+
+const features = [
+  {
+    title: 'Explore',
+    description: 'Catch up on everything new in Minecraft since you last played.',
+    href: '/version-catchup',
+    icon: '🗺',
+  },
+  {
+    title: 'Connect',
+    description: 'Get set up and join the server in minutes. Java & Bedrock welcome.',
+    href: '/bedrock',
+    icon: '🔗',
+  },
+  {
+    title: 'Compete',
+    description: 'Track your stats and climb the leaderboards.',
+    href: '/leaderboards',
+    icon: '⚔',
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div>
+      {/* Hero */}
+      <section className="min-h-[90vh] flex flex-col items-center justify-center text-center px-4 py-20">
+        <CloudTitle>
+          <h1 className="font-pixel text-gold text-4xl sm:text-5xl md:text-6xl mb-4 glow-gold">
+            mc.pvpers.us
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="t-text-dim text-sm sm:text-base max-w-md mx-auto text-center font-pixel">
+            Vanilla+. Community. Adventure.
           </p>
+        </CloudTitle>
+        <div className="mb-8" />
+
+        <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg mb-12" />
+
+        {/* Server Stats */}
+        <div className="mc-panel p-6 max-w-lg w-full">
+          <h2 className="font-pixel t-text-dim text-[10px] mb-4 uppercase tracking-widest">Server Info</h2>
+          <div className="grid grid-cols-2 gap-4 text-sm">
+            <div>
+              <span className="t-text-muted text-xs">Version</span>
+              <p className="text-xp font-pixel text-sm glow-xp">1.21</p>
+            </div>
+            <div>
+              <span className="t-text-muted text-xs">Platform</span>
+              <p className="text-xp font-pixel text-sm glow-xp">Paper</p>
+            </div>
+            <div>
+              <span className="t-text-muted text-xs">Host</span>
+              <p className="t-text font-pixel text-sm">DatHost</p>
+            </div>
+            <div>
+              <span className="t-text-muted text-xs">Players</span>
+              <p className="t-text font-pixel text-sm">Java + Bedrock</p>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      <GrassDivider />
+
+      {/* Feature Cards */}
+      <section className="max-w-5xl mx-auto px-4 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {features.map((feature) => (
+            <Link
+              key={feature.title}
+              href={feature.href}
+              className="mc-panel p-6 transition-all group gradient-border"
+            >
+              <div className="text-3xl mb-3">{feature.icon}</div>
+              <h3 className="font-pixel text-gold text-xs mb-2 transition-all">
+                {feature.title}
+              </h3>
+              <p className="t-text-dim text-sm">{feature.description}</p>
+            </Link>
+          ))}
         </div>
-      </main>
+      </section>
+
+      <GrassDivider />
+
+      {/* About blurb */}
+      <section className="max-w-3xl mx-auto px-4 py-16 text-center">
+        <CloudTitle>
+          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">What is mc.pvpers.us?</h2>
+        </CloudTitle>
+        <CloudText>
+          <p className="t-text-dim leading-relaxed mb-4">
+            We&apos;re a dedicated Vanilla+ Minecraft server &mdash; no pay-to-win, no mods, no BS.
+            Just classic Minecraft with a few quality-of-life tweaks to keep things smooth.
+          </p>
+          <p className="t-text-dim leading-relaxed">
+            Claim your land so nobody griefs your builds, and invite whoever you want to build
+            with you. Beyond that? Practically no rules &mdash; just don&apos;t cheat.
+          </p>
+        </CloudText>
+      </section>
     </div>
   );
 }

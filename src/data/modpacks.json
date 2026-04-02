@@ -1,0 +1,35 @@
+{
+  "qol": {
+    "name": "QoL Modpack",
+    "description": "The full experience. Performance optimizations plus quality-of-life features that enhance gameplay without giving unfair advantages.",
+    "importCode": "REPLACE_WITH_QOL_CODE",
+    "mods": [
+      { "name": "Sodium", "description": "Modern rendering engine for massive FPS improvements" },
+      { "name": "Lithium", "description": "General-purpose server/client optimization mod" },
+      { "name": "Iris Shaders", "description": "Shader support compatible with Sodium" },
+      { "name": "ModMenu", "description": "In-game mod configuration menu" },
+      { "name": "Xaero's Minimap", "description": "Clean minimap with waypoints (fair-play settings)" },
+      { "name": "Xaero's World Map", "description": "Full-screen map that builds as you explore" },
+      { "name": "AppleSkin", "description": "Shows food saturation and exhaustion values" },
+      { "name": "ShulkerBoxTooltip", "description": "Preview shulker box contents on hover" },
+      { "name": "BetterF3", "description": "Cleaner, more readable debug screen" },
+      { "name": "LambDynamicLights", "description": "Held torches and items emit light dynamically" },
+      { "name": "Bobby", "description": "Caches chunks client-side for extended render distance" },
+      { "name": "InventoryProfilesNext", "description": "Inventory sorting and management" }
+    ]
+  },
+  "potato": {
+    "name": "FPS Boost (Potato Edition)",
+    "description": "For machines that need every frame they can get. Performance only, no extras.",
+    "importCode": "REPLACE_WITH_POTATO_CODE",
+    "mods": [
+      { "name": "Sodium", "description": "Modern rendering engine for massive FPS improvements" },
+      { "name": "Lithium", "description": "General-purpose optimization mod" },
+      { "name": "Starlight", "description": "Rewrites the light engine for better performance" },
+      { "name": "FerriteCore", "description": "Reduces memory usage significantly" },
+      { "name": "EntityCulling", "description": "Skips rendering entities you can't see" },
+      { "name": "ImmediatelyFast", "description": "Optimizes immediate-mode rendering" },
+      { "name": "ModMenu", "description": "Mod configuration menu" }
+    ]
+  }
+}

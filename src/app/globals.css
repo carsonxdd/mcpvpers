@@ -1,26 +1,284 @@
+@import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'Minecraft';
+  src: url('/fonts/Minecraft.woff2') format('woff2'),
+       url('/fonts/Minecraft.woff') format('woff'),
+       url('/fonts/Minecraft.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-grass: #5B8731;
+  --color-grass-light: #6FA03A;
+  --color-oak: #BC9862;
+  --color-oak-light: #D4B07A;
+  --color-gold: #FFAA00;
+  --color-xp: #4CBB17;
+  --color-enchant: #A78BFA;
+  --color-sky-top: #78A7FF;
+  --color-sky-mid: #4A6FA5;
+  --color-redstone: #FF4444;
+  --color-diamond: #4EEAF0;
+  --font-pixel: 'Minecraft', 'Press Start 2P', monospace;
+  --font-body: 'Nunito', system-ui, sans-serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* ── Theme variables (swap on .dark) ── */
+:root {
+  --c-bg: #E8F4EC;
+  --c-bg-light: #D8EBE0;
+  --c-bg-lighter: #C8E0D0;
+  --c-surface: #FFFFFF;
+  --c-surface-light: #F0F5F2;
+  --c-border: #C5D5CA;
+  --c-border-light: #A8BEB0;
+  --c-text: #1A2E1A;
+  --c-text-dim: #3D5040;
+  --c-text-muted: #7A9080;
+  --c-panel-bg: rgba(255, 255, 255, 0.85);
+}
+
+html.dark {
+  --c-bg: #1a1a2e;
+  --c-bg-light: #22223a;
+  --c-bg-lighter: #2a2a44;
+  --c-surface: #252540;
+  --c-surface-light: #30304d;
+  --c-border: #3a3a5c;
+  --c-border-light: #4a4a6a;
+  --c-text: #E8E6F0;
+  --c-text-dim: #A0A0B8;
+  --c-text-muted: #6E6E88;
+  --c-panel-bg: rgba(37, 37, 64, 0.8);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--c-bg);
+  color: var(--c-text);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.font-pixel {
+  font-family: var(--font-pixel);
+  letter-spacing: 0.5px;
+}
+
+/* ── Weather desaturation filters ── */
+.weather-clear {
+  filter: none;
+  transition: filter 1.5s ease-in-out;
+}
+.weather-rain {
+  filter: saturate(0.35) brightness(0.85);
+  transition: filter 1.5s ease-in-out;
+}
+.weather-thunderstorm {
+  filter: saturate(0.2) brightness(0.75);
+  transition: filter 1.5s ease-in-out;
+}
+
+/* ── Theme-aware utility classes ── */
+.t-bg        { background-color: var(--c-bg); }
+.t-bg-90     { background-color: color-mix(in srgb, var(--c-bg) 90%, transparent); }
+.t-bg-95     { background-color: color-mix(in srgb, var(--c-bg) 95%, transparent); }
+.t-surface   { background-color: var(--c-surface); }
+.t-surface-light { background-color: var(--c-surface-light); }
+.t-border    { border-color: var(--c-border); }
+.t-border-light { border-color: var(--c-border-light); }
+.t-border-50 { border-color: color-mix(in srgb, var(--c-border) 50%, transparent); }
+.t-border-30 { border-color: color-mix(in srgb, var(--c-border) 30%, transparent); }
+.t-border-20 { border-color: color-mix(in srgb, var(--c-border) 20%, transparent); }
+.t-text      { color: var(--c-text); }
+.t-text-dim  { color: var(--c-text-dim); }
+.t-text-muted { color: var(--c-text-muted); }
+.t-text-muted-50 { color: color-mix(in srgb, var(--c-text-muted) 50%, transparent); }
+.t-text-muted-60 { color: color-mix(in srgb, var(--c-text-muted) 60%, transparent); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--c-bg); }
+::-webkit-scrollbar-thumb { background: var(--c-border); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--c-border-light); }
+
+/* Enchant shimmer */
+@keyframes enchant-shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+
+.enchant-hover {
+  position: relative;
+  overflow: hidden;
+}
+
+.enchant-hover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 30%, rgba(167, 139, 250, 0.1) 50%, transparent 70%);
+  background-size: 200% 100%;
+  animation: enchant-shimmer 3s ease-in-out infinite;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.enchant-hover:hover::after { opacity: 1; }
+
+/* Typewriter */
+@keyframes typewriter { from { width: 0; } to { width: 100%; } }
+@keyframes blink-caret { 50% { border-color: transparent; } }
+
+.typewriter {
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 3px solid var(--color-gold);
+  animation: typewriter 2s steps(30) 0.5s forwards, blink-caret 0.75s step-end infinite;
+  width: 0;
+}
+
+/* Grass divider */
+.grass-divider {
+  height: 4px;
+  background: linear-gradient(90deg, transparent, var(--color-grass), transparent);
+  opacity: 0.4;
+}
+
+/* Glass panel */
+.mc-panel {
+  background: var(--c-panel-bg);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--c-border);
+  border-radius: 8px;
+  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+
+html:not(.dark) .mc-panel {
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+}
+
+html:not(.dark) .mc-panel:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* Inventory slot */
+.inventory-slot {
+  background: var(--c-surface);
+  border: 1px solid var(--c-border);
+  border-radius: 6px;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.inventory-slot:hover {
+  border-color: var(--c-border-light);
+  background: var(--c-surface-light);
+}
+
+/* MC Tooltip */
+.mc-tooltip {
+  background: rgba(16, 0, 24, 0.95);
+  border: 1px solid var(--color-enchant);
+  border-radius: 4px;
+  padding: 6px 10px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  color: white;
+  pointer-events: none;
+  z-index: 50;
+}
+
+/* Pill button */
+.mc-pill {
+  padding: 6px 14px;
+  font-family: var(--font-pixel);
+  font-size: 11px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+  cursor: pointer;
+  color: var(--c-text-dim);
+  background: var(--c-surface-light);
+}
+
+.mc-pill:hover {
+  color: var(--c-text);
+  background: var(--c-border);
+  border-color: var(--c-border-light);
+}
+
+.mc-pill-active {
+  color: white !important;
+  background: var(--color-grass) !important;
+  border-color: var(--color-grass-light) !important;
+}
+
+/* Glow text — dark mode only */
+.glow-gold  { text-shadow: none; }
+.glow-xp    { text-shadow: none; }
+.glow-enchant { text-shadow: none; }
+
+html.dark .glow-gold  { text-shadow: 0 0 20px rgba(255,170,0,0.3), 0 0 40px rgba(255,170,0,0.1); }
+html.dark .glow-xp    { text-shadow: 0 0 20px rgba(126,252,32,0.3), 0 0 40px rgba(126,252,32,0.1); }
+html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
+
+/* Gradient border effect */
+.gradient-border { position: relative; }
+
+.gradient-border::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, var(--color-grass), var(--color-enchant), var(--color-diamond));
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: -1;
+}
+
+.gradient-border:hover::before { opacity: 0.5; }
+
+/* Cloud animations — parallax background */
+@keyframes cloud-drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(60px); }
+}
+
+@keyframes cloud-drift-slow {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(40px); }
+}
+
+/* Cloud animations — title clouds */
+@keyframes cloud-bob {
+  0%, 100% { transform: translate(-50%, -54%) translateY(0); }
+  50% { transform: translate(-50%, -54%) translateY(-8px); }
+}
+
+@keyframes cloud-bob-alt {
+  0%, 100% { transform: translate(-50%, -54%) translateY(0); }
+  50% { transform: translate(-50%, -54%) translateY(6px); }
+}
+
+@keyframes cloud-breathe {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Surface hover for nav items etc */
+.hover-surface:hover {
+  background-color: color-mix(in srgb, var(--c-surface) 60%, transparent);
 }

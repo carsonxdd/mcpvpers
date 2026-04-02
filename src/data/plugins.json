@@ -1,0 +1,42 @@
+[
+  {
+    "name": "Lands",
+    "description": "Claim and protect your land. Create nations, manage permissions, and set up wars.",
+    "icon": "shield"
+  },
+  {
+    "name": "CoreProtect",
+    "description": "Block logging and rollback. Grief protection and investigation tool.",
+    "icon": "search"
+  },
+  {
+    "name": "EssentialsX",
+    "description": "Core server commands — /home, /tpa, /spawn, /msg, and more.",
+    "icon": "terminal"
+  },
+  {
+    "name": "Dynmap/BlueMap",
+    "description": "Live web-based world map with real-time player positions.",
+    "icon": "map"
+  },
+  {
+    "name": "Chest Shops",
+    "description": "Player-run shops using chest signs. Buy and sell within Lands claims.",
+    "icon": "shopping-cart"
+  },
+  {
+    "name": "Bounty System",
+    "description": "Place bounties on other players. Track and claim them for rewards.",
+    "icon": "crosshair"
+  },
+  {
+    "name": "DiscordSRV",
+    "description": "Two-way chat bridge between Discord and the Minecraft server.",
+    "icon": "message-circle"
+  },
+  {
+    "name": "Playtime Tracker",
+    "description": "Tracks player playtime and powers the world border expansion system.",
+    "icon": "clock"
+  }
+]
