@@ -99,9 +99,16 @@ export default function Home() {
             We&apos;re a dedicated Vanilla+ Minecraft server &mdash; no pay-to-win, no mods, no BS.
             Just classic Minecraft with a few quality-of-life tweaks to keep things smooth.
           </p>
-          <p className="t-text-dim leading-relaxed">
+          <p className="t-text-dim leading-relaxed mb-4">
             Claim your land so nobody griefs your builds, and invite whoever you want to build
             with you. Beyond that? Practically no rules &mdash; just don&apos;t cheat.
+          </p>
+          <p className="t-text-dim leading-relaxed">
+            Our world grows with you &mdash; the more we play, the bigger it gets. The world border
+            expands every week based on how much time the community spends online.{' '}
+            <a href="/about#world-border" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+              Learn how it works &rarr;
+            </a>
           </p>
         </CloudText>
       </section>

@@ -41,7 +41,15 @@ export default function MapPage() {
                       <span className="w-3 h-3 bg-redstone/30 border border-redstone/60 rounded-sm inline-block" />
                       <span className="t-text-dim">World Border</span>
                     </div>
-                    <p className="t-text-muted pl-5">Expands based on community playtime.</p>
+                    <p className="t-text-muted pl-5 mb-1">
+                      The visible world is bounded by the world border. It starts at 1,750 blocks
+                      from spawn and expands every Sunday based on combined community playtime.
+                    </p>
+                    <p className="t-text-muted pl-5">
+                      <a href="/about#world-border" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2 text-[11px]">
+                        See expansion tiers &rarr;
+                      </a>
+                    </p>
                   </div>
                   <div>
                     <div className="flex items-center gap-2 mb-1">

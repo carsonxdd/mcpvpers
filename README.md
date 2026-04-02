@@ -14,8 +14,9 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Dynamic weather system — random rain and thunderstorms with pixelated rain drops, lightning bolts, screen flash, and full-page desaturation
 - Manual weather toggle in the header (cycles clear/rain/thunderstorm)
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
+- World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages
 - Leaderboards (placeholder — needs Stats API)
-- BlueMap embed (placeholder — needs BlueMap URL)
+- BlueMap embed with legend explaining world border and land claims (placeholder — needs BlueMap URL)
 - Screenshot gallery and news/changelog pages
 - Fully responsive with mobile navigation
 

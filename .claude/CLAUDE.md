@@ -93,8 +93,12 @@ Not yet configured. Intended for Vercel or similar static/SSR hosting. Domain: m
 - Pixelated rain drops (canvas), lightning bolts (SVG), screen flash, and desaturation
 - Weather-aware header (gray bg + light text in light mode during rain)
 - All cloud components darken during weather events
+- World border expansion system: home page teaser with link, about page has full section (`#world-border`) with tier table (5 tiers, playtime thresholds, block expansion, new-chunk estimates) and bullet-point notes, BlueMap legend explains bounded world with link back to about page
+- About page rules are left-aligned with centered heading
 
 **Still placeholder / TODO:**
+- Live border widget on home page (needs Stats API to expose current border size and weekly progress)
+- Auto-posting news entries on border expansion (needs Stats API)
 - BlueMap page has no actual iframe (needs BlueMap URL)
 - Leaderboard data is mock (needs Stats API plugin)
 - Gallery has placeholder images (needs screenshots)
