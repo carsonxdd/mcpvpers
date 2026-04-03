@@ -35,7 +35,7 @@ export default function Home() {
             mc.pvpers.us
           </h1>
           <p className="t-text-dim text-sm sm:text-base max-w-md mx-auto text-center font-pixel">
-            Vanilla+. Community. Adventure.
+            Explore. Claim. Conquer.
           </p>
         </CloudTitle>
         <div className="mb-8" />
@@ -48,18 +48,18 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="t-text-muted text-xs">Version</span>
-              <p className="text-xp font-pixel text-sm glow-xp">1.21</p>
+              <p className="text-xp font-pixel text-sm glow-xp">1.21.11</p>
+            </div>
+            <div>
+              <span className="t-text-muted text-xs">Gameplay</span>
+              <p className="text-xp font-pixel text-sm glow-xp">Vanilla+ PvP</p>
+            </div>
+            <div>
+              <span className="t-text-muted text-xs">Features</span>
+              <p className="t-text font-pixel text-sm">Land Claiming</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Platform</span>
-              <p className="text-xp font-pixel text-sm glow-xp">Paper</p>
-            </div>
-            <div>
-              <span className="t-text-muted text-xs">Host</span>
-              <p className="t-text font-pixel text-sm">DatHost</p>
-            </div>
-            <div>
-              <span className="t-text-muted text-xs">Players</span>
               <p className="t-text font-pixel text-sm">Java + Bedrock</p>
             </div>
           </div>
