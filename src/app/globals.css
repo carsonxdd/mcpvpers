@@ -69,7 +69,7 @@ body {
   color: var(--c-text);
   font-family: var(--font-body);
   overflow-x: hidden;
-  transition: background-color 0.3s, color 0.3s;
+  transition: background-color 1.5s ease-in-out, color 1.5s ease-in-out;
 }
 
 .font-pixel {
@@ -164,7 +164,7 @@ body {
   backdrop-filter: blur(12px);
   border: 1px solid var(--c-border);
   border-radius: 8px;
-  transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
+  transition: background 1.5s ease-in-out, border-color 1.5s ease-in-out, box-shadow 1.5s ease-in-out;
 }
 
 html:not(.dark) .mc-panel {
@@ -180,7 +180,7 @@ html:not(.dark) .mc-panel:hover {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: 6px;
-  transition: border-color 0.2s, background 0.2s;
+  transition: border-color 1.5s ease-in-out, background 1.5s ease-in-out;
 }
 
 .inventory-slot:hover {
@@ -227,9 +227,9 @@ html:not(.dark) .mc-panel:hover {
 }
 
 /* Glow text — dark mode only */
-.glow-gold  { text-shadow: none; }
-.glow-xp    { text-shadow: none; }
-.glow-enchant { text-shadow: none; }
+.glow-gold  { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
+.glow-xp    { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
+.glow-enchant { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
 
 html.dark .glow-gold  { text-shadow: 0 0 20px rgba(255,170,0,0.3), 0 0 40px rgba(255,170,0,0.1); }
 html.dark .glow-xp    { text-shadow: 0 0 20px rgba(126,252,32,0.3), 0 0 40px rgba(126,252,32,0.1); }
@@ -276,6 +276,13 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 @keyframes cloud-breathe {
   0%, 100% { transform: translateY(0); }
   50% { transform: translateY(-6px); }
+}
+
+/* ── Shooting star (dark mode) ── */
+@keyframes shooting-star-move {
+  0%   { opacity: 1; translate: 0 0; }
+  75%  { opacity: 1; }
+  100% { opacity: 0; translate: 350px 0; }
 }
 
 /* Surface hover for nav items etc */
