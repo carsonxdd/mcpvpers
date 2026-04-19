@@ -37,6 +37,7 @@ function BlockyCloud({ isDark, isRaining, size = 'normal' }: { isDark: boolean; 
       }}
       viewBox="0 0 520 160"
       preserveAspectRatio="xMidYMid meet"
+      shapeRendering="crispEdges"
     >
       {/* Row 0 (top) — small bumps */}
       {[7, 8, 13, 14, 15, 19, 20].map(col => (

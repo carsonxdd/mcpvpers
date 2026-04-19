@@ -209,6 +209,7 @@ export default function ParallaxBackground() {
         className="absolute inset-0 w-full h-full"
         viewBox="0 0 1440 900"
         preserveAspectRatio="xMidYMid slice"
+        shapeRendering="crispEdges"
         style={{
           transform: `translateX(${scrollY * -0.015}px) translateY(${scrollY * 0.01}px)`,
           opacity: isLight ? 1 : 0,
