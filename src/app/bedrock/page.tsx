@@ -1,173 +1,145 @@
 'use client';
 
-import { useState } from 'react';
-import CopyButton from '@/components/CopyButton';
-import GrassDivider from '@/components/GrassDivider';
+import { useEffect, useState } from 'react';
 import CloudTitle from '@/components/CloudTitle';
+import CloudText from '@/components/CloudText';
 import CloudTextSmall from '@/components/CloudTextSmall';
+import GrassDivider from '@/components/GrassDivider';
 
-const tabs = ['Xbox Series X|S', 'PlayStation 5', 'Mobile', 'Windows 10/11'] as const;
-type Tab = (typeof tabs)[number];
+export default function BedrockPollPage() {
+  const [count, setCount] = useState<number | null>(null);
+  const [voted, setVoted] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-const instructions: Record<Tab, { steps: string[]; note?: string }> = {
-  'Xbox Series X|S': {
-    steps: [
-      'Open Minecraft Bedrock Edition on your Xbox.',
-      'Go to Settings > General > Network Settings.',
-      'Select Advanced Settings.',
-      'Change your DNS settings to Manual.',
-      'Set Primary DNS to 104.238.130.180 (BedrockConnect).',
-      'Set Secondary DNS to 8.8.8.8 (Google DNS).',
-      'Press B to save and go back to the home screen.',
-      'Launch Minecraft and go to the Servers tab.',
-      'Select any featured server (e.g. Hive, CubeCraft).',
-      'You\'ll be redirected to the BedrockConnect server list.',
-      'Select "Connect to a Server" and enter mc.pvpers.us with port 19132.',
-      'Hit Submit and you\'re in!',
-    ],
-    note: 'You only need to change DNS once. After that, just pick any featured server each time to get to the server list.',
-  },
-  'PlayStation 5': {
-    steps: [
-      'On your PS5, go to Settings > Network > Settings > Set Up Internet Connection.',
-      'Select your current connection (Wi-Fi or LAN) and hit Edit.',
-      'Change DNS Settings to Manual.',
-      'Set Primary DNS to 104.238.130.180 (BedrockConnect).',
-      'Set Secondary DNS to 8.8.8.8 (Google DNS).',
-      'Save and connect.',
-      'Open Minecraft Bedrock Edition.',
-      'Go to the Servers tab.',
-      'Select any featured server (e.g. Hive, CubeCraft).',
-      'You\'ll be redirected to the BedrockConnect server list.',
-      'Select "Connect to a Server" and enter mc.pvpers.us with port 19132.',
-      'Hit Submit and you\'re in!',
-    ],
-    note: 'PlayStation added server browsing support through BedrockConnect. You only need to set DNS once, and it persists across restarts.',
-  },
-  Mobile: {
-    steps: [
-      'Open Minecraft Bedrock Edition on your device.',
-      'Tap "Play" then go to the "Servers" tab.',
-      'Scroll down and tap "Add Server".',
-      'Enter mc.pvpers.us as the Server Address.',
-      'Enter 19132 as the Port.',
-      'Tap "Save" then tap the server to join!',
-    ],
-  },
-  'Windows 10/11': {
-    steps: [
-      'Open Minecraft Bedrock Edition from the Microsoft Store.',
-      'Click "Play" then go to the "Servers" tab.',
-      'Scroll down and click "Add Server".',
-      'Enter mc.pvpers.us as the Server Address.',
-      'Enter 19132 as the Port.',
-      'Click "Save" then click the server to join!',
-    ],
-  },
-};
+  useEffect(() => {
+    if (typeof window !== 'undefined' && localStorage.getItem('mc-bedrock-poll-voted') === 'true') {
+      setVoted(true);
+    }
+    fetch('/api/bedrock-poll', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => setCount(typeof d.count === 'number' ? d.count : 0))
+      .catch(() => setError('Could not load the vote count. Try refreshing.'));
+  }, []);
 
-const limitations = [
-  'Some visual effects may differ from Java Edition',
-  'Redstone behavior has minor differences',
-  'Some plugins may have limited Bedrock support',
-  'Custom resource packs may not display correctly',
-  'Combat mechanics differ slightly from Java',
-];
-
-export default function BedrockPage() {
-  const [activeTab, setActiveTab] = useState<Tab>('Xbox Series X|S');
-
-  const current = instructions[activeTab];
+  async function vote() {
+    if (submitting || voted) return;
+    setSubmitting(true);
+    setError(null);
+    try {
+      const r = await fetch('/api/bedrock-poll', { method: 'POST', cache: 'no-store' });
+      if (!r.ok) throw new Error('bad status');
+      const d = await r.json();
+      if (typeof d.count === 'number') setCount(d.count);
+      setVoted(true);
+      localStorage.setItem('mc-bedrock-poll-voted', 'true');
+    } catch {
+      setError('Vote failed. Try again?');
+    } finally {
+      setSubmitting(false);
+    }
+  }
 
   return (
     <div>
       <section className="max-w-3xl mx-auto px-4 py-16 text-center">
-        <CloudTitle><h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-4 glow-gold">Bedrock Players</h1></CloudTitle>
-        <CloudTextSmall className="mb-6">
+        <CloudTitle>
+          <h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-4 glow-gold">Bedrock Support?</h1>
+        </CloudTitle>
+        <CloudTextSmall className="mb-8">
           <p className="t-text-dim">
-            We support Bedrock Edition through <strong className="text-xp">GeyserMC</strong>, which
-            lets Bedrock players join Java servers seamlessly. No mods required on your end.
+            We&apos;re a Java server today. Adding Bedrock edition support lets Xbox, PlayStation,
+            Switch, and mobile players join too, but it&apos;s real work to set up and keep running.
           </p>
         </CloudTextSmall>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-10">
-          <CopyButton text="mc.pvpers.us" label="IP: mc.pvpers.us" />
-          <CopyButton text="19132" label="Port: 19132" />
-        </div>
+        <CloudText className="mb-10">
+          <p className="t-text-dim leading-relaxed">
+            If enough people actually want it, we&apos;ll build it. Otherwise we&apos;ll put that time
+            into other things. Your vote tells us which way to go.
+          </p>
+        </CloudText>
       </section>
 
       <GrassDivider />
 
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center"><CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">How to Join</h2></CloudTitle></div>
+      <section className="max-w-2xl mx-auto px-4 py-16">
+        <div className="mc-panel p-8 sm:p-10 text-center">
+          <p className="font-pixel t-text-dim text-[10px] uppercase tracking-widest mb-3">
+            Players who want Bedrock
+          </p>
+          <div className="font-pixel text-gold glow-gold text-5xl sm:text-6xl mb-2">
+            {count === null ? '…' : count}
+          </div>
+          <p className="t-text-muted text-xs mb-8">
+            {count === null
+              ? 'Loading…'
+              : count === 1
+              ? 'vote so far'
+              : 'votes so far'}
+          </p>
 
-        <div className="flex flex-wrap gap-1.5 mb-6 justify-center">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`mc-pill ${activeTab === tab ? 'mc-pill-active' : ''}`}
-            >
-              {tab}
-            </button>
-          ))}
-        </div>
-
-        <div className="mc-panel p-6">
-          <ol className="space-y-3">
-            {current.steps.map((step, i) => (
-              <li key={i} className="flex gap-3 text-sm">
-                <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">{i + 1}.</span>
-                <span className="t-text-dim">{step}</span>
-              </li>
-            ))}
-          </ol>
-
-          {current.note && (
-            <div className="mt-5 pt-4 flex gap-2.5 text-xs" style={{ borderTop: '1px solid var(--c-border)' }}>
-              <span className="text-gold font-pixel shrink-0">TIP</span>
-              <span className="t-text-muted">{current.note}</span>
+          {voted ? (
+            <div className="space-y-2">
+              <p className="font-pixel text-xp text-sm glow-xp">Thanks — your vote counts.</p>
+              <p className="t-text-muted text-xs">
+                We&apos;ll revisit this once we have a clearer read on interest.
+              </p>
             </div>
+          ) : (
+            <>
+              <button
+                onClick={vote}
+                disabled={submitting || count === null}
+                className="mc-pill mc-pill-active font-pixel text-xs px-6 py-3 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {submitting ? 'Submitting…' : "I'm interested"}
+              </button>
+              <p className="t-text-muted text-[11px] mt-4">
+                One vote per person. We only store a hashed version of your IP for dedupe.
+              </p>
+            </>
+          )}
+
+          {error && (
+            <p className="text-redstone text-xs mt-4 font-pixel">{error}</p>
           )}
         </div>
-
-        {/* DNS quick reference for console players */}
-        {(activeTab === 'Xbox Series X|S' || activeTab === 'PlayStation 5') && (
-          <div className="mc-panel p-5 mt-4">
-            <h3 className="font-pixel text-gold text-[10px] uppercase tracking-wider mb-3">DNS Quick Reference</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div>
-                <span className="t-text-muted text-xs">Primary DNS</span>
-                <p className="font-pixel text-xp text-sm">104.238.130.180</p>
-              </div>
-              <div>
-                <span className="t-text-muted text-xs">Secondary DNS</span>
-                <p className="font-pixel t-text text-sm">8.8.8.8</p>
-              </div>
-              <div>
-                <span className="t-text-muted text-xs">Server Address</span>
-                <p className="font-pixel text-gold text-sm">mc.pvpers.us</p>
-              </div>
-              <div>
-                <span className="t-text-muted text-xs">Port</span>
-                <p className="font-pixel t-text text-sm">19132</p>
-              </div>
-            </div>
-          </div>
-        )}
       </section>
 
       <GrassDivider />
 
       <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center"><CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Known Limitations</h2></CloudTitle></div>
+        <div className="text-center">
+          <CloudTitle>
+            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">What Bedrock would mean</h2>
+          </CloudTitle>
+        </div>
         <div className="mc-panel p-6">
-          <ul className="space-y-2">
-            {limitations.map((item, i) => (
-              <li key={i} className="flex gap-3 text-sm">
-                <span className="text-redstone shrink-0 font-pixel text-xs">!</span>
-                <span className="t-text-dim">{item}</span>
-              </li>
-            ))}
+          <ul className="space-y-3 text-sm">
+            <li className="flex gap-3">
+              <span className="text-xp shrink-0 font-pixel">+</span>
+              <span className="t-text-dim">
+                Console and mobile players can join without buying Java Edition.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-xp shrink-0 font-pixel">+</span>
+              <span className="t-text-dim">
+                Bigger player base, more people online at once.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-redstone shrink-0 font-pixel">!</span>
+              <span className="t-text-dim">
+                Some plugins and combat mechanics work differently on Bedrock.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-redstone shrink-0 font-pixel">!</span>
+              <span className="t-text-dim">
+                Console players may need a one-time DNS change to connect.
+              </span>
+            </li>
           </ul>
         </div>
       </section>
