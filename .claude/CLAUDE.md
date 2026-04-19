@@ -9,7 +9,7 @@
 - **Package Manager**: npm
 
 ## Architecture
-Single Next.js app with file-based routing under `src/app/`. All pages are statically generated (SSG) by default. Client components (`'use client'`) are used only where interactivity is needed (particles, music, tabs, copy buttons, etc.).
+Single Next.js app with file-based routing under `src/app/`. Pages are statically generated (SSG) by default; API routes live under `src/app/api/*/route.ts` and are server-rendered on demand. Client components (`'use client'`) are used only where interactivity is needed (particles, music, tabs, copy buttons, poll voting, etc.).
 
 ### Key Patterns
 - **`@/*` import alias** maps to `./src/*` (configured in tsconfig)
@@ -30,7 +30,9 @@ src/
 │   ├── globals.css         # All global styles, theme, animations
 │   ├── about/page.tsx      # About & Rules
 │   ├── modpacks/page.tsx   # Modpack import codes (client component)
-│   ├── bedrock/page.tsx    # Bedrock player guide (client component)
+│   ├── bedrock/page.tsx    # Bedrock interest poll with live counter (client component)
+│   ├── bedrock/archived-geyser-page.tsx  # Original GeyserMC how-to-join page, preserved but not routed (rename to page.tsx to restore)
+│   ├── api/bedrock-poll/route.ts  # GET/POST endpoint for the Bedrock poll — reads/writes data/bedrock-poll.json, dedupes on sha256(salt + CF-Connecting-IP)
 │   ├── version-catchup/page.tsx  # Interactive version timeline with first-visit/return-visit UX (client component)
 │   ├── map/page.tsx        # BlueMap embed placeholder (client component)
 │   ├── leaderboards/page.tsx     # Stats leaderboard (client component)
@@ -64,6 +66,8 @@ public/
 ├── textures/               # Minecraft-style textures and assets
 ├── audio/                  # Background music files
 └── cursors/                # Custom cursor images
+data/                       # Runtime state (gitignored). Created at first write by API routes.
+└── bedrock-poll.json       # { count: number, voterHashes: string[] }
 ```
 
 ## Running the Project
@@ -75,7 +79,7 @@ npm run lint     # ESLint
 ```
 
 ## Deployment
-Not yet configured. Intended for Vercel or similar static/SSR hosting. Domain: mc.pvpers.us
+Runs on a Raspberry Pi, managed by PM2 (`pm2 describe mcpvpers` shows cwd + args), served via Cloudflare Tunnel on port 3002. Domain: mc.pvpers.us. Deploy flow: `git push` from dev, then on the Pi: `git pull && npm run build && pm2 restart mcpvpers`. Because an API route now uses `data/` for runtime state, Vercel/static hosts would need a persistence swap.
 
 ## Current State
 **Phase 1-3 complete (structure + all pages scaffolded):**
@@ -95,6 +99,8 @@ Not yet configured. Intended for Vercel or similar static/SSR hosting. Domain: m
 - All cloud components darken during weather events
 - World border expansion system: home page teaser with link, about page has full section (`#world-border`) with tier table (5 tiers, playtime thresholds, block expansion, new-chunk estimates) and bullet-point notes, BlueMap legend explains bounded world with link back to about page
 - About page rules are left-aligned with centered heading
+- Bedrock page replaced with an interest poll (counter + one-click vote, dedupe via localStorage + hashed IP). Original GeyserMC guide preserved at `src/app/bedrock/archived-geyser-page.tsx`.
+- Site messaging reframed around peaceful survival with opt-in Lands wars (no "griefing not tolerated" language; claim-based PvP opt-in instead)
 
 **Still placeholder / TODO:**
 - Live border widget on home page (needs Stats API to expose current border size and weekly progress)
@@ -119,6 +125,9 @@ Not yet configured. Intended for Vercel or similar static/SSR hosting. Domain: m
 - All particle effects run on a single canvas element for performance
 - The parallax background is `fixed` positioned — content needs `relative z-20` to sit above it
 - Weather z-index layering: ParallaxBackground (z-0) → RainCanvas (z-5) → ParticleCanvas (z-10) → Content (z-20) → Header (z-40) → Lightning flash/bolts (z-50)
-- SVG `fill` attribute does not animate with CSS transitions — cloud components use inline `style={{ fill }}` for smooth weather transitions
+- SVG `fill` set via attribute DOES animate with CSS transitions if the transition is declared on a CSS rule targeting the element (e.g. `.cloud-fade rect { transition: fill 1.5s; }` in globals.css). Attribute-set presentation properties are treated as CSS properties by the browser. The four cloud text components use the `cloud-fade` class so theme toggle fades cloud fill in sync with the sky crossfade (both 1.5s ease-in-out). Weather transitions use `filter` on the SVG element directly.
+- Pixelated cloud SVGs need `shapeRendering="crispEdges"` on the `<svg>` or the browser anti-aliases the shared edges between adjacent `<rect>` elements, producing a visible grid pattern at certain pixel densities / zoom levels. Present on all four cloud text components and the parallax sky-clouds SVG.
 - Weather desaturation filter is on ParallaxBackground and cloud SVGs only, never on content/text
 - `ThunderstormOverlay` renders outside the WeatherProvider filter wrapper so lightning flash is not desaturated
+- API routes that write runtime state use a module-level promise chain (`writeLock = writeLock.then(...)`) to serialize writes and prevent race conditions on the JSON file. See `src/app/api/bedrock-poll/route.ts` for the pattern.
+- Files in `src/app/*/` that are not named `page.tsx`, `layout.tsx`, `route.ts`, etc. are ignored by Next.js routing but still type-checked. Used for archiving old page content alongside its replacement (e.g. `bedrock/archived-geyser-page.tsx`).
