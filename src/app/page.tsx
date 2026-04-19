@@ -56,7 +56,7 @@ export default function Home() {
             </div>
             <div>
               <span className="t-text-muted text-xs">Features</span>
-              <p className="t-text font-pixel text-sm">Land Claiming</p>
+              <p className="t-text font-pixel text-sm">Claims & Nations</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Platform</span>
@@ -100,8 +100,9 @@ export default function Home() {
             Just classic Minecraft with a few quality-of-life tweaks to keep things smooth.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
-            Claim your land so nobody griefs your builds, and invite whoever you want to build
-            with you. Beyond that? Practically no rules &mdash; just don&apos;t cheat.
+            Claim your land, lock down your base, and invite the neighbors you trust. Inside your
+            claim you decide who can build, open chests, or even swing a sword. Everything beyond
+            the claim border is the wild &mdash; travel light, or travel with friends.
           </p>
           <p className="t-text-dim leading-relaxed">
             Our world grows with you &mdash; the more we play, the bigger it gets. The world border

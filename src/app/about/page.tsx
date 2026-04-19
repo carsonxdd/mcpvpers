@@ -18,9 +18,14 @@ export default function AboutPage() {
             mc.pvpers.us is built on a simple idea: Minecraft is best when played with good people and
             minimal interference. We keep the plugin list lean, the rules fair, and the community tight.
           </p>
+          <p className="t-text-dim leading-relaxed mb-4">
+            This is a peaceful survival server at heart. Claim your land, team up with your neighbors,
+            and build something that lasts. Inside your claim you choose the rules &mdash; including whether
+            PvP is on. Out in the wilderness it&apos;s fair game, so watch who&apos;s following you home.
+          </p>
           <p className="t-text-dim leading-relaxed">
-            This is a survival server first. PvP is on, but griefing is not tolerated. Claim your land,
-            build your base, and respect your neighbors.
+            Nations can declare war, but only if both sides accept. Peace is always an option &mdash;
+            and usually the better one.
           </p>
         </CloudText>
       </section>
