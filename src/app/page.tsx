@@ -96,16 +96,16 @@ export default function Home() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
-            We&apos;re a dedicated Vanilla+ Minecraft server &mdash; no pay-to-win, no mods, no BS.
+            We&apos;re a dedicated Vanilla+ Minecraft server. No pay-to-win, no mods, no BS.
             Just classic Minecraft with a few quality-of-life tweaks to keep things smooth.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
             Claim your land, lock down your base, and invite the neighbors you trust. Inside your
             claim you decide who can build, open chests, or even swing a sword. Everything beyond
-            the claim border is the wild &mdash; travel light, or travel with friends.
+            the claim border is the wild, so travel light or travel with friends.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Our world grows with you &mdash; the more we play, the bigger it gets. The world border
+            Our world grows with you. The more we play, the bigger it gets. The world border
             expands every week based on how much time the community spends online.{' '}
             <a href="/about#world-border" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
               Learn how it works &rarr;

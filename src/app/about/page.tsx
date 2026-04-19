@@ -20,11 +20,11 @@ export default function AboutPage() {
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
             This is a peaceful survival server at heart. Claim your land, team up with your neighbors,
-            and build something that lasts. Inside your claim you choose the rules &mdash; including whether
+            and build something that lasts. Inside your claim you set the rules, including whether
             PvP is on. Out in the wilderness it&apos;s fair game, so watch who&apos;s following you home.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Nations can declare war, but only if both sides accept. Peace is always an option &mdash;
+            Nations can declare war, but only if both sides accept. Peace is always an option,
             and usually the better one.
           </p>
         </CloudText>
@@ -120,7 +120,7 @@ export default function AboutPage() {
           <div className="space-y-3 text-sm t-text-dim">
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
-              <span>Playtime is <strong className="t-text">combined</strong> across all players &mdash; everyone contributes.</span>
+              <span>Playtime is <strong className="t-text">combined</strong> across all players. Everyone contributes.</span>
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
@@ -128,7 +128,7 @@ export default function AboutPage() {
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
-              <span>If nobody plays during a week, the border stays where it is &mdash; it never shrinks.</span>
+              <span>If nobody plays during a week, the border stays where it is. It never shrinks.</span>
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>

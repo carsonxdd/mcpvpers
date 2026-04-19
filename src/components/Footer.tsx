@@ -35,7 +35,7 @@ export default function Footer() {
 
         <div className="mt-8 pt-4 t-border-20 border-t flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="t-text-muted-60 text-xs">
-            &copy; {new Date().getFullYear()} mc.pvpers.us &mdash; Not affiliated with Mojang Studios
+            &copy; {new Date().getFullYear()} mc.pvpers.us. Not affiliated with Mojang Studios.
           </p>
           <p className="t-text-muted-60 text-xs flex items-center gap-1.5">
             Powered by Paper

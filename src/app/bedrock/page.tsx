@@ -42,7 +42,7 @@ const instructions: Record<Tab, { steps: string[]; note?: string }> = {
       'Select "Connect to a Server" and enter mc.pvpers.us with port 19132.',
       'Hit Submit and you\'re in!',
     ],
-    note: 'PlayStation added server browsing support through BedrockConnect. You only need to set DNS once — it persists across restarts.',
+    note: 'PlayStation added server browsing support through BedrockConnect. You only need to set DNS once, and it persists across restarts.',
   },
   Mobile: {
     steps: [

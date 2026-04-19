@@ -22,10 +22,10 @@ export default function ModpacksPage() {
         <div className="mc-panel p-4 max-w-2xl mx-auto mb-12 text-center">
           <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Which pack is right for you?</h2>
           <p className="t-text-muted text-sm">
-            <strong className="text-xp">QoL Modpack</strong> &mdash; Full experience with minimap,
+            <strong className="text-xp">QoL Modpack</strong>: Full experience with minimap,
             shulker tooltips, dynamic lights, and more.
             <br />
-            <strong className="text-gold">Potato Edition</strong> &mdash; Just performance. For machines
+            <strong className="text-gold">Potato Edition</strong>: Just performance. For machines
             that need every frame they can get.
           </p>
         </div>
@@ -129,7 +129,7 @@ export default function ModpacksPage() {
               </li>
               <li className="flex gap-3 text-sm">
                 <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">3.</span>
-                <span className="t-text-dim">Hit <strong className="t-text">Install</strong> — CurseForge handles dependencies automatically.</span>
+                <span className="t-text-dim">Hit <strong className="t-text">Install</strong>. CurseForge handles dependencies automatically.</span>
               </li>
             </ol>
           </div>
