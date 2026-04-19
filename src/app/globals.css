@@ -77,6 +77,11 @@ body {
   letter-spacing: 0.5px;
 }
 
+/* ── Smooth fill crossfade for cloud rects on theme toggle ── */
+.cloud-fade rect {
+  transition: fill 1.5s ease-in-out, fill-opacity 1.5s ease-in-out;
+}
+
 /* ── Weather desaturation filters ── */
 .weather-clear {
   filter: none;

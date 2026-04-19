@@ -70,7 +70,7 @@ function CloudLayer({ isDark, isRaining }: { isDark: boolean; isRaining: boolean
 
   return (
     <svg
-      className="absolute pointer-events-none"
+      className="absolute pointer-events-none cloud-fade"
       style={{
         zIndex: 0,
         animation: 'cloud-breathe 7s ease-in-out infinite',

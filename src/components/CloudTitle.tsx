@@ -23,7 +23,7 @@ function BlockyCloud({ isDark, isRaining, size = 'normal' }: { isDark: boolean; 
 
   return (
     <svg
-      className="absolute pointer-events-none"
+      className="absolute pointer-events-none cloud-fade"
       style={{
         zIndex: 0,
         top: '50%',
