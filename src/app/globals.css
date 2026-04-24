@@ -284,10 +284,12 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 }
 
 /* ── Shooting star (dark mode) ── */
+/* Transform is applied inside a rotated parent, so translateX here follows
+   the rotated axis — keeps the comet's motion aligned with its tail. */
 @keyframes shooting-star-move {
-  0%   { opacity: 1; translate: 0 0; }
+  0%   { opacity: 1; transform: translateX(0); }
   75%  { opacity: 1; }
-  100% { opacity: 0; translate: 350px 0; }
+  100% { opacity: 0; transform: translateX(350px); }
 }
 
 /* Surface hover for nav items etc */

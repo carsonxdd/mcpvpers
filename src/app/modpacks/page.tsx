@@ -172,9 +172,17 @@ export default function ModpacksPage() {
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">6.</span>
-              <span className="t-text-dim">
-                <strong className="text-xp">Important:</strong> before playing, open the profile&apos;s <strong className="t-text">Options</strong> and allocate more RAM. We recommend <strong className="t-text">8192 MB (8 GB)</strong> to <strong className="t-text">10240 MB (10 GB)</strong>. The default is far too low for a modded pack and the game will stutter or crash without this.
-              </span>
+              <div className="t-text-dim">
+                <p className="mb-2"><strong className="text-xp">Important:</strong> open the profile&apos;s <strong className="t-text">Options</strong> and set RAM allocation:</p>
+                <ul className="space-y-1.5 pl-4">
+                  <li>
+                    <strong className="text-xp">QoL Modpack:</strong> <strong className="t-text">8192 MB (8 GB)</strong> to <strong className="t-text">10240 MB (10 GB)</strong> recommended. The pack needs headroom for shaders and textures.
+                  </li>
+                  <li>
+                    <strong className="text-gold">FPS Boost:</strong> the default <strong className="t-text">4096 MB (4 GB)</strong> is fine if you&apos;re on the pack because your PC needs it. Expect some stutter on first chunk loads — bump it up if you have spare RAM.
+                  </li>
+                </ul>
+              </div>
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">7.</span>
