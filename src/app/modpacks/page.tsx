@@ -14,9 +14,9 @@ const CATEGORY_ORDER = ['Performance', 'Visuals', 'Quality of Life', 'Libraries'
 
 function ModRow({ mod }: { mod: Mod }) {
   return (
-    <div className="inventory-slot p-2.5 flex items-start gap-3">
-      <span className="font-pixel t-text text-[10px] shrink-0">{mod.name}</span>
-      <span className="t-text-muted text-xs">{mod.description}</span>
+    <div className="inventory-slot p-2.5">
+      <div className="font-pixel t-text text-[10px] mb-1.5">{mod.name}</div>
+      <div className="t-text-muted text-xs leading-snug">{mod.description}</div>
     </div>
   );
 }
@@ -80,12 +80,19 @@ export default function ModpacksPage() {
           </p>
         </CloudText>
 
-        <div className="mc-panel p-4 max-w-2xl mx-auto mb-12 text-center">
+        <div className="mc-panel p-4 max-w-2xl mx-auto mb-6 text-center">
           <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Which pack is right for you?</h2>
           <p className="t-text-muted text-sm">
             <strong className="text-xp">QoL Modpack</strong>: Full experience — shaders, Fresh Animations, controller support, connected textures, and more.
             <br />
-            <strong className="text-gold">Potato Edition</strong>: Just performance. For machines that need every frame they can get.
+            <strong className="text-gold">FPS Boost</strong>: Just performance. For machines that need every frame they can get.
+          </p>
+        </div>
+
+        <div className="mc-panel p-4 max-w-2xl mx-auto mb-12 text-center">
+          <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Or none of the above</h2>
+          <p className="t-text-muted text-sm">
+            These packs are optional. You can join with <strong className="t-text">vanilla</strong> Minecraft, disable any mods you don&apos;t want in CurseForge, or <strong className="t-text">add your own</strong> mods, resource packs, and shaders — see the guides below.
           </p>
         </div>
 

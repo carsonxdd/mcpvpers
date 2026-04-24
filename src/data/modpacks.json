@@ -6,7 +6,7 @@
     "mods": [
       { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
       { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
-      { "name": "Fresh Animations (via EMF + ETF + ESF)", "description": "Smoother, more lifelike mob animations, textures, and sounds", "featured": true, "category": "Visuals" },
+      { "name": "Fresh Animations", "description": "Smoother, more lifelike mob animations, textures, and sounds (via EMF, ETF, ESF)", "featured": true, "category": "Visuals" },
       { "name": "Continuity", "description": "Connected textures — seamless glass, bookshelves, and more", "featured": true, "category": "Visuals" },
       { "name": "Controllable", "description": "Full controller support, remappable bindings", "featured": true, "category": "Quality of Life" },
       { "name": "Shoulder Surfing", "description": "Over-the-shoulder third-person camera", "featured": true, "category": "Quality of Life" },
@@ -18,7 +18,7 @@
       { "name": "FerriteCore", "description": "Reduces memory usage significantly", "category": "Performance" },
       { "name": "BadOptimizations", "description": "Misc engine optimizations that reduce overhead", "category": "Performance" },
       { "name": "Clumps", "description": "Groups XP orbs together to reduce lag on mob kills", "category": "Performance" },
-      { "name": "Concurrent Chunk Management Engine (C2ME)", "description": "Parallelizes chunk loading across CPU cores", "category": "Performance" },
+      { "name": "C2ME", "description": "Concurrent Chunk Management Engine — parallelizes chunk loading across CPU cores", "category": "Performance" },
       { "name": "Entity Culling", "description": "Skips rendering entities you can't see", "category": "Performance" },
 
       { "name": "Ambient Environment", "description": "Dynamic weather, fog, and environmental visuals", "category": "Visuals" },
@@ -39,7 +39,7 @@
     ]
   },
   "potato": {
-    "name": "FPS Boost (Potato Edition)",
+    "name": "FPS Boost",
     "description": "For machines that need every frame they can get. Performance first, minimal extras.",
     "importCode": "REPLACE_WITH_POTATO_CODE",
     "mods": [
@@ -49,7 +49,8 @@
       { "name": "FerriteCore", "description": "Reduces memory usage significantly", "featured": true, "category": "Performance" },
       { "name": "BadOptimizations", "description": "Misc engine optimizations that reduce overhead", "featured": true, "category": "Performance" },
       { "name": "Clumps", "description": "Groups XP orbs together to reduce lag on mob kills", "featured": true, "category": "Performance" },
-      { "name": "Concurrent Chunk Management Engine (C2ME)", "description": "Parallelizes chunk loading across CPU cores", "featured": true, "category": "Performance" },
+      { "name": "C2ME", "description": "Concurrent Chunk Management Engine — parallelizes chunk loading across CPU cores", "featured": true, "category": "Performance" },
+      { "name": "Entity Culling", "description": "Skips rendering entities you can't see", "featured": true, "category": "Performance" },
       { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
 
       { "name": "Continuity", "description": "Connected textures — seamless glass, bookshelves, and more", "category": "Visuals" },
