@@ -7,7 +7,8 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Minecraft-themed design with parallax backgrounds and ambient particle effects
 - Server info with one-click IP copy
 - Interactive Version Catch-Up timeline (1.0 through 26.1) with first-visit year picker, return-visit jump-to-year, year section headers, and per-version month labels
-- Modpack import codes (QoL + Potato Edition) with CurseForge installation guide
+- Modpack import codes (QoL + FPS Boost) with featured/expanded mod lists grouped by category, a 7-step CurseForge installation guide, and per-pack RAM allocation guidance (8–10 GB for QoL, 4 GB default for FPS Boost)
+- Reminder that the packs are optional — players can join with vanilla, disable mods in CurseForge, or bring their own
 - Guide for adding custom mods, resource packs, and shader packs
 - Bedrock interest poll with live vote counter (backed by a JSON file + Next.js API route, dedupes on hashed IP)
 - Cloud text effects behind headings and descriptions (CloudTitle, CloudText, CloudTextSmall, CloudTextTiny)
