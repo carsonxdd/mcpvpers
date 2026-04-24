@@ -7,7 +7,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Minecraft-themed design with parallax backgrounds and ambient particle effects
 - Server info with one-click IP copy
 - Interactive Version Catch-Up timeline (1.0 through 26.1) with first-visit year picker, return-visit jump-to-year, year section headers, and per-version month labels
-- Modpack import codes (QoL + FPS Boost) with featured/expanded mod lists grouped by category, a 7-step CurseForge installation guide, and per-pack RAM allocation guidance (8–10 GB for QoL, 4 GB default for FPS Boost)
+- Modpack import codes (QoL + FPS Boost) with featured/expanded mod lists grouped by category, a 7-step CurseForge installation guide, and per-pack RAM allocation guidance (8–10 GB for QoL, 4 GB default for FPS Boost). Both packs include Simple Voice Chat for server-wide proximity voice
 - Reminder that the packs are optional — players can join with vanilla, disable mods in CurseForge, or bring their own
 - Guide for adding custom mods, resource packs, and shader packs
 - Bedrock interest poll with live vote counter (backed by a JSON file + Next.js API route, dedupes on hashed IP)
@@ -15,6 +15,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Dynamic weather system — random rain and thunderstorms with pixelated rain drops, lightning bolts, screen flash, and full-page desaturation
 - Manual weather toggle in the header (cycles clear/rain/thunderstorm)
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
+- Occasional shooting stars streak across the night sky in dark mode during clear weather (pixelated comet + fading tail, motion aligned to the tilt)
 - World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages
 - Leaderboards (placeholder — needs Stats API)
 - BlueMap embed with legend explaining world border and land claims (placeholder — needs BlueMap URL)
