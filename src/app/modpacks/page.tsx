@@ -144,7 +144,7 @@ export default function ModpacksPage() {
         <div className="text-center"><CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Installing via CurseForge</h2></CloudTitle></div>
         <CloudTextSmall className="text-center mb-8">
           <p className="t-text-dim">
-            Copy an import code above and paste it into CurseForge to install. Takes about 30 seconds.
+            Grab an import code from above, paste it into CurseForge, and you&apos;ll be in-game in about a minute.
           </p>
         </CloudTextSmall>
 
@@ -152,23 +152,33 @@ export default function ModpacksPage() {
           <ol className="space-y-4">
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">1.</span>
-              <span className="t-text-dim">Download the CurseForge App from <strong className="t-text">curseforge.com</strong> and install it. Select Minecraft when prompted.</span>
+              <span className="t-text-dim">Download the <strong className="t-text">CurseForge App</strong> from <strong className="t-text">curseforge.com</strong> and run it.</span>
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">2.</span>
-              <span className="t-text-dim">Copy the <strong className="t-text">Import Code</strong> for the modpack you want from above.</span>
+              <span className="t-text-dim">Open the <strong className="t-text">Minecraft</strong> section in CurseForge.</span>
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">3.</span>
-              <span className="t-text-dim">Open CurseForge, go to <strong className="t-text">Minecraft</strong>, then click <strong className="t-text">Create Custom Profile</strong>.</span>
+              <span className="t-text-dim">Copy the <strong className="t-text">Import Code</strong> for the pack you want from above.</span>
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">4.</span>
-              <span className="t-text-dim">Click <strong className="t-text">Import</strong> and paste the import code when prompted.</span>
+              <span className="t-text-dim">Click <strong className="t-text">Import</strong> and paste the code into the <strong className="t-text">Use Profile Code</strong> field.</span>
             </li>
             <li className="flex gap-4 text-sm">
               <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">5.</span>
-              <span className="t-text-dim">CurseForge will install everything automatically. Once it&apos;s done, hit <strong className="t-text">Play</strong>.</span>
+              <span className="t-text-dim">CurseForge will download and install everything automatically. Wait for it to finish.</span>
+            </li>
+            <li className="flex gap-4 text-sm">
+              <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">6.</span>
+              <span className="t-text-dim">
+                <strong className="text-xp">Important:</strong> before playing, open the profile&apos;s <strong className="t-text">Options</strong> and allocate more RAM. We recommend <strong className="t-text">8192 MB (8 GB)</strong> to <strong className="t-text">10240 MB (10 GB)</strong>. The default is far too low for a modded pack and the game will stutter or crash without this.
+              </span>
+            </li>
+            <li className="flex gap-4 text-sm">
+              <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">7.</span>
+              <span className="t-text-dim">Hit <strong className="t-text">Play</strong>.</span>
             </li>
           </ol>
         </div>
