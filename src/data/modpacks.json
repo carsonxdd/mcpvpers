@@ -12,6 +12,7 @@
       { "name": "Shoulder Surfing", "description": "Over-the-shoulder third-person camera", "featured": true, "category": "Quality of Life" },
       { "name": "Just Zoom", "description": "Configurable zoom key", "featured": true, "category": "Quality of Life" },
       { "name": "AppleSkin", "description": "Shows food saturation and hunger exhaustion", "featured": true, "category": "Quality of Life" },
+      { "name": "Simple Voice Chat", "description": "Proximity voice chat — required to hear and talk to nearby players", "featured": true, "category": "Quality of Life" },
 
       { "name": "Lithium", "description": "General-purpose game optimization", "category": "Performance" },
       { "name": "ImmediatelyFast", "description": "Speeds up the rendering pipeline", "category": "Performance" },
@@ -52,6 +53,7 @@
       { "name": "C2ME", "description": "Concurrent Chunk Management Engine — parallelizes chunk loading across CPU cores", "featured": true, "category": "Performance" },
       { "name": "Entity Culling", "description": "Skips rendering entities you can't see", "featured": true, "category": "Performance" },
       { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
+      { "name": "Simple Voice Chat", "description": "Proximity voice chat — required to hear and talk to nearby players", "featured": true, "category": "Quality of Life" },
 
       { "name": "Continuity", "description": "Connected textures — seamless glass, bookshelves, and more", "category": "Visuals" },
       { "name": "Just Zoom", "description": "Configurable zoom key", "category": "Quality of Life" },
