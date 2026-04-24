@@ -12,17 +12,22 @@ export default function MapPage() {
         <div className="text-center"><CloudTitle><h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-6 glow-gold">BlueMap</h1></CloudTitle></div>
 
         <div className="relative mc-panel overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
+          {/* Fallback shown behind the iframe — visible if BlueMap is offline. */}
           <div className="absolute inset-0 flex items-center justify-center t-surface">
-            <div className="text-center">
-              <div className="font-pixel text-gold text-sm mb-2 glow-gold">BlueMap Loading...</div>
+            <div className="text-center px-6">
+              <div className="font-pixel text-gold text-sm mb-2 glow-gold">BlueMap is offline</div>
               <p className="t-text-muted text-sm">
-                The live map will be embedded here once BlueMap is installed and configured.
-              </p>
-              <p className="t-text-muted-50 text-xs mt-2">
-                Replace this with an iframe pointing to your BlueMap URL.
+                The live map is served directly from the game server. If it&apos;s down for a restart, check back in a minute.
               </p>
             </div>
           </div>
+
+          <iframe
+            src="/bluemap/"
+            title="BlueMap live server map"
+            className="absolute inset-0 w-full h-full border-0"
+          />
+
 
           <div className={`absolute top-4 right-4 z-10 transition-all ${legendOpen ? 'w-72' : 'w-auto'}`}>
             <button
