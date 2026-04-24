@@ -4,32 +4,62 @@
     "description": "The full experience. Performance optimizations plus quality-of-life features that enhance gameplay without giving unfair advantages.",
     "importCode": "REPLACE_WITH_QOL_CODE",
     "mods": [
-      { "name": "Sodium", "description": "Modern rendering engine for massive FPS improvements" },
-      { "name": "Lithium", "description": "General-purpose server/client optimization mod" },
-      { "name": "Iris Shaders", "description": "Shader support compatible with Sodium" },
-      { "name": "ModMenu", "description": "In-game mod configuration menu" },
-      { "name": "Xaero's Minimap", "description": "Clean minimap with waypoints (fair-play settings)" },
-      { "name": "Xaero's World Map", "description": "Full-screen map that builds as you explore" },
-      { "name": "AppleSkin", "description": "Shows food saturation and exhaustion values" },
-      { "name": "ShulkerBoxTooltip", "description": "Preview shulker box contents on hover" },
-      { "name": "BetterF3", "description": "Cleaner, more readable debug screen" },
-      { "name": "LambDynamicLights", "description": "Held torches and items emit light dynamically" },
-      { "name": "Bobby", "description": "Caches chunks client-side for extended render distance" },
-      { "name": "InventoryProfilesNext", "description": "Inventory sorting and management" }
+      { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
+      { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
+      { "name": "Fresh Animations (via EMF + ETF + ESF)", "description": "Smoother, more lifelike mob animations, textures, and sounds", "featured": true, "category": "Visuals" },
+      { "name": "Continuity", "description": "Connected textures — seamless glass, bookshelves, and more", "featured": true, "category": "Visuals" },
+      { "name": "Controllable", "description": "Full controller support, remappable bindings", "featured": true, "category": "Quality of Life" },
+      { "name": "Shoulder Surfing", "description": "Over-the-shoulder third-person camera", "featured": true, "category": "Quality of Life" },
+      { "name": "Just Zoom", "description": "Configurable zoom key", "featured": true, "category": "Quality of Life" },
+      { "name": "AppleSkin", "description": "Shows food saturation and hunger exhaustion", "featured": true, "category": "Quality of Life" },
+
+      { "name": "Lithium", "description": "General-purpose game optimization", "category": "Performance" },
+      { "name": "ImmediatelyFast", "description": "Speeds up the rendering pipeline", "category": "Performance" },
+      { "name": "FerriteCore", "description": "Reduces memory usage significantly", "category": "Performance" },
+      { "name": "BadOptimizations", "description": "Misc engine optimizations that reduce overhead", "category": "Performance" },
+      { "name": "Clumps", "description": "Groups XP orbs together to reduce lag on mob kills", "category": "Performance" },
+      { "name": "Concurrent Chunk Management Engine (C2ME)", "description": "Parallelizes chunk loading across CPU cores", "category": "Performance" },
+      { "name": "Entity Culling", "description": "Skips rendering entities you can't see", "category": "Performance" },
+
+      { "name": "Ambient Environment", "description": "Dynamic weather, fog, and environmental visuals", "category": "Visuals" },
+
+      { "name": "Ambient Sounds", "description": "Adds immersive ambient audio to biomes", "category": "Quality of Life" },
+      { "name": "Mouse Tweaks", "description": "Faster inventory drag-and-scroll management", "category": "Quality of Life" },
+      { "name": "WTHIT", "description": "Tooltip showing block/entity info when looking at them", "category": "Quality of Life" },
+      { "name": "Enchantment Descriptions", "description": "Tooltip descriptions for every enchantment", "category": "Quality of Life" },
+      { "name": "Mod Menu", "description": "In-game mod configuration menu", "category": "Quality of Life" },
+
+      { "name": "Bad Packets", "description": "Networking library dependency", "category": "Libraries" },
+      { "name": "Forge Config API Port", "description": "Forge config system ported to Fabric", "category": "Libraries" },
+      { "name": "Framework", "description": "Required library for MrCrayfish mods (e.g. Controllable)", "category": "Libraries" },
+      { "name": "Konkrete", "description": "Common dependency used by several QoL mods", "category": "Libraries" },
+      { "name": "Prickle", "description": "Library dependency", "category": "Libraries" },
+      { "name": "Searchables", "description": "Shared search UI library", "category": "Libraries" },
+      { "name": "PlaceholderAPI", "description": "Placeholder resolution library", "category": "Libraries" }
     ]
   },
   "potato": {
     "name": "FPS Boost (Potato Edition)",
-    "description": "For machines that need every frame they can get. Performance only, no extras.",
+    "description": "For machines that need every frame they can get. Performance first, minimal extras.",
     "importCode": "REPLACE_WITH_POTATO_CODE",
     "mods": [
-      { "name": "Sodium", "description": "Modern rendering engine for massive FPS improvements" },
-      { "name": "Lithium", "description": "General-purpose optimization mod" },
-      { "name": "Starlight", "description": "Rewrites the light engine for better performance" },
-      { "name": "FerriteCore", "description": "Reduces memory usage significantly" },
-      { "name": "EntityCulling", "description": "Skips rendering entities you can't see" },
-      { "name": "ImmediatelyFast", "description": "Optimizes immediate-mode rendering" },
-      { "name": "ModMenu", "description": "Mod configuration menu" }
+      { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
+      { "name": "Lithium", "description": "General-purpose game optimization", "featured": true, "category": "Performance" },
+      { "name": "ImmediatelyFast", "description": "Speeds up the rendering pipeline", "featured": true, "category": "Performance" },
+      { "name": "FerriteCore", "description": "Reduces memory usage significantly", "featured": true, "category": "Performance" },
+      { "name": "BadOptimizations", "description": "Misc engine optimizations that reduce overhead", "featured": true, "category": "Performance" },
+      { "name": "Clumps", "description": "Groups XP orbs together to reduce lag on mob kills", "featured": true, "category": "Performance" },
+      { "name": "Concurrent Chunk Management Engine (C2ME)", "description": "Parallelizes chunk loading across CPU cores", "featured": true, "category": "Performance" },
+      { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
+
+      { "name": "Continuity", "description": "Connected textures — seamless glass, bookshelves, and more", "category": "Visuals" },
+      { "name": "Just Zoom", "description": "Configurable zoom key", "category": "Quality of Life" },
+      { "name": "Mouse Tweaks", "description": "Faster inventory drag-and-scroll management", "category": "Quality of Life" },
+      { "name": "Enchantment Descriptions", "description": "Tooltip descriptions for every enchantment", "category": "Quality of Life" },
+
+      { "name": "Fabric API", "description": "Core API required by Fabric mods", "category": "Libraries" },
+      { "name": "Konkrete", "description": "Common dependency used by several QoL mods", "category": "Libraries" },
+      { "name": "Prickle", "description": "Library dependency", "category": "Libraries" }
     ]
   }
 }

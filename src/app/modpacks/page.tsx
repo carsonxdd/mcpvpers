@@ -1,5 +1,6 @@
 'use client';
 
+import { useState } from 'react';
 import modpacks from '@/data/modpacks.json';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
@@ -7,7 +8,67 @@ import CloudTextSmall from '@/components/CloudTextSmall';
 import GrassDivider from '@/components/GrassDivider';
 import CopyButton from '@/components/CopyButton';
 
+type Mod = { name: string; description: string; featured?: boolean; category?: string };
+
+const CATEGORY_ORDER = ['Performance', 'Visuals', 'Quality of Life', 'Libraries', 'Other'];
+
+function ModRow({ mod }: { mod: Mod }) {
+  return (
+    <div className="inventory-slot p-2.5 flex items-start gap-3">
+      <span className="font-pixel t-text text-[10px] shrink-0">{mod.name}</span>
+      <span className="t-text-muted text-xs">{mod.description}</span>
+    </div>
+  );
+}
+
+function ModList({ mods, showAll }: { mods: Mod[]; showAll: boolean }) {
+  if (!showAll) {
+    return (
+      <div className="space-y-2">
+        {mods.filter((m) => m.featured).map((mod) => <ModRow key={mod.name} mod={mod} />)}
+      </div>
+    );
+  }
+
+  const grouped = mods.reduce<Record<string, Mod[]>>((acc, mod) => {
+    const cat = mod.category ?? 'Other';
+    (acc[cat] ||= []).push(mod);
+    return acc;
+  }, {});
+
+  const sortedCats = Object.keys(grouped).sort(
+    (a, b) => CATEGORY_ORDER.indexOf(a) - CATEGORY_ORDER.indexOf(b)
+  );
+
+  return (
+    <div className="space-y-5">
+      {sortedCats.map((cat) => (
+        <div key={cat}>
+          <h3 className="font-pixel text-enchant text-[10px] mb-2 uppercase tracking-wider glow-enchant">{cat}</h3>
+          <div className="space-y-2">
+            {grouped[cat].map((mod) => <ModRow key={mod.name} mod={mod} />)}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function ToggleButton({ expanded, total, onClick }: { expanded: boolean; total: number; onClick: () => void }) {
+  return (
+    <button
+      onClick={onClick}
+      className="mc-panel w-full px-4 py-2.5 font-pixel text-[10px] uppercase tracking-wider t-text-dim hover:text-gold transition-colors cursor-pointer"
+    >
+      {expanded ? 'Show fewer' : `Show all ${total} mods`}
+    </button>
+  );
+}
+
 export default function ModpacksPage() {
+  const [qolShowAll, setQolShowAll] = useState(false);
+  const [potatoShowAll, setPotatoShowAll] = useState(false);
+
   return (
     <div>
       <section className="max-w-5xl mx-auto px-4 py-16">
@@ -22,11 +83,9 @@ export default function ModpacksPage() {
         <div className="mc-panel p-4 max-w-2xl mx-auto mb-12 text-center">
           <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Which pack is right for you?</h2>
           <p className="t-text-muted text-sm">
-            <strong className="text-xp">QoL Modpack</strong>: Full experience with minimap,
-            shulker tooltips, dynamic lights, and more.
+            <strong className="text-xp">QoL Modpack</strong>: Full experience — shaders, Fresh Animations, controller support, connected textures, and more.
             <br />
-            <strong className="text-gold">Potato Edition</strong>: Just performance. For machines
-            that need every frame they can get.
+            <strong className="text-gold">Potato Edition</strong>: Just performance. For machines that need every frame they can get.
           </p>
         </div>
 
@@ -34,13 +93,15 @@ export default function ModpacksPage() {
           <div className="mc-panel p-6">
             <h2 className="font-pixel text-xp text-sm mb-2 glow-xp">{modpacks.qol.name}</h2>
             <p className="t-text-muted text-sm mb-6">{modpacks.qol.description}</p>
-            <div className="space-y-2 mb-6">
-              {modpacks.qol.mods.map((mod) => (
-                <div key={mod.name} className="inventory-slot p-2.5 flex items-start gap-3">
-                  <span className="font-pixel t-text text-[10px] shrink-0">{mod.name}</span>
-                  <span className="t-text-muted text-xs">{mod.description}</span>
-                </div>
-              ))}
+            <div className="mb-4">
+              <ModList mods={modpacks.qol.mods} showAll={qolShowAll} />
+            </div>
+            <div className="mb-6">
+              <ToggleButton
+                expanded={qolShowAll}
+                total={modpacks.qol.mods.length}
+                onClick={() => setQolShowAll((v) => !v)}
+              />
             </div>
             <div className="text-center">
               <p className="font-pixel text-[10px] t-text-muted mb-2 uppercase tracking-wider">Import Code</p>
@@ -51,13 +112,15 @@ export default function ModpacksPage() {
           <div className="mc-panel p-6">
             <h2 className="font-pixel text-gold text-sm mb-2 glow-gold">{modpacks.potato.name}</h2>
             <p className="t-text-muted text-sm mb-6">{modpacks.potato.description}</p>
-            <div className="space-y-2 mb-6">
-              {modpacks.potato.mods.map((mod) => (
-                <div key={mod.name} className="inventory-slot p-2.5 flex items-start gap-3">
-                  <span className="font-pixel t-text text-[10px] shrink-0">{mod.name}</span>
-                  <span className="t-text-muted text-xs">{mod.description}</span>
-                </div>
-              ))}
+            <div className="mb-4">
+              <ModList mods={modpacks.potato.mods} showAll={potatoShowAll} />
+            </div>
+            <div className="mb-6">
+              <ToggleButton
+                expanded={potatoShowAll}
+                total={modpacks.potato.mods.length}
+                onClick={() => setPotatoShowAll((v) => !v)}
+              />
             </div>
             <div className="text-center">
               <p className="font-pixel text-[10px] t-text-muted mb-2 uppercase tracking-wider">Import Code</p>
@@ -153,7 +216,7 @@ export default function ModpacksPage() {
             <ol className="space-y-2">
               <li className="flex gap-3 text-sm">
                 <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">1.</span>
-                <span className="t-text-dim">Make sure <strong className="t-text">Iris Shaders</strong> is installed (included in the QoL pack).</span>
+                <span className="t-text-dim">Make sure <strong className="t-text">Iris Shaders</strong> is installed (included in both modpacks).</span>
               </li>
               <li className="flex gap-3 text-sm">
                 <span className="font-pixel text-gold text-xs shrink-0 w-5 text-right">2.</span>
