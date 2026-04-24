@@ -13,7 +13,7 @@ const features = [
   },
   {
     title: 'Connect',
-    description: 'Get set up and join the server in minutes. Java & Bedrock welcome.',
+    description: 'Get set up and join the server in minutes. Java Edition for now.',
     href: '/bedrock',
     icon: '🔗',
   },
@@ -60,7 +60,7 @@ export default function Home() {
             </div>
             <div>
               <span className="t-text-muted text-xs">Platform</span>
-              <p className="t-text font-pixel text-sm">Java + Bedrock</p>
+              <p className="t-text font-pixel text-sm">Java</p>
             </div>
           </div>
         </div>
