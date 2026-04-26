@@ -10,7 +10,7 @@ export default function Footer() {
             <h3 className="font-pixel text-gold text-xs mb-3 glow-gold">mc.pvpers.us</h3>
             <p className="t-text-muted text-sm leading-relaxed">
               A Vanilla+ Minecraft server focused on community, exploration, and adventure.
-              Running Paper 1.21.
+              Running Paper 26.1.
             </p>
           </div>
 

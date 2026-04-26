@@ -73,32 +73,34 @@ export default function LeaderboardsPage() {
           ))}
         </div>
 
-        <div className="mc-panel overflow-hidden">
-          <div className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-50 border-b">
-            <span className="font-pixel t-text-muted text-[10px]">#</span>
-            <span className="font-pixel t-text-muted text-[10px]">Player</span>
-            <span className="font-pixel t-text-muted text-[10px] text-right">{activeCategory}</span>
-          </div>
+        <div className="mc-panel overflow-hidden max-md:overflow-x-auto">
+          <div className="max-md:min-w-[320px]">
+            <div className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-50 border-b max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3">
+              <span className="font-pixel t-text-muted text-[10px]">#</span>
+              <span className="font-pixel t-text-muted text-[10px]">Player</span>
+              <span className="font-pixel t-text-muted text-[10px] text-right">{activeCategory}</span>
+            </div>
 
-          {data.map((player, i) => (
-            <div key={player.name}
-              className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-20 border-b transition-colors hover-surface"
-              style={i < 3 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}
-            >
-              <span className={`font-pixel text-xs ${i < 3 ? medalStyles[i] : 't-text-muted'}`}>
-                {i + 1}
-              </span>
-              <div className="flex items-center gap-2.5">
-                <div className="w-6 h-6 t-surface-light rounded shrink-0" />
-                <span className={`text-sm ${i < 3 ? 't-text font-medium' : 't-text-dim'}`}>
-                  {player.name}
+            {data.map((player, i) => (
+              <div key={player.name}
+                className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-20 border-b transition-colors hover-surface max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3"
+                style={i < 3 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}
+              >
+                <span className={`font-pixel text-xs ${i < 3 ? medalStyles[i] : 't-text-muted'}`}>
+                  {i + 1}
+                </span>
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="w-6 h-6 t-surface-light rounded shrink-0" />
+                  <span className={`text-sm max-md:truncate ${i < 3 ? 't-text font-medium' : 't-text-dim'}`}>
+                    {player.name}
+                  </span>
+                </div>
+                <span className={`text-sm text-right whitespace-nowrap ${i === 0 ? 'text-gold font-pixel text-xs' : 't-text-muted'}`}>
+                  {player.value}
                 </span>
               </div>
-              <span className={`text-sm text-right ${i === 0 ? 'text-gold font-pixel text-xs' : 't-text-muted'}`}>
-                {player.value}
-              </span>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
 
         <p className="t-text-muted-50 text-xs text-center mt-4">

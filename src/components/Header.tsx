@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 import WeatherToggle from './WeatherToggle';
 import { useWeather } from './WeatherProvider';
@@ -16,14 +16,15 @@ const navLinks = [
   { href: '/map', label: 'BlueMap' },
   { href: '/leaderboards', label: 'Leaderboards' },
   { href: '/gallery', label: 'Gallery' },
+  { href: '/polls', label: 'Polls' },
   { href: '/news', label: 'News' },
 ];
 
 function ServerStatus({ light }: { light?: boolean }) {
   return (
-    <div className="flex items-center gap-2 text-xs">
+    <div className="flex items-center gap-2 text-xs" aria-label="Server online">
       <span className="w-2 h-2 rounded-full bg-xp shadow-[0_0_6px_rgba(126,252,32,0.5)] animate-pulse" />
-      <span className={`font-pixel text-[10px] transition-colors duration-[1500ms] ${light ? 'text-gray-300' : 't-text-dim'}`}>Online</span>
+      <span className={`font-pixel text-[10px] max-md:hidden transition-colors duration-[1500ms] ${light ? 'text-gray-300' : 't-text-dim'}`}>Online</span>
     </div>
   );
 }
@@ -33,6 +34,13 @@ export default function Header() {
   const { weather } = useWeather();
   const { theme } = useTheme();
   const isRaining = (weather === 'rain' || weather === 'thunderstorm') && theme === 'light';
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen]);
 
   return (
     <header
@@ -45,7 +53,7 @@ export default function Header() {
       } : undefined}
     >
       <div className="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
-        <Link href="/" className="font-pixel text-gold text-base hover:text-gold/80 transition-colors glow-gold">
+        <Link href="/" className="font-pixel text-gold text-base max-md:text-xs hover:text-gold/80 transition-colors glow-gold whitespace-nowrap">
           mc.pvpers.us
         </Link>
 
@@ -63,16 +71,17 @@ export default function Header() {
           ))}
         </nav>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 max-md:gap-1">
           <ServerStatus light={isRaining} />
           <WeatherToggle />
           <ThemeToggle />
           <button
             onClick={() => setIsOpen(!isOpen)}
-            className={`lg:hidden p-1 cursor-pointer transition-colors duration-[1500ms] ${isRaining ? 'text-gray-200' : 't-text-dim'}`}
+            className={`lg:hidden p-1 max-md:w-11 max-md:h-11 max-md:flex max-md:items-center max-md:justify-center cursor-pointer transition-colors duration-[1500ms] ${isRaining ? 'text-gray-200' : 't-text-dim'}`}
             aria-label="Toggle menu"
+            aria-expanded={isOpen}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               {isOpen ? (
                 <path d="M18 6L6 18M6 6l12 12" />
               ) : (

@@ -23,7 +23,7 @@ export default function MusicPlayer() {
   return (
     <button
       onClick={toggleMute}
-      className="fixed bottom-4 right-4 z-50 w-10 h-10 mc-panel flex items-center justify-center hover:scale-110 transition-all cursor-pointer"
+      className="fixed bottom-4 right-4 z-50 w-10 h-10 max-md:w-12 max-md:h-12 max-md:bottom-[max(1rem,env(safe-area-inset-bottom))] max-md:right-[max(1rem,env(safe-area-inset-right))] mc-panel flex items-center justify-center hover:scale-110 active:scale-95 focus-visible:outline-2 focus-visible:outline-gold/60 transition-all cursor-pointer"
       title={isMuted ? 'Unmute music' : 'Mute music'}
       aria-label={isMuted ? 'Unmute music' : 'Mute music'}
     >

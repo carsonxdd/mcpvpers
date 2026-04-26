@@ -57,7 +57,7 @@ export default function WeatherToggle() {
   return (
     <button
       onClick={handleClick}
-      className="w-8 h-8 flex items-center justify-center rounded-md hover-surface transition-colors cursor-pointer"
+      className="w-8 h-8 max-md:w-11 max-md:h-11 flex items-center justify-center rounded-md hover-surface focus-visible:outline-2 focus-visible:outline-gold/60 active:bg-[color-mix(in_srgb,var(--c-surface)_50%,transparent)] transition-colors cursor-pointer"
       title={labels[weather]}
       aria-label={labels[weather]}
     >

@@ -36,12 +36,16 @@ export default function ShootingStars() {
 
   useEffect(() => {
     if (theme !== 'dark' || weather !== 'clear') return;
+    if (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const intervalMs = isMobile ? 16000 + Math.random() * 20000 : 8000 + Math.random() * 12000;
+    const spawnChance = isMobile ? 0.3 : 0.6;
 
     const initial = setTimeout(spawnStar, 2000 + Math.random() * 3000);
 
     const interval = setInterval(() => {
-      if (Math.random() < 0.6) spawnStar();
-    }, 8000 + Math.random() * 12000);
+      if (Math.random() < spawnChance) spawnStar();
+    }, intervalMs);
 
     return () => {
       clearTimeout(initial);

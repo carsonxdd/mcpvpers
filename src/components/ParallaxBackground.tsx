@@ -118,6 +118,9 @@ export default function ParallaxBackground() {
   const isLight = theme === 'light';
 
   useEffect(() => {
+    const isMobile = window.innerWidth < 768;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isMobile || reduceMotion) return;
     const handleScroll = () => setScrollY(window.scrollY);
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);

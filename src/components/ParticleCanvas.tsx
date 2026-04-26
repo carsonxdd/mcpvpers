@@ -33,6 +33,10 @@ export default function ParticleCanvas() {
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const isMobile = window.innerWidth < 768;
+    const particleCount = isMobile ? 10 : 25;
+
     const resize = () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
@@ -71,7 +75,7 @@ export default function ParticleCanvas() {
       };
     }
 
-    for (let i = 0; i < 25; i++) {
+    for (let i = 0; i < particleCount; i++) {
       const p = spawnParticle();
       p.life = Math.random() * p.maxLife;
       particlesRef.current.push(p);

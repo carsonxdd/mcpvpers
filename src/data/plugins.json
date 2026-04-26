@@ -20,16 +20,6 @@
     "icon": "map"
   },
   {
-    "name": "Chest Shops",
-    "description": "Player-run shops using chest signs. Buy and sell within Lands claims.",
-    "icon": "shopping-cart"
-  },
-  {
-    "name": "Bounty System",
-    "description": "Place bounties on other players. Track and claim them for rewards.",
-    "icon": "crosshair"
-  },
-  {
     "name": "DiscordSRV",
     "description": "Two-way chat bridge between Discord and the Minecraft server.",
     "icon": "message-circle"

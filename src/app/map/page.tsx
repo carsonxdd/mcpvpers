@@ -11,7 +11,7 @@ export default function MapPage() {
       <section className="max-w-6xl mx-auto px-4 py-16">
         <div className="text-center"><CloudTitle><h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-6 glow-gold">BlueMap</h1></CloudTitle></div>
 
-        <div className="relative mc-panel overflow-hidden" style={{ height: '70vh', minHeight: '500px' }}>
+        <div className="relative mc-panel overflow-hidden h-[70vh] min-h-[500px] max-md:h-[60vh] max-md:min-h-[360px]">
           {/* Fallback shown behind the iframe — visible if BlueMap is offline. */}
           <div className="absolute inset-0 flex items-center justify-center t-surface">
             <div className="text-center px-6">
@@ -29,7 +29,7 @@ export default function MapPage() {
           />
 
 
-          <div className={`absolute top-4 right-4 z-10 transition-all ${legendOpen ? 'w-72' : 'w-auto'}`}>
+          <div className={`absolute top-4 right-4 z-10 transition-all ${legendOpen ? 'w-72 max-md:w-52' : 'w-auto'}`}>
             <button
               onClick={() => setLegendOpen(!legendOpen)}
               className="mc-panel px-3 py-1.5 font-pixel text-[10px] t-text-dim hover:text-gold transition-colors cursor-pointer"

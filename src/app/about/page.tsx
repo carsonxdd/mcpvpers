@@ -67,47 +67,47 @@ export default function AboutPage() {
           </p>
         </CloudText>
 
-        <div className="mc-panel p-6 sm:p-8 mt-8">
+        <div className="mc-panel p-6 sm:p-8 max-md:p-3 mt-8">
           <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant text-center uppercase tracking-wider">Expansion Tiers</h3>
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-full text-sm max-md:text-xs">
               <thead>
                 <tr className="border-b" style={{ borderColor: 'var(--c-border)' }}>
-                  <th className="font-pixel text-gold text-[10px] text-left py-2 pr-4">Tier</th>
-                  <th className="font-pixel text-gold text-[10px] text-left py-2 pr-4">Weekly Playtime</th>
-                  <th className="font-pixel text-gold text-[10px] text-left py-2 pr-4">Border Expansion</th>
-                  <th className="font-pixel text-gold text-[10px] text-left py-2">New Chunks*</th>
+                  <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">Tier</th>
+                  <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5"><span className="md:hidden">Playtime</span><span className="max-md:hidden">Weekly Playtime</span></th>
+                  <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5"><span className="md:hidden">Expansion</span><span className="max-md:hidden">Border Expansion</span></th>
+                  <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2"><span className="md:hidden">Chunks*</span><span className="max-md:hidden">New Chunks*</span></th>
                 </tr>
               </thead>
               <tbody className="t-text-dim">
                 <tr className="border-b" style={{ borderColor: 'var(--c-border)' }}>
-                  <td className="py-2.5 pr-4"><span className="text-xp font-pixel text-[10px]">Tier 1</span></td>
-                  <td className="py-2.5 pr-4">5+ hours</td>
-                  <td className="py-2.5 pr-4">+100 blocks</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5"><span className="text-xp font-pixel text-[10px] max-md:text-[9px]">Tier 1</span></td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">5+ hrs</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">+100 blocks</td>
                   <td className="py-2.5 t-text-muted">~5,600</td>
                 </tr>
                 <tr className="border-b" style={{ borderColor: 'var(--c-border)' }}>
-                  <td className="py-2.5 pr-4"><span className="text-xp font-pixel text-[10px]">Tier 2</span></td>
-                  <td className="py-2.5 pr-4">10+ hours</td>
-                  <td className="py-2.5 pr-4">+200 blocks</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5"><span className="text-xp font-pixel text-[10px] max-md:text-[9px]">Tier 2</span></td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">10+ hrs</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">+200 blocks</td>
                   <td className="py-2.5 t-text-muted">~11,500</td>
                 </tr>
                 <tr className="border-b" style={{ borderColor: 'var(--c-border)' }}>
-                  <td className="py-2.5 pr-4"><span className="text-enchant font-pixel text-[10px]">Tier 3</span></td>
-                  <td className="py-2.5 pr-4">20+ hours</td>
-                  <td className="py-2.5 pr-4">+350 blocks</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5"><span className="text-enchant font-pixel text-[10px] max-md:text-[9px]">Tier 3</span></td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">20+ hrs</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">+350 blocks</td>
                   <td className="py-2.5 t-text-muted">~21,000</td>
                 </tr>
                 <tr className="border-b" style={{ borderColor: 'var(--c-border)' }}>
-                  <td className="py-2.5 pr-4"><span className="text-gold font-pixel text-[10px]">Tier 4</span></td>
-                  <td className="py-2.5 pr-4">40+ hours</td>
-                  <td className="py-2.5 pr-4">+500 blocks</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5"><span className="text-gold font-pixel text-[10px] max-md:text-[9px]">Tier 4</span></td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">40+ hrs</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">+500 blocks</td>
                   <td className="py-2.5 t-text-muted">~31,200</td>
                 </tr>
                 <tr>
-                  <td className="py-2.5 pr-4"><span className="text-redstone font-pixel text-[10px]">Tier 5</span></td>
-                  <td className="py-2.5 pr-4">80+ hours</td>
-                  <td className="py-2.5 pr-4">+750 blocks</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5"><span className="text-redstone font-pixel text-[10px] max-md:text-[9px]">Tier 5</span></td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">80+ hrs</td>
+                  <td className="py-2.5 pr-4 max-md:pr-1.5">+750 blocks</td>
                   <td className="py-2.5 t-text-muted">~49,800</td>
                 </tr>
               </tbody>

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import './globals.css';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -12,8 +12,14 @@ import WeatherProvider from '@/components/WeatherProvider';
 export const metadata: Metadata = {
   title: 'mc.pvpers.us | Vanilla+ Minecraft Server',
   description:
-    'A Vanilla+ Minecraft community server. Explore, build, and compete on mc.pvpers.us. Running Paper 1.21 with quality-of-life plugins.',
+    'A Vanilla+ Minecraft community server. Explore, build, and compete on mc.pvpers.us. Running Paper 26.1 with quality-of-life plugins.',
   keywords: ['minecraft', 'server', 'vanilla+', 'pvpers', 'community', 'survival'],
+};
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  viewportFit: 'cover',
 };
 
 export default function RootLayout({

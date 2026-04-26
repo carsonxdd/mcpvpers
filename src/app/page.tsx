@@ -31,7 +31,7 @@ export default function Home() {
       {/* Hero */}
       <section className="min-h-[90vh] flex flex-col items-center justify-center text-center px-4 py-20">
         <CloudTitle>
-          <h1 className="font-pixel text-gold text-4xl sm:text-5xl md:text-6xl mb-4 glow-gold">
+          <h1 className="font-pixel text-gold text-4xl sm:text-5xl md:text-6xl max-md:text-2xl mb-4 glow-gold whitespace-nowrap">
             mc.pvpers.us
           </h1>
           <p className="t-text-dim text-sm sm:text-base max-w-md mx-auto text-center font-pixel">
@@ -40,7 +40,7 @@ export default function Home() {
         </CloudTitle>
         <div className="mb-8" />
 
-        <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg mb-12" />
+        <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg max-md:text-sm mb-12" />
 
         {/* Server Stats */}
         <div className="mc-panel p-6 max-w-lg w-full">
@@ -48,7 +48,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="t-text-muted text-xs">Version</span>
-              <p className="text-xp font-pixel text-sm glow-xp">1.21.11</p>
+              <p className="text-xp font-pixel text-sm glow-xp">26.1.2</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Gameplay</span>

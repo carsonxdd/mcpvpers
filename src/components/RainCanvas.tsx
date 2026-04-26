@@ -30,12 +30,19 @@ export default function RainCanvas() {
 
   useEffect(() => {
     weatherRef.current = weather;
+    const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+    const reduceMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduceMotion) {
+      targetCountRef.current = 0;
+      spawnBatchRef.current = 0;
+      return;
+    }
     if (weather === 'rain') {
-      targetCountRef.current = 450;
-      spawnBatchRef.current = 30; // spawn 30 per frame until target
+      targetCountRef.current = isMobile ? 180 : 450;
+      spawnBatchRef.current = isMobile ? 12 : 30;
     } else if (weather === 'thunderstorm') {
-      targetCountRef.current = 800;
-      spawnBatchRef.current = 50;
+      targetCountRef.current = isMobile ? 280 : 800;
+      spawnBatchRef.current = isMobile ? 20 : 50;
     } else {
       targetCountRef.current = 0;
       spawnBatchRef.current = 0;

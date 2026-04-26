@@ -62,6 +62,7 @@ html.dark {
 
 html {
   scroll-behavior: smooth;
+  overflow-x: hidden;
 }
 
 body {
@@ -219,10 +220,16 @@ html:not(.dark) .mc-panel:hover {
   background: var(--c-surface-light);
 }
 
-.mc-pill:hover {
+.mc-pill:hover,
+.mc-pill:focus-visible {
   color: var(--c-text);
   background: var(--c-border);
   border-color: var(--c-border-light);
+  outline: none;
+}
+
+.mc-pill:active {
+  background: var(--c-border-light);
 }
 
 .mc-pill-active {
@@ -293,8 +300,14 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 }
 
 /* Surface hover for nav items etc */
-.hover-surface:hover {
+.hover-surface:hover,
+.hover-surface:focus-visible {
   background-color: color-mix(in srgb, var(--c-surface) 60%, transparent);
+  outline: none;
+}
+
+.hover-surface:active {
+  background-color: color-mix(in srgb, var(--c-surface) 40%, transparent);
 }
 
 /* Page transition */

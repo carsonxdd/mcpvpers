@@ -20,7 +20,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Leaderboards (placeholder — needs Stats API)
 - BlueMap embed with legend explaining world border and land claims (placeholder — needs BlueMap URL)
 - Screenshot gallery and news/changelog pages
-- Fully responsive with mobile navigation
+- Two-preset responsive design: a single `md:` breakpoint (768px) splits the **mobile preset** from the **desktop preset** — mobile gets enlarged touch targets, throttled canvas effects, narrower BlueMap legend, and shorter map iframe; desktop is untouched. Honors `prefers-reduced-motion` (skips the parallax scroll listener, particles, rain, and shooting stars)
 
 ## Getting Started
 
