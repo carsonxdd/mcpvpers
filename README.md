@@ -55,3 +55,7 @@ No environment variables required for basic development. Future integrations (St
 - `src/data/` — JSON content files (rules, plugins, versions, news, modpacks)
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write
 - `public/` — Static assets (textures, audio, cursors)
+
+## Credits
+
+Built by [Carson Caplan](https://carsoncaplan.com) — see carsoncaplan.com for more projects.

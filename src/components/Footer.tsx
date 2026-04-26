@@ -42,6 +42,10 @@ export default function Footer() {
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-xp shadow-[0_0_4px_rgba(126,252,32,0.4)]" />
           </p>
         </div>
+
+        <p className="mt-2 t-text-muted-60 text-xs text-center">
+          Built by <a href="https://carsoncaplan.com" target="_blank" rel="noopener noreferrer" className="hover:text-xp transition-colors">Carson Caplan</a>
+        </p>
       </div>
     </footer>
   );
