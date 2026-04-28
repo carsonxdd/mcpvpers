@@ -20,6 +20,7 @@ export default function MapPage() {
           <iframe
             src="https://map.pvpers.us"
             title="BlueMap live server map"
+            allow="fullscreen"
             className="absolute inset-0 w-full h-full border-0"
           />
         </div>
