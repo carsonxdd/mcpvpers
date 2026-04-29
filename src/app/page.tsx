@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import CopyButton from '@/components/CopyButton';
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
@@ -6,22 +5,19 @@ import CloudText from '@/components/CloudText';
 
 const features = [
   {
-    title: 'Explore',
-    description: 'Catch up on everything new in Minecraft since you last played.',
-    href: '/version-catchup',
-    icon: '🗺',
+    title: 'Your land, your rules',
+    description:
+      'Claims give you full permission control. Decide who builds, who opens chests, and whether anyone can swing a sword inside your border.',
   },
   {
-    title: 'Connect',
-    description: 'Get set up and join the server in minutes. Java Edition for now.',
-    href: '/bedrock',
-    icon: '🔗',
+    title: 'Outside is outside',
+    description:
+      'No rules in the wilderness. PvP is on, your stuff is yours to defend, and the world is honest about that.',
   },
   {
-    title: 'Compete',
-    description: 'Track your stats and climb the leaderboards.',
-    href: '/leaderboards',
-    icon: '⚔',
+    title: 'Nations & war',
+    description:
+      "Form a nation with the people you trust. Declare war if the other side accepts. Make peace when you've had enough.",
   },
 ];
 
@@ -35,7 +31,7 @@ export default function Home() {
             mc.pvpers.us
           </h1>
           <p className="t-text-dim text-sm sm:text-base max-w-md mx-auto text-center font-pixel">
-            Explore. Claim. Conquer.
+            A world with one rule and a lot of room.
           </p>
         </CloudTitle>
         <div className="mb-8" />
@@ -52,11 +48,11 @@ export default function Home() {
             </div>
             <div>
               <span className="t-text-muted text-xs">Gameplay</span>
-              <p className="text-xp font-pixel text-sm glow-xp">Vanilla+ PvP</p>
+              <p className="text-xp font-pixel text-sm glow-xp">Vanilla+ Survival</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Features</span>
-              <p className="t-text font-pixel text-sm">Claims & Nations</p>
+              <p className="t-text font-pixel text-sm">Claims, Nations, War</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Platform</span>
@@ -72,17 +68,10 @@ export default function Home() {
       <section className="max-w-5xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {features.map((feature) => (
-            <Link
-              key={feature.title}
-              href={feature.href}
-              className="mc-panel p-6 transition-all group gradient-border"
-            >
-              <div className="text-3xl mb-3">{feature.icon}</div>
-              <h3 className="font-pixel text-gold text-xs mb-2 transition-all">
-                {feature.title}
-              </h3>
+            <div key={feature.title} className="mc-panel p-6 gradient-border">
+              <h3 className="font-pixel text-gold text-xs mb-2">{feature.title}</h3>
               <p className="t-text-dim text-sm">{feature.description}</p>
-            </Link>
+            </div>
           ))}
         </div>
       </section>
@@ -96,19 +85,19 @@ export default function Home() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
-            We&apos;re a dedicated Vanilla+ Minecraft server. No pay-to-win, no mods, no BS.
-            Just classic Minecraft with a few quality-of-life tweaks to keep things smooth.
+            mc.pvpers.us is a vanilla+ Minecraft server with claims, nations, and PvP turned on.
+            No pay-to-win, no required mods, no curated experience. Just a world and the people in it.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
-            Claim your land, lock down your base, and invite the neighbors you trust. Inside your
-            claim you decide who can build, open chests, or even swing a sword. Everything beyond
-            the claim border is the wild, so travel light or travel with friends.
+            Inside your claim, you set the rules. Lock down your base, invite the people you trust,
+            and decide what they can and can&apos;t do. Outside the claim border, the world is what
+            you and everyone else make of it. Travel light, travel armed, or travel with friends.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Our world grows with you. The more we play, the bigger it gets. The world border
-            expands every week based on how much time the community spends online.{' '}
+            Nations can form. Wars can be declared, but only if both sides agree. KOTH events and
+            game nights happen sometimes when the group&apos;s around. The rest is up to you.{' '}
             <a href="/about#world-border" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
-              Learn how it works &rarr;
+              Learn how the world grows &rarr;
             </a>
           </p>
         </CloudText>

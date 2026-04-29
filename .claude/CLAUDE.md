@@ -29,7 +29,7 @@ src/
 │   ├── layout.tsx          # Root layout — Header, Footer, Parallax, Particles, Weather, Music
 │   ├── page.tsx            # Home page
 │   ├── globals.css         # All global styles, theme, animations
-│   ├── about/page.tsx      # About & Rules
+│   ├── about/page.tsx      # About — intro, Why one rule, The one rule, world border, what's next, plugins, staff
 │   ├── modpacks/page.tsx   # Modpack import codes (client component)
 │   ├── bedrock/page.tsx    # Bedrock interest poll with live counter (client component)
 │   ├── bedrock/archived-geyser-page.tsx  # Original GeyserMC how-to-join page, preserved but not routed (rename to page.tsx to restore)
@@ -59,14 +59,15 @@ src/
 │   ├── versions.json       # Minecraft version history (1.0–26.1) with year, month, details for catch-up page
 │   ├── news.json           # News/changelog entries
 │   ├── plugins.json        # Server plugin list
-│   ├── rules.json          # Server rules
+│   ├── rules.json          # Server rules ({ title, body }[]) — currently one entry ("No Cheating")
 │   └── modpacks.json       # Modpack definitions with mod lists and import codes
 ├── hooks/                  # (empty — future custom hooks)
 └── lib/                    # (empty — future utilities)
 public/
 ├── textures/               # Minecraft-style textures and assets
 ├── audio/                  # Background music files
-└── cursors/                # Custom cursor images
+├── cursors/                # Custom cursor images
+└── staff/                  # Staff portrait photos referenced by `staff` array in about/page.tsx
 data/                       # Runtime state (gitignored). Created at first write by API routes.
 └── bedrock-poll.json       # { count: number, voterHashes: string[] }
 ```
@@ -99,9 +100,9 @@ Runs on a Raspberry Pi, managed by PM2 (`pm2 describe mcpvpers` shows cwd + args
 - Weather-aware header (gray bg + light text in light mode during rain)
 - All cloud components darken during weather events
 - World border expansion system: home page teaser with link, about page has full section (`#world-border`) with tier table (5 tiers, playtime thresholds, block expansion, new-chunk estimates) and bullet-point notes, BlueMap legend explains bounded world with link back to about page
-- About page rules are left-aligned with centered heading
+- About page "The one rule" section renders `rules.json` directly with no numbered list and no index column — works because the array has a single entry. If rules grow back to multiple, the render block needs a `rules.length === 1` branch (or restore the numbered layout).
 - Bedrock page replaced with an interest poll (counter + one-click vote, dedupe via localStorage + hashed IP). Original GeyserMC guide preserved at `src/app/bedrock/archived-geyser-page.tsx`.
-- Site messaging reframed around peaceful survival with opt-in Lands wars (no "griefing not tolerated" language; claim-based PvP opt-in instead)
+- Site messaging is built around the "one rule" framing: home tagline ("A world with one rule and a lot of room"), home cards ("Your land, your rules" / "Outside is outside" / "Nations & war"), about page sections "Why one rule" → "The one rule" → "What's next". Voice is honest/dry, friend-of-the-server, lightly self-aware. The "Why one rule" section ("Most servers stack rules because the players don't know each other. We do.") explicitly signals this is a friends/closed-circle server — that's the philosophical anchor for the whole site, not a tossed-off line. The contact escape valve points at `carsonxd on Discord`. Switching the audience to public-signups would mean rewriting that section first.
 - Modpacks page rebuilt around the current QoL + FPS Boost pack lineup. Each mod in `modpacks.json` has `featured` and `category` (`Performance` / `Visuals` / `Quality of Life` / `Libraries`). Cards show the 8 featured mods by default with a name-over-description layout; a "Show all N mods" button expands to the full list grouped by category. Install flow is now 7 steps with an explicit RAM-allocation step (8–10 GB for QoL, 4 GB default acceptable for FPS Boost with expected stutter). A second note reminds players the packs are optional.
 - ShootingStars component renders pixelated comets in dark mode during clear weather. Bug fix: the rotated parent applies `transform: rotate(...)` inline while the keyframe animates `transform: translateX(...)` on a nested inner div. Putting translate inside the rotated parent makes motion follow the tilt so the tail trails correctly behind the head. See Gotchas.
 - `/map` page embeds BlueMap in an iframe pointing at `/bluemap/`. nginx proxies that path with `sub_filter` rules to rewrite BlueMap's four absolute-path fetches (`/settings.json`, `/textures.json`, `/live/...`, `/assets/playerheads/...`) into `/bluemap/...`. **Important:** the live mc.pvpers.us survival server is hosted on DatHost, not the Pi — see top-level `~/projects/CLAUDE.md`. The current nginx target is a placeholder (`127.0.0.1:8100` = Pi dev mirror) and must be updated to the DatHost public endpoint for production use.
@@ -116,7 +117,7 @@ Runs on a Raspberry Pi, managed by PM2 (`pm2 describe mcpvpers` shows cwd + args
 - Music player has no audio files (needs royalty-free MC-style tracks in public/audio/)
 - Thunder sound effects are silent placeholders (need real thunder MP3s in public/audio/thunder1-3.mp3)
 - Custom cursor images not yet created (public/cursors/)
-- No Minecraft skin renders for staff section (needs Crafatar integration)
+- Staff section uses real portrait photos from `public/staff/` (currently just `carsonxd.jpg`). Crafatar integration was planned but skipped — pattern is now `{ name, role, image }` in the `staff` array. Drop a JPG into `public/staff/<name>.jpg` and add the entry.
 - Player heads on leaderboard are placeholder divs
 - Page transition loading screen not implemented
 - No favicon yet
