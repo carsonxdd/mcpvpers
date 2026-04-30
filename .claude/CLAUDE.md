@@ -34,9 +34,10 @@ src/
 │   ├── bedrock/page.tsx    # Bedrock interest poll with live counter (client component)
 │   ├── bedrock/archived-geyser-page.tsx  # Original GeyserMC how-to-join page, preserved but not routed (rename to page.tsx to restore)
 │   ├── api/bedrock-poll/route.ts  # GET/POST endpoint for the Bedrock poll — reads/writes data/bedrock-poll.json, dedupes on sha256(salt + CF-Connecting-IP)
+│   ├── api/stats/[...path]/route.ts  # Catch-all GET proxy to PiStatsAPI on DatHost (allowlists players|leaderboard|border|server, forwards subpaths + query, 30s revalidate, 5s timeout, 502 on upstream failure)
 │   ├── version-catchup/page.tsx  # Interactive version timeline with first-visit/return-visit UX (client component)
 │   ├── map/page.tsx        # BlueMap embed placeholder (client component)
-│   ├── leaderboards/page.tsx     # Stats leaderboard (client component)
+│   ├── leaderboards/page.tsx     # Live leaderboard backed by PiStatsAPI proxy — Playtime / Deaths only (other categories not tracked yet)
 │   ├── gallery/page.tsx    # Screenshot gallery (client component)
 │   └── news/page.tsx       # News & changelog
 ├── components/
@@ -49,6 +50,8 @@ src/
 │   ├── ThunderstormOverlay.tsx # Lightning bolts, screen flash, thunder audio (client)
 │   ├── WeatherToggle.tsx   # Header button to cycle clear/rain/thunderstorm (client)
 │   ├── MusicPlayer.tsx     # Mute/unmute toggle with cookie persistence (client)
+│   ├── LiveServerStatus.tsx # Polls /api/stats/server every 30s, shows online/max with green pulse / red 'offline' (client) — used on home page
+│   ├── LiveBorderStatus.tsx # Fetches /api/stats/border once, shows current radius / weekly playtime / total expansions (client) — used on about page above the tier table
 │   ├── CopyButton.tsx      # Click-to-copy with feedback (client)
 │   ├── GrassDivider.tsx    # Themed section divider (server)
 │   ├── CloudTitle.tsx      # Blocky cloud SVG behind section headings, weather-aware (client)
@@ -106,19 +109,18 @@ Runs on a Raspberry Pi, managed by PM2 (`pm2 describe mcpvpers` shows cwd + args
 - Modpacks page rebuilt around the current QoL + FPS Boost pack lineup. Each mod in `modpacks.json` has `featured` and `category` (`Performance` / `Visuals` / `Quality of Life` / `Libraries`). Cards show the 8 featured mods by default with a name-over-description layout; a "Show all N mods" button expands to the full list grouped by category. Install flow is now 7 steps with an explicit RAM-allocation step (8–10 GB for QoL, 4 GB default acceptable for FPS Boost with expected stutter). A second note reminds players the packs are optional.
 - ShootingStars component renders pixelated comets in dark mode during clear weather. Bug fix: the rotated parent applies `transform: rotate(...)` inline while the keyframe animates `transform: translateX(...)` on a nested inner div. Putting translate inside the rotated parent makes motion follow the tilt so the tail trails correctly behind the head. See Gotchas.
 - `/map` page embeds BlueMap in an iframe pointing at `/bluemap/`. nginx proxies that path with `sub_filter` rules to rewrite BlueMap's four absolute-path fetches (`/settings.json`, `/textures.json`, `/live/...`, `/assets/playerheads/...`) into `/bluemap/...`. **Important:** the live mc.pvpers.us survival server is hosted on DatHost, not the Pi — see top-level `~/projects/CLAUDE.md`. The current nginx target is a placeholder (`127.0.0.1:8100` = Pi dev mirror) and must be updated to the DatHost public endpoint for production use.
+- **PiStatsAPI integration.** Server-side proxy at `src/app/api/stats/[...path]/route.ts` forwards to `http://stained.dathost.net:17249/api/{kind}` (override with `PISTATS_URL` env). Client components (`LiveServerStatus`, `LiveBorderStatus`, leaderboards page) fetch through the proxy — never directly to DatHost — because mc.pvpers.us is HTTPS and DatHost serves stats over HTTP, so a direct browser fetch would be blocked as mixed content. Allowlisted upstream paths: `players|leaderboard|border|server`. Cache: 30s `revalidate` on the upstream fetch + matching `s-maxage` so Cloudflare caches at the edge. Player avatars on the leaderboard use `mc-heads.net/avatar/<uuid>/24` (Crafatar was the original choice but was returning HTTP 521 at deploy time; mc-heads.net is interchangeable, swap is one URL change). Leaderboard categories are limited to `playtime` and `deaths` because those are the only stats `LeaderboardHandler` in the plugin sorts by — adding Player Kills / Mob Kills / Blocks Mined / Distance Traveled requires extending PiTab + PiStatsAPI, not just the website.
 - Mobile responsiveness pass: `viewport` export added to `layout.tsx` (`width=device-width, initialScale=1, viewportFit=cover`). Header hamburger, `WeatherToggle`, `ThemeToggle`, `MusicPlayer` enlarged to ≥44px on mobile only via `max-md:`. Hamburger now sets `aria-expanded`; menu closes on Escape. `LeaderboardsPage` grid wrapped in `max-md:overflow-x-auto` with a `max-md:min-w-[320px]` inner shell, mobile-only narrower rank column / gap / padding, and player name `max-md:truncate`. `/map` iframe shrunk to `max-md:h-[60vh] max-md:min-h-[360px]`; legend panel narrowed to `max-md:w-52`. Particle counts: 25 → 10 on mobile (single check at mount). Rain drops: 450/800 → 180/280 on mobile (rain/storm). Shooting-star spawn chance halved and interval doubled on mobile. Parallax scroll listener disabled on mobile and on `prefers-reduced-motion: reduce`. Hover-only `.mc-pill` and `.hover-surface` rules now also fire on `:focus-visible` with `:active` tap-feedback siblings.
 
 **Still placeholder / TODO:**
-- Live border widget on home page (needs Stats API to expose current border size and weekly progress)
-- Auto-posting news entries on border expansion (needs Stats API)
+- Auto-posting news entries on border expansion (data is live via `/api/stats/border`, just needs a writer that compares last seen radius + posts to `news.json`)
+- Extend PiTab + PiStatsAPI to track Player Kills / Mob Kills / Blocks Mined / Distance Traveled, then re-expand the leaderboard category set (currently Playtime + Deaths only)
 - BlueMap page has no actual iframe (needs BlueMap URL)
-- Leaderboard data is mock (needs Stats API plugin)
 - Gallery has placeholder images (needs screenshots)
 - Music player has no audio files (needs royalty-free MC-style tracks in public/audio/)
 - Thunder sound effects are silent placeholders (need real thunder MP3s in public/audio/thunder1-3.mp3)
 - Custom cursor images not yet created (public/cursors/)
 - Staff section uses real portrait photos from `public/staff/` (currently just `carsonxd.jpg`). Crafatar integration was planned but skipped — pattern is now `{ name, role, image }` in the `staff` array. Drop a JPG into `public/staff/<name>.jpg` and add the entry.
-- Player heads on leaderboard are placeholder divs
 - Page transition loading screen not implemented
 - No favicon yet
 - Modpack import codes are placeholders (need real CurseForge import codes in modpacks.json)
@@ -140,5 +142,6 @@ Runs on a Raspberry Pi, managed by PM2 (`pm2 describe mcpvpers` shows cwd + args
 - `RainCanvas` reads the mobile/motion check inside the `weather` effect (not the mount effect), so changing weather re-applies the correct cap.
 - Don't add `hover:` Tailwind classes to interactive controls without `focus-visible:` and `active:` siblings — touch users get no feedback otherwise. The CSS-class versions (`.mc-pill`, `.hover-surface`) already include both.
 - API routes that write runtime state use a module-level promise chain (`writeLock = writeLock.then(...)`) to serialize writes and prevent race conditions on the JSON file. See `src/app/api/bedrock-poll/route.ts` for the pattern.
+- Client-only state hydration (reading localStorage, cookies, or `matchMedia` on mount) must NOT use `setState` inside `useEffect` — React 19's `react-hooks/set-state-in-effect` rule fires and the cascading double-render is the actual problem the rule names. The pattern in this codebase is `useSyncExternalStore(noopSubscribe, () => true, () => false)` to gate render until hydration, plus a lazy `useState` initializer (`useState(readFromStorage)`) for the actual value. The gate prevents server/client mismatch (the lazy initializer reads localStorage on the client but returns the SSR default during hydration). See `ThemeProvider.tsx`, `MusicPlayer.tsx`, and `version-catchup/page.tsx` for the pattern. Don't read storage directly during render without the gate — it produces hydration mismatches when SSR's empty-storage value differs from the client's actual value.
 - Files in `src/app/*/` that are not named `page.tsx`, `layout.tsx`, `route.ts`, etc. are ignored by Next.js routing but still type-checked. Used for archiving old page content alongside its replacement (e.g. `bedrock/archived-geyser-page.tsx`).
 - CSS individual transform properties (`translate` / `rotate` / `scale`) compose with the `transform` shorthand in a fixed order: `translate` → `rotate` → `scale` → `transform`. When combining them, the individual properties are applied *before* the shorthand, which can produce surprises. In `ShootingStars.tsx` the inline `transform: rotate(Xdeg)` paired with a keyframe animating the `translate` property caused the comet to tilt but slide purely horizontally — tail trailed straight back while the head pointed down-and-right. Fix: nest the animated element inside the rotated parent and animate `transform: translateX(...)` so the translate runs in the rotated coordinate space.

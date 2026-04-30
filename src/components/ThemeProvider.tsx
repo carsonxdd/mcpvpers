@@ -1,8 +1,18 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import { createContext, useContext, useEffect, useState, useCallback, useSyncExternalStore } from 'react';
 
 type Theme = 'light' | 'dark';
+
+const STORAGE_KEY = 'mc-theme';
+const subscribeNoop = () => () => {};
+
+function readInitialTheme(): Theme {
+  if (typeof window === 'undefined') return 'dark';
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (saved === 'light' || saved === 'dark') return saved;
+  return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+}
 
 const ThemeContext = createContext<{
   theme: Theme;
@@ -17,27 +27,21 @@ export function useTheme() {
 }
 
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>('dark');
-  const [mounted, setMounted] = useState(false);
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [theme, setTheme] = useState<Theme>(readInitialTheme);
 
   useEffect(() => {
-    const saved = localStorage.getItem('mc-theme') as Theme | null;
-    const preferred = saved || (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-    setTheme(preferred);
-    document.documentElement.classList.toggle('dark', preferred === 'dark');
-    setMounted(true);
-  }, []);
+    document.documentElement.classList.toggle('dark', theme === 'dark');
+  }, [theme]);
 
   const toggle = useCallback(() => {
     setTheme((prev) => {
       const next = prev === 'dark' ? 'light' : 'dark';
-      localStorage.setItem('mc-theme', next);
-      document.documentElement.classList.toggle('dark', next === 'dark');
+      localStorage.setItem(STORAGE_KEY, next);
       return next;
     });
   }, []);
 
-  // Prevent flash by rendering children only after mount
   if (!mounted) {
     return <div style={{ visibility: 'hidden' }}>{children}</div>;
   }

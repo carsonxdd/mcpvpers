@@ -1,22 +1,26 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useSyncExternalStore, useCallback } from 'react';
+
+const subscribeNoop = () => () => {};
+
+function readMutedCookie(): boolean {
+  if (typeof document === 'undefined') return true;
+  const row = document.cookie.split('; ').find((r) => r.startsWith('mc_muted='));
+  return row ? row.split('=')[1] === 'true' : true;
+}
 
 export default function MusicPlayer() {
-  const [isMuted, setIsMuted] = useState(true);
-  const [isLoaded, setIsLoaded] = useState(false);
-
-  useEffect(() => {
-    const saved = document.cookie.split('; ').find((row) => row.startsWith('mc_muted='));
-    if (saved) setIsMuted(saved.split('=')[1] === 'true');
-    setIsLoaded(true);
-  }, []);
+  const isLoaded = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [isMuted, setIsMuted] = useState<boolean>(readMutedCookie);
 
   const toggleMute = useCallback(() => {
-    const newMuted = !isMuted;
-    setIsMuted(newMuted);
-    document.cookie = `mc_muted=${newMuted};path=/;max-age=31536000`;
-  }, [isMuted]);
+    setIsMuted((prev) => {
+      const next = !prev;
+      document.cookie = `mc_muted=${next};path=/;max-age=31536000`;
+      return next;
+    });
+  }, []);
 
   if (!isLoaded) return null;
 

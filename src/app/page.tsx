@@ -2,6 +2,7 @@ import CopyButton from '@/components/CopyButton';
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
+import LiveServerStatus from '@/components/LiveServerStatus';
 
 const features = [
   {
@@ -36,7 +37,8 @@ export default function Home() {
         </CloudTitle>
         <div className="mb-8" />
 
-        <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg max-md:text-sm mb-12" />
+        <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg max-md:text-sm mb-4" />
+        <LiveServerStatus />
 
         {/* Server Stats */}
         <div className="mc-panel p-6 max-w-lg w-full">

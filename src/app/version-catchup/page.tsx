@@ -1,33 +1,29 @@
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useSyncExternalStore } from 'react';
 import versions from '@/data/versions.json';
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 
 const STORAGE_KEY = 'version-catchup-visited';
 const years = Array.from(new Set(versions.map((v) => v.year))).sort((a, b) => a - b);
+const subscribeNoop = () => () => {};
+
+function readHasVisited(): boolean {
+  if (typeof localStorage === 'undefined') return false;
+  return localStorage.getItem(STORAGE_KEY) === 'true';
+}
 
 export default function VersionCatchUpPage() {
-  const [hasVisited, setHasVisited] = useState<boolean | null>(null); // null = loading
-  const [showTimeline, setShowTimeline] = useState(false);
-  const [startYear, setStartYear] = useState<number | null>(null);
+  const isClient = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const [showTimeline, setShowTimeline] = useState<boolean>(readHasVisited);
+  const [startYear, setStartYear] = useState<number | null>(() =>
+    readHasVisited() ? years[years.length - 1] : null,
+  );
   const [visibleNodes, setVisibleNodes] = useState<Set<string>>(new Set());
   const [expanded, setExpanded] = useState<Set<string>>(new Set());
   const timelineRef = useRef<HTMLDivElement>(null);
   const yearRefs = useRef<Map<number, HTMLDivElement>>(new Map());
-
-  // Check localStorage on mount
-  useEffect(() => {
-    const visited = localStorage.getItem(STORAGE_KEY);
-    if (visited) {
-      setHasVisited(true);
-      setShowTimeline(true);
-      setStartYear(years[years.length - 1]); // default to latest year for return visitors
-    } else {
-      setHasVisited(false);
-    }
-  }, []);
 
   // Scroll to the chosen year once the timeline is rendered
   useEffect(() => {
@@ -67,7 +63,6 @@ export default function VersionCatchUpPage() {
 
   const handleYearSelect = useCallback((year: number) => {
     localStorage.setItem(STORAGE_KEY, 'true');
-    setHasVisited(true);
 
     if (!showTimeline) {
       // First visit — reveal the timeline then scroll
@@ -99,8 +94,8 @@ export default function VersionCatchUpPage() {
   }
   const sortedYears = Array.from(versionsByYear.keys()).sort((a, b) => b - a);
 
-  // Don't render until we've checked localStorage
-  if (hasVisited === null) return null;
+  // Don't render until hydration completes (avoids SSR/client mismatch on localStorage read)
+  if (!isClient) return null;
 
   return (
     <div>

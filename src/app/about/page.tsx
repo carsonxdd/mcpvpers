@@ -4,6 +4,7 @@ import plugins from '@/data/plugins.json';
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
+import LiveBorderStatus from '@/components/LiveBorderStatus';
 
 const staff = [
   { name: 'carsonxd', role: 'Owner', image: '/staff/carsonxd.jpg' },
@@ -84,6 +85,8 @@ export default function AboutPage() {
             gets to explore.
           </p>
         </CloudText>
+
+        <LiveBorderStatus />
 
         <div className="mc-panel p-6 sm:p-8 max-md:p-3 mt-8">
           <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant text-center uppercase tracking-wider">Expansion Tiers</h3>
