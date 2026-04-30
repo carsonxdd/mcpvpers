@@ -74,9 +74,9 @@ function CloudLayer({ isDark, isRaining }: { isDark: boolean; isRaining: boolean
       style={{
         zIndex: 0,
         animation: 'cloud-breathe 7s ease-in-out infinite',
-        inset: '-12% -2% -18% -2%',
-        width: '104%',
-        height: '130%',
+        inset: '-17% -7% -26% -7%',
+        width: '114%',
+        height: '143%',
         filter: isRaining ? 'saturate(0.2) brightness(0.55)' : 'none',
         transition: 'filter 1.5s ease-in-out',
       }}
