@@ -11,7 +11,7 @@
       "Craftable Name Tags — name tags can finally be crafted instead of only found as loot",
       "Unique baby animations — each baby mob type has distinct behaviors and movement styles"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=7A5YWn33eps",
     "wiki": "https://minecraft.wiki/w/Java_Edition_26.1"
   },
   {
@@ -26,7 +26,7 @@
       "Zombie Horses — brought into Survival mode as obtainable mounts at last",
       "New underwater combat mechanics — mounted combat works beneath the waves"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=79RwQe6EN_4",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.11"
   },
   {
@@ -41,7 +41,7 @@
       "Copper Chests — storage blocks with copper aesthetic, oxidize through stages",
       "Copper Golem — new mob that presses copper buttons randomly, oxidizes and freezes over time"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=jLuJbSjo7NA",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.8"
   },
   {
@@ -73,7 +73,7 @@
       "Updated Spawn Eggs — all spawn egg textures redesigned",
       "New Fauna — additional ambient creatures bring biomes to life"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=r6Ja2ZxWbRE",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.5"
   },
   {
@@ -90,7 +90,7 @@
       "Resin — new material dropped when creakings are damaged, used for crafting",
       "Eyeblossoms — flowers that open at night and close during the day"
     ],
-    "trailer": "https://www.youtube.com/watch?v=nFMPShIlFWg",
+    "trailer": "https://www.youtube.com/watch?v=0vKS0FOYNok",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.4"
   },
   {
@@ -107,7 +107,7 @@
       "New default skins — additional default player models",
       "Gameplay balancing — various mob and combat adjustments"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=Fyf9gibpX1c",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21.2"
   },
   {
@@ -128,7 +128,7 @@
       "Breeze Rod — crafting material dropped by the Breeze",
       "New banner patterns, pottery sherds, and armor trim templates"
     ],
-    "trailer": "https://www.youtube.com/watch?v=jLqFVxXAzEQ",
+    "trailer": "",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.21"
   },
   {
@@ -143,7 +143,7 @@
       "8 Wolf Variants — wolves now have different appearances based on biome",
       "Armadillo Scute — new material dropped by armadillos, used for wolf armor"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=UKF91_m_B2Q",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.20.5"
   },
   {
@@ -179,7 +179,7 @@
       "Calibrated Sculk Sensors — filtered vibration detection for redstone",
       "Chiseled Bookshelf — functional bookshelf that stores up to 6 books"
     ],
-    "trailer": "https://www.youtube.com/watch?v=DnUitVPyYUg",
+    "trailer": "https://www.youtube.com/watch?v=Rla3FUlxJdE",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.20"
   },
   {
@@ -200,7 +200,7 @@
       "Recovery Compass — points to where you last died",
       "Swift Sneak enchantment — move faster while crouching"
     ],
-    "trailer": "https://www.youtube.com/watch?v=or1DfCIZsHE",
+    "trailer": "https://www.youtube.com/watch?v=GXr5glhGkzE",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.19"
   },
   {
@@ -221,7 +221,7 @@
       "Aquifers — underground water and lava lakes at various heights",
       "Noise caves create enormous underground open spaces"
     ],
-    "trailer": "https://www.youtube.com/watch?v=nLtmEjqzg7M",
+    "trailer": "https://www.youtube.com/watch?v=vdrn4ouZRvQ",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.18"
   },
   {
@@ -244,7 +244,7 @@
       "Glow Berries — food and light source found in lush caves",
       "Tinted Glass — glass that blocks light but you can see through"
     ],
-    "trailer": "https://www.youtube.com/watch?v=oMI072MNmcQ",
+    "trailer": "https://www.youtube.com/watch?v=0maWbr0FHKY",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.17"
   },
   {
@@ -286,7 +286,7 @@
       "Iron Golem healing — feed iron ingots to heal iron golems",
       "Over 100 bug fixes — massive stability and performance improvements"
     ],
-    "trailer": "https://www.youtube.com/watch?v=ulo6EC3It-E",
+    "trailer": "https://www.youtube.com/watch?v=oQOSJkBYzrg",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.15"
   },
   {
@@ -308,7 +308,7 @@
       "Loom — simplified banner crafting",
       "New village architecture — unique designs per biome"
     ],
-    "trailer": "https://www.youtube.com/watch?v=fh3s09NOkro",
+    "trailer": "",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.14"
   },
   {
@@ -332,7 +332,7 @@
       "Swimming mechanic — sprint in water to swim, much faster movement",
       "Heart of the Sea — rare conduit crafting item"
     ],
-    "trailer": "https://www.youtube.com/watch?v=QXZQ-EKoGEM",
+    "trailer": "https://www.youtube.com/watch?v=y1mIEr1Pdk0",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.13"
   },
   {
@@ -351,7 +351,7 @@
       "Illusioner — unused illager mob that casts blindness and creates duplicates",
       "New colors for beds — beds in all 16 dye colors"
     ],
-    "trailer": "https://www.youtube.com/watch?v=k2dQuIgCbEQ",
+    "trailer": "https://www.youtube.com/watch?v=k2dQuIIUT-o",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.12"
   },
   {
@@ -371,7 +371,7 @@
       "Explorer Maps — bought from cartographers, lead to monuments and mansions",
       "Curse enchantments — Curse of Binding and Curse of Vanishing"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=PsDOKrQBwLI",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.11"
   },
   {
@@ -437,7 +437,7 @@
       "Rabbits — small passive mob with multiple color variants",
       "Depth Strider enchantment — faster underwater movement"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=tYoO9XkCCHg",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.8"
   },
   {
@@ -522,7 +522,7 @@
       "Cobblestone Walls — fence-like walls from cobblestone and mossy cobblestone",
       "Night Vision & Invisibility potions — new potion effects"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=p-tzEu02P-k",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.4"
   },
   {
@@ -562,7 +562,7 @@
       "Fire Charge — fireball item, used as flint and steel alternative",
       "Bottle o' Enchanting — throwable XP in survival"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=pRZQiCCIqiE",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.2"
   },
   {
@@ -602,7 +602,7 @@
       "Baby Animals — passive mobs can breed and have babies",
       "Nether Fortress — structure with blaze spawners and nether wart"
     ],
-    "trailer": "",
+    "trailer": "https://www.youtube.com/watch?v=MmB9b5njVbA",
     "wiki": "https://minecraft.wiki/w/Java_Edition_1.0.0"
   }
 ]
