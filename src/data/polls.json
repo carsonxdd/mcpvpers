@@ -1,0 +1,200 @@
+{
+  "polls": [
+    {
+      "id": "mcmmo",
+      "category": "Plugins",
+      "question": "Should we enable mcMMO?",
+      "options": [
+        { "id": "yes", "label": "Yes — full mcMMO" },
+        { "id": "lite", "label": "Lite version only (no combat skills)" },
+        { "id": "no", "label": "No — keep it vanilla" }
+      ]
+    },
+    {
+      "id": "graves",
+      "category": "Plugins",
+      "question": "Add a graves plugin? (items stay at death location)",
+      "options": [
+        { "id": "yes", "label": "Yes — graves with timed decay" },
+        { "id": "permanent", "label": "Yes — graves never despawn" },
+        { "id": "no", "label": "No — vanilla death drops" }
+      ]
+    },
+    {
+      "id": "jobs",
+      "category": "Plugins",
+      "question": "Add a Jobs plugin? (earn money for tasks)",
+      "options": [
+        { "id": "yes", "label": "Yes — full economy" },
+        { "id": "later", "label": "Maybe after economy is in" },
+        { "id": "no", "label": "No — don't want grinding meta" }
+      ]
+    },
+    {
+      "id": "quests",
+      "category": "Plugins",
+      "question": "Add a Quests plugin?",
+      "options": [
+        { "id": "yes", "label": "Yes — love structured goals" },
+        { "id": "no", "label": "No — prefer free play" }
+      ]
+    },
+    {
+      "id": "claims",
+      "category": "Plugins",
+      "question": "Which claim plugin should we use?",
+      "options": [
+        { "id": "griefprevention", "label": "GriefPrevention (golden shovel)" },
+        { "id": "lands", "label": "Lands (fancy UI, nations)" },
+        { "id": "coreprotect", "label": "No claims — CoreProtect rollback only" },
+        { "id": "trust", "label": "Nothing — just trust people" }
+      ]
+    },
+    {
+      "id": "shops",
+      "category": "Plugins",
+      "question": "Player shops plugin?",
+      "options": [
+        { "id": "chestshop", "label": "ChestShop (sign-based)" },
+        { "id": "shopgui", "label": "ShopGUI (admin-run)" },
+        { "id": "no", "label": "No player shops" }
+      ]
+    },
+    {
+      "id": "keep-inventory",
+      "category": "Gameplay",
+      "question": "Keep Inventory on death?",
+      "options": [
+        { "id": "on", "label": "On — never lose items" },
+        { "id": "pvp-off", "label": "On, except when killed by a player" },
+        { "id": "off", "label": "Off — vanilla rules" }
+      ]
+    },
+    {
+      "id": "pvp",
+      "category": "Gameplay",
+      "question": "PvP mode?",
+      "options": [
+        { "id": "everywhere", "label": "Enabled everywhere" },
+        { "id": "safezones", "label": "Enabled, with safe zones around spawn/shops" },
+        { "id": "duels", "label": "Opt-in only (duels arena)" },
+        { "id": "off", "label": "Disabled entirely" }
+      ]
+    },
+    {
+      "id": "mob-griefing",
+      "category": "Gameplay",
+      "question": "Mob griefing (creepers destroy blocks, endermen pick up blocks)?",
+      "options": [
+        { "id": "on", "label": "On — vanilla" },
+        { "id": "creepers-off", "label": "Creepers off, endermen on" },
+        { "id": "off", "label": "Off entirely" }
+      ]
+    },
+    {
+      "id": "sleep",
+      "category": "Gameplay",
+      "question": "How many players needed to skip night?",
+      "options": [
+        { "id": "one", "label": "1 player" },
+        { "id": "half", "label": "50% of players" },
+        { "id": "all", "label": "100% (vanilla)" }
+      ]
+    },
+    {
+      "id": "phantoms",
+      "category": "Gameplay",
+      "question": "Phantom spawning?",
+      "options": [
+        { "id": "normal", "label": "Normal — sleep or die" },
+        { "id": "reduced", "label": "Reduced spawn rate" },
+        { "id": "off", "label": "Disabled" }
+      ]
+    },
+    {
+      "id": "event-theme",
+      "category": "Events",
+      "question": "What should the next event be?",
+      "options": [
+        { "id": "build", "label": "Build contest" },
+        { "id": "pvp", "label": "PvP tournament" },
+        { "id": "parkour", "label": "Parkour race" },
+        { "id": "droparty", "label": "Drop party" },
+        { "id": "boss", "label": "Community boss raid" }
+      ]
+    },
+    {
+      "id": "event-frequency",
+      "category": "Events",
+      "question": "How often should we run events?",
+      "options": [
+        { "id": "weekly", "label": "Weekly" },
+        { "id": "biweekly", "label": "Every 2 weeks" },
+        { "id": "monthly", "label": "Monthly" },
+        { "id": "random", "label": "Surprise / whenever" }
+      ]
+    },
+    {
+      "id": "player-heads",
+      "category": "Server",
+      "question": "Should player heads drop on death?",
+      "options": [
+        { "id": "always", "label": "Always (any death)" },
+        { "id": "pvp", "label": "Only from PvP kills" },
+        { "id": "no", "label": "No head drops" }
+      ]
+    },
+    {
+      "id": "border-pace",
+      "category": "Server",
+      "question": "World border expansion pace?",
+      "options": [
+        { "id": "faster", "label": "Faster — lower playtime thresholds" },
+        { "id": "current", "label": "Current pace is good" },
+        { "id": "slower", "label": "Slower — make expansions feel earned" }
+      ]
+    },
+    {
+      "id": "difficulty",
+      "category": "Server",
+      "question": "Server difficulty?",
+      "options": [
+        { "id": "hard", "label": "Hard" },
+        { "id": "normal", "label": "Normal" },
+        { "id": "easy", "label": "Easy" }
+      ]
+    },
+    {
+      "id": "nether-gate",
+      "category": "Progression",
+      "question": "When should the Nether unlock?",
+      "options": [
+        { "id": "day-one", "label": "Day one — no gate" },
+        { "id": "playtime", "label": "After a community playtime milestone" },
+        { "id": "border", "label": "After the first border expansion" },
+        { "id": "event", "label": "Coordinated date / opening event" }
+      ]
+    },
+    {
+      "id": "end-gate",
+      "category": "Progression",
+      "question": "When should the End unlock?",
+      "options": [
+        { "id": "found", "label": "Whenever someone finds a stronghold" },
+        { "id": "playtime", "label": "After a community playtime milestone" },
+        { "id": "border", "label": "After a specific border tier" },
+        { "id": "event", "label": "Coordinated date / opening event" }
+      ]
+    },
+    {
+      "id": "playtime-gating",
+      "category": "Progression",
+      "question": "Should progression be gated by playtime in general?",
+      "options": [
+        { "id": "yes", "label": "Yes — keeps everyone roughly together" },
+        { "id": "soft", "label": "Soft gates only — nudges, not walls" },
+        { "id": "no", "label": "No — let people rush if they want" }
+      ]
+    }
+  ]
+}
