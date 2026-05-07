@@ -40,27 +40,6 @@
       ]
     },
     {
-      "id": "claims",
-      "category": "Plugins",
-      "question": "Which claim plugin should we use?",
-      "options": [
-        { "id": "griefprevention", "label": "GriefPrevention (golden shovel)" },
-        { "id": "lands", "label": "Lands (fancy UI, nations)" },
-        { "id": "coreprotect", "label": "No claims — CoreProtect rollback only" },
-        { "id": "trust", "label": "Nothing — just trust people" }
-      ]
-    },
-    {
-      "id": "shops",
-      "category": "Plugins",
-      "question": "Player shops plugin?",
-      "options": [
-        { "id": "chestshop", "label": "ChestShop (sign-based)" },
-        { "id": "shopgui", "label": "ShopGUI (admin-run)" },
-        { "id": "no", "label": "No player shops" }
-      ]
-    },
-    {
       "id": "keep-inventory",
       "category": "Gameplay",
       "question": "Keep Inventory on death?",
