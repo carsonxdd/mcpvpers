@@ -1,5 +1,19 @@
 [
   {
+    "id": 4,
+    "date": "2026-05-01",
+    "title": "Server Goes Live Monday Night — 9pm",
+    "body": "We're flipping the switch Monday, May 4th at 9pm. Hop on, claim some land, and start poking around. The world border opens at 1,750 blocks from spawn and grows each week based on combined playtime — so the more you play, the more world we all get.\n\nHeads up: the End is locked. You can find the End Portal, but it won't be usable yet. We're saving the dragon for the group.",
+    "tags": ["Event"]
+  },
+  {
+    "id": 5,
+    "date": "2026-05-01",
+    "title": "Dragon Kill Planned for May 11th",
+    "body": "We're planning to take down the Ender Dragon together on Monday, May 11th at 9pm — one week after launch. If that night doesn't work for everyone, we'll vote on an alternative.\n\nReminder: the End is currently locked. The portal can be found but not entered until we open it for the dragon fight. Bring beds, blocks, and bows.",
+    "tags": ["Event"]
+  },
+  {
     "id": 1,
     "date": "2026-03-30",
     "title": "Server Launch!",

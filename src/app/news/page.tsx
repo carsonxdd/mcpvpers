@@ -32,7 +32,11 @@ export default function NewsPage() {
                 </time>
               </div>
 
-              <p className="t-text-dim text-sm leading-relaxed mb-3">{entry.body}</p>
+              <div className="t-text-dim text-sm leading-relaxed mb-3 space-y-2">
+                {entry.body.split(/\n\n+/).map((para, i) => (
+                  <p key={i}>{para}</p>
+                ))}
+              </div>
 
               <div className="flex gap-2">
                 {entry.tags.map((tag) => (

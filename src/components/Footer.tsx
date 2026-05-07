@@ -27,8 +27,8 @@ export default function Footer() {
           <div>
             <h3 className="font-pixel t-text-dim text-xs mb-3">Connect</h3>
             <div className="flex flex-col gap-2">
-              <a href="#" className="t-text-muted text-sm hover:text-xp transition-colors" target="_blank" rel="noopener noreferrer">Discord</a>
-              <a href="#" className="t-text-muted text-sm hover:text-xp transition-colors" target="_blank" rel="noopener noreferrer">CurseForge</a>
+              <a href="https://discord.gg/3fyMmcSf4C" className="t-text-muted text-sm hover:text-xp transition-colors" target="_blank" rel="noopener noreferrer">Discord</a>
+              <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">CurseForge</Link>
             </div>
           </div>
         </div>

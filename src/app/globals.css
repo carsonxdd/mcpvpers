@@ -1,16 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@300;400;500;600;700&display=swap');
 @import "tailwindcss";
 
-@font-face {
-  font-family: 'Minecraft';
-  src: url('/fonts/Minecraft.woff2') format('woff2'),
-       url('/fonts/Minecraft.woff') format('woff'),
-       url('/fonts/Minecraft.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-  font-display: swap;
-}
-
 @theme inline {
   --color-grass: #5B8731;
   --color-grass-light: #6FA03A;
