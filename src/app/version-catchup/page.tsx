@@ -220,30 +220,38 @@ export default function VersionCatchUpPage() {
                               <p className="t-text-dim text-sm leading-relaxed mb-3">{version.summary}</p>
 
                               {/* Expanded details */}
-                              {isExpanded && version.details && (
-                                <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--c-border)' }}>
-                                  <h4 className="font-pixel text-gold text-[10px] uppercase tracking-wider mb-3 glow-gold">
-                                    What&apos;s New
-                                  </h4>
-                                  <ul className="space-y-2">
-                                    {version.details.map((detail, i) => {
-                                      const dashIndex = detail.indexOf(' — ');
-                                      const hasLabel = dashIndex > 0 && dashIndex < 40;
-                                      return (
-                                        <li key={i} className="flex gap-2.5 text-sm">
-                                          <span className="text-xp shrink-0 mt-0.5">+</span>
-                                          {hasLabel ? (
-                                            <span className="t-text-dim leading-relaxed">
-                                              <strong className="t-text">{detail.substring(0, dashIndex)}</strong>
-                                              {detail.substring(dashIndex)}
-                                            </span>
-                                          ) : (
-                                            <span className="t-text-dim leading-relaxed">{detail}</span>
-                                          )}
-                                        </li>
-                                      );
-                                    })}
-                                  </ul>
+                              {version.details && (
+                                <div
+                                  className={`grid transition-all duration-300 ease-out ${
+                                    isExpanded ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+                                  }`}
+                                >
+                                  <div className="overflow-hidden">
+                                    <div className="mt-4 pt-4" style={{ borderTop: '1px solid var(--c-border)' }}>
+                                      <h4 className="font-pixel text-gold text-[10px] uppercase tracking-wider mb-3 glow-gold">
+                                        What&apos;s New
+                                      </h4>
+                                      <ul className="space-y-2">
+                                        {version.details.map((detail, i) => {
+                                          const dashIndex = detail.indexOf(' — ');
+                                          const hasLabel = dashIndex > 0 && dashIndex < 40;
+                                          return (
+                                            <li key={i} className="flex gap-2.5 text-sm">
+                                              <span className="text-xp shrink-0 mt-0.5">+</span>
+                                              {hasLabel ? (
+                                                <span className="t-text-dim leading-relaxed">
+                                                  <strong className="t-text">{detail.substring(0, dashIndex)}</strong>
+                                                  {detail.substring(dashIndex)}
+                                                </span>
+                                              ) : (
+                                                <span className="t-text-dim leading-relaxed">{detail}</span>
+                                              )}
+                                            </li>
+                                          );
+                                        })}
+                                      </ul>
+                                    </div>
+                                  </div>
                                 </div>
                               )}
 
