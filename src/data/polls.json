@@ -40,6 +40,16 @@
       ]
     },
     {
+      "id": "reputation",
+      "category": "Plugins",
+      "question": "Add a cowboy-style reputation system? (your actions earn you outlaw / lawful / neutral rep)",
+      "options": [
+        { "id": "yes-narrative", "label": "Yes — with wanted posters, bounties, and reputation narrative" },
+        { "id": "yes-simple", "label": "Yes — just a numeric score and tier label" },
+        { "id": "no", "label": "No — keep alignment out of mechanics" }
+      ]
+    },
+    {
       "id": "keep-inventory",
       "category": "Gameplay",
       "question": "Keep Inventory on death?",

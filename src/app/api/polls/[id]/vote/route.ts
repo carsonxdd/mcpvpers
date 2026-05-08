@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import pollsData from '@/data/polls.json';
-import { vote } from '@/lib/polls-store';
+import { vote, PollLimitError } from '@/lib/polls-store';
+import { getClientIp, hashIp } from '@/lib/client-ip';
+import { checkRateLimit } from '@/lib/rate-limit';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -25,11 +27,32 @@ export async function POST(
     return NextResponse.json({ error: 'Invalid option' }, { status: 400 });
   }
 
+  const ip = getClientIp(req);
+  const rl = checkRateLimit(`vote:${ip}`);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: 'Too many votes — slow down.' },
+      { status: 429, headers: { 'Retry-After': String(rl.retryAfter) } }
+    );
+  }
+  const ipH = hashIp(ip);
+
   const cookieStore = await cookies();
   const existing = cookieStore.get(VOTER_COOKIE)?.value;
   const voterId = existing ?? crypto.randomUUID();
 
-  const result = await vote(id, optionId, voterId);
+  let result;
+  try {
+    result = await vote(id, optionId, voterId, ipH);
+  } catch (e) {
+    if (e instanceof PollLimitError) {
+      return NextResponse.json(
+        { error: 'Vote limit reached for this network.' },
+        { status: 403 }
+      );
+    }
+    throw e;
+  }
 
   const response = NextResponse.json(result);
   if (!existing) {

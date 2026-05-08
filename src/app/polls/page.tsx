@@ -12,6 +12,7 @@ export default function PollsPage() {
   const [state, setState] = useState<Record<string, PollState>>({});
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState<string | null>(null);
+  const [errors, setErrors] = useState<Record<string, string | null>>({});
 
   useEffect(() => {
     fetch('/api/polls', { cache: 'no-store' })
@@ -33,6 +34,7 @@ export default function PollsPage() {
       optimistic[optionId] = (optimistic[optionId] ?? 0) + 1;
     }
     setState((s) => ({ ...s, [pollId]: { counts: optimistic, userVote: optionId } }));
+    setErrors((e) => ({ ...e, [pollId]: null }));
     setVoting(pollId);
 
     try {
@@ -41,11 +43,28 @@ export default function PollsPage() {
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({ optionId }),
       });
-      if (!res.ok) throw new Error('vote failed');
+      if (!res.ok) {
+        let msg = 'Vote failed.';
+        if (res.status === 429) {
+          const retry = res.headers.get('retry-after');
+          msg = retry ? `Slow down — try again in ${retry}s.` : 'Slow down — try again shortly.';
+        } else if (res.status === 403) {
+          msg = 'Vote limit reached for this network.';
+        }
+        if (prev) setState((s) => ({ ...s, [pollId]: prev }));
+        else setState((s) => {
+          const next = { ...s };
+          delete next[pollId];
+          return next;
+        });
+        setErrors((e) => ({ ...e, [pollId]: msg }));
+        return;
+      }
       const data = (await res.json()) as PollState;
       setState((s) => ({ ...s, [pollId]: data }));
     } catch {
       if (prev) setState((s) => ({ ...s, [pollId]: prev }));
+      setErrors((e) => ({ ...e, [pollId]: 'Vote failed.' }));
     } finally {
       setVoting(null);
     }
@@ -89,6 +108,7 @@ export default function PollsPage() {
                   state={state[poll.id]}
                   loading={loading}
                   busy={voting === poll.id}
+                  error={errors[poll.id] ?? null}
                   onVote={(optionId) => vote(poll.id, optionId)}
                 />
               ))}
@@ -105,12 +125,14 @@ function PollCard({
   state,
   loading,
   busy,
+  error,
   onVote,
 }: {
   poll: Poll;
   state: PollState | undefined;
   loading: boolean;
   busy: boolean;
+  error: string | null;
   onVote: (optionId: string) => void;
 }) {
   const counts = state?.counts ?? {};
@@ -155,6 +177,13 @@ function PollCard({
           {userVote && ' · your vote recorded'}
         </span>
       </div>
+      {error && (
+        <div className="mt-2 text-center">
+          <span className="font-pixel text-[10px] text-redstone uppercase tracking-wider">
+            {error}
+          </span>
+        </div>
+      )}
     </div>
   );
 }
