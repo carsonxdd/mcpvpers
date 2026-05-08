@@ -46,7 +46,7 @@ export default function LaunchCountdown() {
   return (
     <div className="mc-panel p-5 max-w-lg w-full mb-6 text-center">
       <div className="font-pixel text-[10px] uppercase tracking-widest t-text-muted mb-3">
-        Launch · May 18 · 9 PM Arizona
+        Launch · Saturday May 23 · 9 PM Arizona
       </div>
       <div className="grid grid-cols-4 gap-2">
         {[
