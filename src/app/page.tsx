@@ -3,6 +3,7 @@ import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
 import LiveServerStatus from '@/components/LiveServerStatus';
+import LaunchCountdown from '@/components/LaunchCountdown';
 
 const features = [
   {
@@ -36,6 +37,18 @@ export default function Home() {
           </p>
         </CloudTitle>
         <div className="mb-8" />
+
+        <LaunchCountdown />
+
+        <p className="t-text-dim text-sm mb-6 text-center">
+          Help shape the server before launch —{' '}
+          <a
+            href="/polls"
+            className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
+          >
+            vote on the polls &rarr;
+          </a>
+        </p>
 
         <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg max-md:text-sm mb-4" />
         <LiveServerStatus />

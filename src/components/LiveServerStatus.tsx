@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { LAUNCH_AT } from '@/lib/launch';
 
 type ServerStatus = {
   tps: number;
@@ -13,8 +14,19 @@ const POLL_MS = 30_000;
 export default function LiveServerStatus() {
   const [status, setStatus] = useState<ServerStatus | null>(null);
   const [unreachable, setUnreachable] = useState(false);
+  const [launched, setLaunched] = useState(false);
 
   useEffect(() => {
+    if (Date.now() < LAUNCH_AT) {
+      const wait = LAUNCH_AT - Date.now();
+      const id = setTimeout(() => setLaunched(true), wait);
+      return () => clearTimeout(id);
+    }
+    setLaunched(true);
+  }, []);
+
+  useEffect(() => {
+    if (!launched) return;
     let cancelled = false;
 
     const tick = async () => {
@@ -37,8 +49,9 @@ export default function LiveServerStatus() {
       cancelled = true;
       clearInterval(id);
     };
-  }, []);
+  }, [launched]);
 
+  if (!launched) return null;
   if (!status && !unreachable) return null;
 
   if (unreachable) {
