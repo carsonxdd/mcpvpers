@@ -9,7 +9,7 @@ const roleCards = [
     glow: 'glow-xp',
     accent: 'border-xp/40',
     blurb:
-      'Build, trade, donate, and shape the server without living for PvP. The default. Safer in claims, can fund bounties, can report and commend.',
+      "The default. In the wilderness you can't be killed in PvP — attackers knock you out and can lift one stack from your hotbar. Donate, report, commend, and shape the server without ever swinging a sword.",
   },
   {
     name: 'Outlaw',
@@ -17,7 +17,7 @@ const roleCards = [
     glow: '',
     accent: 'border-redstone/40',
     blurb:
-      "Rob, raid, and pick fights — the frontier remembers. Outlaws appear on wanted lists, can be hunted, and earn infamy. There's a road back if you want it.",
+      "Earn it through your actions, not a class pick. Crimes in the wilderness raise your outlaw rep; cross thresholds and you appear on /wanted with a bounty multiplier on your head. There's a road back if you want it.",
   },
   {
     name: 'Lawman',
@@ -25,25 +25,55 @@ const roleCards = [
     glow: 'glow-gold',
     accent: 'border-gold/40',
     blurb:
-      'Hunt outlaws, collect bounties, and earn the badge. Earned through community commendations — not handed out by staff.',
+      'Take the deputy badge after your first outlaw kill. Climb Citizen → Marshal by stacking peaceful rep, violence rep, and unique commendations. Marshals fund bounties; deputies adjudicate reports.',
   },
 ];
 
 const claimRows = [
-  { where: 'Your claim', meaning: 'Safest area. PvP and theft locked down by your permissions.' },
+  { where: 'Your claim', meaning: 'Safest area. PvP and theft locked down by Lands. Reputation system stays out of it entirely.' },
   { where: 'Allied claim', meaning: 'Depends on the trust level the owner gave you.' },
-  { where: 'Wilderness', meaning: 'The frontier. PvP on. Reputation actions count fully here.' },
-  { where: 'Outlaw hideout', meaning: 'Safer if you stay passive, riskier the moment you fight.' },
+  { where: 'PvP-deny region', meaning: "If a claim or region cancels PvP damage, the rep system never sees the hit. No knockout, no rep, no combat-log timer." },
+  { where: 'Wilderness', meaning: 'The frontier. PvP on. Pacifist knockout, theft GUI, rep awards, and combat-log all fire here.' },
 ];
 
-const commands = [
-  { cmd: '/reputation', desc: 'Check your own rep, infamy, and active flags.' },
-  { cmd: '/wanted', desc: 'See the current wanted list and active bounties.' },
-  { cmd: '/whois <player>', desc: "Look up another player's role, rep, and history." },
-  { cmd: '/bounty', desc: 'Place or fund a bounty on a wanted player.' },
-  { cmd: '/report', desc: 'Report a crime witnessed in the wilderness.' },
-  { cmd: '/commend', desc: 'Commend a player whose conduct earned it.' },
-  { cmd: '/restitution', desc: "Pay off your debts as an outlaw to start clearing your name." },
+const commandsByTier = [
+  {
+    tier: 'Everyone',
+    items: [
+      { cmd: '/rep', desc: 'Public rules summary — states, redemption paths, key commands. Auto-shown on first join.' },
+      { cmd: '/whois [player]', desc: "Full reputation lookup: state, all three rep pools, tier, recent crimes." },
+      { cmd: '/wanted', desc: 'Current outlaws ranked by tier with bounty pool visible.' },
+      { cmd: '/badge yes|no', desc: 'Accept or decline the deputy badge after your first outlaw kill.' },
+      { cmd: '/commend <player>', desc: 'Award peaceful rep. Limited charges, 7-day cooldown per recipient.' },
+      { cmd: '/donate', desc: 'Open the donation chest. Items fund the rewards pool; donors earn capped peaceful rep.' },
+      { cmd: '/report <player> <reason>', desc: 'File a complaint. Requires 2h playtime. 24h cooldown per target.' },
+      { cmd: '/bounty list|track <player>', desc: 'View active bounties or get a tracking compass (Lawman+ for tracking).' },
+    ],
+  },
+  {
+    tier: 'Outlaw',
+    items: [
+      { cmd: '/restitution <victim>', desc: 'Open a 27-slot UI to return stolen items. +5 peaceful rep per stack returned (gated on a logged crime against that victim).' },
+    ],
+  },
+  {
+    tier: 'Sheriff+',
+    items: [
+      { cmd: '/pardon <player>', desc: "Reduce target's outlaw rep. Sheriff −25%, Senior Sheriff −50%, Marshal −100%. Pacifist-kill rep has a 50% floor — even a Marshal can't fully wipe murder." },
+    ],
+  },
+  {
+    tier: 'Deputy+',
+    items: [
+      { cmd: '/report list|view|approve|deny|reverse', desc: 'Adjudicate filed reports. False reports cost the reporter peaceful rep.' },
+    ],
+  },
+  {
+    tier: 'Marshal',
+    items: [
+      { cmd: '/bounty place <player>', desc: 'Open placement UI to escrow items as a bounty on a wanted player.' },
+    ],
+  },
 ];
 
 const faqs = [
@@ -52,36 +82,44 @@ const faqs = [
     a: 'No — claims protect against PvP unless you explicitly allow it. The whole point is that your home is your home.',
   },
   {
+    q: "What if I'm a pacifist in the wilderness — can I be killed there?",
+    a: 'No, not the first hit. Pacifists drop to 1 HP with Slowness, Mining Fatigue, Weakness, and Blindness for 30 seconds instead of dying. The attacker can right-click you to open a theft GUI and lift one stack from your hotbar. A second hit during the knockout window is a real death — and that pays the attacker +50 outlaw rep.',
+  },
+  {
     q: 'What happens if I rob someone?',
-    a: 'In the wilderness, robbery raises your outlaw rep. In a claim where you have build trust, it depends on what the owner allowed — but if you abuse trust, expect consequences.',
+    a: 'Robbery only happens via the knockout GUI on a downed pacifist, and only one stack from their hotbar. Taking anything earns +1 outlaw rep. Pacifists in claims are not knocked out and not robbable.',
   },
   {
     q: 'What happens if I kill a pacifist?',
-    a: 'Heavier outlaw rep hit than killing another outlaw. Pacifists can also fund bigger bounties on the player who killed them.',
+    a: 'Unprovoked kill of a pacifist is +50 outlaw rep — the heaviest crime in the system. Self-defense (you hit the attacker within the last 30 seconds before the kill) is rep-neutral.',
   },
   {
     q: 'Can outlaws become peaceful again?',
-    a: "Yes. Pay restitution to people you wronged, take the rep decay over time, and either earn a community pardon or just wait it out. Nobody's stuck.",
+    a: "Yes. Pay restitution to people you wronged, take the offline rep decay (~2%/week while logged off), or get a Sheriff+ pardon. Sheriffs can shave 25%, Senior Sheriffs 50%, Marshals 100% — but pacifist-kill rep has a 50% floor that can't be pardoned away. Murder fades, it doesn't get wiped.",
   },
   {
     q: 'Can outlaws claim bounties?',
-    a: 'No. Bounties are society paying for justice — not outlaws cashing in on each other. Outlaws hunting outlaws is fine, just unpaid.',
+    a: 'No. Bounties are society paying for justice — not outlaws cashing in on each other. Outlaws hunting outlaws is fine, just unpaid (and rep-neutral on both sides).',
   },
   {
     q: 'How do I become a lawman?',
-    a: 'Hunt wanted outlaws and collect commendations from other players. Lawmen are confirmed by community trust, not appointed.',
+    a: 'Kill a wanted outlaw — that triggers a one-time prompt. Run /badge yes and you become a Citizen. Climb Citizen → Deputy → Sheriff → Senior Sheriff → Marshal by stacking peaceful rep (clean playtime, donations, restitution), violence rep (more outlaw kills), and commendations from distinct players. Pure builders cap at Citizen; pure murderers cap at Citizen.',
   },
   {
     q: 'What does commending do?',
-    a: "It's how the community signals who's trustworthy. Commendations from established players carry more weight, so it can't be farmed by alts.",
+    a: "Awards the recipient peaceful rep on a 7-day cooldown per pair. Counts toward the unique-commender threshold for the lawman ladder, so it's how the community signals who deserves the badge. Limited charges per commender so it can't be spammed.",
   },
   {
-    q: 'Are bounties server-generated?',
-    a: 'No. Every bounty is funded by a player escrowing real items. The server takes no cut.',
+    q: 'Where do bounty items come from?',
+    a: 'Marshals fund and place bounties from their own inventory via /bounty place. The server takes no cut. Donations to /donate fund a separate rewards pool and earn donors capped peaceful rep — they help the economy run, but bounties themselves are Marshal-funded.',
+  },
+  {
+    q: "Won't outlaws just hide in their claim forever?",
+    a: "They can — but they also can't kill, rob, or claim bounties from inside, so they drop out of the game economy entirely. The punishment is boredom. (A v1.1 Lands integration will let lawmen bypass claim PvP-deny on outlaw targets.)",
   },
   {
     q: 'What happens if someone combat logs?',
-    a: 'They take the death anyway, items drop, and combat-logging on a wanted offender adds to their outlaw rep on top.',
+    a: 'If you disconnect within ~10 seconds of taking PvP damage, the system stages a penalty and you take rep on next login. Combat-logging on a wanted offender stacks more outlaw rep on top.',
   },
 ];
 
@@ -101,8 +139,8 @@ export default function ReputationPage() {
             wilderness build a story the server actually remembers.
           </p>
           <p className="t-text-dim leading-relaxed">
-            This is a <strong className="t-text">proposal</strong>, not a feature — we want to know
-            if there&apos;s appetite for it before we build it. There&apos;s a poll on{' '}
+            The system is <strong className="t-text">built and tested</strong> — what&apos;s up for
+            a vote is whether we turn it on at launch. There&apos;s a poll on{' '}
             <a
               href="/polls#reputation"
               className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
@@ -138,12 +176,13 @@ export default function ReputationPage() {
         <div className="mc-panel p-6 sm:p-8">
           <div className="space-y-3 text-sm t-text-dim">
             {[
-              ['Your claim is your home.', 'Locked down. Safe. Your rules.'],
-              ['The wilderness is risky.', 'PvP on, reputation matters here.'],
-              ['Crimes make you wanted.', 'Killing, robbing, raiding — it leaves a trail.'],
-              ['Wanted players can be hunted.', 'Anyone can come collect.'],
-              ['Bounties are funded by players.', 'Society pays for justice. Not the server.'],
-              ['Lawmen are chosen by the community.', 'Earned through commendations, not handed out.'],
+              ['Your claim is your home.', 'Locked down. Safe. The rep system stays out of it.'],
+              ['The wilderness is risky.', 'PvP on, rep awards apply, knockout and theft fire here.'],
+              ['Pacifists get knocked out, not killed.', 'First hit drops you to 1 HP with debuffs. Attackers can take one stack from your hotbar. A second hit is real death.'],
+              ['Crimes raise your outlaw rep.', 'Kill a pacifist, steal, kill pets or villagers, combat-log — it all leaves a trail.'],
+              ['Wanted players can be hunted.', 'Anyone non-outlaw can collect. Outlaws hunting outlaws is allowed but unpaid.'],
+              ['Bounties are funded by Marshals.', 'Real items from a real player, escrowed on a real target. The server takes no cut.'],
+              ['Lawmen earn the badge.', 'First outlaw kill prompts the badge. Climb the ladder with peaceful rep, violence rep, and commendations from distinct players.'],
             ].map(([head, sub]) => (
               <div key={head} className="flex gap-3 items-start">
                 <span className="text-xp shrink-0 font-pixel text-[10px] mt-1">&#9656;</span>
@@ -196,6 +235,42 @@ export default function ReputationPage() {
 
       <GrassDivider />
 
+      {/* Knockout — the distinctive mechanic */}
+      <section className="max-w-3xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <CloudTitle>
+            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Pacifist knockout</h2>
+          </CloudTitle>
+        </div>
+        <CloudText>
+          <p className="t-text-dim leading-relaxed">
+            Pacifists are protected by social cost, not invincibility. In the wilderness, the first
+            killing blow is cancelled — the pacifist drops to 1 HP, gets Slowness V / Mining Fatigue
+            III / Weakness II / Blindness I for 30 seconds, and the attacker can right-click them to
+            open a theft GUI.
+          </p>
+        </CloudText>
+
+        <div className="mc-panel p-6 sm:p-8 mt-6">
+          <div className="space-y-3 text-sm t-text-dim">
+            {[
+              ['1', 'First lethal hit is cancelled. Pacifist drops to 1 HP, debuffed, smoke particles.'],
+              ['2', 'Attacker can right-click within 30 seconds to open a theft GUI showing the pacifist’s hotbar (slots 0–8).'],
+              ['3', 'One stack max. Taking anything = +1 outlaw rep on the attacker. Logged as an unprovoked-pacifist crime.'],
+              ['4', 'A second hit during the window is a real death. That’s +50 outlaw rep — the heaviest single crime in the system.'],
+              ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe.'],
+            ].map(([n, body]) => (
+              <div key={n} className="flex gap-3 items-start">
+                <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
+                <span>{body}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <GrassDivider />
+
       {/* Roles deep-dive */}
       <section className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center">
@@ -212,12 +287,12 @@ export default function ReputationPage() {
             border="border-xp/40"
             tagline="The default. Most players stay here, most of the time."
             points={[
-              'Starts as the role for every new player.',
-              'Stronger PvP protections in claims and around spawn.',
-              'Can fund bounties and place them on wanted players.',
-              'Can /report crimes they witness in the wilderness.',
-              'Can /commend other players whose conduct earned it.',
-              'Can still be involved in the system — economy, justice, rebuilding — without ever swinging a sword.',
+              'Default state for every new player. New players also get 5 hours of newcomer protection.',
+              "Can't die in wilderness PvP — knocked out at 1 HP and looted for one stack instead.",
+              'Earns peaceful rep passively from clean playtime (~0.5/hr).',
+              'Can /donate items to the rewards pool — donations earn capped peaceful rep weekly.',
+              'Can /report crimes, /commend trustworthy players, and pay /restitution if they slip up.',
+              "Can't be promoted to Lawman without first killing an outlaw and accepting the badge.",
             ]}
           />
 
@@ -228,12 +303,12 @@ export default function ReputationPage() {
             border="border-redstone/40"
             tagline="A path you walk into through your actions, not a class you pick at signup."
             points={[
-              'Outlaw rep climbs from killing pacifists, robbing, raiding, and griefing in the wilderness.',
-              'High enough rep and you appear on the wanted list with a bounty cap.',
-              'Anyone can hunt you — pacifists who funded the bounty get a cut, lawmen claim the rest.',
-              'Infamy stacks on top of rep. High infamy makes you a marked target but also a legend.',
-              'Pay restitution to people you wronged, take the rep decay, or earn a community pardon to come back.',
-              'Outlaws cannot claim official bounties on other outlaws.',
+              'Outlaw rep climbs from unprovoked PvP kills, knockout-theft, killing tamed pets, killing villagers, and combat-logging.',
+              'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
+              'Once over 25 outlaw rep, you appear on /wanted and any non-outlaw can hunt you for the bounty.',
+              "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
+              'Outlaw-on-outlaw kills are rep-neutral on both sides — private rivalry, not crime. No bounty payout, no /wanted update.',
+              'Three roads back: /restitution (return stolen items for peaceful rep), offline decay (~2%/week), or a Sheriff+ pardon. Pacifist-kill rep is floored at 50% — it fades, it doesn’t wipe.',
             ]}
           />
 
@@ -242,13 +317,14 @@ export default function ReputationPage() {
             color="text-gold"
             glow="glow-gold"
             border="border-gold/40"
-            tagline="Earned, not assigned. Staff doesn't appoint lawmen — the community does."
+            tagline="Earned, not assigned. Killing your first outlaw triggers a one-time badge prompt."
             points={[
-              'Promotion gated by commendations from established players, not raw bounty count.',
-              'Higher rank unlocks stronger tracking tools and a larger share of bounty payouts.',
-              'Helps resolve /report cases when staff aren’t around.',
-              'Loses standing fast for killing pacifists or going rogue — the badge is harder to keep than to earn.',
-              'Can coordinate posses for high-infamy targets.',
+              'Citizen → Deputy → Sheriff → Senior Sheriff → Marshal. The ladder requires both peaceful rep AND violence rep AND commendations from distinct players — pure builders and pure killers both cap at Citizen.',
+              "Deputy+ can adjudicate /report cases (approve, deny, reverse). False reports cost the reporter peaceful rep.",
+              'Sheriff+ can /pardon outlaws — Sheriff −25%, Senior Sheriff −50%, Marshal −100% (with a 50% floor on pacifist-kill rep).',
+              "Marshals can /bounty place — fund and place bounties on wanted outlaws from their own inventory. Items range 5–64 diamond-equivalent per bounty.",
+              'Killing a pacifist as a Lawman is +50 outlaw rep — the badge is much harder to keep than to earn.',
+              'Lawmen who go inactive 30 days enter Retired (rep frozen until they fight again).',
             ]}
           />
         </div>
@@ -266,13 +342,13 @@ export default function ReputationPage() {
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
             Bounties are how the server&apos;s economy buys justice. Every bounty is funded by a real
-            player escrowing real items — diamonds, netherite, whatever the wronged party thinks the
-            grudge is worth.
+            player — a Marshal — escrowing real items from their own inventory: diamonds, netherite,
+            whatever they think the grudge is worth.
           </p>
           <p className="t-text-dim leading-relaxed">
             The server takes <strong className="t-text">no cut</strong>. Outlaws can&apos;t claim
-            bounties. The pool is what someone else paid in, and it goes to whoever brings the
-            outlaw down.
+            bounties. The pool is what a Marshal paid in, and it goes to whoever brings the outlaw
+            down.
           </p>
         </CloudText>
 
@@ -282,11 +358,11 @@ export default function ReputationPage() {
           </h3>
           <div className="space-y-3 text-sm t-text-dim">
             {[
-              ['1', 'Someone wrongs you. You /bounty <player> with the items you want to escrow.'],
-              ['2', 'The bounty is locked in escrow. The target appears on the wanted list with the pool size visible.'],
-              ['3', 'A non-outlaw kills the target in legitimate PvP.'],
-              ['4', 'Pool pays out: a share to the funder for funding, the rest to the killer.'],
-              ['5', 'If the bounty expires unclaimed, items return to the funder minus a small frontier tax (burned, not pocketed).'],
+              ['1', "Someone wrongs you. You /report them, or ask a Marshal directly. Anyone can /donate to grow the rewards pool that funds Marshal payouts."],
+              ['2', 'A Marshal runs /bounty place <target> and escrows items from their own inventory (5–64 diamond-equivalent).'],
+              ['3', 'The target appears on /wanted with the pool size visible. Anyone non-outlaw can hunt them.'],
+              ['4', "A non-outlaw kills the target. Anti-collusion check runs (alt-shared IPs void the payout); if clean, escrowed items go to the killer."],
+              ['5', 'If the target is pardoned or goes inactive, the bounty refunds back to the Marshal who placed it.'],
             ].map(([n, body]) => (
               <div key={n} className="flex gap-3 items-start">
                 <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
@@ -306,18 +382,22 @@ export default function ReputationPage() {
             <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">Commands</h2>
           </CloudTitle>
         </div>
-        <div className="mc-panel p-6 sm:p-8">
-          <div className="space-y-3">
-            {commands.map((c) => (
-              <div key={c.cmd} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                <code className="font-pixel text-enchant text-xs glow-enchant whitespace-nowrap">{c.cmd}</code>
-                <span className="t-text-dim text-sm">{c.desc}</span>
+        <div className="space-y-6">
+          {commandsByTier.map((group) => (
+            <div key={group.tier} className="mc-panel p-6 sm:p-8">
+              <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant uppercase tracking-wider">
+                {group.tier}
+              </h3>
+              <div className="space-y-3">
+                {group.items.map((c) => (
+                  <div key={c.cmd} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+                    <code className="font-pixel text-gold text-xs glow-gold whitespace-nowrap shrink-0">{c.cmd}</code>
+                    <span className="t-text-dim text-sm">{c.desc}</span>
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-          <p className="t-text-muted text-xs mt-6 text-center italic">
-            Command names aren&apos;t final — these are placeholders for what the system would expose.
-          </p>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -351,12 +431,12 @@ export default function ReputationPage() {
       {/* Vote CTA */}
       <section className="max-w-3xl mx-auto px-4 py-16 text-center">
         <CloudTitle>
-          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Want this?</h2>
+          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Should we turn it on?</h2>
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-6">
-            None of this exists yet. If the group wants it, we&apos;ll build it. If the group
-            doesn&apos;t, we won&apos;t. The vote is the whole reason this page is here.
+            The plugin is built and tested on the dev server. The vote decides whether it ships
+            live at launch or stays in the drawer.
           </p>
         </CloudText>
         <a
