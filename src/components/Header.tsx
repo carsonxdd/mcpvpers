@@ -10,6 +10,7 @@ import { useTheme } from './ThemeProvider';
 const navLinks = [
   { href: '/', label: 'Home' },
   { href: '/about', label: 'About & Rules' },
+  { href: '/reputation', label: 'Reputation' },
   { href: '/modpacks', label: 'Modpacks' },
   { href: '/bedrock', label: 'Bedrock' },
   { href: '/version-catchup', label: 'Version Catch-Up' },

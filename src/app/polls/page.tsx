@@ -140,7 +140,7 @@ function PollCard({
   const userVote = state?.userVote ?? null;
 
   return (
-    <div className="mc-panel p-6">
+    <div id={poll.id} className="mc-panel p-6 scroll-mt-24">
       <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant">{poll.question}</h3>
       <div className="space-y-2">
         {poll.options.map((opt) => {
