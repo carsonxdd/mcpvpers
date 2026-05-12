@@ -36,6 +36,22 @@ const claimRows = [
   { where: 'Wilderness', meaning: 'The frontier. PvP on. Pacifist knockout, theft GUI, rep awards, and combat-log all fire here.' },
 ];
 
+const knockoutSteps: [string, string][] = [
+  ['1', 'First lethal hit is cancelled. Pacifist drops to 1 HP, debuffed, smoke particles.'],
+  ['2', 'Attacker can right-click within 30 seconds to open a theft GUI showing the pacifist’s hotbar (slots 0–8).'],
+  ['3', 'One stack max. Taking anything = +1 outlaw rep on the attacker. Logged as an unprovoked-pacifist crime.'],
+  ['4', 'A second hit during the window is a real death. That’s +50 outlaw rep — the heaviest single crime in the system.'],
+  ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe.'],
+];
+
+const bountySteps: [string, string][] = [
+  ['1', "Someone wrongs you. You /report them, or ask a Marshal directly. Anyone can /donate to grow the rewards pool that funds Marshal payouts."],
+  ['2', 'A Marshal runs /bounty place <target> and escrows items from their own inventory (5–64 diamond-equivalent).'],
+  ['3', 'The target appears on /wanted with the pool size visible. Anyone non-outlaw can hunt them.'],
+  ['4', "A non-outlaw kills the target. Anti-collusion check runs (alt-shared IPs void the payout); if clean, escrowed items go to the killer."],
+  ['5', 'If the target is pardoned or goes inactive, the bounty refunds back to the Marshal who placed it.'],
+];
+
 const commandsByTier = [
   {
     tier: 'Everyone',
@@ -126,7 +142,7 @@ const faqs = [
 export default function ReputationPage() {
   return (
     <div>
-      {/* Hero */}
+      {/* Hero — visible */}
       <section className="max-w-4xl mx-auto px-4 py-16 text-center">
         <CloudTitle>
           <h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-6 glow-gold">
@@ -147,7 +163,8 @@ export default function ReputationPage() {
             >
               the polls page
             </a>{' '}
-            asking exactly that. Read the rest of this page, then go vote.
+            asking exactly that. Skim the basics below, open any topic for the full mechanics,
+            then go vote.
           </p>
         </CloudText>
 
@@ -166,7 +183,7 @@ export default function ReputationPage() {
 
       <GrassDivider />
 
-      {/* The simple version */}
+      {/* The simple version — visible */}
       <section className="max-w-3xl mx-auto px-4 py-16">
         <div className="text-center">
           <CloudTitle>
@@ -197,7 +214,7 @@ export default function ReputationPage() {
 
       <GrassDivider />
 
-      {/* Claims vs wilderness */}
+      {/* Claims vs wilderness — visible */}
       <section className="max-w-3xl mx-auto px-4 py-16">
         <div className="text-center">
           <CloudTitle>
@@ -235,251 +252,189 @@ export default function ReputationPage() {
 
       <GrassDivider />
 
-      {/* Knockout — the distinctive mechanic */}
+      {/* Dig deeper — collapsible deep content */}
       <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center">
+        <div className="text-center mb-8">
           <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Pacifist knockout</h2>
+            <h2 className="font-pixel text-gold text-lg mb-4 glow-gold">Dig deeper</h2>
           </CloudTitle>
+          <p className="t-text-dim text-sm">Tap any topic for the full mechanics.</p>
         </div>
-        <CloudText>
-          <p className="t-text-dim leading-relaxed">
-            Pacifists are protected by social cost, not invincibility. In the wilderness, the first
-            killing blow is cancelled — the pacifist drops to 1 HP, gets Slowness V / Mining Fatigue
-            III / Weakness II / Blindness I for 30 seconds, and the attacker can right-click them to
-            open a theft GUI.
-          </p>
-        </CloudText>
 
-        <div className="mc-panel p-6 sm:p-8 mt-6">
-          <div className="space-y-3 text-sm t-text-dim">
-            {[
-              ['1', 'First lethal hit is cancelled. Pacifist drops to 1 HP, debuffed, smoke particles.'],
-              ['2', 'Attacker can right-click within 30 seconds to open a theft GUI showing the pacifist’s hotbar (slots 0–8).'],
-              ['3', 'One stack max. Taking anything = +1 outlaw rep on the attacker. Logged as an unprovoked-pacifist crime.'],
-              ['4', 'A second hit during the window is a real death. That’s +50 outlaw rep — the heaviest single crime in the system.'],
-              ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe.'],
-            ].map(([n, body]) => (
-              <div key={n} className="flex gap-3 items-start">
-                <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
-                <span>{body}</span>
+        <div className="space-y-3">
+          <DeepDive title="Pacifist knockout">
+            <p className="t-text-dim leading-relaxed mb-6">
+              Pacifists are protected by social cost, not invincibility. In the wilderness, the first
+              killing blow is cancelled — the pacifist drops to 1 HP, gets Slowness V / Mining Fatigue
+              III / Weakness II / Blindness I for 30 seconds, and the attacker can right-click them to
+              open a theft GUI.
+            </p>
+            <div className="space-y-3 text-sm t-text-dim">
+              {knockoutSteps.map(([n, body]) => (
+                <div key={n} className="flex gap-3 items-start">
+                  <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
+                  <span>{body}</span>
+                </div>
+              ))}
+            </div>
+          </DeepDive>
+
+          <DeepDive title="How rep works">
+            <p className="t-text-dim leading-relaxed mb-6">
+              Every player carries three rep pools at the same time. Different actions feed
+              different pools, and your role is mostly a read-out of which one is winning.
+            </p>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="border-2 border-xp/40 rounded-md p-4">
+                <h4 className="font-pixel text-xp glow-xp text-xs mb-3">Peaceful rep</h4>
+                <p className="t-text-dim text-sm leading-relaxed">
+                  Clean playtime (~0.5/hr passive), donations, commending, restitution. Decays slowly.
+                  Required for the Lawman ladder.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <GrassDivider />
-
-      {/* How rep works — three pools */}
-      <section className="max-w-4xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">How rep works</h2>
-          </CloudTitle>
-        </div>
-        <CloudText>
-          <p className="t-text-dim leading-relaxed text-center">
-            Every player carries three rep pools at the same time. Different actions feed
-            different pools, and your role is mostly a read-out of which one is winning.
-          </p>
-        </CloudText>
-
-        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
-          <div className="mc-panel p-5 border-2 border-xp/40">
-            <h3 className="font-pixel text-xp glow-xp text-xs mb-3">Peaceful rep</h3>
-            <p className="t-text-dim text-sm leading-relaxed">
-              Clean playtime (~0.5/hr passive), donations, commending, restitution. Decays slowly.
-              Required for the Lawman ladder.
-            </p>
-          </div>
-          <div className="mc-panel p-5 border-2 border-gold/40">
-            <h3 className="font-pixel text-gold glow-gold text-xs mb-3">Violence rep</h3>
-            <p className="t-text-dim text-sm leading-relaxed">
-              Killing wanted outlaws. The other half of the Lawman ladder — pure builders never
-              get above Citizen without it.
-            </p>
-          </div>
-          <div className="mc-panel p-5 border-2 border-redstone/40">
-            <h3 className="font-pixel text-redstone text-xs mb-3">Outlaw rep</h3>
-            <p className="t-text-dim text-sm leading-relaxed">
-              Pacifist kills (+50), spawn-region PvP (+30), lawman kills (+15), knockout-theft,
-              pet and villager kills, combat-logging. Puts you on /wanted. Decays offline
-              (~2%/week), paid down with restitution or a Sheriff+ pardon.
-            </p>
-          </div>
-        </div>
-
-        <div className="mc-panel p-5 mt-6">
-          <p className="t-text-dim text-sm leading-relaxed text-center">
-            Lawman promotion is the only place all three matter at once. The ladder gates on
-            peaceful rep <strong className="t-text">and</strong> violence rep
-            <strong className="t-text"> and</strong> commendations from distinct players — pure
-            builders and pure killers both cap at Citizen.
-          </p>
-        </div>
-      </section>
-
-      <GrassDivider />
-
-      {/* Roles deep-dive */}
-      <section className="max-w-4xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">The three roles</h2>
-          </CloudTitle>
-        </div>
-
-        <div className="space-y-6">
-          <RoleSection
-            title="Pacifists"
-            color="text-xp"
-            glow="glow-xp"
-            border="border-xp/40"
-            tagline="The default. Most players stay here, most of the time."
-            points={[
-              'Default state for every new player. New players also get 5 hours of newcomer protection.',
-              "Can't die in wilderness PvP — knocked out at 1 HP and looted for one stack instead.",
-              'Earns peaceful rep passively from clean playtime (~0.5/hr).',
-              'Can /donate items to the rewards pool — donations earn capped peaceful rep weekly.',
-              'Can /report crimes, /commend trustworthy players, and pay /restitution if they slip up.',
-              "Can't be promoted to Lawman without first killing an outlaw and accepting the badge.",
-            ]}
-          />
-
-          <RoleSection
-            title="Outlaws"
-            color="text-redstone"
-            glow=""
-            border="border-redstone/40"
-            tagline="A path you walk into through your actions, not a class you pick at signup."
-            points={[
-              'Outlaw rep climbs from wilderness crimes. The big ones: pacifist kill +50, spawn-region PvP +30 (any PvP within 200 blocks of spawn, no self-defense excuse), lawman kill +15. Plus knockout-theft, pet kills, villager kills, and combat-logging.',
-              'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
-              'Once over 25 outlaw rep, you appear on /wanted and any non-outlaw can hunt you for the bounty.',
-              "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
-              'Outlaw-on-outlaw kills are rep-neutral on both sides — private rivalry, not crime. No bounty payout, no /wanted update.',
-              'Three roads back: /restitution (return stolen items for peaceful rep), offline decay (~2%/week), or a Sheriff+ pardon. Pacifist-kill rep is floored at 50% — it fades, it doesn’t wipe.',
-            ]}
-          />
-
-          <RoleSection
-            title="Lawmen"
-            color="text-gold"
-            glow="glow-gold"
-            border="border-gold/40"
-            tagline="Earned, not assigned. Killing your first outlaw triggers a one-time badge prompt."
-            points={[
-              'Citizen → Deputy → Sheriff → Senior Sheriff → Marshal. The ladder requires both peaceful rep AND violence rep AND commendations from distinct players — pure builders and pure killers both cap at Citizen.',
-              "Deputy+ can adjudicate /report cases (approve, deny, reverse). False reports cost the reporter peaceful rep.",
-              'Sheriff+ can /pardon outlaws — Sheriff −25%, Senior Sheriff −50%, Marshal −100% (with a 50% floor on pacifist-kill rep).',
-              "Marshals can /bounty place — fund and place bounties on wanted outlaws from their own inventory. Items range 5–64 diamond-equivalent per bounty.",
-              'Killing a pacifist as a Lawman is +50 outlaw rep — the badge is much harder to keep than to earn.',
-              'Lawmen who go inactive 30 days enter Retired (rep frozen until they fight again).',
-            ]}
-          />
-        </div>
-      </section>
-
-      <GrassDivider />
-
-      {/* Bounties */}
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Bounties</h2>
-          </CloudTitle>
-        </div>
-        <CloudText>
-          <p className="t-text-dim leading-relaxed mb-4">
-            Bounties are how the server&apos;s economy buys justice. Every bounty is funded by a real
-            player — a Marshal — escrowing real items from their own inventory: diamonds, netherite,
-            whatever they think the grudge is worth.
-          </p>
-          <p className="t-text-dim leading-relaxed">
-            The server takes <strong className="t-text">no cut</strong>. Outlaws can&apos;t claim
-            bounties. The pool is what a Marshal paid in, and it goes to whoever brings the outlaw
-            down.
-          </p>
-        </CloudText>
-
-        <div className="mc-panel p-6 sm:p-8 mt-8">
-          <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant text-center uppercase tracking-wider">
-            How a bounty works
-          </h3>
-          <div className="space-y-3 text-sm t-text-dim">
-            {[
-              ['1', "Someone wrongs you. You /report them, or ask a Marshal directly. Anyone can /donate to grow the rewards pool that funds Marshal payouts."],
-              ['2', 'A Marshal runs /bounty place <target> and escrows items from their own inventory (5–64 diamond-equivalent).'],
-              ['3', 'The target appears on /wanted with the pool size visible. Anyone non-outlaw can hunt them.'],
-              ['4', "A non-outlaw kills the target. Anti-collusion check runs (alt-shared IPs void the payout); if clean, escrowed items go to the killer."],
-              ['5', 'If the target is pardoned or goes inactive, the bounty refunds back to the Marshal who placed it.'],
-            ].map(([n, body]) => (
-              <div key={n} className="flex gap-3 items-start">
-                <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
-                <span>{body}</span>
+              <div className="border-2 border-gold/40 rounded-md p-4">
+                <h4 className="font-pixel text-gold glow-gold text-xs mb-3">Violence rep</h4>
+                <p className="t-text-dim text-sm leading-relaxed">
+                  Killing wanted outlaws. The other half of the Lawman ladder — pure builders never
+                  get above Citizen without it.
+                </p>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <GrassDivider />
-
-      {/* Commands */}
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">Commands</h2>
-          </CloudTitle>
-        </div>
-        <div className="space-y-6">
-          {commandsByTier.map((group) => (
-            <div key={group.tier} className="mc-panel p-6 sm:p-8">
-              <h3 className="font-pixel text-enchant text-xs mb-4 glow-enchant uppercase tracking-wider">
-                {group.tier}
-              </h3>
-              <div className="space-y-3">
-                {group.items.map((c) => (
-                  <div key={c.cmd} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
-                    <code className="font-pixel text-gold text-xs glow-gold whitespace-nowrap shrink-0">{c.cmd}</code>
-                    <span className="t-text-dim text-sm">{c.desc}</span>
-                  </div>
-                ))}
+              <div className="border-2 border-redstone/40 rounded-md p-4">
+                <h4 className="font-pixel text-redstone text-xs mb-3">Outlaw rep</h4>
+                <p className="t-text-dim text-sm leading-relaxed">
+                  Pacifist kills (+50), spawn-region PvP (+30), lawman kills (+15), knockout-theft,
+                  pet and villager kills, combat-logging. Puts you on /wanted. Decays offline
+                  (~2%/week), paid down with restitution or a Sheriff+ pardon.
+                </p>
               </div>
             </div>
-          ))}
+            <div className="mt-6 pt-6 border-t" style={{ borderColor: 'var(--c-border)' }}>
+              <p className="t-text-dim text-sm leading-relaxed text-center">
+                Lawman promotion is the only place all three matter at once. The ladder gates on
+                peaceful rep <strong className="t-text">and</strong> violence rep
+                <strong className="t-text"> and</strong> commendations from distinct players — pure
+                builders and pure killers both cap at Citizen.
+              </p>
+            </div>
+          </DeepDive>
+
+          <DeepDive title="The three roles in detail">
+            <div className="space-y-4">
+              <RoleSection
+                title="Pacifists"
+                color="text-xp"
+                glow="glow-xp"
+                border="border-xp/40"
+                tagline="The default. Most players stay here, most of the time."
+                points={[
+                  'Default state for every new player. New players also get 5 hours of newcomer protection.',
+                  "Can't die in wilderness PvP — knocked out at 1 HP and looted for one stack instead.",
+                  'Earns peaceful rep passively from clean playtime (~0.5/hr).',
+                  'Can /donate items to the rewards pool — donations earn capped peaceful rep weekly.',
+                  'Can /report crimes, /commend trustworthy players, and pay /restitution if they slip up.',
+                  "Can't be promoted to Lawman without first killing an outlaw and accepting the badge.",
+                ]}
+              />
+              <RoleSection
+                title="Outlaws"
+                color="text-redstone"
+                glow=""
+                border="border-redstone/40"
+                tagline="A path you walk into through your actions, not a class you pick at signup."
+                points={[
+                  'Outlaw rep climbs from wilderness crimes. The big ones: pacifist kill +50, spawn-region PvP +30 (any PvP within 200 blocks of spawn, no self-defense excuse), lawman kill +15. Plus knockout-theft, pet kills, villager kills, and combat-logging.',
+                  'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
+                  'Once over 25 outlaw rep, you appear on /wanted and any non-outlaw can hunt you for the bounty.',
+                  "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
+                  'Outlaw-on-outlaw kills are rep-neutral on both sides — private rivalry, not crime. No bounty payout, no /wanted update.',
+                  'Three roads back: /restitution (return stolen items for peaceful rep), offline decay (~2%/week), or a Sheriff+ pardon. Pacifist-kill rep is floored at 50% — it fades, it doesn’t wipe.',
+                ]}
+              />
+              <RoleSection
+                title="Lawmen"
+                color="text-gold"
+                glow="glow-gold"
+                border="border-gold/40"
+                tagline="Earned, not assigned. Killing your first outlaw triggers a one-time badge prompt."
+                points={[
+                  'Citizen → Deputy → Sheriff → Senior Sheriff → Marshal. The ladder requires both peaceful rep AND violence rep AND commendations from distinct players — pure builders and pure killers both cap at Citizen.',
+                  "Deputy+ can adjudicate /report cases (approve, deny, reverse). False reports cost the reporter peaceful rep.",
+                  'Sheriff+ can /pardon outlaws — Sheriff −25%, Senior Sheriff −50%, Marshal −100% (with a 50% floor on pacifist-kill rep).',
+                  "Marshals can /bounty place — fund and place bounties on wanted outlaws from their own inventory. Items range 5–64 diamond-equivalent per bounty.",
+                  'Killing a pacifist as a Lawman is +50 outlaw rep — the badge is much harder to keep than to earn.',
+                  'Lawmen who go inactive 30 days enter Retired (rep frozen until they fight again).',
+                ]}
+              />
+            </div>
+          </DeepDive>
+
+          <DeepDive title="Bounties">
+            <p className="t-text-dim leading-relaxed mb-4">
+              Bounties are how the server&apos;s economy buys justice. Every bounty is funded by a real
+              player — a Marshal — escrowing real items from their own inventory: diamonds, netherite,
+              whatever they think the grudge is worth.
+            </p>
+            <p className="t-text-dim leading-relaxed mb-6">
+              The server takes <strong className="t-text">no cut</strong>. Outlaws can&apos;t claim
+              bounties. The pool is what a Marshal paid in, and it goes to whoever brings the outlaw
+              down.
+            </p>
+            <h4 className="font-pixel text-enchant text-xs mb-4 glow-enchant uppercase tracking-wider">
+              How a bounty works
+            </h4>
+            <div className="space-y-3 text-sm t-text-dim">
+              {bountySteps.map(([n, body]) => (
+                <div key={n} className="flex gap-3 items-start">
+                  <span className="font-pixel text-gold text-[10px] shrink-0 mt-1 w-4">{n}.</span>
+                  <span>{body}</span>
+                </div>
+              ))}
+            </div>
+          </DeepDive>
+
+          <DeepDive title="Commands">
+            <div className="space-y-5">
+              {commandsByTier.map((group) => (
+                <div key={group.tier}>
+                  <h4 className="font-pixel text-enchant text-xs mb-3 glow-enchant uppercase tracking-wider">
+                    {group.tier}
+                  </h4>
+                  <div className="space-y-3">
+                    {group.items.map((c) => (
+                      <div key={c.cmd} className="flex flex-col sm:flex-row sm:items-baseline gap-1 sm:gap-4">
+                        <code className="font-pixel text-gold text-xs glow-gold whitespace-nowrap shrink-0">{c.cmd}</code>
+                        <span className="t-text-dim text-sm">{c.desc}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </DeepDive>
+
+          <DeepDive title="FAQ">
+            <div className="space-y-3">
+              {faqs.map((f) => (
+                <details
+                  key={f.q}
+                  className="border-t pt-3 first:border-t-0 first:pt-0 group/q cursor-pointer"
+                  style={{ borderColor: 'var(--c-border)' }}
+                >
+                  <summary className="font-pixel text-enchant text-xs glow-enchant flex items-center justify-between gap-4 list-none">
+                    <span>{f.q}</span>
+                    <span className="text-gold text-sm transition-transform group-open/q:rotate-45 shrink-0">+</span>
+                  </summary>
+                  <p className="t-text-dim text-sm leading-relaxed mt-3">{f.a}</p>
+                </details>
+              ))}
+            </div>
+          </DeepDive>
         </div>
       </section>
 
       <GrassDivider />
 
-      {/* FAQ */}
-      <section className="max-w-3xl mx-auto px-4 py-16">
-        <div className="text-center">
-          <CloudTitle>
-            <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">FAQ</h2>
-          </CloudTitle>
-        </div>
-        <div className="space-y-3">
-          {faqs.map((f) => (
-            <details
-              key={f.q}
-              className="mc-panel p-5 group cursor-pointer"
-            >
-              <summary className="font-pixel text-enchant text-xs glow-enchant flex items-center justify-between gap-4 list-none">
-                <span>{f.q}</span>
-                <span className="text-gold text-sm transition-transform group-open:rotate-45 shrink-0">+</span>
-              </summary>
-              <p className="t-text-dim text-sm leading-relaxed mt-3">{f.a}</p>
-            </details>
-          ))}
-        </div>
-      </section>
-
-      <GrassDivider />
-
-      {/* Vote CTA */}
+      {/* Vote CTA — visible */}
       <section className="max-w-3xl mx-auto px-4 py-16 text-center">
         <CloudTitle>
           <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Should we turn it on?</h2>
@@ -498,6 +453,18 @@ export default function ReputationPage() {
         </a>
       </section>
     </div>
+  );
+}
+
+function DeepDive({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <details className="mc-panel p-5 group/dive cursor-pointer">
+      <summary className="font-pixel text-gold text-sm glow-gold flex items-center justify-between gap-4 list-none">
+        <span>{title}</span>
+        <span className="text-gold text-sm transition-transform group-open/dive:rotate-45 shrink-0">+</span>
+      </summary>
+      <div className="mt-6">{children}</div>
+    </details>
   );
 }
 
