@@ -17,7 +17,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
 - Occasional shooting stars streak across the night sky in dark mode during clear weather (pixelated comet + fading tail, motion aligned to the tilt)
 - World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages
-- Launch countdown on the home page (target: Saturday May 23, 2026 at 9 PM Arizona) — ticks down to days/hours/min/sec, swaps to a "We're live" tile at zero
+- Launch countdown on the home page (target: Saturday May 23, 2026 at 5 PM Arizona) — ticks down to days/hours/min/sec, swaps to a "We're live" tile at zero
 - Live server status (online player count, polled every 30s) below the home-page IP copy, fed by the PiStatsAPI plugin via a server-side proxy — hidden until the launch timestamp passes, then auto-activates without a refresh
 - Live world-border widget on the about page (current radius, weekly playtime, total expansions), fed by the same proxy
 - Leaderboards backed by real player data (Playtime / Deaths) with mc-heads.net player avatars
