@@ -25,7 +25,7 @@ const roleCards = [
     glow: 'glow-gold',
     accent: 'border-gold/40',
     blurb:
-      'Take the deputy badge after your first outlaw kill. Climb Citizen → Marshal by stacking peaceful rep, violence rep, and unique commendations. Marshals fund bounties; deputies adjudicate reports.',
+      'Take the Citizen badge after your first outlaw kill. Climb Citizen → Marshal by stacking peaceful rep, violence rep, and unique commendations. Marshals fund bounties; deputies adjudicate reports.',
   },
 ];
 
@@ -43,7 +43,7 @@ const commandsByTier = [
       { cmd: '/rep', desc: 'Public rules summary — states, redemption paths, key commands. Auto-shown on first join.' },
       { cmd: '/whois [player]', desc: "Full reputation lookup: state, all three rep pools, tier, recent crimes." },
       { cmd: '/wanted', desc: 'Current outlaws ranked by tier with bounty pool visible.' },
-      { cmd: '/badge yes|no', desc: 'Accept or decline the deputy badge after your first outlaw kill.' },
+      { cmd: '/badge yes|no', desc: 'Accept or decline the Citizen badge after your first outlaw kill.' },
       { cmd: '/commend <player>', desc: 'Award peaceful rep. Limited charges, 7-day cooldown per recipient.' },
       { cmd: '/donate', desc: 'Open the donation chest. Items fund the rewards pool; donors earn capped peaceful rep.' },
       { cmd: '/report <player> <reason>', desc: 'File a complaint. Requires 2h playtime. 24h cooldown per target.' },
@@ -119,7 +119,7 @@ const faqs = [
   },
   {
     q: 'What happens if someone combat logs?',
-    a: 'If you disconnect within ~10 seconds of taking PvP damage, the system stages a penalty and you take rep on next login. Combat-logging on a wanted offender stacks more outlaw rep on top.',
+    a: "If you disconnect within ~10 seconds of taking PvP damage, the system flags a combat-log. Outlaw rep is awarded for the offense, and you die on next login as the penalty.",
   },
 ];
 
@@ -303,9 +303,9 @@ export default function ReputationPage() {
           <div className="mc-panel p-5 border-2 border-redstone/40">
             <h3 className="font-pixel text-redstone text-xs mb-3">Outlaw rep</h3>
             <p className="t-text-dim text-sm leading-relaxed">
-              Crimes against pacifists, knockout-theft, pet and villager kills, combat-logging.
-              Puts you on /wanted. Decays offline (~2%/week), paid down with restitution or a
-              Sheriff+ pardon.
+              Pacifist kills (+50), spawn-region PvP (+30), lawman kills (+15), knockout-theft,
+              pet and villager kills, combat-logging. Puts you on /wanted. Decays offline
+              (~2%/week), paid down with restitution or a Sheriff+ pardon.
             </p>
           </div>
         </div>
@@ -354,7 +354,7 @@ export default function ReputationPage() {
             border="border-redstone/40"
             tagline="A path you walk into through your actions, not a class you pick at signup."
             points={[
-              'Outlaw rep climbs from unprovoked PvP kills, knockout-theft, killing tamed pets, killing villagers, and combat-logging.',
+              'Outlaw rep climbs from wilderness crimes. The big ones: pacifist kill +50, spawn-region PvP +30 (any PvP within 200 blocks of spawn, no self-defense excuse), lawman kill +15. Plus knockout-theft, pet kills, villager kills, and combat-logging.',
               'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
               'Once over 25 outlaw rep, you appear on /wanted and any non-outlaw can hunt you for the bounty.',
               "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
