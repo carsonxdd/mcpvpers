@@ -271,6 +271,57 @@ export default function ReputationPage() {
 
       <GrassDivider />
 
+      {/* How rep works — three pools */}
+      <section className="max-w-4xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <CloudTitle>
+            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">How rep works</h2>
+          </CloudTitle>
+        </div>
+        <CloudText>
+          <p className="t-text-dim leading-relaxed text-center">
+            Every player carries three rep pools at the same time. Different actions feed
+            different pools, and your role is mostly a read-out of which one is winning.
+          </p>
+        </CloudText>
+
+        <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-5">
+          <div className="mc-panel p-5 border-2 border-xp/40">
+            <h3 className="font-pixel text-xp glow-xp text-xs mb-3">Peaceful rep</h3>
+            <p className="t-text-dim text-sm leading-relaxed">
+              Clean playtime (~0.5/hr passive), donations, commending, restitution. Decays slowly.
+              Required for the Lawman ladder.
+            </p>
+          </div>
+          <div className="mc-panel p-5 border-2 border-gold/40">
+            <h3 className="font-pixel text-gold glow-gold text-xs mb-3">Violence rep</h3>
+            <p className="t-text-dim text-sm leading-relaxed">
+              Killing wanted outlaws. The other half of the Lawman ladder — pure builders never
+              get above Citizen without it.
+            </p>
+          </div>
+          <div className="mc-panel p-5 border-2 border-redstone/40">
+            <h3 className="font-pixel text-redstone text-xs mb-3">Outlaw rep</h3>
+            <p className="t-text-dim text-sm leading-relaxed">
+              Crimes against pacifists, knockout-theft, pet and villager kills, combat-logging.
+              Puts you on /wanted. Decays offline (~2%/week), paid down with restitution or a
+              Sheriff+ pardon.
+            </p>
+          </div>
+        </div>
+
+        <div className="mc-panel p-5 mt-6">
+          <p className="t-text-dim text-sm leading-relaxed text-center">
+            Lawman promotion is the only place all three matter at once. The ladder gates on
+            peaceful rep <strong className="t-text">and</strong> violence rep
+            <strong className="t-text"> and</strong> commendations from distinct players — pure
+            builders and pure killers both cap at Citizen.
+          </p>
+        </div>
+      </section>
+
+      <GrassDivider />
+
       {/* Roles deep-dive */}
       <section className="max-w-4xl mx-auto px-4 py-16">
         <div className="text-center">
