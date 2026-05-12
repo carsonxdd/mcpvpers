@@ -9,11 +9,11 @@ import { useTheme } from './ThemeProvider';
 
 const navLinks = [
   { href: '/', label: 'Home' },
-  { href: '/about', label: 'About & Rules' },
+  { href: '/about', label: 'About' },
   { href: '/reputation', label: 'Reputation' },
   { href: '/modpacks', label: 'Modpacks' },
   { href: '/bedrock', label: 'Bedrock' },
-  { href: '/version-catchup', label: 'Version Catch-Up' },
+  { href: '/version-catchup', label: 'Versions' },
   { href: '/map', label: 'BlueMap' },
   { href: '/leaderboards', label: 'Leaderboards' },
   { href: '/gallery', label: 'Gallery' },
