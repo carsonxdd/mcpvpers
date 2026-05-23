@@ -5,21 +5,24 @@ import CloudText from '@/components/CloudText';
 import LiveServerStatus from '@/components/LiveServerStatus';
 import LaunchCountdown from '@/components/LaunchCountdown';
 
-const features = [
+type Feature = { title: string; description: string; href?: string };
+
+const features: Feature[] = [
   {
     title: 'Your land, your rules',
     description:
-      'Claims give you full permission control. Decide who builds, who opens chests, and whether anyone can swing a sword inside your border.',
+      'Lands claims give you full permission control. Decide who builds, who opens chests, and whether anyone can swing a sword inside your border.',
   },
   {
     title: 'Outside is outside',
     description:
-      'No rules in the wilderness. PvP is on, your stuff is yours to defend, and the world is honest about that.',
+      'No safety in the wilderness. PvP is on, your stuff is yours to defend, and the world is honest about that.',
   },
   {
-    title: 'Nations & war',
+    title: 'Frontier reputation',
     description:
-      "Form a nation with the people you trust. Declare war if the other side accepts. Make peace when you've had enough.",
+      "Pacifists get knocked out instead of killed. Outlaws end up on wanted posters with bounties on their heads. Lawmen earn the badge by taking outlaws down.",
+    href: '/reputation',
   },
 ];
 
@@ -41,12 +44,12 @@ export default function Home() {
         <LaunchCountdown />
 
         <p className="t-text-dim text-sm mb-6 text-center">
-          Help shape the server before launch —{' '}
+          Polls closed.{' '}
           <a
             href="/polls"
             className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
           >
-            vote on the polls &rarr;
+            See what the community voted in &rarr;
           </a>
         </p>
 
@@ -67,7 +70,7 @@ export default function Home() {
             </div>
             <div>
               <span className="t-text-muted text-xs">Features</span>
-              <p className="t-text font-pixel text-sm">Claims, Nations, War</p>
+              <p className="t-text font-pixel text-sm">Reputation, mcMMO, Lands</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Platform</span>
@@ -82,12 +85,24 @@ export default function Home() {
       {/* Feature Cards */}
       <section className="max-w-5xl mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-          {features.map((feature) => (
-            <div key={feature.title} className="mc-panel p-6 gradient-border">
-              <h3 className="font-pixel text-gold text-xs mb-2">{feature.title}</h3>
-              <p className="t-text-dim text-sm">{feature.description}</p>
-            </div>
-          ))}
+          {features.map((feature) =>
+            feature.href ? (
+              <a
+                key={feature.title}
+                href={feature.href}
+                className="mc-panel p-6 gradient-border hover-surface block transition-all"
+              >
+                <h3 className="font-pixel text-gold text-xs mb-2">{feature.title}</h3>
+                <p className="t-text-dim text-sm">{feature.description}</p>
+                <p className="text-enchant text-xs mt-3 font-pixel">Read the rules &rarr;</p>
+              </a>
+            ) : (
+              <div key={feature.title} className="mc-panel p-6 gradient-border">
+                <h3 className="font-pixel text-gold text-xs mb-2">{feature.title}</h3>
+                <p className="t-text-dim text-sm">{feature.description}</p>
+              </div>
+            )
+          )}
         </div>
       </section>
 
@@ -100,19 +115,20 @@ export default function Home() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
-            mc.pvpers.us is a vanilla+ Minecraft server with claims, nations, and PvP turned on.
-            No pay-to-win, no required mods, no curated experience. Just a world and the people in it.
+            mc.pvpers.us is a Wild West-themed hard survival server. Lands claims, a cowboy
+            reputation system, mcMMO, and a slow-growing world border. No pay-to-win, no required
+            mods, no curated experience.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
             Inside your claim, you set the rules. Lock down your base, invite the people you trust,
-            and decide what they can and can&apos;t do. Outside the claim border, the world is what
-            you and everyone else make of it. Travel light, travel armed, or travel with friends.
+            and decide what they can and can&apos;t do. Outside the claim border, the wilderness is
+            the frontier. PvP on, mob griefing on, reputation rep awards firing every kill.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Nations can form. Wars can be declared, but only if both sides agree. KOTH events and
-            game nights happen sometimes when the group&apos;s around. The rest is up to you.{' '}
-            <a href="/about#world-border" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
-              Learn how the world grows &rarr;
+            Pacifists get knocked out instead of killed. Outlaws land on /wanted with bounties.
+            Lawmen earn the badge. The community votes on every system change.{' '}
+            <a href="/about#whats-live" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+              See what&apos;s live at launch &rarr;
             </a>
           </p>
         </CloudText>

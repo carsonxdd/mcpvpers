@@ -1,6 +1,7 @@
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
+import Expander from '@/components/Expander';
 
 const roleCards = [
   {
@@ -155,16 +156,14 @@ export default function ReputationPage() {
             wilderness build a story the server actually remembers.
           </p>
           <p className="t-text-dim leading-relaxed">
-            The system is <strong className="t-text">built and tested</strong> — what&apos;s up for
-            a vote is whether we turn it on at launch. There&apos;s a poll on{' '}
+            <strong className="t-text">Live as of launch.</strong> Voted in by the community on{' '}
             <a
               href="/polls#reputation"
               className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
             >
               the polls page
-            </a>{' '}
-            asking exactly that. Skim the basics below, open any topic for the full mechanics,
-            then go vote.
+            </a>
+            . Skim the basics below, open any topic for the full mechanics, then go play.
           </p>
         </CloudText>
 
@@ -262,7 +261,7 @@ export default function ReputationPage() {
         </div>
 
         <div className="space-y-3">
-          <DeepDive title="Pacifist knockout">
+          <Expander title="Pacifist knockout">
             <p className="t-text-dim leading-relaxed mb-6">
               Pacifists are protected by social cost, not invincibility. In the wilderness, the first
               killing blow is cancelled — the pacifist drops to 1 HP, gets Slowness V / Mining Fatigue
@@ -277,9 +276,9 @@ export default function ReputationPage() {
                 </div>
               ))}
             </div>
-          </DeepDive>
+          </Expander>
 
-          <DeepDive title="How rep works">
+          <Expander title="How rep works">
             <p className="t-text-dim leading-relaxed mb-6">
               Every player carries three rep pools at the same time. Different actions feed
               different pools, and your role is mostly a read-out of which one is winning.
@@ -316,9 +315,9 @@ export default function ReputationPage() {
                 builders and pure killers both cap at Citizen.
               </p>
             </div>
-          </DeepDive>
+          </Expander>
 
-          <DeepDive title="The three roles in detail">
+          <Expander title="The three roles in detail">
             <div className="space-y-4">
               <RoleSection
                 title="Pacifists"
@@ -366,9 +365,9 @@ export default function ReputationPage() {
                 ]}
               />
             </div>
-          </DeepDive>
+          </Expander>
 
-          <DeepDive title="Bounties">
+          <Expander title="Bounties">
             <p className="t-text-dim leading-relaxed mb-4">
               Bounties are how the server&apos;s economy buys justice. Every bounty is funded by a real
               player — a Marshal — escrowing real items from their own inventory: diamonds, netherite,
@@ -390,9 +389,9 @@ export default function ReputationPage() {
                 </div>
               ))}
             </div>
-          </DeepDive>
+          </Expander>
 
-          <DeepDive title="Commands">
+          <Expander title="Commands">
             <div className="space-y-5">
               {commandsByTier.map((group) => (
                 <div key={group.tier}>
@@ -410,61 +409,41 @@ export default function ReputationPage() {
                 </div>
               ))}
             </div>
-          </DeepDive>
+          </Expander>
 
-          <DeepDive title="FAQ">
-            <div className="space-y-3">
+          <Expander title="FAQ">
+            <div>
               {faqs.map((f) => (
-                <details
-                  key={f.q}
-                  className="border-t pt-3 first:border-t-0 first:pt-0 group/q cursor-pointer"
-                  style={{ borderColor: 'var(--c-border)' }}
-                >
-                  <summary className="font-pixel text-enchant text-xs glow-enchant flex items-center justify-between gap-4 list-none">
-                    <span>{f.q}</span>
-                    <span className="text-gold text-sm transition-transform group-open/q:rotate-45 shrink-0">+</span>
-                  </summary>
-                  <p className="t-text-dim text-sm leading-relaxed mt-3">{f.a}</p>
-                </details>
+                <Expander key={f.q} title={f.q} variant="faq">
+                  {f.a}
+                </Expander>
               ))}
             </div>
-          </DeepDive>
+          </Expander>
         </div>
       </section>
 
       <GrassDivider />
 
-      {/* Vote CTA — visible */}
+      {/* Live confirmation + result link — visible */}
       <section className="max-w-3xl mx-auto px-4 py-16 text-center">
         <CloudTitle>
-          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Should we turn it on?</h2>
+          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">It&apos;s on.</h2>
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-6">
-            The plugin is built and tested on the dev server. The vote decides whether it ships
-            live at launch or stays in the drawer.
+            The reputation system is live at launch. The community voted it in on the polls page.
+            Wanted posters, bounties, pacifist knockout, the whole frontier.
           </p>
         </CloudText>
         <a
           href="/polls#reputation"
           className="inline-block mc-panel px-6 py-3 font-pixel text-gold text-xs glow-gold hover-surface"
         >
-          Vote on the cowboy poll &rarr;
+          See the poll result &rarr;
         </a>
       </section>
     </div>
-  );
-}
-
-function DeepDive({ title, children }: { title: string; children: React.ReactNode }) {
-  return (
-    <details className="mc-panel p-5 group/dive cursor-pointer">
-      <summary className="font-pixel text-gold text-sm glow-gold flex items-center justify-between gap-4 list-none">
-        <span>{title}</span>
-        <span className="text-gold text-sm transition-transform group-open/dive:rotate-45 shrink-0">+</span>
-      </summary>
-      <div className="mt-6">{children}</div>
-    </details>
   );
 }
 

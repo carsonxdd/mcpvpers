@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import CloudTitle from '@/components/CloudTitle';
+import repData from '@/data/reputation-leaderboards.json';
 
 type StatKey =
   | 'playtime'
@@ -11,11 +12,17 @@ type StatKey =
   | 'ores_mined'
   | 'distance'
   | 'advancements'
-  | 'xp_levels';
+  | 'xp_levels'
+  | 'peaceful_rep'
+  | 'violence_rep'
+  | 'lawmen';
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
 
-const categories: { label: string; key: StatKey }[] = [
+const repKeys: StatKey[] = ['peaceful_rep', 'violence_rep', 'lawmen'];
+const isRepKey = (k: StatKey) => repKeys.includes(k);
+
+const categories: { label: string; key: StatKey; group?: 'rep' }[] = [
   { label: 'Playtime', key: 'playtime' },
   { label: 'Deaths', key: 'deaths' },
   { label: 'Mob Kills', key: 'mob_kills' },
@@ -24,6 +31,9 @@ const categories: { label: string; key: StatKey }[] = [
   { label: 'Distance Walked', key: 'distance' },
   { label: 'Advancements', key: 'advancements' },
   { label: 'XP Levels', key: 'xp_levels' },
+  { label: 'Peaceful Rep', key: 'peaceful_rep', group: 'rep' },
+  { label: 'Violence Rep', key: 'violence_rep', group: 'rep' },
+  { label: 'Lawmen', key: 'lawmen', group: 'rep' },
 ];
 
 const playtimeWindows: { label: string; key: PlaytimeWindow }[] = [
@@ -41,19 +51,32 @@ const headerByKey: Record<StatKey, string> = {
   distance: 'Distance',
   advancements: 'Advancements',
   xp_levels: 'Levels',
+  peaceful_rep: 'Peaceful',
+  violence_rep: 'Violence',
+  lawmen: 'Tier',
 };
 
 type LeaderboardEntry = {
   rank: number;
-  uuid: string;
+  uuid: string | null;
   name: string;
   value: number;
+  tier?: string;
+  commendations?: number;
 };
 
 type LeaderboardResponse = {
   stat: string;
   window?: string;
   players: LeaderboardEntry[];
+};
+
+type RepRow = { rank: number; uuid: string | null; name: string; value?: number; tier?: string; commendations?: number };
+const repPreview = (repData as { preview?: boolean }).preview === true;
+const repRows: Record<'peaceful_rep' | 'violence_rep' | 'lawmen', LeaderboardEntry[]> = {
+  peaceful_rep: (repData.peaceful as RepRow[]).map((r) => ({ ...r, value: r.value ?? 0 })),
+  violence_rep: (repData.violence as RepRow[]).map((r) => ({ ...r, value: r.value ?? 0 })),
+  lawmen: (repData.lawmen as RepRow[]).map((r) => ({ ...r, value: r.commendations ?? 0, tier: r.tier, commendations: r.commendations })),
 };
 
 const medalStyles = ['text-gold glow-gold', 't-text-dim', 't-text-dim'];
@@ -76,22 +99,24 @@ function formatDistance(cm: number): string {
   return `${m.toLocaleString()} m`;
 }
 
-function formatValue(stat: StatKey, value: number): string {
-  if (stat === 'playtime') return formatPlaytime(value);
-  if (stat === 'distance') return formatDistance(value);
-  return value.toLocaleString();
+function formatValue(stat: StatKey, entry: LeaderboardEntry): string {
+  if (stat === 'playtime') return formatPlaytime(entry.value);
+  if (stat === 'distance') return formatDistance(entry.value);
+  if (stat === 'lawmen') return entry.tier ?? '—';
+  return entry.value.toLocaleString();
 }
 
 export default function LeaderboardsPage() {
   const [activeKey, setActiveKey] = useState<StatKey>('playtime');
   const [playtimeWindow, setPlaytimeWindow] = useState<PlaytimeWindow>('all');
-  const [data, setData] = useState<LeaderboardEntry[]>([]);
+  const [fetchedData, setFetchedData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    let cancelled = false;
+    if (isRepKey(activeKey)) return;
 
+    let cancelled = false;
     const params = new URLSearchParams({ stat: activeKey, limit: '10' });
     if (activeKey === 'playtime') params.set('window', playtimeWindow);
 
@@ -102,7 +127,7 @@ export default function LeaderboardsPage() {
       })
       .then((json) => {
         if (cancelled) return;
-        setData(json.players ?? []);
+        setFetchedData(json.players ?? []);
       })
       .catch((e) => {
         if (cancelled) return;
@@ -116,6 +141,13 @@ export default function LeaderboardsPage() {
       cancelled = true;
     };
   }, [activeKey, playtimeWindow]);
+
+  const isRep = isRepKey(activeKey);
+  const data: LeaderboardEntry[] = isRep
+    ? repRows[activeKey as 'peaceful_rep' | 'violence_rep' | 'lawmen']
+    : fetchedData;
+  const displayLoading = isRep ? false : loading;
+  const displayError = isRep ? null : error;
 
   const selectCategory = (key: StatKey) => {
     if (key === activeKey) return;
@@ -157,6 +189,15 @@ export default function LeaderboardsPage() {
         )}
         {activeKey !== 'playtime' && <div className="mb-8" />}
 
+        {isRepKey(activeKey) && repPreview && (
+          <div className="mb-4 text-center">
+            <span className="font-pixel text-[9px] text-redstone uppercase tracking-widest mr-2">SAMPLE</span>
+            <span className="t-text-muted text-xs">
+              Illustrative data. Live counts populate after the plugin endpoint wires in post-launch.
+            </span>
+          </div>
+        )}
+
         <div className="mc-panel overflow-hidden max-md:overflow-x-auto">
           <div className="max-md:min-w-[320px]">
             <div className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-50 border-b max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3">
@@ -165,19 +206,19 @@ export default function LeaderboardsPage() {
               <span className="font-pixel t-text-muted text-[10px] text-right">{headerByKey[activeKey]}</span>
             </div>
 
-            {loading && (
+            {displayLoading && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">Loading…</div>
             )}
-            {!loading && error && (
+            {!displayLoading && displayError && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">
                 Couldn&apos;t load leaderboard. Try again later.
               </div>
             )}
-            {!loading && !error && data.length === 0 && (
+            {!displayLoading && !displayError && data.length === 0 && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">No players yet.</div>
             )}
-            {!loading && !error && data.map((player, i) => (
-              <div key={player.uuid}
+            {!displayLoading && !displayError && data.map((player, i) => (
+              <div key={player.uuid ?? player.name}
                 className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-20 border-b transition-colors hover-surface max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3"
                 style={i < 3 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}
               >
@@ -187,7 +228,7 @@ export default function LeaderboardsPage() {
                 <div className="flex items-center gap-2.5 min-w-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={`https://mc-heads.net/avatar/${player.uuid}/24`}
+                    src={`https://mc-heads.net/avatar/${player.uuid ?? player.name}/24`}
                     alt=""
                     width={24}
                     height={24}
@@ -199,7 +240,10 @@ export default function LeaderboardsPage() {
                   </span>
                 </div>
                 <span className={`text-sm text-right whitespace-nowrap ${i === 0 ? 'text-gold font-pixel text-xs' : 't-text-muted'}`}>
-                  {formatValue(activeKey, player.value)}
+                  {formatValue(activeKey, player)}
+                  {activeKey === 'lawmen' && player.commendations != null && (
+                    <span className="t-text-muted text-xs ml-2">· {player.commendations} commendations</span>
+                  )}
                 </span>
               </div>
             ))}

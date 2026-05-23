@@ -1,0 +1,113 @@
+{
+  "lastUpdated": "2026-05-22",
+  "decisions": [
+    {
+      "pollId": "reputation",
+      "title": "Cowboy reputation",
+      "status": "live",
+      "summary": "The reputation plugin is on at launch. Wanted posters, bounties, pacifist knockout. The works."
+    },
+    {
+      "pollId": "mcmmo",
+      "title": "mcMMO",
+      "status": "live",
+      "summary": "Full mcMMO is on at launch. Every skill, no lite version. Specific rates may get tuned post-launch."
+    },
+    {
+      "pollId": "graves",
+      "title": "Graves",
+      "status": "live",
+      "summary": "Death drops your inventory into a grave at the spot. Graves despawn the moment you empty them."
+    },
+    {
+      "pollId": "keep-inventory",
+      "title": "Keep inventory",
+      "status": "live",
+      "summary": "Off. Vanilla rules. Graves catch your stuff so dying isn't a wipe."
+    },
+    {
+      "pollId": "pvp",
+      "title": "PvP",
+      "status": "live",
+      "summary": "On in the wilderness. Lands claims are the safe zones. Your home is your home."
+    },
+    {
+      "pollId": "mob-griefing",
+      "title": "Mob griefing",
+      "status": "live",
+      "summary": "Vanilla in the wilderness (creepers blow stuff up). Off inside Lands claims by default."
+    },
+    {
+      "pollId": "sleep",
+      "title": "Sleep to skip night",
+      "status": "live",
+      "summary": "50% of online players in bed skips the night."
+    },
+    {
+      "pollId": "phantoms",
+      "title": "Phantoms",
+      "status": "live",
+      "summary": "Reduced spawn rate. They still show up, just not nightly."
+    },
+    {
+      "pollId": "player-heads",
+      "title": "Player heads",
+      "status": "live",
+      "summary": "Drop from PvP kills only. Mob and environment deaths don't drop heads."
+    },
+    {
+      "pollId": "border-pace",
+      "title": "World border pace",
+      "status": "live",
+      "summary": "Slower expansion. Playtime thresholds scale with the active-player count so growth has to be earned."
+    },
+    {
+      "pollId": "difficulty",
+      "title": "Server difficulty",
+      "status": "live",
+      "summary": "Hard. Hunger drains, zombies break doors, you know the drill."
+    },
+    {
+      "pollId": "nether-gate",
+      "title": "Nether unlock",
+      "status": "live",
+      "summary": "Open day one. Closest vote of the bunch (7 to 6), so it stays a community call."
+    },
+    {
+      "pollId": "playtime-gating",
+      "title": "Playtime gating",
+      "status": "live",
+      "summary": "Soft gates only. Border pace already pulls most of the weight here."
+    },
+    {
+      "pollId": "event-theme",
+      "title": "First event theme",
+      "status": "later",
+      "summary": "Community boss raid won. Format is still being built. First one likely in the opening weeks."
+    },
+    {
+      "pollId": "event-frequency",
+      "title": "Event cadence",
+      "status": "later",
+      "summary": "Weekly was the vote. Realistically targeting every two weeks until the cadence proves itself."
+    },
+    {
+      "pollId": "quests",
+      "title": "Quests plugin",
+      "status": "later",
+      "summary": "Yes won, but not day one. Looking for the right plugin and format first."
+    },
+    {
+      "pollId": "jobs",
+      "title": "Jobs plugin",
+      "status": "later",
+      "summary": "Coming after the economy is in. Not day one."
+    },
+    {
+      "pollId": "end-gate",
+      "title": "End unlock",
+      "status": "tbd",
+      "summary": "End stays locked at launch regardless of the vote. A focused poll on opening conditions is coming once people settle in."
+    }
+  ]
+}

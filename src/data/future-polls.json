@@ -1,0 +1,43 @@
+{
+  "_note": "Polls planned for after launch (post-2026-05-23). Not loaded by /polls or any API route — purely a record of upcoming votes so they're not forgotten. Move an entry into src/data/polls.json (and update POLLS_CLOSE_AT) when re-opening voting.",
+  "polls": [
+    {
+      "id": "lands-map-overlay",
+      "category": "Server",
+      "question": "Show Lands claim outlines on the BlueMap?",
+      "context": "Currently disabled at launch — claims aren't fed to BlueMap. Pros: visible territory, easier to find friends/towns. Cons: makes outlaws' homes findable, undermines the 'hidden bunker' play style. Legend block on /map is commented out pending this vote.",
+      "options": [
+        { "id": "yes", "label": "Yes — show every claim" },
+        { "id": "nations-only", "label": "Only show federated nations, not solo claims" },
+        { "id": "opt-in", "label": "Opt-in per claim (owners decide visibility)" },
+        { "id": "no", "label": "No — keep claims off the public map" }
+      ]
+    },
+    {
+      "id": "end-unlock",
+      "category": "Progression",
+      "question": "When should the End unlock?",
+      "context": "Locked at launch regardless of the pre-launch vote. Re-vote with grounded context once the meta settles.",
+      "options": [
+        { "id": "found", "label": "Whenever someone finds a stronghold" },
+        { "id": "playtime", "label": "After a community playtime milestone" },
+        { "id": "border", "label": "After a specific border tier" },
+        { "id": "event", "label": "Coordinated opening event" }
+      ]
+    },
+    {
+      "id": "quests-plugin",
+      "category": "Plugins",
+      "question": "Which quests plugin should we use?",
+      "context": "Quests won 'yes' pre-launch but didn't ship day one. Run this once we've shortlisted candidates.",
+      "options": []
+    },
+    {
+      "id": "jobs-plugin",
+      "category": "Plugins",
+      "question": "Which jobs plugin should we use?",
+      "context": "Jobs won 'later-after-economy' pre-launch. Run once the economy direction is decided.",
+      "options": []
+    }
+  ]
+}

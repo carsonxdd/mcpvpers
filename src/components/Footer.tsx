@@ -18,8 +18,12 @@ export default function Footer() {
             <h3 className="font-pixel t-text-dim text-xs mb-3">Links</h3>
             <div className="flex flex-col gap-2">
               <Link href="/about" className="t-text-muted text-sm hover:text-xp transition-colors">About & Rules</Link>
-              <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">Modpacks</Link>
+              <Link href="/reputation" className="t-text-muted text-sm hover:text-xp transition-colors">Reputation</Link>
+              <Link href="/mcmmo" className="t-text-muted text-sm hover:text-xp transition-colors">mcMMO</Link>
+              <Link href="/polls" className="t-text-muted text-sm hover:text-xp transition-colors">Polls</Link>
               <Link href="/leaderboards" className="t-text-muted text-sm hover:text-xp transition-colors">Leaderboards</Link>
+              <Link href="/wanted" className="t-text-muted text-sm hover:text-xp transition-colors">Wanted</Link>
+              <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">Modpacks</Link>
               <Link href="/map" className="t-text-muted text-sm hover:text-xp transition-colors">BlueMap</Link>
             </div>
           </div>

@@ -72,6 +72,9 @@ body {
 .cloud-fade rect {
   transition: fill 1.5s ease-in-out, fill-opacity 1.5s ease-in-out;
 }
+.cloud-fade stop {
+  transition: stop-color 1.5s ease-in-out;
+}
 
 /* ── Weather desaturation filters ── */
 .weather-clear {
@@ -308,4 +311,83 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 
 .animate-page-in {
   animation: page-in 0.3s ease-out;
+}
+
+/* Wanted poster — oak item-frame wrapping a parchment page.
+   Theme-agnostic on purpose: posters look the same in light and dark mode. */
+.wanted-frame {
+  background: linear-gradient(135deg, #c8a070 0%, #a37844 40%, #c8a070 100%);
+  padding: 8px;
+  border-radius: 4px;
+  box-shadow:
+    inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+    inset 2px 2px 0 rgba(255, 230, 180, 0.35),
+    0 6px 16px rgba(0, 0, 0, 0.45);
+  transition: transform 0.25s ease-out, box-shadow 0.25s ease-out;
+  will-change: transform;
+}
+
+.wanted-frame:hover {
+  transform: rotate(0deg) translateY(-4px) !important;
+  box-shadow:
+    inset -2px -2px 0 rgba(0, 0, 0, 0.35),
+    inset 2px 2px 0 rgba(255, 230, 180, 0.35),
+    0 12px 24px rgba(0, 0, 0, 0.55);
+}
+
+.wanted-paper {
+  position: relative;
+  background:
+    radial-gradient(circle at 15% 25%, rgba(120, 70, 30, 0.10) 0%, transparent 45%),
+    radial-gradient(circle at 80% 15%, rgba(90, 50, 20, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 60% 90%, rgba(120, 70, 30, 0.10) 0%, transparent 45%),
+    linear-gradient(135deg, #f1dba3 0%, #e3c587 50%, #d4b06a 100%);
+  padding: 18px 16px 14px;
+  box-shadow:
+    inset 0 0 20px rgba(100, 60, 20, 0.18),
+    inset 0 0 2px rgba(60, 30, 10, 0.4);
+}
+
+/* Aged edge — darker corners on the parchment */
+.wanted-paper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(80, 45, 15, 0.18) 0%, transparent 12%),
+    linear-gradient(225deg, rgba(80, 45, 15, 0.18) 0%, transparent 12%),
+    linear-gradient(45deg, rgba(80, 45, 15, 0.18) 0%, transparent 12%),
+    linear-gradient(315deg, rgba(80, 45, 15, 0.18) 0%, transparent 12%);
+}
+
+/* Tier color tokens — independent of theme. */
+.tier-drifter   { color: #8a8a8a; }
+.tier-bandit    { color: #b6883a; }
+.tier-outlaw    { color: #c9651f; }
+.tier-notorious { color: #b73a25; }
+.tier-legend    { color: #7a1b14; }
+
+.tier-legend-glow {
+  text-shadow: 0 0 6px rgba(255, 60, 30, 0.45), 0 0 14px rgba(180, 0, 0, 0.25);
+}
+
+.wanted-divider {
+  border-top: 1px dashed rgba(80, 45, 15, 0.45);
+}
+
+/* Crisp pixel head inside the parchment */
+.wanted-head {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  border: 2px solid rgba(60, 30, 10, 0.65);
+  box-shadow:
+    0 0 0 1px rgba(241, 219, 163, 0.6),
+    0 2px 6px rgba(0, 0, 0, 0.35);
+  background: rgba(60, 30, 10, 0.15);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wanted-frame { transition: none; }
+  .wanted-frame:hover { transform: none !important; }
 }

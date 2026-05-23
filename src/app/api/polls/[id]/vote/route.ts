@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import pollsData from '@/data/polls.json';
 import { vote, PollLimitError } from '@/lib/polls-store';
+import { arePollsClosed } from '@/lib/polls';
 import { getClientIp, hashIp } from '@/lib/client-ip';
 import { checkRateLimit } from '@/lib/rate-limit';
 
@@ -19,6 +20,13 @@ export async function POST(
   const poll = pollsData.polls.find((p) => p.id === id);
   if (!poll) {
     return NextResponse.json({ error: 'Poll not found' }, { status: 404 });
+  }
+
+  if (arePollsClosed()) {
+    return NextResponse.json(
+      { error: 'Polls are closed.', reason: 'polls-closed' },
+      { status: 403 }
+    );
   }
 
   const body = (await req.json()) as { optionId?: string };

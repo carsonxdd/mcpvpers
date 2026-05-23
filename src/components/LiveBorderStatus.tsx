@@ -15,6 +15,7 @@ type BorderStatus = {
   max_radius: number;
   diameter: number;
   weekly_playtime_seconds: number;
+  active_players: number;
   total_expansions: number;
   last_expansion: string;
 };
@@ -48,7 +49,7 @@ export default function LiveBorderStatus() {
   return (
     <div className="mc-panel p-5 mt-8">
       <p className="font-pixel t-text-dim text-[10px] mb-4 uppercase tracking-widest text-center">Right Now</p>
-      <div className="grid grid-cols-3 gap-4 max-md:grid-cols-1 max-md:gap-3 text-center">
+      <div className="grid grid-cols-4 max-md:grid-cols-2 gap-4 max-md:gap-3 text-center">
         <div>
           <p className="t-text-muted text-xs mb-1">Current Border</p>
           <p className="text-xp font-pixel text-sm glow-xp">±{status.current_radius.toLocaleString()}</p>
@@ -56,6 +57,10 @@ export default function LiveBorderStatus() {
         <div>
           <p className="t-text-muted text-xs mb-1">This Week</p>
           <p className="text-xp font-pixel text-sm glow-xp">{weeklyPlayed} played</p>
+        </div>
+        <div>
+          <p className="t-text-muted text-xs mb-1">Active Players</p>
+          <p className="text-xp font-pixel text-sm glow-xp">{status.active_players ?? 0}</p>
         </div>
         <div>
           <p className="t-text-muted text-xs mb-1">Expansions</p>

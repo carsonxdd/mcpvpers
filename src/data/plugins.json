@@ -1,8 +1,58 @@
 [
   {
     "name": "Lands",
-    "description": "Claim land, team up with neighbors, form nations. Wars are opt-in, both sides have to accept.",
+    "description": "Claim chunks, trust friends, federate into nations. Wars are off until the reputation integration ships.",
     "icon": "shield"
+  },
+  {
+    "name": "Reputation",
+    "description": "In-house. Cowboy reputation system. Pacifist knockout, wanted outlaws, lawman badge, real-item bounties.",
+    "icon": "star"
+  },
+  {
+    "name": "mcMMO",
+    "description": "15 skills with passive bonuses and active abilities. Full version, no lite mode.",
+    "icon": "trending-up"
+  },
+  {
+    "name": "Graves",
+    "description": "In-house. Dying drops your inventory into a grave. Despawns the moment you empty it.",
+    "icon": "package"
+  },
+  {
+    "name": "Heads",
+    "description": "In-house. Player heads drop from PvP kills only. Trophies for actual fights.",
+    "icon": "user"
+  },
+  {
+    "name": "Border",
+    "description": "In-house. World border grows weekly from combined playtime, scaled to active-player count.",
+    "icon": "globe"
+  },
+  {
+    "name": "Tab",
+    "description": "In-house. Custom tab list with session/all-time playtime, deaths, ping, and server TPS (ticks per second; 20 is smooth). Feeds the playtime data the border expansion reads.",
+    "icon": "list"
+  },
+  {
+    "name": "Stats API",
+    "description": "In-house. Local HTTP server feeding the website's live leaderboards, border status, and wanted list.",
+    "icon": "activity"
+  },
+  {
+    "name": "Mail",
+    "description": "In-house. Send messages or items to offline players. Both arrive on their next login.",
+    "icon": "mail"
+  },
+  {
+    "name": "Trade",
+    "description": "In-house. Two-window trade GUI between players. Both sides confirm before items swap.",
+    "icon": "arrow-left-right"
+  },
+  {
+    "name": "Announcements",
+    "description": "In-house. Rotating chat tips and announcements on a timer.",
+    "icon": "megaphone"
   },
   {
     "name": "CoreProtect",
@@ -10,23 +60,23 @@
     "icon": "search"
   },
   {
+    "name": "LuckPerms",
+    "description": "Group-based permissions for staff and rep tiers.",
+    "icon": "key"
+  },
+  {
     "name": "EssentialsX",
     "description": "Core server commands: /home, /tpa, /spawn, /msg, and more.",
     "icon": "terminal"
   },
   {
-    "name": "Dynmap/BlueMap",
-    "description": "Live web-based world map with real-time player positions.",
+    "name": "BlueMap",
+    "description": "Live web-based world map at map.pvpers.us with real-time player positions and claim outlines.",
     "icon": "map"
   },
   {
     "name": "DiscordSRV",
     "description": "Two-way chat bridge between Discord and the Minecraft server.",
     "icon": "message-circle"
-  },
-  {
-    "name": "Playtime Tracker",
-    "description": "Tracks player playtime and powers the world border expansion system.",
-    "icon": "clock"
   }
 ]
