@@ -78,5 +78,10 @@
     "name": "DiscordSRV",
     "description": "Two-way chat bridge between Discord and the Minecraft server.",
     "icon": "message-circle"
+  },
+  {
+    "name": "Simple Voice Chat",
+    "description": "Proximity voice chat. Hear nearby players, fade out at range. Walkie-talkies and group channels supported. Client mod required (pre-installed in both modpacks).",
+    "icon": "mic"
   }
 ]

@@ -21,7 +21,7 @@ export default function AboutPage() {
           <p className="t-text-dim leading-relaxed mb-4">
             mc.pvpers.us runs on a simple idea: the fewer rules a server has, the more interesting it
             gets. We don&apos;t curate playstyles. We give you the tools (Lands claims, a cowboy-style
-            reputation system, mcMMO) and let the world fill in around them.
+            reputation system, mcMMO, proximity voice chat) and let the world fill in around them.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
             If you want to build, claim your land and build. If you want to fight, the wilderness is
@@ -156,6 +156,21 @@ export default function AboutPage() {
               Graves <strong className="t-text">despawn the moment you empty them</strong>, so the
               world doesn&apos;t fill up with abandoned markers. Move fast. Other players can see
               the marker too.
+            </p>
+          </Expander>
+
+          <Expander title="Proximity voice chat">
+            <p className="t-text-dim leading-relaxed mb-3">
+              Simple Voice Chat is set up server-side. Once you&apos;ve got the matching client mod,
+              you hear other players based on distance — close-up conversation in the same room,
+              fades out at range, gone over the horizon. Walkie-talkies and group channels are
+              supported for staying in voice with people who aren&apos;t standing next to you.
+            </p>
+            <p className="t-text-dim leading-relaxed">
+              Both of our <a href="/modpacks" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">modpacks</a>{' '}
+              ship with the client mod pre-installed. If you&apos;re running vanilla, grab Simple
+              Voice Chat from Modrinth or CurseForge — it&apos;s optional, but it&apos;s easily the
+              biggest social upgrade you can install.
             </p>
           </Expander>
 

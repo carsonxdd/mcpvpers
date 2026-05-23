@@ -83,16 +83,16 @@ export default function ModpacksPage() {
         <div className="mc-panel p-4 max-w-2xl mx-auto mb-6 text-center">
           <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Which pack is right for you?</h2>
           <p className="t-text-muted text-sm">
-            <strong className="text-xp">QoL Modpack</strong>: Full experience — shaders, Fresh Animations, controller support, connected textures, and more.
+            <strong className="text-xp">QoL Modpack</strong>: Full experience — proximity voice chat, shaders, Fresh Animations, controller support, connected textures, and more.
             <br />
-            <strong className="text-gold">FPS Boost</strong>: Just performance. For machines that need every frame they can get.
+            <strong className="text-gold">FPS Boost</strong>: Just performance, plus proximity voice chat. For machines that need every frame they can get.
           </p>
         </div>
 
         <div className="mc-panel p-4 max-w-2xl mx-auto mb-12 text-center">
           <h2 className="font-pixel t-text-dim text-[10px] mb-2 uppercase tracking-wider">Or none of the above</h2>
           <p className="t-text-muted text-sm">
-            These packs are optional. You can join with <strong className="t-text">vanilla</strong> Minecraft, disable any mods you don&apos;t want in CurseForge, or <strong className="t-text">add your own</strong> mods, resource packs, and shaders — see the guides below.
+            These packs are optional. You can join with <strong className="t-text">vanilla</strong> Minecraft, disable any mods you don&apos;t want in CurseForge, or <strong className="t-text">add your own</strong> mods, resource packs, and shaders — see the guides below. Heads up: vanilla means no proximity voice chat. Install Simple Voice Chat solo if that&apos;s the only piece you want.
           </p>
         </div>
 
