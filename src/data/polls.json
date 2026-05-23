@@ -184,6 +184,42 @@
         { "id": "soft", "label": "Soft gates only — nudges, not walls" },
         { "id": "no", "label": "No — let people rush if they want" }
       ]
+    },
+    {
+      "id": "graves-robbable",
+      "category": "Plugins",
+      "question": "Should graves be robbable?",
+      "closesAt": "2026-05-30T06:59:00Z",
+      "options": [
+        { "id": "yes", "label": "Yes — anyone can open a grave (current behavior)" },
+        { "id": "timed", "label": "Owner-only for 10 minutes, then anyone" },
+        { "id": "no", "label": "No — only the owner can open their grave" }
+      ]
+    },
+    {
+      "id": "lands-map-overlay",
+      "category": "Server",
+      "question": "Show Lands claim outlines on the BlueMap?",
+      "closesAt": "2026-05-30T06:59:00Z",
+      "options": [
+        { "id": "yes", "label": "Yes — show every claim" },
+        { "id": "nations-only", "label": "Only federated nations, not solo claims" },
+        { "id": "opt-in", "label": "Opt-in per claim (owners decide visibility)" },
+        { "id": "no", "label": "No — keep claims off the public map" }
+      ]
+    },
+    {
+      "id": "end-unlock",
+      "category": "Progression",
+      "question": "When should the End unlock?",
+      "closesAt": "2026-05-30T06:59:00Z",
+      "options": [
+        { "id": "found", "label": "Whenever someone finds a stronghold" },
+        { "id": "wed-jun-3", "label": "Wednesday June 3 — midweek of week 2" },
+        { "id": "sat-may-30", "label": "Saturday May 30 — one week after launch" },
+        { "id": "sat-jun-6", "label": "Saturday June 6 — two weeks after launch" },
+        { "id": "sat-jun-13", "label": "Saturday June 13 — three weeks, settle in first" }
+      ]
     }
   ]
 }

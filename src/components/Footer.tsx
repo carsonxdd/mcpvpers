@@ -16,7 +16,7 @@ export default function Footer() {
 
           <div>
             <h3 className="font-pixel t-text-dim text-xs mb-3">Links</h3>
-            <div className="flex flex-col gap-2">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
               <Link href="/about" className="t-text-muted text-sm hover:text-xp transition-colors">About & Rules</Link>
               <Link href="/reputation" className="t-text-muted text-sm hover:text-xp transition-colors">Reputation</Link>
               <Link href="/mcmmo" className="t-text-muted text-sm hover:text-xp transition-colors">mcMMO</Link>

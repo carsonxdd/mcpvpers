@@ -1,13 +1,13 @@
 'use client';
 
-import { useEffect, useState, useSyncExternalStore } from 'react';
+import { useEffect, useMemo, useState, useSyncExternalStore } from 'react';
 import pollsData from '@/data/polls.json';
 import pollResults from '@/data/poll-results.json';
-import { POLLS_CLOSE_AT } from '@/lib/polls';
+import { isPollClosed, ROUND_2_CLOSE_AT } from '@/lib/polls';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
 
-type Poll = (typeof pollsData.polls)[number];
+type Poll = (typeof pollsData.polls)[number] & { closesAt?: string };
 type PollState = { counts: Record<string, number>; userVote: string | null };
 type DecisionStatus = 'live' | 'later' | 'tbd';
 type Decision = {
@@ -45,15 +45,23 @@ const statusGroups: { status: DecisionStatus; label: string; tag: string; tagCla
 
 const subscribeNoop = () => () => {};
 
+const closeDateFormatter = new Intl.DateTimeFormat('en-US', {
+  weekday: 'long',
+  month: 'long',
+  day: 'numeric',
+});
+
 export default function PollsPage() {
   const isHydrated = useSyncExternalStore(subscribeNoop, () => true, () => false);
   const [now, setNow] = useState(() => Date.now());
-  const closed = isHydrated && now >= POLLS_CLOSE_AT;
 
   const [state, setState] = useState<Record<string, PollState>>({});
   const [loading, setLoading] = useState(true);
   const [voting, setVoting] = useState<string | null>(null);
   const [errors, setErrors] = useState<Record<string, string | null>>({});
+
+  const [pastOpen, setPastOpen] = useState(false);
+  const [pendingScroll, setPendingScroll] = useState<string | null>(null);
 
   useEffect(() => {
     fetch('/api/polls', { cache: 'no-store' })
@@ -63,15 +71,66 @@ export default function PollsPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Flip state when the next pending poll closes — keeps the page accurate without a refresh.
   useEffect(() => {
-    if (Date.now() >= POLLS_CLOSE_AT) return;
-    const remaining = POLLS_CLOSE_AT - Date.now();
+    const polls = pollsData.polls as Poll[];
+    const nextClose = polls
+      .map((p) => (p.closesAt ? Date.parse(p.closesAt) : null))
+      .filter((t): t is number => t !== null && t > Date.now())
+      .sort((a, b) => a - b)[0];
+    if (!nextClose) return;
+    const remaining = nextClose - Date.now();
     const id = setTimeout(() => setNow(Date.now()), remaining + 500);
     return () => clearTimeout(id);
   }, []);
 
+  useEffect(() => {
+    if (!pastOpen || !pendingScroll) return;
+    const id = setTimeout(() => {
+      const el = document.getElementById(pendingScroll);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', `#${pendingScroll}`);
+      }
+      setPendingScroll(null);
+    }, 60);
+    return () => clearTimeout(id);
+  }, [pastOpen, pendingScroll]);
+
+  function jumpToPoll(pollId: string) {
+    if (pastOpen) {
+      const el = document.getElementById(pollId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        history.replaceState(null, '', `#${pollId}`);
+      }
+      return;
+    }
+    setPastOpen(true);
+    setPendingScroll(pollId);
+  }
+
+  const { activePolls, closedByCategory } = useMemo(() => {
+    const all = pollsData.polls as Poll[];
+    const active: Poll[] = [];
+    const closed: Poll[] = [];
+    for (const p of all) {
+      if (isHydrated && !isPollClosed(p.closesAt, now)) active.push(p);
+      else closed.push(p);
+    }
+    const cats: string[] = [];
+    for (const p of closed) if (!cats.includes(p.category)) cats.push(p.category);
+    const closedByCategory = cats.map((name) => ({
+      name,
+      polls: closed.filter((p) => p.category === name),
+    }));
+    return { activePolls: active, closedByCategory };
+  }, [isHydrated, now]);
+
   async function vote(pollId: string, optionId: string) {
-    if (voting || closed) return;
+    if (voting) return;
+    const poll = (pollsData.polls as Poll[]).find((p) => p.id === pollId);
+    if (!poll || isPollClosed(poll.closesAt, now)) return;
     const prev = state[pollId];
 
     const optimistic: Record<string, number> = { ...(prev?.counts ?? {}) };
@@ -103,7 +162,7 @@ export default function PollsPage() {
             reason = data.reason;
           } catch {}
           if (reason === 'polls-closed') {
-            msg = 'Polls are closed.';
+            msg = 'Poll is closed.';
             setNow(Date.now());
           } else {
             msg = 'Vote limit reached for this network.';
@@ -128,14 +187,37 @@ export default function PollsPage() {
     }
   }
 
-  const categories: string[] = [];
-  for (const p of pollsData.polls) {
-    if (!categories.includes(p.category)) categories.push(p.category);
-  }
-  const grouped = categories.map((name) => ({
-    name,
-    polls: pollsData.polls.filter((p) => p.category === name),
-  }));
+  const round2CloseLabel = closeDateFormatter.format(new Date(ROUND_2_CLOSE_AT));
+  const hasActive = isHydrated && activePolls.length > 0;
+  const hasClosed = closedByCategory.length > 0;
+
+  const closedPollsBlock = (
+    <div>
+      {closedByCategory.map((cat, idx) => (
+        <div key={cat.name} className={idx === 0 ? '' : 'mt-16'}>
+          <div className="text-center">
+            <CloudTitle>
+              <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">{cat.name}</h2>
+            </CloudTitle>
+          </div>
+          <div className="space-y-6">
+            {cat.polls.map((poll) => (
+              <PollCard
+                key={poll.id}
+                poll={poll}
+                state={state[poll.id]}
+                loading={loading}
+                busy={voting === poll.id}
+                closed={true}
+                error={errors[poll.id] ?? null}
+                onVote={(optionId) => vote(poll.id, optionId)}
+              />
+            ))}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div>
@@ -147,50 +229,93 @@ export default function PollsPage() {
         </div>
         <CloudText className="max-w-2xl mx-auto mb-12 text-center">
           <p className="t-text-dim">
-            {closed
-              ? 'Polls closed Thursday night before launch. Quick summary first, full vote counts below.'
-              : 'Vote on plugins, gameplay rules, and upcoming events. One vote per poll — change your mind anytime.'}
+            {hasActive
+              ? `New polls are open below — one vote per poll, change your mind anytime. Pre-launch round closed Thursday; decisions and full vote counts after that.`
+              : `Pre-launch polls closed Thursday before launch. Decisions below — past vote counts behind a button.`}
           </p>
         </CloudText>
 
-        {closed && <ResultsSummary />}
+        {hasActive && (
+          <ActivePollsSection
+            polls={activePolls}
+            state={state}
+            loading={loading}
+            voting={voting}
+            errors={errors}
+            onVote={vote}
+            closeLabel={round2CloseLabel}
+            now={now}
+          />
+        )}
 
-        {grouped.map((cat, idx) => (
-          <div key={cat.name} className={idx === 0 ? '' : 'mt-16'}>
-            <div className="text-center">
-              <CloudTitle>
-                <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">{cat.name}</h2>
-              </CloudTitle>
-            </div>
-            <div className="space-y-6">
-              {cat.polls.map((poll) => (
-                <PollCard
-                  key={poll.id}
-                  poll={poll}
-                  state={state[poll.id]}
-                  loading={loading}
-                  busy={voting === poll.id}
-                  closed={closed}
-                  error={errors[poll.id] ?? null}
-                  onVote={(optionId) => vote(poll.id, optionId)}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
+        {hasClosed && <ResultsSummary onJump={jumpToPoll} />}
+
+        {hasClosed && (
+          <PastPollsSection open={pastOpen} onToggle={() => setPastOpen((o) => !o)}>
+            {closedPollsBlock}
+          </PastPollsSection>
+        )}
       </section>
     </div>
   );
 }
 
-function ResultsSummary() {
+function ActivePollsSection({
+  polls,
+  state,
+  loading,
+  voting,
+  errors,
+  onVote,
+  closeLabel,
+  now,
+}: {
+  polls: Poll[];
+  state: Record<string, PollState>;
+  loading: boolean;
+  voting: string | null;
+  errors: Record<string, string | null>;
+  onVote: (pollId: string, optionId: string) => void;
+  closeLabel: string;
+  now: number;
+}) {
+  return (
+    <div className="mb-16">
+      <div className="text-center mb-8">
+        <CloudTitle>
+          <h2 className="font-pixel text-gold text-lg mb-3 glow-gold">Open now</h2>
+        </CloudTitle>
+        <p className="t-text-muted text-xs font-pixel uppercase tracking-widest relative z-10 mt-5">
+          Closes {closeLabel} · about a week
+        </p>
+      </div>
+
+      <div className="space-y-6">
+        {polls.map((poll) => (
+          <PollCard
+            key={poll.id}
+            poll={poll}
+            state={state[poll.id]}
+            loading={loading}
+            busy={voting === poll.id}
+            closed={isPollClosed(poll.closesAt, now)}
+            error={errors[poll.id] ?? null}
+            onVote={(optionId) => onVote(poll.id, optionId)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ResultsSummary({ onJump }: { onJump: (id: string) => void }) {
   return (
     <div className="mb-16">
       <div className="text-center mb-8">
         <CloudTitle>
           <h2 className="font-pixel text-gold text-lg mb-3 glow-gold">What the community decided</h2>
         </CloudTitle>
-        <p className="t-text-muted text-xs font-pixel uppercase tracking-widest">
+        <p className="t-text-muted text-xs font-pixel uppercase tracking-widest relative z-10 mt-5">
           Tap any decision to jump to the vote counts
         </p>
       </div>
@@ -211,10 +336,11 @@ function ResultsSummary() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 {items.map((d) => (
-                  <a
+                  <button
                     key={d.pollId}
-                    href={`#${d.pollId}`}
-                    className={`mc-panel p-4 border-2 ${group.cardAccent} hover-surface block transition-all`}
+                    type="button"
+                    onClick={() => onJump(d.pollId)}
+                    className={`mc-panel p-4 border-2 ${group.cardAccent} hover-surface block w-full text-left cursor-pointer transition-all`}
                   >
                     <div className="flex items-start justify-between gap-3 mb-2">
                       <h4 className="font-pixel text-enchant text-[11px] glow-enchant">{d.title}</h4>
@@ -225,13 +351,45 @@ function ResultsSummary() {
                       </span>
                     </div>
                     <p className="t-text-dim text-sm leading-relaxed">{d.summary}</p>
-                  </a>
+                  </button>
                 ))}
               </div>
             </div>
           );
         })}
       </div>
+    </div>
+  );
+}
+
+function PastPollsSection({
+  open,
+  onToggle,
+  children,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="text-center mb-8">
+        <button
+          type="button"
+          onClick={onToggle}
+          aria-expanded={open}
+          className="mc-panel px-6 py-3 font-pixel text-gold text-xs glow-gold hover-surface inline-flex items-center gap-3 cursor-pointer"
+        >
+          <span>{open ? 'Hide past polls' : 'Show past polls — full vote counts'}</span>
+          <span
+            aria-hidden="true"
+            className={`text-sm transition-transform duration-300 ${open ? 'rotate-180' : ''}`}
+          >
+            ▾
+          </span>
+        </button>
+      </div>
+      {open && children}
     </div>
   );
 }
