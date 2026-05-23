@@ -344,7 +344,7 @@ export default function ReputationPage() {
                 points={[
                   'Outlaw rep climbs from wilderness crimes. The big ones: pacifist kill +50, spawn-region PvP +30 (unprovoked kills within 100 blocks of spawn — self-defense still counts as provoked here, same as anywhere else), lawman kill +15. Plus knockout-theft (rep scales with the value of what was taken), pet kills, villager kills, and combat-logging.',
                   'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
-                  'Once over 25 outlaw rep, you appear on /wanted and any non-outlaw can hunt you for the bounty.',
+                  'Once over 25 outlaw rep, you appear on /wanted with your tier. Any non-outlaw can hunt you — Lawmen earn violence rep for the kill, and if a Senior Sheriff or Marshal has placed a bounty on you, the killer collects the payout too.',
                   "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
                   'Outlaw-on-outlaw kills are rep-neutral on both sides — private rivalry, not crime. No bounty payout, no /wanted update.',
                   'Three roads back: /restitution (return stolen items for peaceful rep), offline decay (~2%/week), or a Sheriff+ pardon. Pacifist-kill rep is floored at 50% — it fades, it doesn’t wipe.',
@@ -369,6 +369,15 @@ export default function ReputationPage() {
           </Expander>
 
           <Expander title="Bounties">
+            <p className="t-text-dim leading-relaxed mb-4">
+              <strong className="t-text">Wanted vs. bounty.</strong> Wanted is automatic — once your
+              outlaw rep crosses 25 you show up on{' '}
+              <code className="font-pixel text-gold text-xs glow-gold">/wanted</code> with your
+              tier. A bounty is a separate, optional step: a Senior Sheriff or Marshal has to place
+              one from the treasury. A wanted player with no bounty can still be hunted (and Lawmen
+              still earn violence rep for the kill), but there&apos;s no payout until someone draws
+              from the pool.
+            </p>
             <p className="t-text-dim leading-relaxed mb-4">
               Bounties are how the server&apos;s economy buys justice. They&apos;re paid out of the
               Sheriff&apos;s Office treasury — a shared pool that anyone can grow by donating items
