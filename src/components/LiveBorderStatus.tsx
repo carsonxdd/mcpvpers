@@ -44,7 +44,7 @@ export default function LiveBorderStatus() {
 
   if (hidden || !status) return null;
 
-  const weeklyPlayed = formatPlaytime(status.weekly_playtime_seconds);
+  const todayPlayed = formatPlaytime(status.weekly_playtime_seconds);
 
   return (
     <div className="mc-panel p-5 mt-8">
@@ -55,8 +55,8 @@ export default function LiveBorderStatus() {
           <p className="text-xp font-pixel text-sm glow-xp">±{status.current_radius.toLocaleString()}</p>
         </div>
         <div>
-          <p className="t-text-muted text-xs mb-1">This Week</p>
-          <p className="text-xp font-pixel text-sm glow-xp">{weeklyPlayed} played</p>
+          <p className="t-text-muted text-xs mb-1">Today</p>
+          <p className="text-xp font-pixel text-sm glow-xp">{todayPlayed} played</p>
         </div>
         <div>
           <p className="t-text-muted text-xs mb-1">Active Players</p>

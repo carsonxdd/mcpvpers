@@ -1,29 +1,11 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
-import wantedData from '@/data/wanted.json';
-import repData from '@/data/reputation-leaderboards.json';
-
-type Lawman = {
-  rank: number;
-  uuid: string | null;
-  name: string;
-  tier: string;
-  commendations: number;
-  outlawKills: number;
-  donatedDiamonds: number;
-};
-const topLawmen = (repData.lawmen as Lawman[]).slice(0, 3);
-const repIsPreview = (repData as { preview?: boolean }).preview === true;
-
-const lawmenTierColor: Record<string, string> = {
-  Marshal: 'text-gold glow-gold',
-  'Senior Sheriff': 'text-gold',
-  Sheriff: 'text-enchant glow-enchant',
-  Deputy: 'text-enchant',
-  Citizen: 't-text-dim',
-};
+import TopLawmen from '@/components/TopLawmen';
 
 type Crime = { kind: string; count: number };
 type Outlaw = {
@@ -46,7 +28,21 @@ const tierClass: Record<string, string> = {
   Legend: 'tier-legend tier-legend-glow',
 };
 
-const tiltByIndex = [-1.5, 1.2, -0.8, 1.6, -1.2];
+const EXAMPLE_OUTLAW: Outlaw = {
+  name: 'BanditExample',
+  uuid: null,
+  outlawRep: 124,
+  tier: 'Outlaw',
+  bountyMultiplier: 2.0,
+  bountyDiamonds: 16,
+  postedBy: "Sheriff's Office",
+  lastSeenMinutes: 47,
+  crimes: [
+    { kind: 'Knockout thefts', count: 4 },
+    { kind: 'Pacifist kills', count: 2 },
+    { kind: 'Pet kills', count: 1 },
+  ],
+};
 
 function formatLastSeen(minutes: number) {
   if (minutes < 60) return `${minutes}m ago`;
@@ -55,11 +51,37 @@ function formatLastSeen(minutes: number) {
 }
 
 export default function WantedPage() {
-  const outlaws = [...(wantedData.outlaws as Outlaw[])].sort(
-    (a, b) => b.bountyDiamonds - a.bountyDiamonds,
-  );
-  const isPreview = wantedData.preview === true;
+  const [outlaws, setOutlaws] = useState<Outlaw[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/stats/reputation/wanted')
+      .then(async (r) => {
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        return (await r.json()) as { outlaws: Outlaw[] };
+      })
+      .then((json) => {
+        if (cancelled) return;
+        const sorted = [...(json.outlaws ?? [])].sort(
+          (a, b) => b.bountyDiamonds - a.bountyDiamonds,
+        );
+        setOutlaws(sorted);
+      })
+      .catch(() => {
+        if (!cancelled) setError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const totalBounty = outlaws.reduce((s, o) => s + o.bountyDiamonds, 0);
+  const showExample = !loading && (error || outlaws.length === 0);
 
   return (
     <div>
@@ -71,15 +93,9 @@ export default function WantedPage() {
           </h1>
         </CloudTitle>
         <CloudText>
-          <p className="t-text-dim leading-relaxed mb-3">
+          <p className="t-text-dim leading-relaxed">
             These outlaws crossed the line in the wilderness. A Marshal put up real items.
             Bring them down and the bounty&apos;s yours.
-          </p>
-          <p className="t-text-muted text-sm">
-            <span className="font-pixel text-[10px] text-redstone mr-2">SAMPLE</span>
-            {isPreview
-              ? 'Posters below are illustrative. The reputation system is live at launch; the board fills with real outlaws as players actually commit crimes.'
-              : null}
           </p>
         </CloudText>
 
@@ -111,14 +127,7 @@ export default function WantedPage() {
             <h2 className="font-pixel text-gold text-lg glow-gold mb-3">Top Lawmen</h2>
           </CloudTitle>
           <p className="t-text-muted text-sm mt-2">
-            The other side of the badge.{' '}
-            {repIsPreview && (
-              <>
-                <span className="font-pixel text-[9px] text-redstone uppercase tracking-widest mx-1">SAMPLE</span>
-                {' '}
-              </>
-            )}
-            Full ladder on{' '}
+            The other side of the badge. Full ladder on{' '}
             <Link
               href="/leaderboards#lawmen"
               className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
@@ -129,50 +138,7 @@ export default function WantedPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 max-w-4xl mx-auto">
-          {topLawmen.map((lawman, i) => (
-            <div
-              key={lawman.name}
-              className="mc-panel p-6 flex flex-col items-center text-center gap-3"
-              style={i === 0 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}
-            >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={`https://mc-heads.net/avatar/${lawman.uuid ?? lawman.name}/80`}
-                alt={`${lawman.name} player head`}
-                width={80}
-                height={80}
-                loading="lazy"
-                className="w-20 h-20 rounded shrink-0 t-surface-light"
-              />
-              <div className="min-w-0 w-full">
-                <p className="font-pixel text-sm t-text truncate">{lawman.name}</p>
-                <p className={`font-pixel text-[10px] uppercase tracking-widest mt-1.5 ${lawmenTierColor[lawman.tier] ?? 't-text-dim'}`}>
-                  {lawman.tier}
-                </p>
-              </div>
-              <div className="w-full pt-3 mt-1 border-t" style={{ borderColor: 'var(--c-border)' }}>
-                <div className="grid grid-cols-3 gap-2 text-center">
-                  <div>
-                    <p className="font-pixel text-gold text-sm glow-gold">{lawman.outlawKills}</p>
-                    <p className="t-text-muted text-[9px] uppercase tracking-wider mt-1">Kills</p>
-                  </div>
-                  <div>
-                    <p className="font-pixel text-gold text-sm glow-gold">{lawman.commendations}</p>
-                    <p className="t-text-muted text-[9px] uppercase tracking-wider mt-1">Commends</p>
-                  </div>
-                  <div>
-                    <p className="font-pixel text-gold text-sm glow-gold">
-                      {lawman.donatedDiamonds}
-                      <span className="text-enchant ml-0.5">◆</span>
-                    </p>
-                    <p className="t-text-muted text-[9px] uppercase tracking-wider mt-1">Donated</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
+        <TopLawmen />
       </section>
 
       {/* Poster board */}
@@ -183,16 +149,38 @@ export default function WantedPage() {
           </CloudTitle>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-md:gap-6">
-          {outlaws.map((o, i) => (
-            <Poster key={o.name} outlaw={o} tilt={tiltByIndex[i % tiltByIndex.length]} />
-          ))}
-        </div>
+        {loading && (
+          <p className="text-center t-text-muted text-sm">Loading…</p>
+        )}
 
-        <p className="text-center t-text-muted text-xs italic mt-12 max-w-xl mx-auto">
-          Outlaws below the Drifter threshold (25 rep) don&apos;t make the board. Self-defense kills
-          and outlaw-on-outlaw kills don&apos;t feed the list either.
-        </p>
+        {showExample && (
+          <div className="max-w-md mx-auto">
+            <Poster outlaw={EXAMPLE_OUTLAW} tilt={-1.0} isExample />
+            <p className="text-center t-text-muted text-xs italic mt-8">
+              No outlaws on the board right now. The poster above is an example —
+              real ones appear here as players actually cross the line.
+            </p>
+          </div>
+        )}
+
+        {!loading && !showExample && (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-md:gap-6">
+              {outlaws.map((o, i) => (
+                <Poster
+                  key={o.uuid ?? o.name}
+                  outlaw={o}
+                  tilt={[-1.5, 1.2, -0.8, 1.6, -1.2][i % 5]}
+                />
+              ))}
+            </div>
+
+            <p className="text-center t-text-muted text-xs italic mt-12 max-w-xl mx-auto">
+              Outlaws below the Drifter threshold (25 rep) don&apos;t make the board. Self-defense kills
+              and outlaw-on-outlaw kills don&apos;t feed the list either.
+            </p>
+          </>
+        )}
       </section>
 
       <GrassDivider />
@@ -230,11 +218,27 @@ function Stat({ label, value }: { label: string; value: string }) {
   );
 }
 
-function Poster({ outlaw, tilt }: { outlaw: Outlaw; tilt: number }) {
+function Poster({
+  outlaw,
+  tilt,
+  isExample = false,
+}: {
+  outlaw: Outlaw;
+  tilt: number;
+  isExample?: boolean;
+}) {
   const tier = tierClass[outlaw.tier] ?? 'tier-drifter';
 
   return (
-    <div className="wanted-frame" style={{ transform: `rotate(${tilt}deg)` }}>
+    <div className="wanted-frame relative" style={{ transform: `rotate(${tilt}deg)` }}>
+      {isExample && (
+        <span
+          className="absolute top-3 right-3 z-20 font-pixel text-[9px] tracking-[0.2em] px-2 py-1 rounded"
+          style={{ background: '#3b1f0c', color: '#f4e3c8' }}
+        >
+          EXAMPLE
+        </span>
+      )}
       <div className="wanted-paper">
         {/* Header */}
         <div className="text-center relative z-10">
@@ -256,7 +260,7 @@ function Poster({ outlaw, tilt }: { outlaw: Outlaw; tilt: number }) {
         <div className="flex justify-center my-5 relative z-10">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://mc-heads.net/avatar/${outlaw.name}/96`}
+            src={`https://mc-heads.net/avatar/${outlaw.uuid ?? outlaw.name}/96`}
             alt={`${outlaw.name} player head`}
             width={96}
             height={96}

@@ -21,9 +21,9 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Launch countdown on the home page (target: Saturday May 23, 2026 at 5 PM Arizona) — ticks down to days/hours/min/sec, swaps to a "We're live" tile at zero
 - Live server status (online player count, polled every 30s) below the home-page IP copy, fed by the PiStatsAPI plugin via a server-side proxy — hidden until the launch timestamp passes, then auto-activates without a refresh
 - Live world-border widget on the about page (current radius, weekly playtime, active players, total expansions), fed by the same proxy
-- Leaderboards backed by real player data (Playtime / Deaths) with mc-heads.net player avatars
+- Leaderboards backed by real player data across all 11 tabs (Playtime, Deaths, Mob Kills, Blocks Mined, Ores Mined, Distance, Advancements, XP Levels, Peaceful Rep, Violence Rep, Lawmen) with mc-heads.net player avatars. Rep tabs fetch from the plugin's reputation context via the stats proxy
 - Reputation system explainer (`/reputation`) — covers Pacifist / Outlaw / Lawman roles, the three rep pools, claims vs wilderness, knockout mechanics, bounty flow, all commands, and a long FAQ. Deep content collapsed behind animated expanders (smooth open/close via `grid-template-rows` + opacity fade, full-row `<button>` hitbox, `aria-expanded` + `aria-controls`, `prefers-reduced-motion` honored) so the page reads as a quick skim with optional dives
-- Wanted poster board (`/wanted`) — hybrid oak-frame + parchment posters with crisp pixel player heads, color-coded tier label (Drifter → Bandit → Outlaw → Notorious → Legend), bounty in diamonds, posted-by line, crime tally, and last-seen footer. Tilted "tacked to a board" layout, lifts on hover, respects `prefers-reduced-motion`. Data is shaped to match the eventual `/api/stats/wanted` plugin payload so the page just swaps its import for a fetch when the rep system ships
+- Wanted poster board (`/wanted`) — hybrid oak-frame + parchment posters with crisp pixel player heads, color-coded tier label (Drifter → Bandit → Outlaw → Notorious → Legend), bounty in diamonds, posted-by line, crime tally, and last-seen footer. Tilted "tacked to a board" layout, lifts on hover, respects `prefers-reduced-motion`. Fetches live outlaws from the plugin's `/api/reputation/wanted` endpoint via the stats proxy; when the board is empty, a single `EXAMPLE` poster is shown as a "this is what one looks like" placeholder rather than three mock posters
 - mcMMO explainer (`/mcmmo`) — full breakdown of 15 skills (Gathering / Combat / Crafting & utility), passive bonuses, active abilities, commands, getting-started tips, and how mcMMO interacts with the reputation system. Same expander pattern as `/reputation`
 - BlueMap embed with legend explaining the world border. Land-claims overlay is intentionally disabled at launch (we're not feeding claim outlines to BlueMap yet); the legend block is commented out in `src/app/map/page.tsx` pending a post-launch poll
 - Screenshot gallery and news/changelog pages
@@ -75,6 +75,18 @@ To re-vote on how the pacifist knockout mechanic actually feels in play. Hold th
 - **`knockout-cooldown`** — Cooldown before a player can be knocked again after waking up?
 -->
 
+## Reputation + wanted board wired to live data (2026-05-23)
+
+Launch-day pass: the rep leaderboard tabs and the wanted poster board both came off mock JSON and onto the plugin's live endpoints. Plugin side is shipping in parallel (the reputation context now lives at `/api/reputation` upstream, with new `/leaderboard/peaceful`, `/leaderboard/violence`, `/leaderboard/lawmen`, and `/wanted` handlers).
+
+- **`src/app/api/stats/[...path]/route.ts`** — added `reputation` to `ALLOWED_KINDS`. The catch-all proxy now passes `/api/stats/reputation/leaderboard/<peaceful|violence|lawmen>` and `/api/stats/reputation/wanted` straight through to the upstream's reputation context, with the same 30s revalidate + Cloudflare edge caching as the existing stats paths
+- **`/leaderboards`** — the three rep tabs (Peaceful Rep, Violence Rep, Lawmen) now fetch live via the proxy instead of reading from `src/data/reputation-leaderboards.json`. The `isRep` / `displayLoading` / `displayError` branching collapsed away — all 11 tabs share one fetch + render path. The SAMPLE / "Illustrative data" banner is gone. Until the plugin ships the rep handlers, the tabs land in the standard "Couldn't load leaderboard" empty state rather than a mock fallback
+- **`/wanted`** — converted from a server component reading `src/data/wanted.json` to a client component fetching `/api/stats/reputation/wanted` on mount. The Quick stats strip (Wanted count, Total bounty, Highest tier) now derives from the live list — empty list reads `0 / 0◆ / none`, which is its own "this is live, the board just spun up" signal. The hero's SAMPLE banner was dropped (the example poster carries that meaning now)
+- **Empty-board fallback** — when the wanted fetch returns an empty list or errors, the board renders **one** `EXAMPLE` poster (clearly badged in the top-right corner) with a caption explaining real ones populate as players cross the rep threshold. Prefer one illustrative card over three mock ones — keeps the page from feeling spammy or fake-busy. The example data lives inline in `src/app/wanted/page.tsx` (no JSON file)
+- **`src/components/TopLawmen.tsx` (new)** — the "Top Lawmen" callout on `/wanted` was extracted out of the page (which is now client-side anyway) into its own client component that fetches the lawmen leaderboard directly. The three-stat row (Kills / Commends / Donated) collapsed to a single centered commendations count, since the plugin's lawmen payload only exposes `{ rank, uuid, name, tier, commendations }` — outlaw kills and donated diamonds aren't tracked separately in the rep system
+- **Plugin contract (server-side, coordinated, not in this repo)** — for `/api/reputation/wanted` the plugin normalizes its native shape into the page's `Outlaw` type: emits `uuid`, renames `outlaw_rep` → `outlawRep`, `bounty_total_diamond_eq` → `bountyDiamonds`, and `top_crimes` `[{type, count}]` → `crimes` `[{kind, count}]`. `bountyMultiplier` is derived from tier (Drifter 1.0 / Bandit 1.5 / Outlaw 2.0 / Notorious 2.5 / Legend 3.0) per `PiReputation` config. `lastSeenMinutes` comes from `(now - last_seen_ts) / 60_000` clamped ≥ 0. `postedBy` always returns `"Sheriff's Office"` (Phase A bounties are auto-posted from the treasury, no human placer to attribute)
+- **Deleted** — `src/data/reputation-leaderboards.json` and `src/data/wanted.json`. The README's `src/data/` reference was updated accordingly
+
 ## Getting Started
 
 ```bash
@@ -105,7 +117,7 @@ No environment variables required for basic development. The stats proxy at `/ap
 
 - `src/app/` — Pages (file-based routing) and API routes under `src/app/api/`
 - `src/components/` — Reusable UI components
-- `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, wanted, reputation-leaderboards, future-polls)
+- `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, future-polls). Wanted outlaws and reputation leaderboards are fetched live from the plugin via the stats proxy
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write
 - `public/` — Static assets (textures, audio, cursors)
 

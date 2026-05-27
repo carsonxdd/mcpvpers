@@ -26,7 +26,7 @@
   },
   {
     "name": "Border",
-    "description": "In-house. World border grows weekly from combined playtime, scaled to active-player count.",
+    "description": "In-house. World border grows daily from combined playtime, scaled to active-player count.",
     "icon": "globe"
   },
   {

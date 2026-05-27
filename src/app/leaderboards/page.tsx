@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import CloudTitle from '@/components/CloudTitle';
-import repData from '@/data/reputation-leaderboards.json';
 
 type StatKey =
   | 'playtime'
@@ -19,8 +18,13 @@ type StatKey =
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
 
-const repKeys: StatKey[] = ['peaceful_rep', 'violence_rep', 'lawmen'];
-const isRepKey = (k: StatKey) => repKeys.includes(k);
+const repEndpoints: Record<'peaceful_rep' | 'violence_rep' | 'lawmen', string> = {
+  peaceful_rep: '/api/stats/reputation/leaderboard/peaceful',
+  violence_rep: '/api/stats/reputation/leaderboard/violence',
+  lawmen: '/api/stats/reputation/leaderboard/lawmen',
+};
+const isRepKey = (k: StatKey): k is 'peaceful_rep' | 'violence_rep' | 'lawmen' =>
+  k === 'peaceful_rep' || k === 'violence_rep' || k === 'lawmen';
 
 const categories: { label: string; key: StatKey; group?: 'rep' }[] = [
   { label: 'Playtime', key: 'playtime' },
@@ -71,14 +75,6 @@ type LeaderboardResponse = {
   players: LeaderboardEntry[];
 };
 
-type RepRow = { rank: number; uuid: string | null; name: string; value?: number; tier?: string; commendations?: number };
-const repPreview = (repData as { preview?: boolean }).preview === true;
-const repRows: Record<'peaceful_rep' | 'violence_rep' | 'lawmen', LeaderboardEntry[]> = {
-  peaceful_rep: (repData.peaceful as RepRow[]).map((r) => ({ ...r, value: r.value ?? 0 })),
-  violence_rep: (repData.violence as RepRow[]).map((r) => ({ ...r, value: r.value ?? 0 })),
-  lawmen: (repData.lawmen as RepRow[]).map((r) => ({ ...r, value: r.commendations ?? 0, tier: r.tier, commendations: r.commendations })),
-};
-
 const medalStyles = ['text-gold glow-gold', 't-text-dim', 't-text-dim'];
 
 function formatPlaytime(seconds: number): string {
@@ -114,13 +110,17 @@ export default function LeaderboardsPage() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isRepKey(activeKey)) return;
-
     let cancelled = false;
-    const params = new URLSearchParams({ stat: activeKey, limit: '10' });
-    if (activeKey === 'playtime') params.set('window', playtimeWindow);
+    let url: string;
+    if (isRepKey(activeKey)) {
+      url = repEndpoints[activeKey];
+    } else {
+      const params = new URLSearchParams({ stat: activeKey, limit: '10' });
+      if (activeKey === 'playtime') params.set('window', playtimeWindow);
+      url = `/api/stats/leaderboard?${params.toString()}`;
+    }
 
-    fetch(`/api/stats/leaderboard?${params.toString()}`)
+    fetch(url)
       .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return (await r.json()) as LeaderboardResponse;
@@ -142,12 +142,7 @@ export default function LeaderboardsPage() {
     };
   }, [activeKey, playtimeWindow]);
 
-  const isRep = isRepKey(activeKey);
-  const data: LeaderboardEntry[] = isRep
-    ? repRows[activeKey as 'peaceful_rep' | 'violence_rep' | 'lawmen']
-    : fetchedData;
-  const displayLoading = isRep ? false : loading;
-  const displayError = isRep ? null : error;
+  const data: LeaderboardEntry[] = fetchedData;
 
   const selectCategory = (key: StatKey) => {
     if (key === activeKey) return;
@@ -189,15 +184,6 @@ export default function LeaderboardsPage() {
         )}
         {activeKey !== 'playtime' && <div className="mb-8" />}
 
-        {isRepKey(activeKey) && repPreview && (
-          <div className="mb-4 text-center">
-            <span className="font-pixel text-[9px] text-redstone uppercase tracking-widest mr-2">SAMPLE</span>
-            <span className="t-text-muted text-xs">
-              Illustrative data. Live counts populate after the plugin endpoint wires in post-launch.
-            </span>
-          </div>
-        )}
-
         <div className="mc-panel overflow-hidden max-md:overflow-x-auto">
           <div className="max-md:min-w-[320px]">
             <div className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-50 border-b max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3">
@@ -206,18 +192,18 @@ export default function LeaderboardsPage() {
               <span className="font-pixel t-text-muted text-[10px] text-right">{headerByKey[activeKey]}</span>
             </div>
 
-            {displayLoading && (
+            {loading && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">Loading…</div>
             )}
-            {!displayLoading && displayError && (
+            {!loading && error && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">
                 Couldn&apos;t load leaderboard. Try again later.
               </div>
             )}
-            {!displayLoading && !displayError && data.length === 0 && (
+            {!loading && !error && data.length === 0 && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">No players yet.</div>
             )}
-            {!displayLoading && !displayError && data.map((player, i) => (
+            {!loading && !error && data.map((player, i) => (
               <div key={player.uuid ?? player.name}
                 className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-20 border-b transition-colors hover-surface max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3"
                 style={i < 3 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}

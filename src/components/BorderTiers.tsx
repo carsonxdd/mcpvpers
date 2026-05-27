@@ -8,11 +8,11 @@ type BorderStatus = {
 };
 
 const BASE_TIERS = [
-  { tier: 1, hours: 5, blocks: 100, color: 'text-xp', chunks: '~5,600' },
-  { tier: 2, hours: 10, blocks: 200, color: 'text-xp', chunks: '~11,500' },
-  { tier: 3, hours: 20, blocks: 300, color: 'text-enchant', chunks: '~17,800' },
-  { tier: 4, hours: 30, blocks: 400, color: 'text-gold', chunks: '~24,300' },
-  { tier: 5, hours: 40, blocks: 500, color: 'text-redstone', chunks: '~31,200' },
+  { tier: 1, hours: 0.5, blocks: 100, color: 'text-xp', chunks: '~5,600' },
+  { tier: 2, hours: 1.5, blocks: 200, color: 'text-xp', chunks: '~11,500' },
+  { tier: 3, hours: 3,   blocks: 300, color: 'text-enchant', chunks: '~17,800' },
+  { tier: 4, hours: 5,   blocks: 400, color: 'text-gold', chunks: '~24,300' },
+  { tier: 5, hours: 8,   blocks: 500, color: 'text-redstone', chunks: '~31,200' },
 ];
 
 const PREVIEW_SIZES = [1, 2, 3, 5, 10];
@@ -56,7 +56,7 @@ export default function BorderTiers() {
 
       {enabled && (
         <p className="t-text-muted text-[11px] text-center mb-4">
-          Thresholds scale with active players this week.
+          Thresholds scale with active players today.
           {status && liveActive > 1 && (
             <>
               {' '}
@@ -100,7 +100,7 @@ export default function BorderTiers() {
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">Tier</th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Playtime</span>
-                <span className="max-md:hidden">Weekly Playtime</span>
+                <span className="max-md:hidden">Today's Playtime</span>
               </th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Expansion</span>
