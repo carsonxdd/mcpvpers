@@ -10,14 +10,22 @@ import TopLawmen from '@/components/TopLawmen';
 type Crime = { kind: string; count: number };
 type Outlaw = {
   name: string;
-  uuid: string | null;
+  uuid?: string | null;
   outlawRep: number;
   tier: string;
-  bountyMultiplier: number;
+  bountyMultiplier?: number;
   bountyDiamonds: number;
-  postedBy: string;
-  lastSeenMinutes: number;
+  postedBy?: string;
+  lastSeenMinutes?: number;
   crimes: Crime[];
+};
+
+type UpstreamOutlaw = {
+  name: string;
+  outlaw_rep: number;
+  tier: string;
+  top_crimes?: { type: string; count: number }[];
+  bounty_total_diamond_eq?: number;
 };
 
 const tierClass: Record<string, string> = {
@@ -28,21 +36,46 @@ const tierClass: Record<string, string> = {
   Legend: 'tier-legend tier-legend-glow',
 };
 
-const EXAMPLE_OUTLAW: Outlaw = {
-  name: 'BanditExample',
-  uuid: null,
-  outlawRep: 124,
-  tier: 'Outlaw',
-  bountyMultiplier: 2.0,
-  bountyDiamonds: 16,
-  postedBy: "Sheriff's Office",
-  lastSeenMinutes: 47,
-  crimes: [
-    { kind: 'Knockout thefts', count: 4 },
-    { kind: 'Pacifist kills', count: 2 },
-    { kind: 'Pet kills', count: 1 },
-  ],
+const tierMultiplier: Record<string, number> = {
+  Drifter: 1.0,
+  Bandit: 1.5,
+  Outlaw: 2.0,
+  Notorious: 2.5,
+  Legend: 3.0,
 };
+
+const crimeLabels: Record<string, string> = {
+  UNPROVOKED_KILL_PACIFIST: 'Pacifist kills',
+  KNOCKOUT_THEFT: 'Knockout thefts',
+  VILLAGER_KILL: 'Villager kills',
+  PET_KILL: 'Pet kills',
+  SPAWN_REGION_KILL: 'Spawn-region PvP',
+  LAWMAN_KILL: 'Lawman kills',
+  COMBAT_LOG: 'Combat logs',
+  REPORT_APPROVED: 'Reports filed',
+};
+
+function crimeLabel(type: string): string {
+  if (crimeLabels[type]) return crimeLabels[type];
+  return type
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+function fromUpstream(u: UpstreamOutlaw): Outlaw {
+  return {
+    name: u.name,
+    outlawRep: u.outlaw_rep,
+    tier: u.tier,
+    bountyDiamonds: Math.round(u.bounty_total_diamond_eq ?? 0),
+    bountyMultiplier: tierMultiplier[u.tier],
+    crimes: (u.top_crimes ?? []).map((c) => ({
+      kind: crimeLabel(c.type),
+      count: c.count,
+    })),
+  };
+}
 
 function formatLastSeen(minutes: number) {
   if (minutes < 60) return `${minutes}m ago`;
@@ -60,14 +93,13 @@ export default function WantedPage() {
     fetch('/api/stats/reputation/wanted')
       .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return (await r.json()) as { outlaws: Outlaw[] };
+        return (await r.json()) as { wanted: UpstreamOutlaw[] };
       })
       .then((json) => {
         if (cancelled) return;
-        const sorted = [...(json.outlaws ?? [])].sort(
-          (a, b) => b.bountyDiamonds - a.bountyDiamonds,
-        );
-        setOutlaws(sorted);
+        const transformed = (json.wanted ?? []).map(fromUpstream);
+        transformed.sort((a, b) => b.bountyDiamonds - a.bountyDiamonds);
+        setOutlaws(transformed);
       })
       .catch(() => {
         if (!cancelled) setError(true);
@@ -81,7 +113,7 @@ export default function WantedPage() {
   }, []);
 
   const totalBounty = outlaws.reduce((s, o) => s + o.bountyDiamonds, 0);
-  const showExample = !loading && (error || outlaws.length === 0);
+  const hasOutlaws = outlaws.length > 0;
 
   return (
     <div>
@@ -99,12 +131,14 @@ export default function WantedPage() {
           </p>
         </CloudText>
 
-        {/* Quick stats strip */}
-        <div className="mt-8 grid grid-cols-3 gap-3 max-w-md mx-auto">
-          <Stat label="Wanted" value={outlaws.length.toString()} />
-          <Stat label="Total bounty" value={`${totalBounty}◆`} />
-          <Stat label="Highest tier" value={outlaws[0]?.tier ?? 'none'} />
-        </div>
+        {/* Quick stats strip — hidden when the board is empty so we don't render "Highest tier: none" */}
+        {hasOutlaws && (
+          <div className="mt-8 grid grid-cols-3 gap-3 max-w-md mx-auto">
+            <Stat label="Wanted" value={outlaws.length.toString()} />
+            <Stat label="Total bounty" value={`${totalBounty}◆`} />
+            <Stat label="Highest tier" value={outlaws[0].tier} />
+          </div>
+        )}
 
         {/* How does this work callout */}
         <div className="mt-8 inline-flex flex-col sm:flex-row items-center gap-3 sm:gap-4 mc-panel px-5 py-3">
@@ -153,17 +187,19 @@ export default function WantedPage() {
           <p className="text-center t-text-muted text-sm">Loading…</p>
         )}
 
-        {showExample && (
-          <div className="max-w-md mx-auto">
-            <Poster outlaw={EXAMPLE_OUTLAW} tilt={-1.0} isExample />
-            <p className="text-center t-text-muted text-xs italic mt-8">
-              No outlaws on the board right now. The poster above is an example —
-              real ones appear here as players actually cross the line.
-            </p>
-          </div>
+        {!loading && error && (
+          <p className="text-center t-text-muted text-sm italic">
+            Couldn&apos;t load the wanted board. Try again later.
+          </p>
         )}
 
-        {!loading && !showExample && (
+        {!loading && !error && !hasOutlaws && (
+          <p className="text-center t-text-muted text-sm italic">
+            No outlaws on the board yet — the wilderness is quiet.
+          </p>
+        )}
+
+        {!loading && !error && hasOutlaws && (
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-md:gap-6">
               {outlaws.map((o, i) => (
@@ -221,24 +257,14 @@ function Stat({ label, value }: { label: string; value: string }) {
 function Poster({
   outlaw,
   tilt,
-  isExample = false,
 }: {
   outlaw: Outlaw;
   tilt: number;
-  isExample?: boolean;
 }) {
   const tier = tierClass[outlaw.tier] ?? 'tier-drifter';
 
   return (
     <div className="wanted-frame relative" style={{ transform: `rotate(${tilt}deg)` }}>
-      {isExample && (
-        <span
-          className="absolute top-3 right-3 z-20 font-pixel text-[9px] tracking-[0.2em] px-2 py-1 rounded"
-          style={{ background: '#3b1f0c', color: '#f4e3c8' }}
-        >
-          EXAMPLE
-        </span>
-      )}
       <div className="wanted-paper">
         {/* Header */}
         <div className="text-center relative z-10">
@@ -278,7 +304,10 @@ function Poster({
             {outlaw.name}
           </p>
           <p className={`font-pixel text-[10px] uppercase tracking-widest mt-1.5 ${tier}`}>
-            {outlaw.tier} <span style={{ color: '#6b3a1a' }}>· ×{outlaw.bountyMultiplier.toFixed(1)}</span>
+            {outlaw.tier}
+            {outlaw.bountyMultiplier != null && (
+              <span style={{ color: '#6b3a1a' }}> · ×{outlaw.bountyMultiplier.toFixed(1)}</span>
+            )}
           </p>
         </div>
 
@@ -297,12 +326,14 @@ function Poster({
             {outlaw.bountyDiamonds}
             <span style={{ color: '#1a8a8f', marginLeft: '0.25rem' }}>◆</span>
           </p>
-          <p
-            className="font-pixel text-[8px] mt-1"
-            style={{ color: '#6b3a1a' }}
-          >
-            posted by {outlaw.postedBy}
-          </p>
+          {outlaw.postedBy && (
+            <p
+              className="font-pixel text-[8px] mt-1"
+              style={{ color: '#6b3a1a' }}
+            >
+              posted by {outlaw.postedBy}
+            </p>
+          )}
         </div>
 
         {/* Crimes */}
@@ -330,12 +361,14 @@ function Poster({
         </div>
 
         {/* Footer */}
-        <p
-          className="font-pixel text-[8px] italic text-center mt-4 relative z-10"
-          style={{ color: '#6b3a1a' }}
-        >
-          last seen {formatLastSeen(outlaw.lastSeenMinutes)}
-        </p>
+        {outlaw.lastSeenMinutes != null && (
+          <p
+            className="font-pixel text-[8px] italic text-center mt-4 relative z-10"
+            style={{ color: '#6b3a1a' }}
+          >
+            last seen {formatLastSeen(outlaw.lastSeenMinutes)}
+          </p>
+        )}
       </div>
     </div>
   );

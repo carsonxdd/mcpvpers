@@ -4,10 +4,10 @@ import { useEffect, useState } from 'react';
 
 type Lawman = {
   rank: number;
-  uuid: string | null;
+  uuid?: string | null;
   name: string;
   tier: string;
-  commendations: number;
+  commendations?: number;
 };
 
 const lawmenTierColor: Record<string, string> = {
@@ -84,7 +84,9 @@ export default function TopLawmen() {
             </p>
           </div>
           <div className="w-full pt-3 mt-1 border-t" style={{ borderColor: 'var(--c-border)' }}>
-            <p className="font-pixel text-gold text-lg glow-gold">{lawman.commendations}</p>
+            <p className="font-pixel text-gold text-lg glow-gold">
+              {lawman.commendations ?? '—'}
+            </p>
             <p className="t-text-muted text-[9px] uppercase tracking-wider mt-1">Commendations</p>
           </div>
         </div>
