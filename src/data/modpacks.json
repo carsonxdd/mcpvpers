@@ -42,7 +42,7 @@
   "potato": {
     "name": "FPS Boost",
     "description": "For machines that need every frame they can get. Performance first, minimal extras.",
-    "importCode": "IdhAOymB",
+    "importCode": "zbmKZDVX",
     "mods": [
       { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
       { "name": "Lithium", "description": "General-purpose game optimization", "featured": true, "category": "Performance" },
