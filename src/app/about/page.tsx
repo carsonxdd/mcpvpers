@@ -100,8 +100,10 @@ export default function AboutPage() {
           <Expander title="Cowboy reputation system">
             <p className="t-text-dim leading-relaxed mb-3">
               The reputation plugin is on at launch. Wilderness PvP runs through three rep pools
-              (peaceful, violence, outlaw) and decides whether you&apos;re a Pacifist (knocked out
-              instead of killed), an Outlaw on the wanted list, or a Lawman wearing the badge.
+              (peaceful, violence, outlaw) and decides whether you&apos;re a Pacifist (safe by
+              default, can opt into PvP with <code className="text-gold">/pvp on</code> to hunt
+              outlaws and climb the Lawman ladder), an Outlaw on the wanted list, or a Lawman
+              wearing the badge.
             </p>
             <p className="t-text-dim leading-relaxed">
               Full mechanics, command list, and FAQ are on{' '}
@@ -195,6 +197,7 @@ export default function AboutPage() {
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/spawn</code> sends you to world spawn. <code className="text-gold">/back</code> returns to your last death or teleport.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/msg &lt;player&gt;</code> &mdash; private message someone online. <code className="text-gold">/mail</code> for offline players (delivered next login).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/trade</code> &mdash; opens the two-window trade GUI with another player.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/pvp on|off|status</code>: Pacifists and Retired opt in or out of PvP (30-min toggle cooldown). Outlaws and Lawmen are always on.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/lands</code> &mdash; open the claims menu. Defaults already block griefing inside your claim.</span></li>
             </ul>
             <p className="t-text-dim leading-relaxed mt-4 text-sm">
@@ -212,7 +215,7 @@ export default function AboutPage() {
         <div className="space-y-3 mb-10">
           <Expander title="Combat, PvP & player heads">
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">PvP is on in the wilderness.</strong> Lands claims are your safe zone. Outside them, fair game.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">PvP is on in the wilderness for Outlaws and Lawmen.</strong> Pacifists and Retired players are exempt by default (they can&apos;t deal or take PvP damage), but can opt in with <code className="text-gold">/pvp on</code> to join the fight.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Server difficulty is Hard.</strong> Hunger drains, zombies break doors, mobs deal real damage.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Player heads drop from PvP kills only.</strong> Mob and environment deaths don&apos;t drop heads, which keeps the trophy meaningful.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span>The reputation system gates the consequences. See{' '}<a href="/reputation" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">how rep works</a>.</span></li>
