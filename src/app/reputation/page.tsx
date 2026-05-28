@@ -40,7 +40,7 @@ const claimRows = [
 const knockoutSteps: [string, string][] = [
   ['1', 'First lethal hit is cancelled. Pacifist drops to 1 HP, debuffed, smoke particles — and is fully invulnerable to all damage for the next 30 seconds.'],
   ['2', 'Attacker can right-click within those 30 seconds to open a theft GUI showing the pacifist’s hotbar (slots 0–8).'],
-  ['3', 'One stack max. Taking anything = +1 outlaw rep base, plus more if the stack is valuable — a diamond stack costs the attacker more rep than dirt. Logged as an unprovoked-pacifist crime.'],
+  ['3', 'One stack max. Rep cost scales with the diamond-equivalent value of what you lift — a full stack of diamonds runs about +17 outlaw rep, a stack of dirt is barely a blip. Logged as an unprovoked-pacifist crime either way.'],
   ['4', 'On wake-up the pacifist regenerates to full (Regen II) and enters a 5-minute vulnerable cooldown. The knockout will not re-arm during that window — a lethal hit kills outright. That’s +50 outlaw rep, the heaviest single crime in the system.'],
   ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe.'],
 ];
@@ -71,7 +71,7 @@ const commandsByTier = [
   {
     tier: 'Outlaw',
     items: [
-      { cmd: '/restitution <victim>', desc: "Open a 27-slot UI to return stolen items. Earns peaceful rep scaled by what's actually valuable (dirt prints ~0, diamonds count), capped at 20 rep/day. Gated on a logged crime against that victim." },
+      { cmd: '/restitution <victim>', desc: "Open a 27-slot UI to return stolen items. Earns peaceful rep scaled by what's actually valuable (dirt prints ~0, diamonds count), capped at 20 rep/day and at a per-item value ceiling so dumping a double chest of diamonds doesn't pay forever. Gated on a logged crime against that victim." },
     ],
   },
   {
@@ -137,7 +137,7 @@ const faqs = [
   },
   {
     q: 'What happens if someone combat logs?',
-    a: "If you disconnect within ~10 seconds of taking PvP damage, the system flags a combat-log. Outlaw rep is awarded for the offense, and you die on next login as the penalty. While combat-tagged, /home, /tpa, /spawn, /back, and /warp are all blocked — you fight, flee on foot, or eat the death.",
+    a: "If you disconnect within ~10 seconds of taking PvP damage, the system flags a combat-log. Outlaw rep is awarded for the offense, and you die on next login as the penalty. While combat-tagged, /home, /tpa, /spawn, /back, /warp, /rtp, and /wild are all blocked — you fight, flee on foot, or eat the death.",
   },
 ];
 

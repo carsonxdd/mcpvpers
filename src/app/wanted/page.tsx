@@ -8,6 +8,8 @@ import CloudText from '@/components/CloudText';
 import TopLawmen from '@/components/TopLawmen';
 
 type Crime = { kind: string; count: number };
+type RewardItem = { material: string; count: number };
+type LastSeen = { world: string; x: number; y: number; z: number };
 type Outlaw = {
   name: string;
   uuid?: string | null;
@@ -16,16 +18,23 @@ type Outlaw = {
   bountyMultiplier?: number;
   bountyDiamonds: number;
   postedBy?: string;
-  lastSeenMinutes?: number;
+  lastSeen?: LastSeen | null;
+  rewardItems: RewardItem[];
   crimes: Crime[];
 };
 
 type UpstreamOutlaw = {
   name: string;
+  uuid?: string | null;
   outlaw_rep: number;
   tier: string;
   top_crimes?: { type: string; count: number }[];
   bounty_total_diamond_eq?: number;
+  reward_items?: { material: string; count: number }[];
+  last_seen_world?: string | null;
+  last_seen_x?: number | null;
+  last_seen_y?: number | null;
+  last_seen_z?: number | null;
 };
 
 const tierClass: Record<string, string> = {
@@ -49,38 +58,62 @@ const crimeLabels: Record<string, string> = {
   KNOCKOUT_THEFT: 'Knockout thefts',
   VILLAGER_KILL: 'Villager kills',
   PET_KILL: 'Pet kills',
+  PVP_KILL: 'PvP kills',
   SPAWN_REGION_KILL: 'Spawn-region PvP',
   LAWMAN_KILL: 'Lawman kills',
   COMBAT_LOG: 'Combat logs',
   REPORT_APPROVED: 'Reports filed',
 };
 
-function crimeLabel(type: string): string {
-  if (crimeLabels[type]) return crimeLabels[type];
-  return type
+function titleCaseFromSnake(s: string): string {
+  return s
     .toLowerCase()
     .replace(/_/g, ' ')
     .replace(/\b\w/g, (c) => c.toUpperCase());
 }
 
+function crimeLabel(type: string): string {
+  return crimeLabels[type] ?? titleCaseFromSnake(type);
+}
+
+function materialLabel(material: string): string {
+  return titleCaseFromSnake(material);
+}
+
+const worldLabels: Record<string, string> = {
+  world: 'Overworld',
+  world_nether: 'the Nether',
+  world_the_end: 'the End',
+};
+
+function worldLabel(world: string): string {
+  return worldLabels[world] ?? titleCaseFromSnake(world);
+}
+
 function fromUpstream(u: UpstreamOutlaw): Outlaw {
+  const lastSeen: LastSeen | null =
+    u.last_seen_world != null && u.last_seen_x != null && u.last_seen_y != null && u.last_seen_z != null
+      ? {
+          world: u.last_seen_world,
+          x: Math.round(u.last_seen_x),
+          y: Math.round(u.last_seen_y),
+          z: Math.round(u.last_seen_z),
+        }
+      : null;
   return {
     name: u.name,
+    uuid: u.uuid ?? null,
     outlawRep: u.outlaw_rep,
     tier: u.tier,
     bountyDiamonds: Math.round(u.bounty_total_diamond_eq ?? 0),
     bountyMultiplier: tierMultiplier[u.tier],
+    rewardItems: u.reward_items ?? [],
+    lastSeen,
     crimes: (u.top_crimes ?? []).map((c) => ({
       kind: crimeLabel(c.type),
       count: c.count,
     })),
   };
-}
-
-function formatLastSeen(minutes: number) {
-  if (minutes < 60) return `${minutes}m ago`;
-  if (minutes < 60 * 24) return `${Math.floor(minutes / 60)}h ago`;
-  return `${Math.floor(minutes / (60 * 24))}d ago`;
 }
 
 export default function WantedPage() {
@@ -325,10 +358,33 @@ function Poster({
           >
             {outlaw.bountyDiamonds}
             <span style={{ color: '#1a8a8f', marginLeft: '0.25rem' }}>◆</span>
+            <span
+              className="font-pixel text-[8px] tracking-widest ml-1.5"
+              style={{ color: '#6b3a1a' }}
+            >
+              EQ
+            </span>
           </p>
+          {outlaw.rewardItems.length > 0 && (
+            <ul className="flex flex-wrap justify-center gap-1.5 mt-2.5">
+              {outlaw.rewardItems.map((r) => (
+                <li
+                  key={r.material}
+                  className="font-pixel text-[9px] px-2 py-1 rounded"
+                  style={{
+                    color: '#2c160a',
+                    background: 'rgba(91, 51, 22, 0.12)',
+                    border: '1px solid rgba(91, 51, 22, 0.35)',
+                  }}
+                >
+                  {r.count}× {materialLabel(r.material)}
+                </li>
+              ))}
+            </ul>
+          )}
           {outlaw.postedBy && (
             <p
-              className="font-pixel text-[8px] mt-1"
+              className="font-pixel text-[8px] mt-2"
               style={{ color: '#6b3a1a' }}
             >
               posted by {outlaw.postedBy}
@@ -361,12 +417,12 @@ function Poster({
         </div>
 
         {/* Footer */}
-        {outlaw.lastSeenMinutes != null && (
+        {outlaw.lastSeen && (
           <p
             className="font-pixel text-[8px] italic text-center mt-4 relative z-10"
             style={{ color: '#6b3a1a' }}
           >
-            last seen {formatLastSeen(outlaw.lastSeenMinutes)}
+            last seen in {worldLabel(outlaw.lastSeen.world)} at {outlaw.lastSeen.x}, {outlaw.lastSeen.y}, {outlaw.lastSeen.z}
           </p>
         )}
       </div>
