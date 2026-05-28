@@ -49,8 +49,9 @@ export default function AboutPage() {
             <a href="/reputation" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
               reputation system
             </a>{' '}
-            keeps violence consequential. Pacifists can&apos;t be killed in one hit, outlaws end up
-            on wanted posters, and lawmen earn the badge by taking outlaws down. Past that, we trust
+            keeps violence consequential. Pacifists choose whether to fight (and keep one-hit-kill
+            protection either way), outlaws end up on wanted posters, and lawmen earn the badge by
+            taking outlaws down. Past that, we trust
             people to figure it out. When they don&apos;t, the world&apos;s consequences usually
             handle it better than a rulebook would.
           </p>

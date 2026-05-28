@@ -16,12 +16,12 @@ const features: Feature[] = [
   {
     title: 'Outside is outside',
     description:
-      'No safety in the wilderness. PvP is on, your stuff is yours to defend, and the world is honest about that.',
+      'No safety in the wilderness for anyone in the fight. PvP is always on for outlaws and lawmen, opt-in for pacifists. Your stuff is yours to defend either way.',
   },
   {
     title: 'Frontier reputation',
     description:
-      "Pacifists get knocked out instead of killed. Outlaws end up on wanted posters with bounties on their heads. Lawmen earn the badge by taking outlaws down.",
+      "PvP is a choice you make, not a class you're stuck with. Pacifists can opt in to hunt outlaws but keep one-hit-kill protection. Cross lines and your name lands on wanted posters with a bounty. Take outlaws down and you earn the lawman badge.",
     href: '/reputation',
   },
 ];
@@ -125,8 +125,9 @@ export default function Home() {
             the frontier. PvP on, mob griefing on, reputation rep awards firing every kill.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Pacifists get knocked out instead of killed. Outlaws land on /wanted with bounties.
-            Lawmen earn the badge. The community votes on every system change.{' '}
+            Pacifists keep one-hit-kill protection but can opt into PvP to hunt outlaws. Cross lines
+            in the wilderness and you land on /wanted with a bounty. Lawmen earn the badge by taking
+            outlaws down. The community votes on every system change.{' '}
             <a href="/about#whats-live" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
               See what&apos;s live at launch &rarr;
             </a>
