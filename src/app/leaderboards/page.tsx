@@ -255,7 +255,7 @@ export default function LeaderboardsPage() {
                 </span>
                 {player.uuid ? (
                   <Link
-                    href={`/player/${player.uuid}`}
+                    href={`/player/${encodeURIComponent(player.name)}`}
                     className="flex items-center gap-2.5 min-w-0 hover:underline"
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
