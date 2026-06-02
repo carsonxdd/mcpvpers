@@ -86,6 +86,27 @@ async function fetchOutlaw(timeoutMs: number): Promise<Entry[]> {
   }));
 }
 
+// Commendations has no upstream leaderboard endpoint, so build one by fanning
+// out per-player reputation across the roster and ranking by unique commenders
+// in the last 90 days. One call per roster player — fine at this scale; a real
+// plugin endpoint would be the move if the roster ever gets large.
+async function fetchCommendations(timeoutMs: number): Promise<Entry[]> {
+  const roster = await getJson<{ uuid: string; name: string }[]>('players', timeoutMs);
+  if (!Array.isArray(roster)) return [];
+  const rows = await Promise.all(
+    roster.map((p) =>
+      getJson<{ unique_commenders_90d?: number }>(
+        `reputation/player/${encodeURIComponent(p.name)}`,
+        timeoutMs,
+      ).then((rep) => ({ uuid: p.uuid, name: p.name, value: rep?.unique_commenders_90d ?? 0 })),
+    ),
+  );
+  return rows
+    .filter((r) => r.value > 0)
+    .sort((a, b) => b.value - a.value)
+    .map((r, i) => ({ rank: i + 1, uuid: r.uuid, name: r.name, value: r.value }));
+}
+
 // Slow track: refresh blocks_mined off the critical path. Only overwrites the
 // cached board when it actually returns data, so a timeout never blanks it.
 async function refreshBlocks(): Promise<void> {
@@ -103,17 +124,19 @@ async function refresh(): Promise<void> {
   if (refreshing) return;
   refreshing = true;
   try {
-    const [fast, outlaw] = await Promise.all([
+    const [fast, outlaw, commendations] = await Promise.all([
       Promise.all(
         FAST_BOARDS.map((b) =>
           fetchBoard(b.path, FAST_TIMEOUT_MS).then((rows): [string, Entry[]] => [b.key, rows]),
         ),
       ),
       fetchOutlaw(FAST_TIMEOUT_MS),
+      fetchCommendations(FAST_TIMEOUT_MS),
     ]);
     const boards: Record<string, Entry[]> = { ...(cache?.boards ?? {}) };
     for (const [key, rows] of fast) boards[key] = rows;
     boards.outlaw_rep = outlaw;
+    boards.commendations = commendations;
     cache = { boards, updatedAt: Date.now() };
   } finally {
     refreshing = false;

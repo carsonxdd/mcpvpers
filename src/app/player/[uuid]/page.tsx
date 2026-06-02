@@ -274,16 +274,13 @@ export default function PlayerPage() {
                     <RepPool label="Violence" value={rep.violence_rep} className="text-gold" />
                     <RepPool label="Outlaw" value={rep.outlaw_rep} className="text-redstone" />
                   </div>
-                  <div className="mt-4 pt-4 t-border-20 border-t flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs t-text-muted">
-                    {badge && (
+                  {badge && (
+                    <div className="mt-4 pt-4 t-border-20 border-t flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs t-text-muted">
                       <span>
                         State: <span className={badge.className}>{badge.label}</span>
                       </span>
-                    )}
-                    <span>
-                      Commenders (90d): <span className="t-text-dim">{rep.unique_commenders_90d}</span>
-                    </span>
-                  </div>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -352,7 +349,7 @@ function ProfileSkeleton() {
       <div className="mb-8">
         <div className="h-3 w-16 rounded t-surface-light mb-3 ml-1" />
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-          {Array.from({ length: 8 }).map((_, i) => (
+          {Array.from({ length: 9 }).map((_, i) => (
             <div key={i} className="mc-panel p-4">
               <div className="h-2.5 w-16 rounded t-surface-light mb-3" />
               <div className="h-5 w-20 rounded t-surface-light" />

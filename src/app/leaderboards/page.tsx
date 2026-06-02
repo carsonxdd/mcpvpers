@@ -16,7 +16,8 @@ type StatKey =
   | 'peaceful_rep'
   | 'violence_rep'
   | 'outlaw_rep'
-  | 'lawmen';
+  | 'lawmen'
+  | 'commendations';
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
 
@@ -33,6 +34,7 @@ const categories: { label: string; key: StatKey }[] = [
   { label: 'Outlaw Rep', key: 'outlaw_rep' },
   { label: 'Violence Rep', key: 'violence_rep' },
   { label: 'Lawmen', key: 'lawmen' },
+  { label: 'Commendations', key: 'commendations' },
 ];
 
 const playtimeWindows: { label: string; key: PlaytimeWindow }[] = [
@@ -54,6 +56,7 @@ const headerByKey: Record<StatKey, string> = {
   violence_rep: 'Violence',
   outlaw_rep: 'Outlaw',
   lawmen: 'Tier',
+  commendations: 'Commenders',
 };
 
 type LeaderboardEntry = {

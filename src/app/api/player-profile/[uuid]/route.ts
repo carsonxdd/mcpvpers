@@ -119,6 +119,18 @@ export async function GET(
     `reputation/player/${encodeURIComponent(player.name)}`,
   );
 
+  // Commendations: value comes from the player's own reputation (authoritative),
+  // rank from the website-built commendations board in the snapshot.
+  const commBoard = snapshot.boards.commendations ?? [];
+  const commRow = rowFor(snapshot, 'commendations', uuid);
+  stats.push({
+    key: 'commendations',
+    label: 'Commendations',
+    value: reputation?.unique_commenders_90d ?? commRow?.value ?? 0,
+    rank: commRow?.rank ?? null,
+    total: commBoard.length,
+  });
+
   return NextResponse.json(
     {
       uuid,
