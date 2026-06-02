@@ -51,7 +51,7 @@ type Reputation = {
 };
 
 type ProfileResponse = {
-  uuid: string;
+  uuid: string | null;
   name: string | null;
   online: boolean;
   found: boolean;
@@ -134,8 +134,6 @@ export default function PlayerPage() {
 
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [adv, setAdv] = useState<AdvancementsResponse | null>(null);
-  // Slow stats (blocks_mined) load on their own track — null = still loading.
-  const [slowStats, setSlowStats] = useState<StatEntry[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -146,40 +144,32 @@ export default function PlayerPage() {
     // fetches. Resetting in-effect trips react-hooks/set-state-in-effect.
     let cancelled = false;
 
-    Promise.all([
-      fetch(`/api/player-profile/${uuid}`).then(async (r) => {
+    fetch(`/api/player-profile/${uuid}`)
+      .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
         return (await r.json()) as ProfileResponse;
-      }),
-      // Advancements are best-effort — the page still renders the stats profile
-      // if the advancements endpoint 404s (older PiStatsAPI without it).
-      fetch(`/api/stats/players/${uuid}/advancements`)
-        .then((r) => (r.ok ? (r.json() as Promise<AdvancementsResponse>) : null))
-        .catch(() => null),
-    ])
-      .then(([profileData, advData]) => {
+      })
+      .then((profileData) => {
         if (cancelled) return;
         setProfile(profileData);
-        setAdv(advData);
+        // Advancements are keyed off the CANONICAL uuid — the route param may be
+        // a username, and the upstream advancements endpoint is uuid-only (a name
+        // returns empty data). Best-effort: the stats profile renders without it.
+        const canonical = profileData.uuid;
+        if (canonical) {
+          fetch(`/api/stats/players/${canonical}/advancements`)
+            .then((r) => (r.ok ? (r.json() as Promise<AdvancementsResponse>) : null))
+            .then((advData) => {
+              if (!cancelled) setAdv(advData);
+            })
+            .catch(() => {});
+        }
       })
       .catch((e) => {
         if (!cancelled) setError(String(e));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
-      });
-
-    // Slow track (blocks_mined, ~23s upstream): fetched separately so it never
-    // blocks the rest of the profile. The card shows a placeholder until it
-    // resolves; an empty result just drops the card.
-    fetch(`/api/player-profile/${uuid}?part=slow`)
-      .then((r) => (r.ok ? (r.json() as Promise<{ stats: StatEntry[] }>) : null))
-      .then((data) => {
-        if (cancelled) return;
-        setSlowStats(data?.stats ?? []);
-      })
-      .catch(() => {
-        if (!cancelled) setSlowStats([]);
       });
 
     return () => {
@@ -191,6 +181,10 @@ export default function PlayerPage() {
   const rep = profile?.reputation ?? null;
   const badge = rep ? stateBadge(rep) : null;
   const advPct = adv && adv.total > 0 ? Math.round((adv.completed / adv.total) * 100) : 0;
+  // Prefer the canonical uuid (route param may be a username); mc-heads accepts
+  // either, but the resolved uuid is the stable identifier.
+  const headId = profile?.uuid ?? uuid;
+  const notFound = !loading && !error && profile != null && !profile.found;
 
   return (
     <div>
@@ -205,7 +199,7 @@ export default function PlayerPage() {
         <div className="mc-panel p-6 mb-8 flex items-center gap-4">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
-            src={`https://mc-heads.net/avatar/${uuid}/64`}
+            src={`https://mc-heads.net/avatar/${headId}/64`}
             alt=""
             width={64}
             height={64}
@@ -245,14 +239,20 @@ export default function PlayerPage() {
           </div>
         </div>
 
-        {loading && <div className="px-4 py-8 text-center t-text-muted text-sm">Loading…</div>}
+        {loading && <ProfileSkeleton />}
         {!loading && error && (
           <div className="px-4 py-8 text-center t-text-muted text-sm">
             Couldn&apos;t load this player. The server may be restarting — try again later.
           </div>
         )}
+        {notFound && (
+          <div className="px-4 py-8 text-center t-text-muted text-sm">
+            No player by that name yet — check the spelling, or find them on the{' '}
+            <Link href="/leaderboards" className="hover:underline t-text-dim">leaderboards</Link>.
+          </div>
+        )}
 
-        {!loading && !error && profile && (
+        {!loading && !error && profile && profile.found && (
           <>
             {/* Stats grid */}
             <div className="mb-8">
@@ -261,15 +261,6 @@ export default function PlayerPage() {
                 {profile.stats.map((s) => (
                   <StatCard key={s.key} stat={s} />
                 ))}
-                {/* Slow track (blocks_mined): placeholder until it resolves. */}
-                {slowStats === null ? (
-                  <div className="mc-panel p-4">
-                    <p className="font-pixel t-text-muted text-[10px] mb-1.5">Blocks Mined</p>
-                    <p className="t-text-muted text-lg font-medium leading-none animate-pulse">…</p>
-                  </div>
-                ) : (
-                  slowStats.map((s) => <StatCard key={s.key} stat={s} />)
-                )}
               </div>
             </div>
 
@@ -349,6 +340,38 @@ export default function PlayerPage() {
           </>
         )}
       </section>
+    </div>
+  );
+}
+
+// Loading placeholder — mirrors the real stats grid + reputation layout so the
+// page doesn't jump when data lands.
+function ProfileSkeleton() {
+  return (
+    <div className="animate-pulse">
+      <div className="mb-8">
+        <div className="h-3 w-16 rounded t-surface-light mb-3 ml-1" />
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <div key={i} className="mc-panel p-4">
+              <div className="h-2.5 w-16 rounded t-surface-light mb-3" />
+              <div className="h-5 w-20 rounded t-surface-light" />
+              <div className="h-2.5 w-12 rounded t-surface-light mt-3" />
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="mb-8">
+        <div className="h-3 w-24 rounded t-surface-light mb-3 ml-1" />
+        <div className="mc-panel p-5 grid grid-cols-3 gap-3">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <div className="h-5 w-12 rounded t-surface-light" />
+              <div className="h-2.5 w-14 rounded t-surface-light" />
+            </div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

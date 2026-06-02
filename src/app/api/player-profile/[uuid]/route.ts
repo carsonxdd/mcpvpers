@@ -1,54 +1,42 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getSnapshot, rowFor } from '@/lib/leaderboardSnapshot';
 
 export const runtime = 'nodejs';
 
-// Aggregator for the per-player profile page. The upstream PiStatsAPI has no
-// rich single-player endpoint — `/api/players/<uuid>` only carries
-// playtime/deaths/online, and every other stat (mob kills, ores, distance, xp
-// levels, advancements, blocks mined) lives ONLY on the per-stat leaderboards.
-// So we fan out: one summary fetch + one leaderboard fetch per stat (each gives
-// the player's value AND rank), plus reputation keyed by NAME (not uuid). The
-// roster is tiny (~32 players) so each leaderboard is small.
-//
-// Two speed tiers. Most leaderboards answer in well under a second, but
-// `blocks_mined` is computed live upstream and consistently takes ~23s with no
-// server-side caching. We can't let that block the whole profile, so it's split
-// into a SLOW tier the page requests separately (`?part=slow`) and lazy-renders.
-// Next's `revalidate` keeps the slow result warm after the first cold fetch, so
-// in practice only the first visitor after a cache miss waits on it — and only
-// for that one card, never the rest of the page.
+// Per-player profile aggregator. The upstream PiStatsAPI has no rich single-
+// player endpoint, and every stat (mob kills, ores, distance, xp, advancements,
+// blocks mined) lives only on the leaderboards. Rather than re-fetch all of
+// those from upstream on every profile view (slow, and prone to timing out under
+// load), we read the player's value+rank straight out of the shared warm
+// snapshot (full roster, refreshed in the background, blocks_mined included).
+// That leaves just two quick upstream calls: the roster (for online status +
+// username→uuid resolution) and reputation (keyed by name).
 
 const UPSTREAM = process.env.PISTATS_URL ?? 'http://stained.dathost.net:17249';
+const TIMEOUT_MS = 5000;
+const REVALIDATE = 30;
 
-type StatDef = { key: string; label: string; stat: string };
+const UUID_RE = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
 
-const FAST_STATS: StatDef[] = [
-  { key: 'playtime', label: 'Playtime', stat: 'playtime' },
-  { key: 'mob_kills', label: 'Mob Kills', stat: 'mob_kills' },
-  { key: 'ores_mined', label: 'Ores Mined', stat: 'ores_mined' },
-  { key: 'distance', label: 'Distance', stat: 'distance' },
-  { key: 'xp_levels', label: 'XP Levels', stat: 'xp_levels' },
-  { key: 'advancements', label: 'Advancements', stat: 'advancements' },
-  { key: 'deaths', label: 'Deaths', stat: 'deaths' },
+// Each profile stat → the snapshot board it's resolved from.
+const PROFILE_STATS: { key: string; label: string; board: string }[] = [
+  { key: 'playtime', label: 'Playtime', board: 'playtime:all' },
+  { key: 'blocks_mined', label: 'Blocks Mined', board: 'blocks_mined' },
+  { key: 'mob_kills', label: 'Mob Kills', board: 'mob_kills' },
+  { key: 'ores_mined', label: 'Ores Mined', board: 'ores_mined' },
+  { key: 'distance', label: 'Distance', board: 'distance' },
+  { key: 'xp_levels', label: 'XP Levels', board: 'xp_levels' },
+  { key: 'advancements', label: 'Advancements', board: 'advancements' },
+  { key: 'deaths', label: 'Deaths', board: 'deaths' },
 ];
 
-// `blocks_mined` is real but ~23s upstream — fetched on its own slow track.
-const SLOW_STATS: StatDef[] = [{ key: 'blocks_mined', label: 'Blocks Mined', stat: 'blocks_mined' }];
-
-const FAST_TIMEOUT_MS = 5000;
-const FAST_REVALIDATE = 30;
-const SLOW_TIMEOUT_MS = 28000;
-const SLOW_REVALIDATE = 120;
-
-type Summary = {
+type PlayerRow = {
   uuid: string;
   name: string;
+  online: boolean;
   playtime_seconds: number;
   deaths: number;
-  online: boolean;
 };
-
-type LeaderboardRow = { rank: number; uuid: string | null; name: string; value: number };
 
 type Reputation = {
   name: string;
@@ -62,17 +50,16 @@ type Reputation = {
   outlaw_tier: string;
 };
 
-async function getJson<T>(path: string, timeoutMs: number, revalidate: number): Promise<T | null> {
+async function getJson<T>(path: string): Promise<T | null> {
   try {
     const res = await fetch(`${UPSTREAM}/api/${path}`, {
-      signal: AbortSignal.timeout(timeoutMs),
-      next: { revalidate },
+      signal: AbortSignal.timeout(TIMEOUT_MS),
+      next: { revalidate: REVALIDATE },
     });
     if (!res.ok) return null;
     const text = await res.text();
-    if (!text.trim()) return null; // empty body == no data / not computed
+    if (!text.trim()) return null;
     const json = JSON.parse(text) as T & { error?: string };
-    // The reputation context returns 200 with an { error } body for misses.
     if (json && typeof json === 'object' && 'error' in json && json.error) return null;
     return json;
   } catch {
@@ -80,85 +67,67 @@ async function getJson<T>(path: string, timeoutMs: number, revalidate: number): 
   }
 }
 
-// Resolve a player's value + server rank for each stat from its leaderboard.
-async function resolveStats(
-  uuid: string,
-  defs: StatDef[],
-  timeoutMs: number,
-  revalidate: number,
+const emptyStats = () =>
+  PROFILE_STATS.map((s) => ({ key: s.key, label: s.label, value: 0, rank: null, total: 0 }));
+
+const headers = {
+  'cache-control': `public, s-maxage=${REVALIDATE}, stale-while-revalidate=60`,
+};
+
+export async function GET(
+  _req: NextRequest,
+  { params }: { params: Promise<{ uuid: string }> },
 ) {
-  const boards = await Promise.all(
-    defs.map((s) =>
-      getJson<{ players: LeaderboardRow[] }>(
-        `leaderboard?stat=${encodeURIComponent(s.stat)}&limit=1000`,
-        timeoutMs,
-        revalidate,
-      ),
-    ),
-  );
-  return defs.map((s, i) => {
-    const players = boards[i]?.players ?? [];
-    const row = players.find((p) => p.uuid === uuid);
+  const { uuid: idOrName } = await params;
+
+  // Roster (online + name↔uuid) and the warm snapshot in parallel.
+  const [roster, snapshot] = await Promise.all([
+    getJson<PlayerRow[]>('players'),
+    getSnapshot(),
+  ]);
+
+  const players = Array.isArray(roster) ? roster : [];
+  const lower = idOrName.toLowerCase();
+  const player = UUID_RE.test(idOrName)
+    ? players.find((p) => p.uuid?.toLowerCase() === lower)
+    : players.find((p) => p.name?.toLowerCase() === lower);
+
+  if (!player) {
+    return NextResponse.json(
+      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null },
+      { headers },
+    );
+  }
+
+  const uuid = player.uuid;
+
+  // Stat value + server rank pulled from the shared snapshot — no per-view
+  // leaderboard fetches.
+  const stats = PROFILE_STATS.map((s) => {
+    const board = snapshot.boards[s.board] ?? [];
+    const row = rowFor(snapshot, s.board, uuid);
     return {
       key: s.key,
       label: s.label,
       value: row?.value ?? 0,
       rank: row?.rank ?? null,
-      total: players.length,
+      total: board.length,
     };
   });
-}
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: Promise<{ uuid: string }> },
-) {
-  const { uuid } = await params;
-  const id = encodeURIComponent(uuid);
-  const part = req.nextUrl.searchParams.get('part');
-
-  // Slow track: just the heavy leaderboards (blocks_mined), requested on its own.
-  if (part === 'slow') {
-    const stats = await resolveStats(uuid, SLOW_STATS, SLOW_TIMEOUT_MS, SLOW_REVALIDATE);
-    return NextResponse.json(
-      { stats },
-      {
-        headers: {
-          'cache-control': `public, s-maxage=${SLOW_REVALIDATE}, stale-while-revalidate=300`,
-        },
-      },
-    );
-  }
-
-  // Fast track: summary + the quick leaderboards in parallel.
-  const [summary, stats] = await Promise.all([
-    getJson<Summary>(`players/${id}`, FAST_TIMEOUT_MS, FAST_REVALIDATE),
-    resolveStats(uuid, FAST_STATS, FAST_TIMEOUT_MS, FAST_REVALIDATE),
-  ]);
-
-  // Reputation is keyed by name, so it waits on the resolved summary name.
-  const name = summary?.name ?? null;
-  const reputation = name
-    ? await getJson<Reputation>(
-        `reputation/player/${encodeURIComponent(name)}`,
-        FAST_TIMEOUT_MS,
-        FAST_REVALIDATE,
-      )
-    : null;
+  const reputation = await getJson<Reputation>(
+    `reputation/player/${encodeURIComponent(player.name)}`,
+  );
 
   return NextResponse.json(
     {
       uuid,
-      name,
-      online: summary?.online ?? false,
-      found: summary != null,
+      name: player.name,
+      online: player.online,
+      found: true,
       stats,
       reputation,
     },
-    {
-      headers: {
-        'cache-control': `public, s-maxage=${FAST_REVALIDATE}, stale-while-revalidate=60`,
-      },
-    },
+    { headers },
   );
 }
