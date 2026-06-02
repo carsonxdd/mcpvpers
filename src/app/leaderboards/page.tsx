@@ -70,7 +70,7 @@ type Snapshot = {
   boards: Record<string, LeaderboardEntry[]>;
 };
 
-const medalStyles = ['text-gold glow-gold', 't-text-dim', 't-text-dim'];
+const medalStyles = ['text-gold glow-gold', 'text-silver glow-silver', 'text-bronze glow-bronze'];
 
 function formatPlaytime(seconds: number): string {
   const totalMinutes = Math.floor(seconds / 60);

@@ -7,6 +7,8 @@
   --color-oak: #BC9862;
   --color-oak-light: #D4B07A;
   --color-gold: #FFAA00;
+  --color-silver: #C2CBD4;
+  --color-bronze: #CD7F32;
   --color-xp: #4CBB17;
   --color-enchant: #A78BFA;
   --color-sky-top: #78A7FF;
@@ -233,10 +235,14 @@ html:not(.dark) .mc-panel:hover {
 
 /* Glow text — dark mode only */
 .glow-gold  { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
+.glow-silver { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
+.glow-bronze { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
 .glow-xp    { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
 .glow-enchant { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
 
 html.dark .glow-gold  { text-shadow: 0 0 20px rgba(255,170,0,0.3), 0 0 40px rgba(255,170,0,0.1); }
+html.dark .glow-silver { text-shadow: 0 0 20px rgba(194,203,212,0.3), 0 0 40px rgba(194,203,212,0.1); }
+html.dark .glow-bronze { text-shadow: 0 0 20px rgba(205,127,50,0.3), 0 0 40px rgba(205,127,50,0.1); }
 html.dark .glow-xp    { text-shadow: 0 0 20px rgba(126,252,32,0.3), 0 0 40px rgba(126,252,32,0.1); }
 html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 
