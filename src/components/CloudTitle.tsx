@@ -8,6 +8,11 @@ interface CloudTitleProps {
   children: React.ReactNode;
   className?: string;
   size?: 'normal' | 'large';
+  /* Nudge the cloud off-center (px). Positive X = right, positive Y = down.
+     Applied to the SVG's top/left anchor (not transform), since the cloud-bob
+     keyframe overrides transform. Defaults keep every existing heading centered. */
+  cloudOffsetX?: number;
+  cloudOffsetY?: number;
 }
 
 /*
@@ -16,7 +21,7 @@ interface CloudTitleProps {
   dark blue → grey during rain. Stop colors transition smoothly (1.5s) via
   `.cloud-fade stop` in globals.css so weather and theme swaps stay in sync.
 */
-function BlockyCloud({ isDark, isRaining, size = 'normal' }: { isDark: boolean; isRaining: boolean; size?: 'normal' | 'large' }) {
+function BlockyCloud({ isDark, isRaining, size = 'normal', offsetX = 0, offsetY = 0 }: { isDark: boolean; isRaining: boolean; size?: 'normal' | 'large'; offsetX?: number; offsetY?: number }) {
   const gradId = useId();
   const topColor = isDark
     ? (isRaining ? '#1F1F3A' : '#3a3a5c')
@@ -36,8 +41,8 @@ function BlockyCloud({ isDark, isRaining, size = 'normal' }: { isDark: boolean; 
       className="absolute pointer-events-none cloud-fade"
       style={{
         zIndex: 0,
-        top: '50%',
-        left: '50%',
+        top: `calc(50% + ${offsetY}px)`,
+        left: `calc(50% + ${offsetX}px)`,
         width: w,
         height: h,
         transform: 'translate(-50%, -54%)',
@@ -92,7 +97,7 @@ function BlockyCloud({ isDark, isRaining, size = 'normal' }: { isDark: boolean; 
   );
 }
 
-export default function CloudTitle({ children, className = '', size = 'normal' }: CloudTitleProps) {
+export default function CloudTitle({ children, className = '', size = 'normal', cloudOffsetX = 0, cloudOffsetY = 0 }: CloudTitleProps) {
   const { theme } = useTheme();
   const { weather } = useWeather();
   const isDark = theme === 'dark';
@@ -103,7 +108,7 @@ export default function CloudTitle({ children, className = '', size = 'normal' }
 
   return (
     <div className={`relative inline-flex flex-col items-center justify-center ${className}`}>
-      <BlockyCloud isDark={isDark} isRaining={isRaining} size={size} />
+      <BlockyCloud isDark={isDark} isRaining={isRaining} size={size} offsetX={cloudOffsetX} offsetY={cloudOffsetY} />
 
       {/* Content */}
       <span

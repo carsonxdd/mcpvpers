@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
 
 type StatKey =
@@ -14,6 +15,7 @@ type StatKey =
   | 'xp_levels'
   | 'peaceful_rep'
   | 'violence_rep'
+  | 'outlaw_rep'
   | 'lawmen';
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
@@ -36,6 +38,7 @@ const categories: { label: string; key: StatKey; group?: 'rep' }[] = [
   { label: 'Advancements', key: 'advancements' },
   { label: 'XP Levels', key: 'xp_levels' },
   { label: 'Peaceful Rep', key: 'peaceful_rep', group: 'rep' },
+  { label: 'Outlaw Rep', key: 'outlaw_rep', group: 'rep' },
   { label: 'Violence Rep', key: 'violence_rep', group: 'rep' },
   { label: 'Lawmen', key: 'lawmen', group: 'rep' },
 ];
@@ -57,6 +60,7 @@ const headerByKey: Record<StatKey, string> = {
   xp_levels: 'Levels',
   peaceful_rep: 'Peaceful',
   violence_rep: 'Violence',
+  outlaw_rep: 'Outlaw',
   lawmen: 'Tier',
 };
 
@@ -73,6 +77,10 @@ type LeaderboardResponse = {
   stat: string;
   window?: string;
   players: LeaderboardEntry[];
+};
+
+type WantedRepResponse = {
+  wanted: { uuid: string | null; name: string; outlaw_rep: number; tier: string }[];
 };
 
 const medalStyles = ['text-gold glow-gold', 't-text-dim', 't-text-dim'];
@@ -99,6 +107,8 @@ function formatValue(stat: StatKey, entry: LeaderboardEntry): string {
   if (stat === 'playtime') return formatPlaytime(entry.value);
   if (stat === 'distance') return formatDistance(entry.value);
   if (stat === 'lawmen') return entry.tier ?? '—';
+  if (stat === 'peaceful_rep' || stat === 'violence_rep' || stat === 'outlaw_rep')
+    return entry.value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   return entry.value.toLocaleString();
 }
 
@@ -112,7 +122,9 @@ export default function LeaderboardsPage() {
   useEffect(() => {
     let cancelled = false;
     let url: string;
-    if (isRepKey(activeKey)) {
+    if (activeKey === 'outlaw_rep') {
+      url = '/api/stats/reputation/wanted';
+    } else if (isRepKey(activeKey)) {
       url = repEndpoints[activeKey];
     } else {
       const params = new URLSearchParams({ stat: activeKey, limit: '10' });
@@ -123,11 +135,24 @@ export default function LeaderboardsPage() {
     fetch(url)
       .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return (await r.json()) as LeaderboardResponse;
+        return await r.json();
       })
       .then((json) => {
         if (cancelled) return;
-        setFetchedData(json.players ?? []);
+        if (activeKey === 'outlaw_rep') {
+          const wanted = (json as WantedRepResponse).wanted ?? [];
+          setFetchedData(
+            wanted.slice(0, 10).map((o, i) => ({
+              rank: i + 1,
+              uuid: o.uuid ?? null,
+              name: o.name,
+              value: o.outlaw_rep,
+              tier: o.tier,
+            })),
+          );
+        } else {
+          setFetchedData((json as LeaderboardResponse).players ?? []);
+        }
       })
       .catch((e) => {
         if (cancelled) return;
@@ -211,20 +236,40 @@ export default function LeaderboardsPage() {
                 <span className={`font-pixel text-xs ${i < 3 ? medalStyles[i] : 't-text-muted'}`}>
                   {i + 1}
                 </span>
-                <div className="flex items-center gap-2.5 min-w-0">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={`https://mc-heads.net/avatar/${player.uuid ?? player.name}/24`}
-                    alt=""
-                    width={24}
-                    height={24}
-                    loading="lazy"
-                    className="w-6 h-6 rounded shrink-0 t-surface-light"
-                  />
-                  <span className={`text-sm max-md:truncate ${i < 3 ? 't-text font-medium' : 't-text-dim'}`}>
-                    {player.name}
-                  </span>
-                </div>
+                {player.uuid ? (
+                  <Link
+                    href={`/player/${player.uuid}`}
+                    className="flex items-center gap-2.5 min-w-0 hover:underline"
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://mc-heads.net/avatar/${player.uuid}/24`}
+                      alt=""
+                      width={24}
+                      height={24}
+                      loading="lazy"
+                      className="w-6 h-6 rounded shrink-0 t-surface-light"
+                    />
+                    <span className={`text-sm max-md:truncate ${i < 3 ? 't-text font-medium' : 't-text-dim'}`}>
+                      {player.name}
+                    </span>
+                  </Link>
+                ) : (
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={`https://mc-heads.net/avatar/${player.uuid ?? player.name}/24`}
+                      alt=""
+                      width={24}
+                      height={24}
+                      loading="lazy"
+                      className="w-6 h-6 rounded shrink-0 t-surface-light"
+                    />
+                    <span className={`text-sm max-md:truncate ${i < 3 ? 't-text font-medium' : 't-text-dim'}`}>
+                      {player.name}
+                    </span>
+                  </div>
+                )}
                 <span className={`text-sm text-right whitespace-nowrap ${i === 0 ? 'text-gold font-pixel text-xs' : 't-text-muted'}`}>
                   {formatValue(activeKey, player)}
                   {activeKey === 'lawmen' && player.commendations != null && (
