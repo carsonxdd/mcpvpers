@@ -29,23 +29,30 @@ type Entry = {
   commendations?: number;
 };
 
+// Fetch the full roster per board so the page can paginate client-side. The
+// regular stat boards honor `limit` (returns up to the whole roster); the
+// reputation boards (peaceful/violence/lawmen) are hard-capped at 10 upstream —
+// `limit` is ignored there — so those tabs max out at 10 until the plugin lifts
+// the cap.
+const ROSTER_LIMIT = 1000;
+
 // key = the tab key the leaderboards page selects on.
 const FAST_BOARDS: { key: string; path: string }[] = [
-  { key: 'playtime:all', path: 'leaderboard?stat=playtime&window=all&limit=10' },
-  { key: 'playtime:month', path: 'leaderboard?stat=playtime&window=month&limit=10' },
-  { key: 'playtime:week', path: 'leaderboard?stat=playtime&window=week&limit=10' },
-  { key: 'deaths', path: 'leaderboard?stat=deaths&limit=10' },
-  { key: 'mob_kills', path: 'leaderboard?stat=mob_kills&limit=10' },
-  { key: 'ores_mined', path: 'leaderboard?stat=ores_mined&limit=10' },
-  { key: 'distance', path: 'leaderboard?stat=distance&limit=10' },
-  { key: 'advancements', path: 'leaderboard?stat=advancements&limit=10' },
-  { key: 'xp_levels', path: 'leaderboard?stat=xp_levels&limit=10' },
+  { key: 'playtime:all', path: `leaderboard?stat=playtime&window=all&limit=${ROSTER_LIMIT}` },
+  { key: 'playtime:month', path: `leaderboard?stat=playtime&window=month&limit=${ROSTER_LIMIT}` },
+  { key: 'playtime:week', path: `leaderboard?stat=playtime&window=week&limit=${ROSTER_LIMIT}` },
+  { key: 'deaths', path: `leaderboard?stat=deaths&limit=${ROSTER_LIMIT}` },
+  { key: 'mob_kills', path: `leaderboard?stat=mob_kills&limit=${ROSTER_LIMIT}` },
+  { key: 'ores_mined', path: `leaderboard?stat=ores_mined&limit=${ROSTER_LIMIT}` },
+  { key: 'distance', path: `leaderboard?stat=distance&limit=${ROSTER_LIMIT}` },
+  { key: 'advancements', path: `leaderboard?stat=advancements&limit=${ROSTER_LIMIT}` },
+  { key: 'xp_levels', path: `leaderboard?stat=xp_levels&limit=${ROSTER_LIMIT}` },
   { key: 'peaceful_rep', path: 'reputation/leaderboard/peaceful' },
   { key: 'violence_rep', path: 'reputation/leaderboard/violence' },
   { key: 'lawmen', path: 'reputation/leaderboard/lawmen' },
 ];
 
-const SLOW_BOARD = { key: 'blocks_mined', path: 'leaderboard?stat=blocks_mined&limit=10' };
+const SLOW_BOARD = { key: 'blocks_mined', path: `leaderboard?stat=blocks_mined&limit=${ROSTER_LIMIT}` };
 
 type Snapshot = { boards: Record<string, Entry[]>; updatedAt: number };
 
@@ -84,7 +91,7 @@ async function fetchOutlaw(timeoutMs: number): Promise<Entry[]> {
   }>('reputation/wanted', timeoutMs);
   const wanted = json?.wanted;
   if (!Array.isArray(wanted)) return [];
-  return wanted.slice(0, 10).map((o, i) => ({
+  return wanted.slice(0, 100).map((o, i) => ({
     rank: i + 1,
     uuid: o.uuid ?? null,
     name: o.name,

@@ -114,10 +114,17 @@ function boardKeyFor(activeKey: StatKey, window: PlaytimeWindow): string {
   return activeKey === 'playtime' ? `playtime:${window}` : activeKey;
 }
 
+// A page holds up to 100 ranks; within a page we reveal 50 first, then the rest
+// on "Load more". Beyond 100 ranks, pagination kicks in.
+const PAGE_SIZE = 100;
+const INITIAL_VISIBLE = 50;
+
 export default function LeaderboardsPage() {
   const [activeKey, setActiveKey] = useState<StatKey>('playtime');
   const [playtimeWindow, setPlaytimeWindow] = useState<PlaytimeWindow>('all');
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
+  const [page, setPage] = useState(0);
+  const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -154,8 +161,29 @@ export default function LeaderboardsPage() {
   // Blocks Mined can lag the rest of the snapshot right after a restart.
   const warming = !loading && !error && activeKey === 'blocks_mined' && board === undefined;
 
-  const selectCategory = (key: StatKey) => setActiveKey(key);
-  const selectWindow = (key: PlaytimeWindow) => setPlaytimeWindow(key);
+  const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages - 1);
+  const pageStart = safePage * PAGE_SIZE;
+  const pageRows = data.slice(pageStart, pageStart + PAGE_SIZE);
+  const visibleRows = expanded ? pageRows : pageRows.slice(0, INITIAL_VISIBLE);
+  const showLoadMore = !expanded && pageRows.length > INITIAL_VISIBLE;
+  const showPagination = data.length > PAGE_SIZE;
+
+  // Switching tab/window or page resets the reveal back to the first 50.
+  const selectCategory = (key: StatKey) => {
+    setActiveKey(key);
+    setPage(0);
+    setExpanded(false);
+  };
+  const selectWindow = (key: PlaytimeWindow) => {
+    setPlaytimeWindow(key);
+    setPage(0);
+    setExpanded(false);
+  };
+  const goToPage = (p: number) => {
+    setPage(p);
+    setExpanded(false);
+  };
 
   return (
     <div>
@@ -215,7 +243,9 @@ export default function LeaderboardsPage() {
             {!loading && !error && !warming && data.length === 0 && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">No players yet.</div>
             )}
-            {!loading && !error && data.map((player, i) => (
+            {!loading && !error && visibleRows.map((player, j) => {
+              const i = pageStart + j; // absolute rank index across pages
+              return (
               <div key={player.uuid ?? player.name}
                 className="grid grid-cols-[3rem_1fr_auto] gap-4 px-4 py-3 t-border-20 border-b transition-colors hover-surface max-md:grid-cols-[2.5rem_1fr_auto] max-md:gap-3 max-md:px-3"
                 style={i < 3 ? { background: 'color-mix(in srgb, var(--c-surface) 30%, transparent)' } : undefined}
@@ -264,9 +294,40 @@ export default function LeaderboardsPage() {
                   )}
                 </span>
               </div>
-            ))}
+              );
+            })}
+
+            {showLoadMore && (
+              <div className="px-4 py-4 text-center">
+                <button onClick={() => setExpanded(true)} className="mc-pill">
+                  Load more ({pageRows.length - INITIAL_VISIBLE} more)
+                </button>
+              </div>
+            )}
           </div>
         </div>
+
+        {showPagination && (
+          <div className="flex items-center justify-center gap-3 mt-6 relative z-10">
+            <button
+              onClick={() => goToPage(safePage - 1)}
+              disabled={safePage === 0}
+              className={`mc-pill ${safePage === 0 ? 'opacity-40 cursor-not-allowed' : ''}`}
+            >
+              ← Prev
+            </button>
+            <span className="font-pixel t-text-muted text-[10px]">
+              {pageStart + 1}–{Math.min(pageStart + PAGE_SIZE, data.length)} of {data.length}
+            </span>
+            <button
+              onClick={() => goToPage(safePage + 1)}
+              disabled={safePage >= totalPages - 1}
+              className={`mc-pill ${safePage >= totalPages - 1 ? 'opacity-40 cursor-not-allowed' : ''}`}
+            >
+              Next →
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
