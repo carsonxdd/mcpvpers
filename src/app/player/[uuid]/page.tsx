@@ -30,12 +30,33 @@ type AdvancementsResponse = {
   categories: Category[];
 };
 
-type PlayerSummary = {
-  uuid: string;
+type StatEntry = {
+  key: string;
+  label: string;
+  value: number;
+  rank: number | null;
+  total: number;
+};
+
+type Reputation = {
   name: string;
-  playtime_seconds: number;
-  deaths: number;
+  state: string;
+  outlaw_rep: number;
+  peaceful_rep: number;
+  violence_rep: number;
+  unique_commenders_90d: number;
+  play_seconds: number;
+  last_seen_ts: number;
+  outlaw_tier: string;
+};
+
+type ProfileResponse = {
+  uuid: string;
+  name: string | null;
   online: boolean;
+  found: boolean;
+  stats: StatEntry[];
+  reputation: Reputation | null;
 };
 
 function formatPlaytime(seconds: number): string {
@@ -48,6 +69,30 @@ function formatPlaytime(seconds: number): string {
   return `${minutes}m`;
 }
 
+function formatDistance(cm: number): string {
+  if (cm <= 0) return '0 m';
+  const km = cm / 100000;
+  if (km >= 1) return `${km.toFixed(1)} km`;
+  return `${Math.round(cm / 100).toLocaleString()} m`;
+}
+
+function formatStat(key: string, value: number): string {
+  if (key === 'playtime') return formatPlaytime(value);
+  if (key === 'distance') return formatDistance(value);
+  return value.toLocaleString();
+}
+
+function formatLastSeen(ts: number, online: boolean): string {
+  if (online) return 'Online now';
+  const mins = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+  if (mins < 1) return 'Just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  return `${days}d ago`;
+}
+
 // Frame → accent styling for earned tiles. Mirrors the in-game frame colors.
 const frameDone: Record<Advancement['frame'], string> = {
   task: 'border-emerald-500/60 bg-emerald-500/10',
@@ -55,36 +100,67 @@ const frameDone: Record<Advancement['frame'], string> = {
   challenge: 'border-fuchsia-500/60 bg-fuchsia-500/10',
 };
 
+const tierClass: Record<string, string> = {
+  Drifter: 'tier-drifter',
+  Bandit: 'tier-bandit',
+  Outlaw: 'tier-outlaw',
+  Notorious: 'tier-notorious',
+  Legend: 'tier-legend tier-legend-glow',
+};
+
+// State → headline badge. Outlaws carry their tier color; pacifists read calm
+// green; anyone wearing the badge (lawman ladder) reads gold.
+function stateBadge(rep: Reputation): { label: string; className: string } {
+  const state = rep.state?.toUpperCase() ?? '';
+  if (state === 'OUTLAW') {
+    return {
+      label: rep.outlaw_tier && rep.outlaw_tier !== 'None' ? rep.outlaw_tier : 'Outlaw',
+      className: tierClass[rep.outlaw_tier] ?? 'tier-outlaw',
+    };
+  }
+  if (state === 'PACIFIST') return { label: 'Pacifist', className: 'text-xp glow-xp' };
+  if (!state) return { label: 'Unknown', className: 't-text-muted' };
+  // Lawman ladder (Citizen / Deputy / Sheriff / Senior Sheriff / Marshal).
+  const label = state
+    .toLowerCase()
+    .replace(/_/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+  return { label, className: 'text-gold glow-gold' };
+}
+
 export default function PlayerPage() {
   const params = useParams<{ uuid: string }>();
   const uuid = params.uuid;
 
+  const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [adv, setAdv] = useState<AdvancementsResponse | null>(null);
-  const [summary, setSummary] = useState<PlayerSummary | null>(null);
+  // Slow stats (blocks_mined) load on their own track — null = still loading.
+  const [slowStats, setSlowStats] = useState<StatEntry[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     // No synchronous setLoading/setError reset here: the page is only ever
-    // mounted fresh from a leaderboard row (no player→player navigation), so
-    // the initial state (loading: true, error: null) already covers the one
-    // fetch this mount performs. Resetting in-effect trips react-hooks/set-state-in-effect.
+    // mounted fresh from a leaderboard row (no player→player navigation), so the
+    // initial state (loading: true, error: null) already covers this mount's
+    // fetches. Resetting in-effect trips react-hooks/set-state-in-effect.
     let cancelled = false;
 
     Promise.all([
-      fetch(`/api/stats/players/${uuid}/advancements`).then(async (r) => {
+      fetch(`/api/player-profile/${uuid}`).then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return (await r.json()) as AdvancementsResponse;
+        return (await r.json()) as ProfileResponse;
       }),
-      // Summary is best-effort (404 for players with no PiTab record yet).
-      fetch(`/api/stats/players/${uuid}`)
-        .then((r) => (r.ok ? (r.json() as Promise<PlayerSummary>) : null))
+      // Advancements are best-effort — the page still renders the stats profile
+      // if the advancements endpoint 404s (older PiStatsAPI without it).
+      fetch(`/api/stats/players/${uuid}/advancements`)
+        .then((r) => (r.ok ? (r.json() as Promise<AdvancementsResponse>) : null))
         .catch(() => null),
     ])
-      .then(([advData, summaryData]) => {
+      .then(([profileData, advData]) => {
         if (cancelled) return;
+        setProfile(profileData);
         setAdv(advData);
-        setSummary(summaryData);
       })
       .catch((e) => {
         if (!cancelled) setError(String(e));
@@ -93,13 +169,28 @@ export default function PlayerPage() {
         if (!cancelled) setLoading(false);
       });
 
+    // Slow track (blocks_mined, ~23s upstream): fetched separately so it never
+    // blocks the rest of the profile. The card shows a placeholder until it
+    // resolves; an empty result just drops the card.
+    fetch(`/api/player-profile/${uuid}?part=slow`)
+      .then((r) => (r.ok ? (r.json() as Promise<{ stats: StatEntry[] }>) : null))
+      .then((data) => {
+        if (cancelled) return;
+        setSlowStats(data?.stats ?? []);
+      })
+      .catch(() => {
+        if (!cancelled) setSlowStats([]);
+      });
+
     return () => {
       cancelled = true;
     };
   }, [uuid]);
 
-  const name = adv?.name ?? summary?.name ?? 'Player';
-  const pct = adv && adv.total > 0 ? Math.round((adv.completed / adv.total) * 100) : 0;
+  const name = profile?.name ?? adv?.name ?? 'Player';
+  const rep = profile?.reputation ?? null;
+  const badge = rep ? stateBadge(rep) : null;
+  const advPct = adv && adv.total > 0 ? Math.round((adv.completed / adv.total) * 100) : 0;
 
   return (
     <div>
@@ -122,19 +213,35 @@ export default function PlayerPage() {
           />
           <div className="min-w-0">
             <CloudTitle className="ml-10 w-fit" cloudOffsetX={10} cloudOffsetY={12}>
-              <h1 className="font-pixel text-gold text-xl sm:text-2xl glow-gold whitespace-nowrap">{name}</h1>
+              <h1 className="font-pixel text-gold text-xl sm:text-2xl glow-gold whitespace-nowrap">
+                {name}
+              </h1>
             </CloudTitle>
-            {adv && (
-              <p className="t-text-dim text-sm mt-1">
-                {adv.completed} / {adv.total} advancements · {pct}%
-                {summary && (
+            {/* relative z-10 lifts this line above the CloudTitle's cloud SVG,
+                which is offset downward and would otherwise paint over it. */}
+            <div className="relative z-10 flex flex-wrap items-center gap-x-2 gap-y-1 mt-2 text-sm">
+              {badge && (
+                <span className={`font-pixel text-[10px] ${badge.className}`}>{badge.label}</span>
+              )}
+              {profile?.online ? (
+                <>
+                  {badge && <span className="t-text-muted text-xs">·</span>}
+                  <span className="text-emerald-400 text-xs flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                    Online
+                  </span>
+                </>
+              ) : (
+                rep && (
                   <>
-                    {' '}· {formatPlaytime(summary.playtime_seconds)} played · {summary.deaths} deaths
-                    {summary.online && <span className="text-emerald-400"> · online</span>}
+                    {badge && <span className="t-text-muted text-xs">·</span>}
+                    <span className="t-text-muted text-xs">
+                      Seen {formatLastSeen(rep.last_seen_ts, false)}
+                    </span>
                   </>
-                )}
-              </p>
-            )}
+                )
+              )}
+            </div>
           </div>
         </div>
 
@@ -145,42 +252,133 @@ export default function PlayerPage() {
           </div>
         )}
 
-        {!loading && !error && adv && adv.categories.map((cat) => (
-          <div key={cat.key} className="mb-8">
-            <div className="flex items-baseline justify-between mb-3 px-1">
-              <h2 className="font-pixel t-text text-sm">{cat.label}</h2>
-              <span className="font-pixel t-text-muted text-[10px]">
-                {cat.completed}/{cat.total}
-              </span>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {cat.advancements.map((a) => (
-                <div
-                  key={a.key}
-                  title={a.description}
-                  className={`rounded border p-2.5 transition-colors ${
-                    a.done
-                      ? frameDone[a.frame]
-                      : 't-border-20 opacity-45 hover:opacity-70'
-                  }`}
-                >
-                  <div className="flex items-start gap-1.5">
-                    <span className={`text-xs leading-tight ${a.done ? 't-text' : 't-text-muted'}`}>
-                      {a.done ? '✓ ' : ''}{a.title}
-                    </span>
-                    {a.frame === 'challenge' && (
-                      <span className="text-[9px] text-fuchsia-400 font-pixel shrink-0 ml-auto">★</span>
-                    )}
+        {!loading && !error && profile && (
+          <>
+            {/* Stats grid */}
+            <div className="mb-8">
+              <h2 className="font-pixel t-text text-sm mb-3 px-1">Stats</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                {profile.stats.map((s) => (
+                  <StatCard key={s.key} stat={s} />
+                ))}
+                {/* Slow track (blocks_mined): placeholder until it resolves. */}
+                {slowStats === null ? (
+                  <div className="mc-panel p-4">
+                    <p className="font-pixel t-text-muted text-[10px] mb-1.5">Blocks Mined</p>
+                    <p className="t-text-muted text-lg font-medium leading-none animate-pulse">…</p>
                   </div>
-                  <p className="t-text-muted text-[10px] mt-1 leading-snug line-clamp-2">
-                    {a.description}
-                  </p>
-                </div>
-              ))}
+                ) : (
+                  slowStats.map((s) => <StatCard key={s.key} stat={s} />)
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+
+            {/* Reputation */}
+            {rep && (
+              <div className="mb-8">
+                <h2 className="font-pixel t-text text-sm mb-3 px-1">Reputation</h2>
+                <div className="mc-panel p-5">
+                  <div className="grid grid-cols-3 gap-3 text-center">
+                    <RepPool label="Peaceful" value={rep.peaceful_rep} className="text-xp" />
+                    <RepPool label="Violence" value={rep.violence_rep} className="text-gold" />
+                    <RepPool label="Outlaw" value={rep.outlaw_rep} className="text-redstone" />
+                  </div>
+                  <div className="mt-4 pt-4 t-border-20 border-t flex flex-wrap justify-center gap-x-5 gap-y-1.5 text-xs t-text-muted">
+                    {badge && (
+                      <span>
+                        State: <span className={badge.className}>{badge.label}</span>
+                      </span>
+                    )}
+                    <span>
+                      Commenders (90d): <span className="t-text-dim">{rep.unique_commenders_90d}</span>
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Advancements */}
+            {adv && (
+              <div>
+                <div className="flex items-baseline justify-between mb-3 px-1">
+                  <h2 className="font-pixel t-text text-sm">Advancements</h2>
+                  <span className="font-pixel t-text-muted text-[10px]">
+                    {adv.completed}/{adv.total} · {advPct}%
+                  </span>
+                </div>
+                {adv.categories.map((cat) => (
+                  <div key={cat.key} className="mb-8">
+                    <div className="flex items-baseline justify-between mb-3 px-1">
+                      <h3 className="font-pixel t-text-dim text-xs">{cat.label}</h3>
+                      <span className="font-pixel t-text-muted text-[10px]">
+                        {cat.completed}/{cat.total}
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                      {cat.advancements.map((a) => (
+                        <div
+                          key={a.key}
+                          title={a.description}
+                          className={`rounded border p-2.5 transition-colors ${
+                            a.done ? frameDone[a.frame] : 't-border-20 opacity-45 hover:opacity-70'
+                          }`}
+                        >
+                          <div className="flex items-start gap-1.5">
+                            <span
+                              className={`text-xs leading-tight ${a.done ? 't-text' : 't-text-muted'}`}
+                            >
+                              {a.done ? '✓ ' : ''}
+                              {a.title}
+                            </span>
+                            {a.frame === 'challenge' && (
+                              <span className="text-[9px] text-fuchsia-400 font-pixel shrink-0 ml-auto">
+                                ★
+                              </span>
+                            )}
+                          </div>
+                          <p className="t-text-muted text-[10px] mt-1 leading-snug line-clamp-2">
+                            {a.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
       </section>
+    </div>
+  );
+}
+
+function StatCard({ stat }: { stat: StatEntry }) {
+  return (
+    <div className="mc-panel p-4">
+      <p className="font-pixel t-text-muted text-[10px] mb-1.5">{stat.label}</p>
+      <p className="t-text text-lg font-medium leading-none">{formatStat(stat.key, stat.value)}</p>
+      {stat.rank != null && stat.total > 0 && (
+        <p
+          className={`text-xs mt-2 ${
+            stat.rank === 1 ? 'text-gold glow-gold font-pixel' : 't-text-muted'
+          }`}
+        >
+          {stat.rank === 1 ? '★ #1' : `#${stat.rank}`}
+          <span className="t-text-muted"> of {stat.total}</span>
+        </p>
+      )}
+    </div>
+  );
+}
+
+function RepPool({ label, value, className }: { label: string; value: number; className: string }) {
+  return (
+    <div>
+      <p className={`font-pixel text-lg ${className}`}>
+        {value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })}
+      </p>
+      <p className="font-pixel t-text-muted text-[10px] mt-1.5">{label}</p>
     </div>
   );
 }

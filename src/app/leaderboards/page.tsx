@@ -20,15 +20,7 @@ type StatKey =
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
 
-const repEndpoints: Record<'peaceful_rep' | 'violence_rep' | 'lawmen', string> = {
-  peaceful_rep: '/api/stats/reputation/leaderboard/peaceful',
-  violence_rep: '/api/stats/reputation/leaderboard/violence',
-  lawmen: '/api/stats/reputation/leaderboard/lawmen',
-};
-const isRepKey = (k: StatKey): k is 'peaceful_rep' | 'violence_rep' | 'lawmen' =>
-  k === 'peaceful_rep' || k === 'violence_rep' || k === 'lawmen';
-
-const categories: { label: string; key: StatKey; group?: 'rep' }[] = [
+const categories: { label: string; key: StatKey }[] = [
   { label: 'Playtime', key: 'playtime' },
   { label: 'Deaths', key: 'deaths' },
   { label: 'Mob Kills', key: 'mob_kills' },
@@ -37,10 +29,10 @@ const categories: { label: string; key: StatKey; group?: 'rep' }[] = [
   { label: 'Distance Walked', key: 'distance' },
   { label: 'Advancements', key: 'advancements' },
   { label: 'XP Levels', key: 'xp_levels' },
-  { label: 'Peaceful Rep', key: 'peaceful_rep', group: 'rep' },
-  { label: 'Outlaw Rep', key: 'outlaw_rep', group: 'rep' },
-  { label: 'Violence Rep', key: 'violence_rep', group: 'rep' },
-  { label: 'Lawmen', key: 'lawmen', group: 'rep' },
+  { label: 'Peaceful Rep', key: 'peaceful_rep' },
+  { label: 'Outlaw Rep', key: 'outlaw_rep' },
+  { label: 'Violence Rep', key: 'violence_rep' },
+  { label: 'Lawmen', key: 'lawmen' },
 ];
 
 const playtimeWindows: { label: string; key: PlaytimeWindow }[] = [
@@ -73,14 +65,9 @@ type LeaderboardEntry = {
   commendations?: number;
 };
 
-type LeaderboardResponse = {
-  stat: string;
-  window?: string;
-  players: LeaderboardEntry[];
-};
-
-type WantedRepResponse = {
-  wanted: { uuid: string | null; name: string; outlaw_rep: number; tier: string }[];
+type Snapshot = {
+  updatedAt: number;
+  boards: Record<string, LeaderboardEntry[]>;
 };
 
 const medalStyles = ['text-gold glow-gold', 't-text-dim', 't-text-dim'];
@@ -112,51 +99,45 @@ function formatValue(stat: StatKey, entry: LeaderboardEntry): string {
   return entry.value.toLocaleString();
 }
 
+function formatAgo(ts: number): string {
+  if (!ts) return '';
+  const secs = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (secs < 60) return 'just now';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  return `${hours}h ago`;
+}
+
+// Maps the active tab + playtime window to the snapshot board key.
+function boardKeyFor(activeKey: StatKey, window: PlaytimeWindow): string {
+  return activeKey === 'playtime' ? `playtime:${window}` : activeKey;
+}
+
 export default function LeaderboardsPage() {
   const [activeKey, setActiveKey] = useState<StatKey>('playtime');
   const [playtimeWindow, setPlaytimeWindow] = useState<PlaytimeWindow>('all');
-  const [fetchedData, setFetchedData] = useState<LeaderboardEntry[]>([]);
+  const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // One fetch on mount — the snapshot holds every tab, so switching tabs is
+  // instant and the slow Blocks Mined board arrives pre-warmed (or fills in on a
+  // later refresh). No per-tab requests.
   useEffect(() => {
     let cancelled = false;
-    let url: string;
-    if (activeKey === 'outlaw_rep') {
-      url = '/api/stats/reputation/wanted';
-    } else if (isRepKey(activeKey)) {
-      url = repEndpoints[activeKey];
-    } else {
-      const params = new URLSearchParams({ stat: activeKey, limit: '10' });
-      if (activeKey === 'playtime') params.set('window', playtimeWindow);
-      url = `/api/stats/leaderboard?${params.toString()}`;
-    }
 
-    fetch(url)
+    fetch('/api/leaderboards-snapshot')
       .then(async (r) => {
         if (!r.ok) throw new Error(`HTTP ${r.status}`);
-        return await r.json();
+        return (await r.json()) as Snapshot;
       })
       .then((json) => {
         if (cancelled) return;
-        if (activeKey === 'outlaw_rep') {
-          const wanted = (json as WantedRepResponse).wanted ?? [];
-          setFetchedData(
-            wanted.slice(0, 10).map((o, i) => ({
-              rank: i + 1,
-              uuid: o.uuid ?? null,
-              name: o.name,
-              value: o.outlaw_rep,
-              tier: o.tier,
-            })),
-          );
-        } else {
-          setFetchedData((json as LeaderboardResponse).players ?? []);
-        }
+        setSnapshot(json);
       })
       .catch((e) => {
-        if (cancelled) return;
-        setError(String(e));
+        if (!cancelled) setError(String(e));
       })
       .finally(() => {
         if (!cancelled) setLoading(false);
@@ -165,23 +146,16 @@ export default function LeaderboardsPage() {
     return () => {
       cancelled = true;
     };
-  }, [activeKey, playtimeWindow]);
+  }, []);
 
-  const data: LeaderboardEntry[] = fetchedData;
+  const boardKey = boardKeyFor(activeKey, playtimeWindow);
+  const board = snapshot?.boards[boardKey];
+  const data: LeaderboardEntry[] = board ?? [];
+  // Blocks Mined can lag the rest of the snapshot right after a restart.
+  const warming = !loading && !error && activeKey === 'blocks_mined' && board === undefined;
 
-  const selectCategory = (key: StatKey) => {
-    if (key === activeKey) return;
-    setLoading(true);
-    setError(null);
-    setActiveKey(key);
-  };
-
-  const selectWindow = (key: PlaytimeWindow) => {
-    if (key === playtimeWindow) return;
-    setLoading(true);
-    setError(null);
-    setPlaytimeWindow(key);
-  };
+  const selectCategory = (key: StatKey) => setActiveKey(key);
+  const selectWindow = (key: PlaytimeWindow) => setPlaytimeWindow(key);
 
   return (
     <div>
@@ -198,7 +172,7 @@ export default function LeaderboardsPage() {
         </div>
 
         {activeKey === 'playtime' && (
-          <div className="flex flex-wrap gap-1.5 mb-8 justify-center relative z-10">
+          <div className="flex flex-wrap gap-1.5 mb-4 justify-center relative z-10">
             {playtimeWindows.map((w) => (
               <button key={w.key} onClick={() => selectWindow(w.key)}
                 className={`mc-pill ${playtimeWindow === w.key ? 'mc-pill-active' : ''}`}>
@@ -207,7 +181,15 @@ export default function LeaderboardsPage() {
             ))}
           </div>
         )}
-        {activeKey !== 'playtime' && <div className="mb-8" />}
+
+        {/* Freshness line — the snapshot refreshes in the background every few minutes. */}
+        <div className="text-center mb-8 h-4">
+          {snapshot && snapshot.updatedAt > 0 && (
+            <span className="t-text-muted text-[10px] font-pixel">
+              Updated {formatAgo(snapshot.updatedAt)}
+            </span>
+          )}
+        </div>
 
         <div className="mc-panel overflow-hidden max-md:overflow-x-auto">
           <div className="max-md:min-w-[320px]">
@@ -225,7 +207,12 @@ export default function LeaderboardsPage() {
                 Couldn&apos;t load leaderboard. Try again later.
               </div>
             )}
-            {!loading && !error && data.length === 0 && (
+            {warming && (
+              <div className="px-4 py-8 text-center t-text-muted text-sm">
+                Still warming up — the Blocks Mined board refreshes in the background. Check back in a moment.
+              </div>
+            )}
+            {!loading && !error && !warming && data.length === 0 && (
               <div className="px-4 py-8 text-center t-text-muted text-sm">No players yet.</div>
             )}
             {!loading && !error && data.map((player, i) => (
