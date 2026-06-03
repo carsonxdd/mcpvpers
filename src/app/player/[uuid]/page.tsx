@@ -30,6 +30,21 @@ type AdvancementsResponse = {
   categories: Category[];
 };
 
+type SkillEntry = {
+  skill: string; // mcMMO enum name, e.g. "MINING"
+  level: number;
+  xp: number;
+  xp_to_next: number;
+  child: boolean;
+};
+
+type SkillsResponse = {
+  uuid: string;
+  name: string;
+  power_level: number;
+  skills: SkillEntry[];
+};
+
 type StatEntry = {
   key: string;
   label: string;
@@ -100,6 +115,24 @@ const frameDone: Record<Advancement['frame'], string> = {
   challenge: 'border-fuchsia-500/60 bg-fuchsia-500/10',
 };
 
+// mcMMO skill display. Order within a group = display order. Includes the newer
+// combat skills (Crossbows/Maces/Tridents/Spears) the /mcmmo guide doesn't list yet.
+const SKILL_LABELS: Record<string, string> = {
+  MINING: 'Mining', WOODCUTTING: 'Woodcutting', EXCAVATION: 'Excavation',
+  HERBALISM: 'Herbalism', FISHING: 'Fishing',
+  SWORDS: 'Swords', AXES: 'Axes', UNARMED: 'Unarmed', ARCHERY: 'Archery',
+  CROSSBOWS: 'Crossbows', MACES: 'Maces', TRIDENTS: 'Tridents', SPEARS: 'Spears',
+  TAMING: 'Taming',
+  ACROBATICS: 'Acrobatics', ALCHEMY: 'Alchemy', REPAIR: 'Repair',
+  SMELTING: 'Smelting', SALVAGE: 'Salvage',
+};
+
+const SKILL_GROUPS: { name: string; skills: string[] }[] = [
+  { name: 'Gathering', skills: ['MINING', 'WOODCUTTING', 'EXCAVATION', 'HERBALISM', 'FISHING'] },
+  { name: 'Combat', skills: ['SWORDS', 'AXES', 'UNARMED', 'ARCHERY', 'CROSSBOWS', 'MACES', 'TRIDENTS', 'SPEARS', 'TAMING'] },
+  { name: 'Crafting & Utility', skills: ['ACROBATICS', 'ALCHEMY', 'REPAIR', 'SMELTING', 'SALVAGE'] },
+];
+
 const tierClass: Record<string, string> = {
   Drifter: 'tier-drifter',
   Bandit: 'tier-bandit',
@@ -134,6 +167,7 @@ export default function PlayerPage() {
 
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [adv, setAdv] = useState<AdvancementsResponse | null>(null);
+  const [skills, setSkills] = useState<SkillsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -161,6 +195,12 @@ export default function PlayerPage() {
             .then((r) => (r.ok ? (r.json() as Promise<AdvancementsResponse>) : null))
             .then((advData) => {
               if (!cancelled) setAdv(advData);
+            })
+            .catch(() => {});
+          fetch(`/api/stats/players/${canonical}/skills`)
+            .then((r) => (r.ok ? (r.json() as Promise<SkillsResponse>) : null))
+            .then((skillData) => {
+              if (!cancelled) setSkills(skillData);
             })
             .catch(() => {});
         }
@@ -285,6 +325,9 @@ export default function PlayerPage() {
               </div>
             )}
 
+            {/* mcMMO Skills */}
+            {skills && skills.skills.length > 0 && <SkillsPanel data={skills} />}
+
             {/* Advancements */}
             {adv && (
               <div>
@@ -387,6 +430,60 @@ function StatCard({ stat }: { stat: StatEntry }) {
           {stat.rank === 1 ? '★ #1' : `#${stat.rank}`}
           <span className="t-text-muted"> of {stat.total}</span>
         </p>
+      )}
+    </div>
+  );
+}
+
+function SkillsPanel({ data }: { data: SkillsResponse }) {
+  const byName = new Map(data.skills.map((s) => [s.skill, s]));
+  return (
+    <div className="mb-8">
+      <div className="flex items-baseline justify-between mb-3 px-1">
+        <h2 className="font-pixel t-text text-sm">mcMMO Skills</h2>
+        <span className="font-pixel text-gold glow-gold text-sm">
+          Power {data.power_level.toLocaleString()}
+        </span>
+      </div>
+      {SKILL_GROUPS.map((group) => {
+        const entries = group.skills
+          .map((key) => byName.get(key))
+          .filter((s): s is SkillEntry => s != null && SKILL_LABELS[s.skill] != null);
+        if (entries.length === 0) return null;
+        return (
+          <div key={group.name} className="mb-6">
+            <h3 className="font-pixel t-text-dim text-xs mb-3 px-1">{group.name}</h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {entries.map((s) => (
+                <SkillTile key={s.skill} skill={s} />
+              ))}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function SkillTile({ skill }: { skill: SkillEntry }) {
+  const pct = skill.xp_to_next > 0 ? Math.min(100, Math.round((skill.xp / skill.xp_to_next) * 100)) : 0;
+  return (
+    <div className="mc-panel p-3">
+      <div className="flex items-baseline justify-between">
+        <span className="t-text text-sm">
+          {SKILL_LABELS[skill.skill]}
+          {skill.child && <span className="t-text-muted text-[10px] ml-1">(child)</span>}
+        </span>
+        <span className="font-pixel text-xs t-text-dim">{skill.level}</span>
+      </div>
+      {/* XP-to-next bar; child skills have no XP track of their own */}
+      {!skill.child && (
+        <div className="mt-2 h-1.5 rounded-full t-border-20 border overflow-hidden">
+          <div
+            className="h-full rounded-full"
+            style={{ width: `${pct}%`, background: 'var(--color-xp)' }}
+          />
+        </div>
       )}
     </div>
   );

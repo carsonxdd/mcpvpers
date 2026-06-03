@@ -13,6 +13,7 @@ type StatKey =
   | 'distance'
   | 'advancements'
   | 'xp_levels'
+  | 'power_level'
   | 'peaceful_rep'
   | 'violence_rep'
   | 'outlaw_rep'
@@ -30,6 +31,7 @@ const categories: { label: string; key: StatKey }[] = [
   { label: 'Distance Walked', key: 'distance' },
   { label: 'Advancements', key: 'advancements' },
   { label: 'XP Levels', key: 'xp_levels' },
+  { label: 'Power Level', key: 'power_level' },
   { label: 'Peaceful Rep', key: 'peaceful_rep' },
   { label: 'Outlaw Rep', key: 'outlaw_rep' },
   { label: 'Violence Rep', key: 'violence_rep' },
@@ -52,6 +54,7 @@ const headerByKey: Record<StatKey, string> = {
   distance: 'Distance',
   advancements: 'Advancements',
   xp_levels: 'Levels',
+  power_level: 'Power',
   peaceful_rep: 'Peaceful',
   violence_rep: 'Violence',
   outlaw_rep: 'Outlaw',

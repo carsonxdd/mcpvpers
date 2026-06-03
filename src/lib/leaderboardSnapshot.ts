@@ -36,6 +36,7 @@ const FAST_BOARDS: { key: string; path: string }[] = [
   { key: 'distance', path: `leaderboard?stat=distance&limit=${ROSTER_LIMIT}` },
   { key: 'advancements', path: `leaderboard?stat=advancements&limit=${ROSTER_LIMIT}` },
   { key: 'xp_levels', path: `leaderboard?stat=xp_levels&limit=${ROSTER_LIMIT}` },
+  { key: 'power_level', path: `leaderboard?stat=power_level&limit=${ROSTER_LIMIT}` },
   { key: 'peaceful_rep', path: 'reputation/leaderboard/peaceful' },
   { key: 'violence_rep', path: 'reputation/leaderboard/violence' },
   { key: 'lawmen', path: 'reputation/leaderboard/lawmen' },
