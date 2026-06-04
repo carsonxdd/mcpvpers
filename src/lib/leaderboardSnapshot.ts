@@ -108,6 +108,40 @@ async function fetchCommendations(timeoutMs: number): Promise<Entry[]> {
     .map((r, i) => ({ rank: i + 1, uuid: r.uuid, name: r.name, value: r.value }));
 }
 
+// Per-skill leaderboards. The upstream has no per-skill board (only the
+// aggregated power_level), so build one per mcMMO skill by fanning out the
+// roster's /skills endpoint — same shape and scale as the commendations board
+// (one call per roster player). Each board is keyed `skill:<SKILL_ENUM>` (e.g.
+// `skill:MINING`) and ranks all roster players by that skill's level descending,
+// so a profile can read its "#N of <roster size>" straight out of the snapshot.
+async function fetchSkillBoards(timeoutMs: number): Promise<Record<string, Entry[]>> {
+  const roster = await getJson<{ uuid: string; name: string }[]>('players', timeoutMs);
+  if (!Array.isArray(roster)) return {};
+  const perPlayer = await Promise.all(
+    roster.map((p) =>
+      getJson<{ skills?: { skill: string; level: number }[] }>(
+        `players/${encodeURIComponent(p.uuid)}/skills`,
+        timeoutMs,
+      ).then((s) => ({ uuid: p.uuid, name: p.name, skills: s?.skills ?? [] })),
+    ),
+  );
+  const bySkill = new Map<string, { uuid: string; name: string; level: number }[]>();
+  for (const player of perPlayer) {
+    for (const sk of player.skills) {
+      const rows = bySkill.get(sk.skill) ?? [];
+      rows.push({ uuid: player.uuid, name: player.name, level: sk.level });
+      bySkill.set(sk.skill, rows);
+    }
+  }
+  const boards: Record<string, Entry[]> = {};
+  for (const [skill, rows] of bySkill) {
+    boards[`skill:${skill}`] = rows
+      .sort((a, b) => b.level - a.level)
+      .map((r, i) => ({ rank: i + 1, uuid: r.uuid, name: r.name, value: r.level }));
+  }
+  return boards;
+}
+
 // Slow track: refresh blocks_mined off the critical path. Only overwrites the
 // cached board when it actually returns data, so a timeout never blanks it.
 async function refreshBlocks(): Promise<void> {
@@ -125,7 +159,7 @@ async function refresh(): Promise<void> {
   if (refreshing) return;
   refreshing = true;
   try {
-    const [fast, outlaw, commendations] = await Promise.all([
+    const [fast, outlaw, commendations, skillBoards] = await Promise.all([
       Promise.all(
         FAST_BOARDS.map((b) =>
           fetchBoard(b.path, FAST_TIMEOUT_MS).then((rows): [string, Entry[]] => [b.key, rows]),
@@ -133,11 +167,13 @@ async function refresh(): Promise<void> {
       ),
       fetchOutlaw(FAST_TIMEOUT_MS),
       fetchCommendations(FAST_TIMEOUT_MS),
+      fetchSkillBoards(FAST_TIMEOUT_MS),
     ]);
     const boards: Record<string, Entry[]> = { ...(cache?.boards ?? {}) };
     for (const [key, rows] of fast) boards[key] = rows;
     boards.outlaw_rep = outlaw;
     boards.commendations = commendations;
+    Object.assign(boards, skillBoards);
     cache = { boards, updatedAt: Date.now() };
   } finally {
     refreshing = false;

@@ -94,7 +94,7 @@ export async function GET(
 
   if (!player) {
     return NextResponse.json(
-      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null },
+      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {} },
       { headers },
     );
   }
@@ -114,6 +114,19 @@ export async function GET(
       total: board.length,
     };
   });
+
+  // Per-skill server rank, plus the aggregated power level, pulled from the
+  // website-built skill boards in the snapshot (upstream has no per-skill
+  // leaderboard). Map: skill enum (e.g. "MINING") or "POWER_LEVEL" -> rank/total.
+  const skillRanks: Record<string, { rank: number; total: number }> = {};
+  for (const [key, rows] of Object.entries(snapshot.boards)) {
+    if (!key.startsWith('skill:')) continue;
+    const row = rows.find((e) => e.uuid === uuid);
+    if (row) skillRanks[key.slice('skill:'.length)] = { rank: row.rank, total: rows.length };
+  }
+  const powerBoard = snapshot.boards.power_level ?? [];
+  const powerRow = rowFor(snapshot, 'power_level', uuid);
+  if (powerRow) skillRanks.POWER_LEVEL = { rank: powerRow.rank, total: powerBoard.length };
 
   const reputation = await getJson<Reputation>(
     `reputation/player/${encodeURIComponent(player.name)}`,
@@ -139,6 +152,7 @@ export async function GET(
       found: true,
       stats,
       reputation,
+      skillRanks,
     },
     { headers },
   );

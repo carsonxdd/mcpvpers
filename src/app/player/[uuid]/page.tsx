@@ -72,6 +72,8 @@ type ProfileResponse = {
   found: boolean;
   stats: StatEntry[];
   reputation: Reputation | null;
+  // skill enum (e.g. "MINING") or "POWER_LEVEL" -> server rank within the roster
+  skillRanks: Record<string, { rank: number; total: number }>;
 };
 
 function formatPlaytime(seconds: number): string {
@@ -326,7 +328,9 @@ export default function PlayerPage() {
             )}
 
             {/* mcMMO Skills */}
-            {skills && skills.skills.length > 0 && <SkillsPanel data={skills} />}
+            {skills && skills.skills.length > 0 && (
+              <SkillsPanel data={skills} ranks={profile?.skillRanks ?? {}} />
+            )}
 
             {/* Advancements */}
             {adv && (
@@ -437,14 +441,36 @@ function StatCard({ stat }: { stat: StatEntry }) {
   );
 }
 
-function SkillsPanel({ data }: { data: SkillsResponse }) {
+// Shared "#3 of 32" rank label — gold ★ #1 styling matches StatCard.
+function RankLabel({ rank, total, className = '' }: { rank: number; total: number; className?: string }) {
+  return (
+    <span className={`${rank === 1 ? 'text-gold glow-gold font-pixel' : 't-text-muted'} ${className}`}>
+      {rank === 1 ? '★ #1' : `#${rank}`}
+      <span className="t-text-muted"> of {total}</span>
+    </span>
+  );
+}
+
+function SkillsPanel({
+  data,
+  ranks,
+}: {
+  data: SkillsResponse;
+  ranks: Record<string, { rank: number; total: number }>;
+}) {
   const byName = new Map(data.skills.map((s) => [s.skill, s]));
+  const power = ranks.POWER_LEVEL;
   return (
     <div className="mb-8">
       <div className="flex items-baseline justify-between mb-3 px-1">
         <h2 className="font-pixel t-text text-sm">mcMMO Skills</h2>
-        <span className="font-pixel text-gold glow-gold text-sm">
-          Power {data.power_level.toLocaleString()}
+        <span className="flex items-baseline gap-2">
+          {power && data.power_level > 0 && (
+            <RankLabel rank={power.rank} total={power.total} className="text-[10px]" />
+          )}
+          <span className="font-pixel text-gold glow-gold text-sm">
+            Power {data.power_level.toLocaleString()}
+          </span>
         </span>
       </div>
       {SKILL_GROUPS.map((group) => {
@@ -457,7 +483,7 @@ function SkillsPanel({ data }: { data: SkillsResponse }) {
             <h3 className="font-pixel t-text-dim text-xs mb-3 px-1">{group.name}</h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {entries.map((s) => (
-                <SkillTile key={s.skill} skill={s} />
+                <SkillTile key={s.skill} skill={s} rank={ranks[s.skill]} />
               ))}
             </div>
           </div>
@@ -467,7 +493,7 @@ function SkillsPanel({ data }: { data: SkillsResponse }) {
   );
 }
 
-function SkillTile({ skill }: { skill: SkillEntry }) {
+function SkillTile({ skill, rank }: { skill: SkillEntry; rank?: { rank: number; total: number } }) {
   const pct = skill.xp_to_next > 0 ? Math.min(100, Math.round((skill.xp / skill.xp_to_next) * 100)) : 0;
   return (
     <div className="mc-panel p-3">
@@ -478,6 +504,12 @@ function SkillTile({ skill }: { skill: SkillEntry }) {
         </span>
         <span className="font-pixel text-xs t-text-dim">{skill.level}</span>
       </div>
+      {/* Rank only on skills the player has actually trained (level > 0) */}
+      {rank && skill.level > 0 && (
+        <p className="text-[10px] mt-1.5">
+          <RankLabel rank={rank.rank} total={rank.total} />
+        </p>
+      )}
       {/* XP-to-next bar; child skills have no XP track of their own */}
       {!skill.child && (
         <div className="mt-2 h-1.5 rounded-full t-border-20 border overflow-hidden">
