@@ -331,7 +331,7 @@ function Poster({
         {/* Name + tier */}
         <div className="text-center relative z-10">
           <p
-            className="font-pixel text-base sm:text-lg"
+            className="font-pixel text-base sm:text-lg break-all leading-tight"
             style={{ color: '#2c160a' }}
           >
             {outlaw.name}

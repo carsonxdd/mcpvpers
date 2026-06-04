@@ -110,9 +110,9 @@ function formatLastSeen(ts: number, online: boolean): string {
 
 // Frame → accent styling for earned tiles. Mirrors the in-game frame colors.
 const frameDone: Record<Advancement['frame'], string> = {
-  task: 'border-emerald-500/60 bg-emerald-500/10',
-  goal: 'border-emerald-400/60 bg-emerald-400/10',
-  challenge: 'border-fuchsia-500/60 bg-fuchsia-500/10',
+  task: 'border-emerald-500/60 bg-emerald-500/15',
+  goal: 'border-emerald-400/60 bg-emerald-400/15',
+  challenge: 'border-fuchsia-500/60 bg-fuchsia-500/15',
 };
 
 // mcMMO skill display. Order within a group = display order. Includes the newer
@@ -246,8 +246,8 @@ export default function PlayerPage() {
             className="w-16 h-16 rounded t-surface-light shrink-0"
           />
           <div className="min-w-0">
-            <CloudTitle className="ml-10 w-fit" cloudOffsetX={10} cloudOffsetY={12}>
-              <h1 className="font-pixel text-gold text-xl sm:text-2xl glow-gold whitespace-nowrap">
+            <CloudTitle className="ml-10 w-fit max-md:ml-0 max-md:max-w-[60vw]" cloudOffsetX={10} cloudOffsetY={12}>
+              <h1 className="font-pixel text-gold text-xl sm:text-2xl max-md:text-base glow-gold whitespace-nowrap max-md:whitespace-normal max-md:break-all">
                 {name}
               </h1>
             </CloudTitle>
@@ -351,12 +351,14 @@ export default function PlayerPage() {
                           key={a.key}
                           title={a.description}
                           className={`rounded border p-2.5 transition-colors ${
-                            a.done ? frameDone[a.frame] : 't-border-20 opacity-45 hover:opacity-70'
+                            a.done
+                              ? frameDone[a.frame]
+                              : 't-surface-light t-border-30 opacity-80 hover:opacity-100'
                           }`}
                         >
                           <div className="flex items-start gap-1.5">
                             <span
-                              className={`text-xs leading-tight ${a.done ? 't-text' : 't-text-muted'}`}
+                              className={`text-xs leading-tight ${a.done ? 't-text' : 't-text-dim'}`}
                             >
                               {a.done ? '✓ ' : ''}
                               {a.title}

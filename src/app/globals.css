@@ -233,6 +233,17 @@ html:not(.dark) .mc-panel:hover {
   border-color: var(--color-grass-light) !important;
 }
 
+/* Touch targets: pills are the primary control on mobile (leaderboard tabs,
+   playtime windows), so grow them to a comfortable tap size under md. */
+@media (max-width: 767px) {
+  .mc-pill {
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
 /* Glow text — dark mode only */
 .glow-gold  { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
 .glow-silver { text-shadow: none; transition: text-shadow 1.5s ease-in-out; }
