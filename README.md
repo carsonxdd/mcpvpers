@@ -123,6 +123,22 @@ Each player's mcMMO skill (and the aggregated Power level) now shows its server 
 - **`src/app/api/player-profile/[uuid]/route.ts` — `skillRanks` map** — the profile aggregator (which already holds the snapshot) now returns a `skillRanks` map of `<SKILL_ENUM>` → `{ rank, total }`, plus a `POWER_LEVEL` entry sourced from the existing `power_level` board. `total` is the roster size, matching the "of 32" framing
 - **`/player/<id>` — rank labels** — each skill tile shows its `#N of <roster>` rank under the level, and the mcMMO Power header gained its rank too. Shared `RankLabel` reuses the stats grid's gold `★ #1` styling. Ranks render only on skills the player has actually trained (level > 0) — a skill sitting at 0 just shows the level, no rank clutter
 
+## Boss Rush events page + per-player event stats (2026-06-06)
+
+A full Boss Rush (PiEvents) section landed: a live `/events` hub with per-role leaderboards, a raid log, and a summary banner; six statically-generated per-raid pages with boss mechanics and full loot tables; and a Boss Rush block on player profiles. Backed by PiStatsAPI 1.3.0's `/api/events/*` endpoints. Everything degrades to "not live yet" when PiEvents isn't reachable, so the site is safe to ship before the plugin does.
+
+- **`src/app/api/stats/[...path]/route.ts`** — `events` added to `ALLOWED_KINDS`, so `/api/stats/events/*` passes through to the upstream (used by the profile route for the authoritative per-player event line)
+- **`src/lib/eventsSnapshot.ts` (new) — warm events snapshot** — same pattern as `leaderboardSnapshot.ts`: one in-memory snapshot holding the seven role boards (`/categories`), the summary banner (`/summary`), and the recent-runs feed (`/recent`), refreshed in the background (60s TTL). When every endpoint is unreachable (503 on old PiStatsAPI / missing PiEvents `stats.db`) the snapshot is flagged `available: false`. `getEventsSnapshot()` / `eventRowFor()` are the public surface
+- **`/api/events-snapshot` (new)** — thin edge-cached route serving the snapshot (`s-maxage=60`)
+- **`/events` (new) — the hub** — summary banner (runs / clears / clear rate / paid out / players / last run), the seven **role boards** (Score, Damage, Boss Damage, Tank, Support, Adds, Clears) as instant-switching tabs sourced from the one snapshot, a **raid log** (Cleared/Wiped · players · wave · time-ago), and **The Raids** grid: six clickable tiles labeled **Tier 1–5** (derived from `rank`) plus a **Duel** tile, each linking to its detail page. Below: a shared-mechanics panel (3 HP phases + Fixate/Summons/Enrage/Taunt), a "How loot drops" panel (epic to the podium, 35% upgrade-to-rare, common otherwise), and the payouts/score-weights panel. Hidden behind a "Boss Rush isn't live yet" state until the snapshot reports `available`
+- **`/events/[slug]` (new) — per-raid pages** — statically generated via `generateStaticParams` (one page per boss id, e.g. `/events/vexspinne`), with `generateMetadata` so shared links read "Vexspinne, the Broodmother · The Hollow Hive — Boss Rush". Each page: boss header (icon, tier badge, raid · mob, description), a "The Fight" panel (phases + signature moves + shared mechanics), the full **loot table** grouped EPIC / RARE / COMMON with enchants + lore on every item, and prev/next tier navigation
+- **`src/lib/bossDisplay.ts` (new)** — shared `Boss`/`LootDrop` types, per-boss accent map, official rarity colors (epic `#AA00AA` / rare `#5555FF` / common `#55FF55`), `tierLabel()`, `bossBySlug()`, and the shared-mechanics list — imported by both the client hub and the server detail pages so they can't drift
+- **`src/data/bosses.json` (new)** — the six raids (Mortrax's Tomb → The Pale Court → The Hollow Hive → The Ashbound Throne → The Grand Conclave, plus the Champion of the Pit duel). Each carries the boss's mob, signature moves, and a 12-item loot table (3 epic / 4 rare / 5 common) with exact enchants and lore lines
+- **`src/app/api/player-profile/[uuid]/route.ts` — `events` + `eventRanks`** — the profile aggregator now reads the events snapshot too: it returns the player's full event stat line (fetched from `/api/events/player/<name>`, authoritative even outside any board's top-25) plus per-role ranks pulled from the snapshot's role boards. Both null/empty when PiEvents isn't live
+- **`/player/<id>` — Boss Rush section** — for players who've joined at least one run, a new panel shows role stat cards (Score / Damage / Boss Damage / Damage Taken / Healing / Adds) with `#N of M` ranks, a runs/clears/best-score header, and a survivals / lives-lost / earnings footer. Hidden for non-participants and when PiEvents is down
+- **`components/Header.tsx`** — nav gained a **Boss Rush** link (`/events`)
+- **Backend dependency** — needs **PiStatsAPI 1.3.0** (the `/api/events/*` surface) shipped to DatHost **and** PiEvents live. Until both land, every events endpoint returns 503, the `/events` page shows its "not live yet" state, and the profile section stays hidden. The boss/loot content is static, so the raid pages render regardless
+
 ## Getting Started
 
 ```bash
@@ -153,8 +169,8 @@ No environment variables required for basic development. The stats proxy at `/ap
 
 - `src/app/` — Pages (file-based routing) and API routes under `src/app/api/`
 - `src/components/` — Reusable UI components
-- `src/lib/` — Shared logic: `launch.ts` (launch timestamp), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes)
-- `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, future-polls). Wanted outlaws and reputation leaderboards are fetched live from the plugin via the stats proxy
+- `src/lib/` — Shared logic: `launch.ts` (launch timestamp), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes), `eventsSnapshot.ts` (warm Boss Rush cache: role boards + summary + recent runs), `bossDisplay.ts` (shared boss/loot types, rarity colors, and helpers for the `/events` hub and per-raid pages)
+- `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, future-polls, bosses). Wanted outlaws and reputation leaderboards are fetched live from the plugin via the stats proxy
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write
 - `public/` — Static assets (textures, audio, cursors)
 

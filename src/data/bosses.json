@@ -1,0 +1,182 @@
+[
+  {
+    "id": "mortrax",
+    "name": "Mortrax, the Rotcrowned",
+    "mob": "Zombie",
+    "raid": "Mortrax's Tomb",
+    "kind": "ladder",
+    "rank": 1,
+    "ladderLabel": "Warm-up",
+    "accent": "nature",
+    "icon": "🧟",
+    "description": "The ladder's first rung. A rotting king who opens with telegraphed slams and keeps the pressure on with the dead he raises. Learn the rhythm here, while the fight is still forgiving.",
+    "moves": [
+      { "name": "Ground Slam", "description": "Telegraphed fire-ring AoE — step out of the ring before it lands." },
+      { "name": "Risen Dead", "description": "Raises waves of the dead to swarm the party." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Rotcrown", "item": "Diamond Helmet", "enchants": "Prot IV, Unb III, Thorns III", "lore": "Torn from the skull of Mortrax. It still weeps black ichor." },
+      { "tier": "epic", "name": "Graveling Edge", "item": "Diamond Sword", "enchants": "Sharp V, Looting II, Unb III", "lore": "Forged in a king's tomb. It remembers every burial." },
+      { "tier": "epic", "name": "Ichorstride", "item": "Diamond Boots", "enchants": "Prot III, Unb III, Thorns II", "lore": "Caked in the rot of ages." },
+      { "tier": "rare", "name": "Tomb-Iron Vest", "item": "Iron Chestplate", "enchants": "Prot III, Unb II", "lore": "Salvaged from a fallen gravekeeper. The rot never breached it." },
+      { "tier": "rare", "name": "Mourner's Edge", "item": "Iron Sword", "enchants": "Smite III, Unb II", "lore": "It grieves for every shambler it returns to rest." },
+      { "tier": "rare", "name": "Sexton's Longspade", "item": "Diamond Shovel", "enchants": "Eff IV, Unb II", "lore": "Six feet down, every time. Mortrax buried his own gravediggers." },
+      { "tier": "rare", "name": "Tome of Grave Iron", "item": "Book", "enchants": "Prot III", "lore": "Bound in coffin lining. Chapter one: stay buried." },
+      { "tier": "common", "name": "Gravedigger's Spade", "item": "Diamond Pickaxe", "enchants": "Eff III, Unb II", "lore": "Crusted with tomb-dirt." },
+      { "tier": "common", "name": "Risen Cleaver", "item": "Iron Sword", "enchants": "Sharp II, Unb II", "lore": "Re-gripped by dead hands." },
+      { "tier": "common", "name": "Gravewatch Helm", "item": "Iron Helmet", "enchants": "Prot II, Unb I", "lore": "Its last owner kept vigil too long." },
+      { "tier": "common", "name": "Shambler's Boots", "item": "Iron Boots", "enchants": "Feather Fall II, Unb I", "lore": "They keep walking after you stop." },
+      { "tier": "common", "name": "Tome of Rot", "item": "Book", "enchants": "Thorns II", "lore": "Pages bound in cured hide." }
+    ]
+  },
+  {
+    "id": "ossivar",
+    "name": "Ossivar, the Pale Sovereign",
+    "mob": "Skeleton",
+    "raid": "The Pale Court",
+    "kind": "ladder",
+    "rank": 2,
+    "ladderLabel": "Second rung",
+    "accent": "bone",
+    "icon": "💀",
+    "description": "A skeletal monarch who fights at range. The arrow volleys get nastier every phase and stray reinforcements wander in to flank — close the gap or get whittled down.",
+    "moves": [
+      { "name": "Arrow Volley", "description": "Ranged volleys that intensify with each HP phase." },
+      { "name": "Reinforcements", "description": "Stray skeletons wander in to flank the party." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Marrowrend", "item": "Diamond Sword", "enchants": "Sharp V, Looting III, Unb III", "lore": "Carved from the Pale Sovereign's femur. It hungers for marrow." },
+      { "tier": "epic", "name": "Bonelord's Aegis", "item": "Diamond Chestplate", "enchants": "Prot IV, Unb III", "lore": "Ribs of a king, fused into plate." },
+      { "tier": "epic", "name": "Pale Crown", "item": "Diamond Helmet", "enchants": "Prot III, Unb III, Resp III", "lore": "Worn by one who never drew breath." },
+      { "tier": "rare", "name": "Splintered Longbow", "item": "Bow", "enchants": "Power IV, Unb II", "lore": "Strung with the Sovereign's own sinew. It creaks like an opening casket." },
+      { "tier": "rare", "name": "Arrowturn Plate", "item": "Iron Chestplate", "enchants": "Proj Prot III, Unb II", "lore": "Angled to shed the Sovereign's volleys. Count the dents. Count the survivals." },
+      { "tier": "rare", "name": "Court Herald's Mace", "item": "Mace", "enchants": "Density III, Unb II", "lore": "It announces you. Loudly." },
+      { "tier": "rare", "name": "Tome of the Volley", "item": "Book", "enchants": "Power III", "lore": "Whispers of a thousand archers. Loose as one." },
+      { "tier": "common", "name": "Bonepicker", "item": "Diamond Pickaxe", "enchants": "Eff III, Unb II", "lore": "Tipped with a finger-bone." },
+      { "tier": "common", "name": "Pale Guard's Mail", "item": "Iron Leggings", "enchants": "Prot II, Unb II", "lore": "Stripped from a tireless sentry." },
+      { "tier": "common", "name": "Courtbow", "item": "Bow", "enchants": "Power II, Unb I", "lore": "Standard issue of the Pale Guard." },
+      { "tier": "common", "name": "Ossuary Sabatons", "item": "Iron Boots", "enchants": "Proj Prot II, Unb I", "lore": "They rattle faintly when you run." },
+      { "tier": "common", "name": "Tome of Marrow", "item": "Book", "enchants": "Unb II", "lore": "Dry reading. Very dry." }
+    ]
+  },
+  {
+    "id": "vexspinne",
+    "name": "Vexspinne, the Broodmother",
+    "mob": "Spider",
+    "raid": "The Hollow Hive",
+    "kind": "ladder",
+    "rank": 3,
+    "ladderLabel": "Mid ladder",
+    "accent": "venom",
+    "icon": "🕷️",
+    "description": "Fast, lightly armored, and wrapped in a venom cloud that thickens when she frenzies. Her broods swarm the floor — keep moving and stay out of the poison.",
+    "moves": [
+      { "name": "Venom", "description": "A poison cloud clings to her — stronger when frenzied. Don't stand in it." },
+      { "name": "Brood", "description": "Summons cave-spider broods while she darts in and out." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Silkbinder", "item": "Bow", "enchants": "Power V, Punch II, Unb III", "lore": "Strung with the Broodmother's own silk. Its arrows trail gossamer." },
+      { "tier": "epic", "name": "Venomweave", "item": "Diamond Chestplate", "enchants": "Prot IV, Thorns III, Unb III", "lore": "Woven in the dark of the hive." },
+      { "tier": "epic", "name": "Chitincrown", "item": "Diamond Helmet", "enchants": "Prot III, Resp III, Unb III", "lore": "Carved from the Broodmother's carapace." },
+      { "tier": "rare", "name": "Webbed Mail", "item": "Iron Leggings", "enchants": "Prot III, Unb II", "lore": "Bound in layered silk. Stronger than the steel beneath it." },
+      { "tier": "rare", "name": "Broodbane", "item": "Iron Sword", "enchants": "Bane of Arthropods IV, Unb II", "lore": "Every hive remembers it. Every hive fears it." },
+      { "tier": "rare", "name": "Silkstep Boots", "item": "Iron Boots", "enchants": "Feather Fall III, Unb II", "lore": "You land like a whisper on the web. The Broodmother never hears you coming." },
+      { "tier": "rare", "name": "Tome of Chitin", "item": "Book", "enchants": "Prot III", "lore": "Armor lessons from a thousand molts." },
+      { "tier": "common", "name": "Spinneret Pick", "item": "Diamond Pickaxe", "enchants": "Eff III, Unb II", "lore": "Sticky to the touch." },
+      { "tier": "common", "name": "Fangblade", "item": "Iron Sword", "enchants": "Sharp II, Unb II", "lore": "Honed from a broodling's fang." },
+      { "tier": "common", "name": "Hatchling Helm", "item": "Iron Helmet", "enchants": "Prot II, Unb I", "lore": "Still faintly translucent." },
+      { "tier": "common", "name": "Mite-Eaten Mail", "item": "Iron Chestplate", "enchants": "Prot II, Unb I", "lore": "The silverfish holes are part of the design." },
+      { "tier": "common", "name": "Tome of Venom", "item": "Book", "enchants": "Thorns II", "lore": "The pages itch to read." }
+    ]
+  },
+  {
+    "id": "vaelthorn",
+    "name": "Vaelthorn, the Ashbound",
+    "mob": "Wither Skeleton",
+    "raid": "The Ashbound Throne",
+    "kind": "ladder",
+    "rank": 4,
+    "ladderLabel": "Late ladder",
+    "accent": "fire",
+    "icon": "🔥",
+    "description": "Wither-skull volleys, heavy slams, and the meanest enrage on the ladder. If your damage isn't there by the final phase, the throne keeps its king.",
+    "moves": [
+      { "name": "Wither Skulls", "description": "Volleys of wither skulls raked across the arena." },
+      { "name": "Crushing Slam", "description": "Heavy melee slams when you're in close." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Cindershroud", "item": "Diamond Chestplate", "enchants": "Prot IV, Fire Prot IV, Unb III", "lore": "Forged in the pyre of a dead kingdom. The ash never cools." },
+      { "tier": "epic", "name": "Ashfang", "item": "Diamond Sword", "enchants": "Sharp V, Fire Aspect II, Unb III", "lore": "Quenched in nether-blood." },
+      { "tier": "epic", "name": "Witherwrought Crown", "item": "Diamond Helmet", "enchants": "Prot IV, Unb III, Thorns II", "lore": "Bound in nether-ash and royal grief." },
+      { "tier": "rare", "name": "Emberpick", "item": "Diamond Pickaxe", "enchants": "Eff IV, Unb II", "lore": "Still warm to the touch. It has never once gone out." },
+      { "tier": "rare", "name": "Charblade", "item": "Iron Sword", "enchants": "Fire Aspect II, Sharp II, Unb II", "lore": "It cauterizes as it cuts. Vaelthorn's smiths wasted nothing." },
+      { "tier": "rare", "name": "Cinderwalk Boots", "item": "Iron Boots", "enchants": "Soul Speed II, Fire Prot II, Unb II", "lore": "The ash parts before them. Made for the roads of a burning kingdom." },
+      { "tier": "rare", "name": "Tome of the Pyre", "item": "Book", "enchants": "Fire Prot III", "lore": "Reads best by firelight. Preferably someone else's." },
+      { "tier": "common", "name": "Scorched Plate", "item": "Iron Chestplate", "enchants": "Fire Prot II, Unb II", "lore": "Half-melted, still serviceable." },
+      { "tier": "common", "name": "Ashwalker Boots", "item": "Iron Boots", "enchants": "Fire Prot II, Unb II", "lore": "They leave no prints in the cinders." },
+      { "tier": "common", "name": "Bonechar Pick", "item": "Diamond Pickaxe", "enchants": "Eff III, Unb II", "lore": "Hafted with wither-bone." },
+      { "tier": "common", "name": "Throneguard Helm", "item": "Iron Helmet", "enchants": "Fire Prot II, Unb I", "lore": "Dented by a falling crown." },
+      { "tier": "common", "name": "Tome of Cinders", "item": "Book", "enchants": "Fire Aspect II", "lore": "Edges singed black." }
+    ]
+  },
+  {
+    "id": "maelgrave",
+    "name": "Maelgrave, the Grand Augur",
+    "mob": "Ravager",
+    "raid": "The Grand Conclave",
+    "kind": "ladder",
+    "rank": 5,
+    "ladderLabel": "Hardest",
+    "accent": "arcane",
+    "icon": "⚔️",
+    "description": "The top of the ladder. Marches lines of evoker fangs across the floor and fights behind a vindicator-and-vex warband. Sidestep the fangs, cut the warband, then deal with the Augur.",
+    "moves": [
+      { "name": "Fangs", "description": "A marching line of evoker fangs toward a player — sidestep the line." },
+      { "name": "Warband", "description": "Fights alongside a vindicator-and-vex warband." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Augur's Verdict", "item": "Crossbow", "enchants": "Quick Charge III, Piercing IV, Unb III", "lore": "Maelgrave's sentence, delivered at range. It never misses twice." },
+      { "tier": "epic", "name": "Totembound Aegis", "item": "Diamond Chestplate", "enchants": "Prot IV, Unb III", "lore": "Inlaid with shattered totems." },
+      { "tier": "epic", "name": "Sigil of Undeath", "item": "Totem of Undying", "enchants": "", "lore": "The Conclave's final rite, stolen." },
+      { "tier": "rare", "name": "Outrider's Arbalest", "item": "Crossbow", "enchants": "Quick Charge II, Piercing II, Unb II", "lore": "Favored by the warband's fastest riders. Loaded before you hear the hooves." },
+      { "tier": "rare", "name": "Ravagerhide Vest", "item": "Iron Chestplate", "enchants": "Prot III, Unb II", "lore": "Tanned from a beast that wouldn't kneel. Maelgrave rode its brother in." },
+      { "tier": "rare", "name": "Omenblade", "item": "Iron Axe", "enchants": "Sharp III, Unb II", "lore": "It read your fate in the swing. The omen is always the same." },
+      { "tier": "rare", "name": "Tome of Sharp Omens", "item": "Book", "enchants": "Sharp III", "lore": "The margins scream." },
+      { "tier": "common", "name": "Conclave Crossbow", "item": "Crossbow", "enchants": "Quick Charge I, Unb II", "lore": "Standard issue of the warband." },
+      { "tier": "common", "name": "Vindicator's Axe", "item": "Iron Axe", "enchants": "Sharp II, Unb II", "lore": "Notched from a hundred raids." },
+      { "tier": "common", "name": "Augur's Robes", "item": "Iron Chestplate", "enchants": "Prot II, Unb II", "lore": "Iron plates under grey cloth." },
+      { "tier": "common", "name": "Banner-Bearer's Cap", "item": "Iron Helmet", "enchants": "Prot II, Unb I", "lore": "The banner did not survive." },
+      { "tier": "common", "name": "Tome of Multishot", "item": "Book", "enchants": "Multishot I", "lore": "Three bolts where one would do." }
+    ]
+  },
+  {
+    "id": "korrin",
+    "name": "Korrin Brakkus, the Undefeated",
+    "mob": "Vindicator",
+    "raid": "Champion of the Pit",
+    "kind": "duel",
+    "rank": 6,
+    "ladderLabel": "Duel",
+    "accent": "gold",
+    "icon": "🏆",
+    "description": "Not on the ladder — a one-on-one gladiator duel. He lunges across the pit and slams on landing, and once you've bloodied him he calls in two 'seconds' to even the odds.",
+    "moves": [
+      { "name": "Leap", "description": "Lunges across the pit and slams on landing — heed the ⚠ INCOMING warning." },
+      { "name": "Seconds", "description": "Brings in two 'seconds' once he's bloodied." }
+    ],
+    "loot": [
+      { "tier": "epic", "name": "Pitbreaker", "item": "Diamond Axe", "enchants": "Sharp V, Knockback II, Unb III", "lore": "Korrin's own axe, won at last. The pit remembers its champion." },
+      { "tier": "epic", "name": "Victor's Plate", "item": "Diamond Chestplate", "enchants": "Prot IV, Thorns II, Unb III", "lore": "Dented by every challenger before you." },
+      { "tier": "epic", "name": "Laurel of the Undefeated", "item": "Diamond Helmet", "enchants": "Prot III, Resp III, Unb III", "lore": "Worn by the one who finally fell." },
+      { "tier": "rare", "name": "Challenger's Blade", "item": "Iron Sword", "enchants": "Sharp III, Sweeping Edge II, Unb II", "lore": "Issued to every name on the roster. Most are returned unused." },
+      { "tier": "rare", "name": "Crowdpleaser", "item": "Iron Axe", "enchants": "Knockback II, Sharp II, Unb II", "lore": "Send them into the stands. The crowd will throw them back." },
+      { "tier": "rare", "name": "Veteran's Warplate", "item": "Iron Chestplate", "enchants": "Prot III, Unb II", "lore": "One hundred bouts, one owner. Then one bad day." },
+      { "tier": "rare", "name": "Tome of Footwork", "item": "Book", "enchants": "Feather Fall III", "lore": "Step. Pivot. Live. Korrin wrote the last chapter mid-leap." },
+      { "tier": "common", "name": "Arena Buckler", "item": "Shield", "enchants": "Unb III", "lore": "Scarred but unbroken." },
+      { "tier": "common", "name": "Gladiator's Greaves", "item": "Iron Leggings", "enchants": "Prot II, Unb II", "lore": "Sand still in the joints." },
+      { "tier": "common", "name": "Sparring Sword", "item": "Iron Sword", "enchants": "Sharp II, Unb I", "lore": "Dulled by a thousand drills." },
+      { "tier": "common", "name": "Pitwalker Boots", "item": "Iron Boots", "enchants": "Feather Fall II, Unb I", "lore": "The sand remembers every fall." },
+      { "tier": "common", "name": "Tome of Vigor", "item": "Book", "enchants": "Unb III", "lore": "A champion's training regimen." }
+    ]
+  }
+]

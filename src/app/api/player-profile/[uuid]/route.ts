@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSnapshot, rowFor } from '@/lib/leaderboardSnapshot';
+import { getEventsSnapshot, eventRowFor, type EventEntry } from '@/lib/eventsSnapshot';
 
 export const runtime = 'nodejs';
 
@@ -80,10 +81,11 @@ export async function GET(
 ) {
   const { uuid: idOrName } = await params;
 
-  // Roster (online + name↔uuid) and the warm snapshot in parallel.
-  const [roster, snapshot] = await Promise.all([
+  // Roster (online + name↔uuid) and both warm snapshots in parallel.
+  const [roster, snapshot, eventsSnapshot] = await Promise.all([
     getJson<PlayerRow[]>('players'),
     getSnapshot(),
+    getEventsSnapshot(),
   ]);
 
   const players = Array.isArray(roster) ? roster : [];
@@ -94,7 +96,7 @@ export async function GET(
 
   if (!player) {
     return NextResponse.json(
-      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {} },
+      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {}, events: null, eventRanks: {} },
       { headers },
     );
   }
@@ -132,6 +134,25 @@ export async function GET(
     `reputation/player/${encodeURIComponent(player.name)}`,
   );
 
+  // Boss Rush (PiEvents). The player endpoint returns the authoritative full
+  // stat line + recent payouts even when the player is outside any board's
+  // top-25; the per-role ranks come from the events snapshot's role boards (only
+  // present when they rank top-25). Both degrade to null/empty when PiEvents
+  // isn't live upstream, and the profile page hides the section.
+  type EventPlayer = EventEntry & {
+    recent_payouts?: { money: number; reason: string; at: number }[];
+  };
+  const events = eventsSnapshot.available
+    ? await getJson<EventPlayer>(`events/player/${encodeURIComponent(player.name)}`)
+    : null;
+  const ROLE_BOARDS = ['score', 'damage', 'boss_damage', 'tank', 'support', 'adds', 'clears'];
+  const eventRanks: Record<string, { rank: number; total: number }> = {};
+  for (const boardKey of ROLE_BOARDS) {
+    const row = eventRowFor(eventsSnapshot, boardKey, uuid);
+    const total = eventsSnapshot.categories[boardKey]?.length ?? 0;
+    if (row && total > 0) eventRanks[boardKey] = { rank: row.rank, total };
+  }
+
   // Commendations: value comes from the player's own reputation (authoritative),
   // rank from the website-built commendations board in the snapshot.
   const commBoard = snapshot.boards.commendations ?? [];
@@ -153,6 +174,8 @@ export async function GET(
       stats,
       reputation,
       skillRanks,
+      events,
+      eventRanks,
     },
     { headers },
   );

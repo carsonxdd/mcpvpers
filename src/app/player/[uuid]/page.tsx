@@ -65,6 +65,24 @@ type Reputation = {
   outlaw_tier: string;
 };
 
+type EventPlayer = {
+  uuid: string | null;
+  name: string;
+  events: number;
+  clears: number;
+  total_damage: number;
+  total_boss_damage: number;
+  total_damage_taken: number;
+  total_healing: number;
+  total_adds: number;
+  total_score: number;
+  best_score: number;
+  total_lives_lost: number;
+  survivals: number;
+  total_money: number;
+  recent_payouts?: { money: number; reason: string; at: number }[];
+};
+
 type ProfileResponse = {
   uuid: string | null;
   name: string | null;
@@ -74,6 +92,10 @@ type ProfileResponse = {
   reputation: Reputation | null;
   // skill enum (e.g. "MINING") or "POWER_LEVEL" -> server rank within the roster
   skillRanks: Record<string, { rank: number; total: number }>;
+  // Boss Rush (PiEvents) — null when PiEvents isn't live or the player never joined a run
+  events: EventPlayer | null;
+  // role board key (score|damage|boss_damage|tank|support|adds|clears) -> server rank
+  eventRanks: Record<string, { rank: number; total: number }>;
 };
 
 function formatPlaytime(seconds: number): string {
@@ -332,6 +354,11 @@ export default function PlayerPage() {
               <SkillsPanel data={skills} ranks={profile?.skillRanks ?? {}} />
             )}
 
+            {/* Boss Rush (PiEvents) — only for players who've actually joined a run */}
+            {profile.events && profile.events.events > 0 && (
+              <BossRushPanel data={profile.events} ranks={profile.eventRanks ?? {}} />
+            )}
+
             {/* Advancements */}
             {adv && (
               <div>
@@ -519,6 +546,63 @@ function SkillTile({ skill, rank }: { skill: SkillEntry; rank?: { rank: number; 
           />
         </div>
       )}
+    </div>
+  );
+}
+
+// Boss Rush role stats. `board` is the events role board the rank comes from.
+const EVENT_FIELDS: { field: keyof EventPlayer; label: string; board: string }[] = [
+  { field: 'total_score', label: 'Score', board: 'score' },
+  { field: 'total_damage', label: 'Damage', board: 'damage' },
+  { field: 'total_boss_damage', label: 'Boss Damage', board: 'boss_damage' },
+  { field: 'total_damage_taken', label: 'Damage Taken', board: 'tank' },
+  { field: 'total_healing', label: 'Healing', board: 'support' },
+  { field: 'total_adds', label: 'Adds', board: 'adds' },
+];
+
+function BossRushPanel({
+  data,
+  ranks,
+}: {
+  data: EventPlayer;
+  ranks: Record<string, { rank: number; total: number }>;
+}) {
+  return (
+    <div className="mb-8">
+      <div className="flex items-baseline justify-between mb-3 px-1">
+        <h2 className="font-pixel t-text text-sm">Boss Rush</h2>
+        <span className="font-pixel t-text-muted text-[10px]">
+          {data.events} {data.events === 1 ? 'run' : 'runs'} · {data.clears} cleared
+          {data.best_score > 0 && (
+            <span className="text-gold"> · best {Math.round(data.best_score).toLocaleString()}</span>
+          )}
+        </span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+        {EVENT_FIELDS.map((f) => {
+          const value = data[f.field] as number;
+          const rank = ranks[f.board];
+          return (
+            <div key={f.field} className="mc-panel p-4">
+              <p className="font-pixel t-text-muted text-[10px] mb-1.5">{f.label}</p>
+              <p className="t-text text-lg font-medium leading-none">
+                {Math.round(value).toLocaleString()}
+              </p>
+              {rank && (
+                <p className="text-xs mt-2">
+                  <RankLabel rank={rank.rank} total={rank.total} />
+                </p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+      {/* Survival + earnings footer */}
+      <div className="mc-panel p-4 mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs t-text-muted">
+        <span>Survivals: <span className="t-text-dim">{data.survivals}</span></span>
+        <span>Lives lost: <span className="t-text-dim">{data.total_lives_lost}</span></span>
+        <span>Earned: <span className="text-gold">${Math.round(data.total_money).toLocaleString()}</span></span>
+      </div>
     </div>
   );
 }
