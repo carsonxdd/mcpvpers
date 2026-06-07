@@ -16,7 +16,7 @@ const navLinks = [
   { href: '/version-catchup', label: 'Versions' },
   { href: '/map', label: 'BlueMap' },
   { href: '/leaderboards', label: 'Leaderboards' },
-  { href: '/events', label: 'Boss Rush' },
+  { href: '/events', label: 'Events' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/polls', label: 'Polls' },
   { href: '/news', label: 'News' },

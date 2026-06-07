@@ -96,7 +96,7 @@ export async function GET(
 
   if (!player) {
     return NextResponse.json(
-      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {}, events: null, eventRanks: {} },
+      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {}, events: null, eventRanks: {}, pvp: null },
       { headers },
     );
   }
@@ -141,10 +141,54 @@ export async function GET(
   // isn't live upstream, and the profile page hides the section.
   type EventPlayer = EventEntry & {
     recent_payouts?: { money: number; reason: string; at: number }[];
+    // 1.5.0+: empty arrays on pre-tracking data — the profile guards on length.
+    recent_runs?: {
+      id: number;
+      raid: string | null;
+      cleared: boolean;
+      wave: number;
+      difficulty: number;
+      duration_ms: number;
+      score: number;
+      damage: number;
+      money: number;
+      ended_at: number;
+    }[];
+    recent_loot?: { item: string; tier: string; at: number }[];
   };
-  const events = eventsSnapshot.available
-    ? await getJson<EventPlayer>(`events/player/${encodeURIComponent(player.name)}`)
-    : null;
+  // PvP profile (TDM/FFA). 503 until pvp_totals exists / 404 if the player never
+  // fought a match — getJson maps both to null and the page hides the PvP section.
+  type PvpPlayer = {
+    uuid: string;
+    name: string;
+    matches: number;
+    wins: number;
+    kills: number;
+    deaths: number;
+    kd: number;
+    total_money: number;
+    best_killstreak: number;
+    mvps: number;
+    recent_matches?: {
+      id: number;
+      mode: string;
+      decided: boolean;
+      winner: string | null;
+      mvp: string | null;
+      team: string | null;
+      kills: number;
+      deaths: number;
+      money: number;
+      duration_ms: number;
+      ended_at: number;
+    }[];
+  };
+  const [events, pvp] = eventsSnapshot.available
+    ? await Promise.all([
+        getJson<EventPlayer>(`events/player/${encodeURIComponent(player.name)}`),
+        getJson<PvpPlayer>(`events/pvp/player/${encodeURIComponent(player.name)}`),
+      ])
+    : [null, null];
   const ROLE_BOARDS = ['score', 'damage', 'boss_damage', 'tank', 'support', 'adds', 'clears'];
   const eventRanks: Record<string, { rank: number; total: number }> = {};
   for (const boardKey of ROLE_BOARDS) {
@@ -176,6 +220,7 @@ export async function GET(
       skillRanks,
       events,
       eventRanks,
+      pvp,
     },
     { headers },
   );

@@ -33,13 +33,21 @@ export type EventEntry = {
   total_lives_lost: number;
   survivals: number;
   total_money: number;
+  best_pit: number; // highest Pit level cleared (1.5.0+; 0 on old data)
+  pit_clears: number; // count of Pit-level clears
 };
 
 export type EventRun = {
-  mode: string;
+  id: number; // run detail key (/events/run/{id})
+  mode: string; // BOSS_RUSH | TDM | FFA
   cleared: boolean;
   players: number;
-  wave: number;
+  wave: number; // 0 for TDM/FFA rows
+  difficulty: number; // Pit keystone level; 0 = base / pre-Pit / PvP rows
+  raid: string | null; // raid key (Boss Rush rows; null for PvP / pre-tracking)
+  duration_ms: number; // 0 on pre-tracking rows
+  winner: string | null; // PvP only (team color / FFA name; null on draw / BR)
+  mvp: string | null; // BR top scorer / PvP top killer; null on pre-tracking
   ended_at: number; // epoch millis
 };
 
@@ -50,6 +58,12 @@ export type EventSummary = {
   total_paid_out: number;
   unique_participants: number;
   last_run_ts: number;
+  // 1.5.0+: total_runs/total_clears now count ALL modes (incl. PvP). Use the
+  // boss_* fields for the Boss Rush banner. Absent on older upstreams.
+  boss_runs?: number;
+  boss_clears?: number;
+  pvp_matches?: number;
+  pitforged_drops?: number;
 };
 
 export type EventsSnapshot = {

@@ -4,7 +4,7 @@
 import bossesData from '@/data/bosses.json';
 
 export type LootDrop = {
-  tier: 'epic' | 'rare' | 'common';
+  tier: 'pitforged' | 'epic' | 'rare' | 'common';
   name: string;
   item: string;
   enchants: string;
@@ -33,6 +33,24 @@ export function bossBySlug(slug: string): Boss | undefined {
   return bosses.find((b) => b.id === slug);
 }
 
+// PiEvents identifies a raid by a mob-based key (event_history.raid / live_event.raid:
+// "zombie", "skeleton", …) rather than the boss id. Map it back to the boss so the
+// raid log, run details and live banner can show the boss name + icon.
+const RAID_KEY_TO_ID: Record<string, string> = {
+  zombie: 'mortrax',
+  skeleton: 'ossivar',
+  spider: 'vexspinne',
+  wither: 'vaelthorn',
+  illager: 'maelgrave',
+  champion: 'korrin',
+};
+
+export function bossByRaidKey(key: string | null | undefined): Boss | undefined {
+  if (!key) return undefined;
+  const lower = key.toLowerCase();
+  return bossBySlug(RAID_KEY_TO_ID[lower] ?? lower);
+}
+
 // Ladder bosses read "Tier N"; the standalone duel reads "Duel".
 export function tierLabel(boss: Boss): string {
   return boss.kind === 'duel' ? 'Duel' : `Tier ${boss.rank}`;
@@ -49,8 +67,12 @@ export const accentClass: Record<string, { text: string; border: string; chip: s
 };
 export const accentFor = (a: string) => accentClass[a] ?? accentClass.gold;
 
-// Loot tier → badge label + official in-game rarity color (§5/§9/§a).
+// Loot tier → badge label + official in-game rarity color (§-codes). Pitforged
+// (&d pink) is the top tier, sitting above epic/rare/common — it's the Pit 1+ epic
+// pool with above-vanilla-cap gear. (There is no legendary tier; it was cut in
+// config before shipping — do not re-add legendary badges/tables anywhere.)
 export const lootTier: Record<string, { badge: string; color: string }> = {
+  pitforged: { badge: 'PITFORGED', color: '#FF55FF' },
   epic: { badge: 'EPIC', color: '#AA00AA' },
   rare: { badge: 'RARE', color: '#5555FF' },
   common: { badge: 'COMMON', color: '#55FF55' },

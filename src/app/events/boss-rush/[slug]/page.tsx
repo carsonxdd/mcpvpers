@@ -23,14 +23,16 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const boss = bossBySlug(slug);
-  if (!boss) return { title: 'Boss Rush — mc.pvpers.us' };
+  if (!boss) return { title: 'Boss Rush - mc.pvpers.us' };
   return {
-    title: `${boss.name} · ${boss.raid} — Boss Rush`,
+    title: `${boss.name} · ${boss.raid} - Boss Rush`,
     description: boss.description,
   };
 }
 
-const TIER_ORDER = ['epic', 'rare', 'common'] as const;
+// Rarest first: pitforged → epic → rare → common. (No legendary tier - it was cut
+// in config before shipping; do not re-add it.)
+const TIER_ORDER = ['pitforged', 'epic', 'rare', 'common'] as const;
 
 export default async function RaidPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -46,7 +48,7 @@ export default async function RaidPage({ params }: { params: Promise<{ slug: str
     <div>
       <section className="max-w-3xl mx-auto px-4 py-16">
         <div className="mb-6">
-          <Link href="/events" className="text-sm t-text-muted hover:underline">
+          <Link href="/events/boss-rush" className="text-sm t-text-muted hover:underline">
             ← Boss Rush
           </Link>
         </div>
@@ -77,7 +79,7 @@ export default async function RaidPage({ params }: { params: Promise<{ slug: str
           <h2 className="font-pixel t-text text-sm mb-3 px-1">The Fight</h2>
           <div className="mc-panel p-5">
             <p className="t-text-muted text-sm mb-4 leading-snug">
-              Four waves of adds, then the boss — fought across three HP phases (
+              Four waves of adds, then the boss - fought across three HP phases (
               <span className="t-text-dim">100% → 60% → 30%</span>), its kit escalating as it drops.
             </p>
 
@@ -115,8 +117,8 @@ export default async function RaidPage({ params }: { params: Promise<{ slug: str
         <div className="mb-8">
           <h2 className="font-pixel t-text text-sm mb-3 px-1">Loot Table</h2>
           <p className="t-text-muted text-[11px] mb-4 px-1">
-            Dropped on a clear. Top-3 scorers also roll an epic; every roll has a 35% chance to
-            upgrade to rare.
+            Dropped on a clear. Every scorer rolls for an epic (top-3 at 35%, others 15%); at Pit 1+,
+            won epic rolls come back Pitforged instead.
           </p>
           <div className="space-y-6">
             {TIER_ORDER.map((tier) => {
@@ -158,14 +160,14 @@ export default async function RaidPage({ params }: { params: Promise<{ slug: str
         {/* Prev / next raid */}
         <div className="flex items-center justify-between gap-3 pt-4 t-border-20 border-t">
           {prev ? (
-            <Link href={`/events/${prev.id}`} className="text-xs t-text-muted hover:t-text-dim min-w-0">
+            <Link href={`/events/boss-rush/${prev.id}`} className="text-xs t-text-muted hover:t-text-dim min-w-0">
               ← {tierLabel(prev)}: <span className="t-text-dim">{prev.name}</span>
             </Link>
           ) : (
             <span />
           )}
           {next ? (
-            <Link href={`/events/${next.id}`} className="text-xs t-text-muted hover:t-text-dim text-right min-w-0">
+            <Link href={`/events/boss-rush/${next.id}`} className="text-xs t-text-muted hover:t-text-dim text-right min-w-0">
               {tierLabel(next)}: <span className="t-text-dim">{next.name}</span> →
             </Link>
           ) : (

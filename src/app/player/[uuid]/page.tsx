@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
+import { bossByRaidKey, lootTier } from '@/lib/bossDisplay';
 
 type Advancement = {
   key: string;
@@ -65,6 +66,19 @@ type Reputation = {
   outlaw_tier: string;
 };
 
+type EventRecentRun = {
+  id: number;
+  raid: string | null;
+  cleared: boolean;
+  wave: number;
+  difficulty: number;
+  duration_ms: number;
+  score: number;
+  damage: number;
+  money: number;
+  ended_at: number;
+};
+
 type EventPlayer = {
   uuid: string | null;
   name: string;
@@ -80,7 +94,37 @@ type EventPlayer = {
   total_lives_lost: number;
   survivals: number;
   total_money: number;
+  best_pit: number;
+  pit_clears: number;
   recent_payouts?: { money: number; reason: string; at: number }[];
+  recent_runs?: EventRecentRun[];
+  recent_loot?: { item: string; tier: string; at: number }[];
+};
+
+type PvpPlayer = {
+  uuid: string;
+  name: string;
+  matches: number;
+  wins: number;
+  kills: number;
+  deaths: number;
+  kd: number;
+  total_money: number;
+  best_killstreak: number;
+  mvps: number;
+  recent_matches?: {
+    id: number;
+    mode: string;
+    decided: boolean;
+    winner: string | null;
+    mvp: string | null;
+    team: string | null;
+    kills: number;
+    deaths: number;
+    money: number;
+    duration_ms: number;
+    ended_at: number;
+  }[];
 };
 
 type ProfileResponse = {
@@ -96,6 +140,8 @@ type ProfileResponse = {
   events: EventPlayer | null;
   // role board key (score|damage|boss_damage|tank|support|adds|clears) -> server rank
   eventRanks: Record<string, { rank: number; total: number }>;
+  // PvP (TDM/FFA) — null until PvP ships / the player has fought a match
+  pvp: PvpPlayer | null;
 };
 
 function formatPlaytime(seconds: number): string {
@@ -359,6 +405,11 @@ export default function PlayerPage() {
               <BossRushPanel data={profile.events} ranks={profile.eventRanks ?? {}} />
             )}
 
+            {/* PvP Arena (PiEvents) — only for players who've fought a match */}
+            {profile.pvp && profile.pvp.matches > 0 && (
+              <PvpPanel data={profile.pvp} />
+            )}
+
             {/* Advancements */}
             {adv && (
               <div>
@@ -560,6 +611,17 @@ const EVENT_FIELDS: { field: keyof EventPlayer; label: string; board: string }[]
   { field: 'total_adds', label: 'Adds', board: 'adds' },
 ];
 
+function eventTimeAgo(ts: number): string {
+  if (!ts) return '';
+  const secs = Math.max(0, Math.floor((Date.now() - ts) / 1000));
+  if (secs < 60) return 'just now';
+  const mins = Math.floor(secs / 60);
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
 function BossRushPanel({
   data,
   ranks,
@@ -569,13 +631,18 @@ function BossRushPanel({
 }) {
   return (
     <div className="mb-8">
-      <div className="flex items-baseline justify-between mb-3 px-1">
+      <div className="flex items-baseline justify-between mb-3 px-1 gap-2 flex-wrap">
         <h2 className="font-pixel t-text text-sm">Boss Rush</h2>
-        <span className="font-pixel t-text-muted text-[10px]">
-          {data.events} {data.events === 1 ? 'run' : 'runs'} · {data.clears} cleared
-          {data.best_score > 0 && (
-            <span className="text-gold"> · best {Math.round(data.best_score).toLocaleString()}</span>
+        <span className="font-pixel t-text-muted text-[10px] flex items-center gap-2">
+          {data.best_pit >= 1 && (
+            <span className="px-1.5 py-0.5 rounded bg-violet-500/15 text-violet-300">Pit {data.best_pit}</span>
           )}
+          <span>
+            {data.events} {data.events === 1 ? 'run' : 'runs'} · {data.clears} cleared
+            {data.best_score > 0 && (
+              <span className="text-gold"> · best {Math.round(data.best_score).toLocaleString()}</span>
+            )}
+          </span>
         </span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -601,8 +668,110 @@ function BossRushPanel({
       <div className="mc-panel p-4 mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs t-text-muted">
         <span>Survivals: <span className="t-text-dim">{data.survivals}</span></span>
         <span>Lives lost: <span className="t-text-dim">{data.total_lives_lost}</span></span>
+        {data.pit_clears > 0 && (
+          <span>Pit clears: <span className="text-violet-300">{data.pit_clears}</span></span>
+        )}
         <span>Earned: <span className="text-gold">${Math.round(data.total_money).toLocaleString()}</span></span>
       </div>
+
+      {/* Recent runs (1.5.0+; empty on older data) */}
+      {data.recent_runs && data.recent_runs.length > 0 && (
+        <div className="mc-panel mt-3 overflow-hidden">
+          <p className="font-pixel t-text-muted text-[10px] px-4 pt-3 pb-1">Recent runs</p>
+          {data.recent_runs.map((r) => {
+            const boss = bossByRaidKey(r.raid);
+            return (
+              <div key={r.id} className="flex items-center gap-2.5 px-4 py-2 text-xs t-border-20 border-t">
+                <span className={r.cleared ? 'text-xp' : 'text-redstone'}>{r.cleared ? '✓' : '✗'}</span>
+                <span className="t-text-dim min-w-0 truncate">
+                  {boss ? (
+                    <>
+                      <span aria-hidden>{boss.icon}</span> {boss.raid}
+                    </>
+                  ) : (
+                    'Boss Rush'
+                  )}
+                  {r.difficulty >= 1 && <span className="text-violet-300"> · Pit {r.difficulty}</span>}
+                </span>
+                <span className="t-text-muted ml-auto shrink-0">{Math.round(r.score).toLocaleString()}</span>
+                <span className="text-gold shrink-0 whitespace-nowrap">${Math.round(r.money).toLocaleString()}</span>
+                <span className="t-text-muted shrink-0 whitespace-nowrap max-md:hidden">{eventTimeAgo(r.ended_at)}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {/* Recent loot (tier-colored) */}
+      {data.recent_loot && data.recent_loot.length > 0 && (
+        <div className="mc-panel mt-3 p-4">
+          <p className="font-pixel t-text-muted text-[10px] mb-2">Recent loot</p>
+          <div className="flex flex-wrap gap-x-4 gap-y-1.5 text-xs">
+            {data.recent_loot.map((d, i) => (
+              <span key={i} style={{ color: lootTier[d.tier]?.color }} className="whitespace-nowrap">
+                {d.item}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PvpPanel({ data }: { data: PvpPlayer }) {
+  const losses = Math.max(0, data.matches - data.wins);
+  return (
+    <div className="mb-8">
+      <div className="flex items-baseline justify-between mb-3 px-1">
+        <h2 className="font-pixel t-text text-sm">PvP Arena</h2>
+        <span className="font-pixel t-text-muted text-[10px]">
+          {data.matches} {data.matches === 1 ? 'match' : 'matches'} · {data.wins}W-{losses}L
+        </span>
+      </div>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <PvpTile label="Kills" value={data.kills.toLocaleString()} />
+        <PvpTile label="K/D" value={data.kd.toFixed(2)} />
+        <PvpTile label="Best Streak" value={data.best_killstreak.toLocaleString()} />
+        <PvpTile label="MVPs" value={data.mvps.toLocaleString()} accent />
+      </div>
+      <div className="mc-panel p-4 mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs t-text-muted">
+        <span>Deaths: <span className="t-text-dim">{data.deaths}</span></span>
+        <span>Earned: <span className="text-gold">${Math.round(data.total_money).toLocaleString()}</span></span>
+      </div>
+
+      {data.recent_matches && data.recent_matches.length > 0 && (
+        <div className="mc-panel mt-3 overflow-hidden">
+          <p className="font-pixel t-text-muted text-[10px] px-4 pt-3 pb-1">Recent matches</p>
+          {data.recent_matches.map((m) => {
+            const result = !m.decided
+              ? 'draw'
+              : m.winner && (m.winner === m.team || m.winner === data.name)
+                ? 'win'
+                : 'loss';
+            return (
+              <div key={m.id} className="flex items-center gap-2.5 px-4 py-2 text-xs t-border-20 border-t">
+                <span className={result === 'win' ? 'text-xp' : result === 'loss' ? 'text-redstone' : 't-text-muted'}>
+                  {result === 'win' ? 'W' : result === 'loss' ? 'L' : 'D'}
+                </span>
+                <span className="t-text-dim">{m.mode}</span>
+                <span className="t-text-muted">{m.kills}/{m.deaths}</span>
+                <span className="text-gold ml-auto shrink-0 whitespace-nowrap">${Math.round(m.money).toLocaleString()}</span>
+                <span className="t-text-muted shrink-0 whitespace-nowrap max-md:hidden">{eventTimeAgo(m.ended_at)}</span>
+              </div>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function PvpTile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+  return (
+    <div className="mc-panel p-4">
+      <p className="font-pixel t-text-muted text-[10px] mb-1.5">{label}</p>
+      <p className={`text-lg font-medium leading-none ${accent ? 'text-gold' : 't-text'}`}>{value}</p>
     </div>
   );
 }
