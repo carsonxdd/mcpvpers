@@ -133,6 +133,7 @@ export default function LeaderboardsPage() {
   const [expanded, setExpanded] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [blocksRetry, setBlocksRetry] = useState(0);
 
   // One fetch on mount — the snapshot holds every tab, so switching tabs is
   // instant and the slow Blocks Mined board arrives pre-warmed (or fills in on a
@@ -160,6 +161,30 @@ export default function LeaderboardsPage() {
       cancelled = true;
     };
   }, []);
+
+  // The Blocks Mined board lands in server memory ~22s after a cold start (the
+  // snapshot route returns the fast boards first, then fills it in on a slow
+  // track). The mount fetch above may also be served a stale, blocks-less copy
+  // from the edge cache. So while it's still missing, re-poll — cache-busted, to
+  // bypass the edge and read the warmed server memory — until it arrives or we
+  // give up. This is what makes the board appear without a manual reload.
+  useEffect(() => {
+    if (loading || error) return;
+    if (snapshot?.boards['blocks_mined']) return; // already landed — stop polling
+    if (blocksRetry >= 8) return; // ~80s of polling, then give up
+
+    const t = setTimeout(() => {
+      fetch(`/api/leaderboards-snapshot?t=${Date.now()}`)
+        .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : null))
+        .then((json) => {
+          if (json) setSnapshot(json);
+        })
+        .catch(() => {})
+        .finally(() => setBlocksRetry((n) => n + 1));
+    }, 10000);
+
+    return () => clearTimeout(t);
+  }, [loading, error, snapshot, blocksRetry]);
 
   const boardKey = boardKeyFor(activeKey, playtimeWindow);
   const board = snapshot?.boards[boardKey];

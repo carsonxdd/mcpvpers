@@ -16,6 +16,11 @@ type BorderStatus = {
   diameter: number;
   weekly_playtime_seconds: number;
   active_players: number;
+  // PiStatsAPI >= 1.6.0: live per-day totals (Phoenix day boundary). The old
+  // weekly_* fields are stale scheduled-mode snapshots (rewritten once at ~9 PM),
+  // so prefer these when present.
+  today_playtime_seconds?: number;
+  today_active_players?: number;
   total_expansions: number;
   last_expansion: string;
 };
@@ -44,7 +49,7 @@ export default function LiveBorderStatus() {
 
   if (hidden || !status) return null;
 
-  const todayPlayed = formatPlaytime(status.weekly_playtime_seconds);
+  const todayPlayed = formatPlaytime(status.today_playtime_seconds ?? status.weekly_playtime_seconds);
 
   return (
     <div className="mc-panel p-5 mt-8">
@@ -59,8 +64,8 @@ export default function LiveBorderStatus() {
           <p className="text-xp font-pixel text-sm glow-xp">{todayPlayed} played</p>
         </div>
         <div>
-          <p className="t-text-muted text-xs mb-1">Active Players</p>
-          <p className="text-xp font-pixel text-sm glow-xp">{status.active_players ?? 0}</p>
+          <p className="t-text-muted text-xs mb-1">Active Today</p>
+          <p className="text-xp font-pixel text-sm glow-xp">{status.today_active_players ?? status.active_players ?? 0}</p>
         </div>
         <div>
           <p className="t-text-muted text-xs mb-1">Expansions</p>

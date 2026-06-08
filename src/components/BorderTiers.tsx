@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 type BorderStatus = {
   active_players: number;
+  today_active_players?: number; // PiStatsAPI >= 1.6.0: live distinct-players-today count
   scaling?: { enabled: boolean; exponent: number };
 };
 
@@ -39,7 +40,7 @@ export default function BorderTiers() {
     };
   }, []);
 
-  const liveActive = status?.active_players ?? 0;
+  const liveActive = status?.today_active_players ?? status?.active_players ?? 0;
   const enabled = status?.scaling?.enabled ?? true;
   const exponent = status?.scaling?.exponent ?? 1.3;
   const effectiveActive = preview ?? Math.max(liveActive, 1);
@@ -67,6 +68,12 @@ export default function BorderTiers() {
               — ×{mult.toFixed(2)}.
             </>
           )}
+        </p>
+      )}
+
+      {enabled && (
+        <p className="t-text-muted text-[10px] text-center mb-4 -mt-2">
+          Tonight&apos;s 9 PM expansion is sized by yesterday&apos;s totals, so this live preview is indicative.
         </p>
       )}
 
@@ -100,7 +107,7 @@ export default function BorderTiers() {
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">Tier</th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Playtime</span>
-                <span className="max-md:hidden">Today's Playtime</span>
+                <span className="max-md:hidden">Today&apos;s Playtime</span>
               </th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Expansion</span>

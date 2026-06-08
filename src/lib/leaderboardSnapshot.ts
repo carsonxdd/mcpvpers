@@ -11,7 +11,9 @@
 const UPSTREAM = process.env.PISTATS_URL ?? 'http://stained.dathost.net:17249';
 const TTL_MS = 3 * 60 * 1000; // refresh in the background once older than this
 const FAST_TIMEOUT_MS = 8000;
-const SLOW_TIMEOUT_MS = 28000;
+// blocks_mined is computed live and grows with the world (~22s and climbing on
+// DatHost); keep headroom over it so a slightly slow call doesn't blank the board.
+const SLOW_TIMEOUT_MS = 40000;
 const ROSTER_LIMIT = 1000; // pull the full roster so callers can rank/paginate
 
 export type Entry = {
