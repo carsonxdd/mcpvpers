@@ -83,6 +83,17 @@ export function tierChip(color: string) {
   return { color, backgroundColor: `color-mix(in srgb, ${color} 16%, transparent)` };
 }
 
+// PiEvents gear modes (PiStatsAPI 1.7.0+). Colors mirror the in-game language:
+// green KIT = safe (gear provided), gold BYOG = own gear but no drops, red
+// HARDCORE = items drop where you fall. `null`/absent on pre-feature rows =
+// kit-era — guard reads with `gear_mode ?? 'KIT'`. KIT is de-emphasized in dense
+// lists (render a chip only for BYOG/HARDCORE).
+export const gearMode: Record<string, { label: string; color: string }> = {
+  KIT: { label: 'KIT', color: '#55FF55' },
+  BYOG: { label: 'BYOG', color: '#FFAA00' },
+  HARDCORE: { label: 'HARDCORE', color: '#FF5555' },
+};
+
 // Every boss shares this skeleton — rendered on the overview and each detail page.
 export const SHARED_MECHANICS: { name: string; desc: string }[] = [
   { name: 'Fixate', desc: 'Locks onto one player — run. Tanks get a taunt tool to override it.' },

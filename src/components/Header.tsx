@@ -17,6 +17,10 @@ const navLinks = [
   { href: '/map', label: 'BlueMap' },
   { href: '/leaderboards', label: 'Leaderboards' },
   { href: '/events', label: 'Events' },
+  // Economy: the /economy page is built but describes ship-day features (PiShop +
+  // the real economy). Uncomment on DatHost ship day — same gate as the Part 4
+  // news entries. Page lives at src/app/economy/page.tsx.
+  // { href: '/economy', label: 'Economy' },
   { href: '/gallery', label: 'Gallery' },
   { href: '/polls', label: 'Polls' },
   { href: '/news', label: 'News' },

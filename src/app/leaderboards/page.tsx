@@ -18,11 +18,18 @@ type StatKey =
   | 'violence_rep'
   | 'outlaw_rep'
   | 'lawmen'
-  | 'commendations';
+  | 'commendations'
+  | 'event_score'
+  | 'pvp_wins';
 
 type PlaytimeWindow = 'all' | 'month' | 'week';
+type Section = 'vanilla' | 'plugins';
 
-const categories: { label: string; key: StatKey }[] = [
+// Two sections, swapped by the top [Vanilla] [Plugins] toggle. Vanilla = pure
+// survival stats; Plugins = progression/rep + broad event totals. The granular
+// Boss Rush / PvP role boards stay on the /events/* tabs — only the broad
+// Event Score + PvP Wins totals surface here.
+const VANILLA_CATEGORIES: { label: string; key: StatKey }[] = [
   { label: 'Playtime', key: 'playtime' },
   { label: 'Deaths', key: 'deaths' },
   { label: 'Mob Kills', key: 'mob_kills' },
@@ -31,12 +38,16 @@ const categories: { label: string; key: StatKey }[] = [
   { label: 'Distance Walked', key: 'distance' },
   { label: 'Advancements', key: 'advancements' },
   { label: 'XP Levels', key: 'xp_levels' },
+];
+const PLUGIN_CATEGORIES: { label: string; key: StatKey }[] = [
   { label: 'Power Level', key: 'power_level' },
   { label: 'Peaceful Rep', key: 'peaceful_rep' },
   { label: 'Outlaw Rep', key: 'outlaw_rep' },
   { label: 'Violence Rep', key: 'violence_rep' },
   { label: 'Lawmen', key: 'lawmen' },
   { label: 'Commendations', key: 'commendations' },
+  { label: 'Event Score', key: 'event_score' },
+  { label: 'PvP Wins', key: 'pvp_wins' },
 ];
 
 const playtimeWindows: { label: string; key: PlaytimeWindow }[] = [
@@ -60,6 +71,8 @@ const headerByKey: Record<StatKey, string> = {
   outlaw_rep: 'Outlaw',
   lawmen: 'Tier',
   commendations: 'Commenders',
+  event_score: 'Score',
+  pvp_wins: 'Wins',
 };
 
 type LeaderboardEntry = {
@@ -102,6 +115,7 @@ function formatValue(stat: StatKey, entry: LeaderboardEntry): string {
   if (stat === 'lawmen') return entry.tier ?? '—';
   if (stat === 'peaceful_rep' || stat === 'violence_rep' || stat === 'outlaw_rep')
     return entry.value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  if (stat === 'event_score') return Math.round(entry.value).toLocaleString();
   return entry.value.toLocaleString();
 }
 
@@ -126,6 +140,7 @@ const PAGE_SIZE = 100;
 const INITIAL_VISIBLE = 50;
 
 export default function LeaderboardsPage() {
+  const [section, setSection] = useState<Section>('vanilla');
   const [activeKey, setActiveKey] = useState<StatKey>('playtime');
   const [playtimeWindow, setPlaytimeWindow] = useState<PlaytimeWindow>('all');
   const [snapshot, setSnapshot] = useState<Snapshot | null>(null);
@@ -200,6 +215,15 @@ export default function LeaderboardsPage() {
   const showLoadMore = !expanded && pageRows.length > INITIAL_VISIBLE;
   const showPagination = data.length > PAGE_SIZE;
 
+  // Switching section swaps which category-pill row shows. Reset the active
+  // board to that section's first category, or the table would render a board
+  // whose pill is now hidden.
+  const selectSection = (s: Section) => {
+    setSection(s);
+    setActiveKey(s === 'vanilla' ? 'playtime' : 'power_level');
+    setPage(0);
+    setExpanded(false);
+  };
   // Switching tab/window or page resets the reveal back to the first 50.
   const selectCategory = (key: StatKey) => {
     setActiveKey(key);
@@ -221,8 +245,17 @@ export default function LeaderboardsPage() {
       <section className="max-w-3xl mx-auto px-4 py-16">
         <div className="text-center"><CloudTitle><h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-8 glow-gold">Leaderboards</h1></CloudTitle></div>
 
+        <div className="flex gap-1.5 mb-4 justify-center relative z-10">
+          {(['vanilla', 'plugins'] as const).map((s) => (
+            <button key={s} onClick={() => selectSection(s)}
+              className={`mc-pill ${section === s ? 'mc-pill-active' : ''}`}>
+              {s === 'vanilla' ? 'Vanilla' : 'Plugins'}
+            </button>
+          ))}
+        </div>
+
         <div className="flex flex-wrap gap-1.5 mb-4 justify-center relative z-10">
-          {categories.map((cat) => (
+          {(section === 'vanilla' ? VANILLA_CATEGORIES : PLUGIN_CATEGORIES).map((cat) => (
             <button key={cat.key} onClick={() => selectCategory(cat.key)}
               className={`mc-pill ${activeKey === cat.key ? 'mc-pill-active' : ''}`}>
               {cat.label}
@@ -337,6 +370,17 @@ export default function LeaderboardsPage() {
             )}
           </div>
         </div>
+
+        {(activeKey === 'event_score' || activeKey === 'pvp_wins') && (
+          <div className="text-center mt-4 relative z-10">
+            <Link
+              href={activeKey === 'event_score' ? '/events/boss-rush' : '/events/pvp'}
+              className="font-pixel text-[10px] text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
+            >
+              {activeKey === 'event_score' ? 'See all Boss Rush boards →' : 'See all PvP boards →'}
+            </Link>
+          </div>
+        )}
 
         {showPagination && (
           <div className="flex items-center justify-center gap-3 mt-6 relative z-10">

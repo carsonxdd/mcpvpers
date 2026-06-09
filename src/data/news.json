@@ -19,5 +19,47 @@
     "title": "Pre-Launch Polls Are Open",
     "body": "Help shape the server before it goes live — polls are open at /polls. Vote on stuff that's still up in the air. We'll close them at launch and bake the results in.",
     "tags": ["Event"]
+  },
+  {
+    "id": 4,
+    "date": "2026-05-23",
+    "title": "Day One — Everything the Frontier Launched With",
+    "body": "The server is live. For the record, here's everything that shipped on day one.\n\nThe reputation system: everyone starts as a Pacifist — you can't die to PvP in the wild. Instead you get knocked out, and the attacker can rob you of one hotbar stack. Kill peaceful players and you go on the wanted board; hunt outlaws, take the deputy badge, and climb the lawman ladder from Citizen to Marshal. Bounties are real escrowed items, /report files complaints, /commend rewards good neighbors, and the wanted posters live right here on the site.\n\nDying drops your stuff into a grave with your head on it — graves never despawn, and your XP comes back when you open yours. PvP kills can drop the victim's head. There's offline mail (/mail, /mailbox), item delivery (/senditem), and scam-proof trading (/trade).\n\nThe world border starts small and grows with combined playtime — the more we play, the more world we get. Land claims (/lands), mcMMO skills, proximity voice chat, and the live map round it out. The End is locked until we take the dragon together.",
+    "tags": ["Event", "Plugin Update"]
+  },
+  {
+    "id": 5,
+    "date": "2026-05-27",
+    "title": "Grief Doesn't Pay — Block Logging Is On",
+    "body": "Every block placed or broken on the server is now logged and reversible (CoreProtect). If someone torches your base, it gets rolled back and the log says exactly who did it. Griefing is now a guaranteed-loss move.\n\nBonus: land claims now show up on the live map at map.pvpers.us, so you can see who's settled where.",
+    "tags": ["Plugin Update"]
+  },
+  {
+    "id": 6,
+    "date": "2026-05-30",
+    "title": "The Dragon Is Dead — The End Is Open",
+    "body": "We did it. The Ender Dragon went down on group night, and the End is now permanently unlocked — elytra, shulkers, end cities, all of it is fair game.\n\nThe portal's where you left it. Bring blocks.",
+    "tags": ["Event"]
+  },
+  {
+    "id": 7,
+    "date": "2026-05-30",
+    "title": "Reputation Update — Warmode, Bunker-Busting, Faster Commends",
+    "body": "Big reputation patch. The headline: /pvp warmode. Pacifists and Retired players can now opt into PvP with /pvp on. The default got safer too — if you haven't opted in, you can neither deal nor take PvP damage in the wild. Opted-in pacifists keep their knockout protection but can earn violence rep toward the lawman ladder, and as a perk, warmode players grind mcMMO 5% faster.\n\nOutlaws can no longer hide in PvP-off claims. If you're wanted, your claim won't save you — bounty hunters can reach you anywhere. Everyone else keeps full claim protection.\n\nCommends got friendlier: the per-recipient cooldown dropped from 7 days to 12 hours (since tuned down further to 6), and /commend list shows every commendation you've received — who gave it, why, and when.",
+    "tags": ["Plugin Update", "Rule Change"]
+  },
+  {
+    "id": 8,
+    "date": "2026-05-30",
+    "title": "Quality of Life — Shorter Commands",
+    "body": "Dropped the 'pi' prefix from commands across the board. /pitab is now /tab (so /tab hide to clean up your tab list), and there's a new /graves command that lists every grave you've got waiting. Everything you already had still works the same — stats, playtime, and graves all carried over untouched.",
+    "tags": ["Plugin Update"]
+  },
+  {
+    "id": 9,
+    "date": "2026-06-01",
+    "title": "The Border Now Grows Every Night at 9 PM",
+    "body": "Border expansion is now a nightly event: once a day at 9 PM Arizona, the border grows based on everyone's combined playtime from the previous day. Play more, get more world — and now you can actually watch it happen.\n\nWe also fixed the scaling math. The old formula punished busy nights so hard that the border was pinned to the minimum +100 no matter how much everyone played. Group playtime actually counts now — big nights mean big expansions.",
+    "tags": ["Map Expansion", "Plugin Update"]
   }
 ]

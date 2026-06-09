@@ -72,6 +72,28 @@ async function fetchBoard(path: string, timeoutMs: number): Promise<Entry[]> {
   return Array.isArray(json?.players) ? json.players : [];
 }
 
+// Broad event boards for the main leaderboards page (the granular role boards
+// stay on the /events/* tabs). These live under events/... and return a
+// different JSON shape than a plain leaderboard?stat= call, so they're
+// synthesized here like outlaw_rep / commendations rather than in FAST_BOARDS.
+// 503/empty on a server without PiEvents (DatHost today) → []. The page just
+// shows "No players yet." until PiEvents + PiStatsAPI 1.7.0 ship to DatHost.
+//
+// ⚠️ Field names verified against the events handoff, not yet against a live
+// host (DatHost 404s on /api/events/* today). Boss Rush rows expose
+// `total_score`, PvP rows expose `wins`. If the live shape differs, adjust the
+// valueKey here — the rest of the snapshot is unaffected.
+async function fetchEventBoard(path: string, valueKey: string, timeoutMs: number): Promise<Entry[]> {
+  const json = await getJson<{ players?: Record<string, unknown>[] }>(path, timeoutMs);
+  const rows = Array.isArray(json?.players) ? json.players : [];
+  return rows.map((r, i) => ({
+    rank: (r.rank as number) ?? i + 1,
+    uuid: (r.uuid as string) ?? null,
+    name: (r.name as string) ?? '',
+    value: Number(r[valueKey] ?? 0),
+  }));
+}
+
 // The outlaw-rep board has no global endpoint; derive it from the wanted board
 // (already ranked by outlaw_rep descending).
 async function fetchOutlaw(timeoutMs: number): Promise<Entry[]> {
@@ -161,7 +183,7 @@ async function refresh(): Promise<void> {
   if (refreshing) return;
   refreshing = true;
   try {
-    const [fast, outlaw, commendations, skillBoards] = await Promise.all([
+    const [fast, outlaw, commendations, skillBoards, eventScore, pvpWins] = await Promise.all([
       Promise.all(
         FAST_BOARDS.map((b) =>
           fetchBoard(b.path, FAST_TIMEOUT_MS).then((rows): [string, Entry[]] => [b.key, rows]),
@@ -170,11 +192,15 @@ async function refresh(): Promise<void> {
       fetchOutlaw(FAST_TIMEOUT_MS),
       fetchCommendations(FAST_TIMEOUT_MS),
       fetchSkillBoards(FAST_TIMEOUT_MS),
+      fetchEventBoard(`events/leaderboard?stat=score&limit=${ROSTER_LIMIT}`, 'total_score', FAST_TIMEOUT_MS),
+      fetchEventBoard(`events/pvp/leaderboard?stat=wins&limit=${ROSTER_LIMIT}`, 'wins', FAST_TIMEOUT_MS),
     ]);
     const boards: Record<string, Entry[]> = { ...(cache?.boards ?? {}) };
     for (const [key, rows] of fast) boards[key] = rows;
     boards.outlaw_rep = outlaw;
     boards.commendations = commendations;
+    boards.event_score = eventScore;
+    boards.pvp_wins = pvpWins;
     Object.assign(boards, skillBoards);
     cache = { boards, updatedAt: Date.now() };
   } finally {

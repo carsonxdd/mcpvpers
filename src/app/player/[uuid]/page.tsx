@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
-import { bossByRaidKey, lootTier } from '@/lib/bossDisplay';
+import { bossByRaidKey, lootTier, gearMode } from '@/lib/bossDisplay';
 
 type Advancement = {
   key: string;
@@ -73,6 +73,7 @@ type EventRecentRun = {
   wave: number;
   difficulty: number;
   duration_ms: number;
+  gear_mode?: string | null;
   score: number;
   damage: number;
   money: number;
@@ -119,6 +120,7 @@ type PvpPlayer = {
     winner: string | null;
     mvp: string | null;
     team: string | null;
+    gear_mode?: string | null;
     kills: number;
     deaths: number;
     money: number;
@@ -622,6 +624,22 @@ function eventTimeAgo(ts: number): string {
   return `${Math.floor(hours / 24)}d ago`;
 }
 
+// Gear-mode chip (PiStatsAPI 1.7.0). KIT is the default/most common, so in these
+// dense rows we hide it and only chip BYOG/HARDCORE. `null`/absent = kit-era.
+function GearChip({ mode }: { mode?: string | null }) {
+  const key = mode ?? 'KIT';
+  const g = gearMode[key];
+  if (!g || key === 'KIT') return null;
+  return (
+    <span
+      className="font-pixel text-[9px] px-1 py-0.5 rounded shrink-0"
+      style={{ color: g.color, background: `color-mix(in srgb, ${g.color} 15%, transparent)` }}
+    >
+      {g.label}
+    </span>
+  );
+}
+
 function BossRushPanel({
   data,
   ranks,
@@ -693,6 +711,7 @@ function BossRushPanel({
                   )}
                   {r.difficulty >= 1 && <span className="text-violet-300"> · Pit {r.difficulty}</span>}
                 </span>
+                <GearChip mode={r.gear_mode} />
                 <span className="t-text-muted ml-auto shrink-0">{Math.round(r.score).toLocaleString()}</span>
                 <span className="text-gold shrink-0 whitespace-nowrap">${Math.round(r.money).toLocaleString()}</span>
                 <span className="t-text-muted shrink-0 whitespace-nowrap max-md:hidden">{eventTimeAgo(r.ended_at)}</span>
@@ -755,6 +774,7 @@ function PvpPanel({ data }: { data: PvpPlayer }) {
                   {result === 'win' ? 'W' : result === 'loss' ? 'L' : 'D'}
                 </span>
                 <span className="t-text-dim">{m.mode}</span>
+                <GearChip mode={m.gear_mode} />
                 <span className="t-text-muted">{m.kills}/{m.deaths}</span>
                 <span className="text-gold ml-auto shrink-0 whitespace-nowrap">${Math.round(m.money).toLocaleString()}</span>
                 <span className="t-text-muted shrink-0 whitespace-nowrap max-md:hidden">{eventTimeAgo(m.ended_at)}</span>

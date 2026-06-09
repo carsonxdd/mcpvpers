@@ -11,7 +11,7 @@
   },
   {
     "name": "mcMMO",
-    "description": "15 skills with passive bonuses and active abilities. Full version, no lite mode.",
+    "description": "19 skills with passive bonuses and active abilities. Full version, no lite mode.",
     "icon": "trending-up"
   },
   {
@@ -73,11 +73,6 @@
     "name": "BlueMap",
     "description": "Live web-based world map at map.pvpers.us with real-time player positions and claim outlines.",
     "icon": "map"
-  },
-  {
-    "name": "DiscordSRV",
-    "description": "Two-way chat bridge between Discord and the Minecraft server.",
-    "icon": "message-circle"
   },
   {
     "name": "Simple Voice Chat",

@@ -193,13 +193,16 @@ export default function AboutPage() {
               Cheat sheet for everyday play. All of these work day one:
             </p>
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/sethome</code> and <code className="text-gold">/home</code> &mdash; save and teleport back to a spot. You can keep multiple.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/sethome</code> and <code className="text-gold">/home</code> &mdash; save and teleport back to a spot. You can keep multiple (3 to start).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/tpa &lt;player&gt;</code> &mdash; request a teleport to someone. They reply with <code className="text-gold">/tpaccept</code> or <code className="text-gold">/tpdeny</code>.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/spawn</code> sends you to world spawn. <code className="text-gold">/back</code> returns to your last death or teleport.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/msg &lt;player&gt;</code> &mdash; private message someone online. <code className="text-gold">/mail</code> for offline players (delivered next login).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/trade</code> &mdash; opens the two-window trade GUI with another player.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/pvp on|off|status</code>: Pacifists and Retired opt in or out of PvP (30-min toggle cooldown). Outlaws and Lawmen are always on.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/lands</code> &mdash; open the claims menu. Defaults already block griefing inside your claim.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/graves</code> &mdash; lists every grave you&apos;ve got waiting, so you can find your stuff after a death.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/stats</code> &mdash; your playtime, deaths, and session numbers (the same data the website reads).</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/tab hide</code> &mdash; clean up the tab list if you&apos;d rather not see everyone&apos;s stats while you play.</span></li>
             </ul>
             <p className="t-text-dim leading-relaxed mt-4 text-sm">
               Hold <strong className="t-text">Tab</strong>{' '}in-game to see the player list. It shows
@@ -238,9 +241,10 @@ export default function AboutPage() {
               we&apos;ll see how it plays out.
             </p>
             <p className="t-text-dim leading-relaxed">
-              <strong className="t-text">The End stays locked</strong> at launch regardless of the
-              vote result. A focused poll on opening conditions is coming once people have settled
-              in and we have a sense of the meta.
+              <strong className="t-text">The End was locked at launch</strong> — the portal was
+              findable but sealed, saved for the group. We took the Ender Dragon down together on
+              group night (around May 30), and <strong className="t-text">the End is now permanently
+              open</strong>: elytra, shulkers, end cities, all of it is fair game.
             </p>
           </Expander>
         </div>
@@ -293,13 +297,14 @@ export default function AboutPage() {
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4 text-center">
             The world doesn&apos;t start infinite. It opens at a <strong className="t-text">1,750-block radius</strong> from
-            spawn and grows every week based on how much the community plays.
+            spawn and grows every night based on how much the community plays.
           </p>
           <p className="t-text-dim leading-relaxed text-center">
-            Every Sunday, the border plugin tallies total player-hours from the past week and expands the
-            border based on which tier the server hit. The thresholds scale with how many people are
-            actively playing — 10 hours from one person counts more than 10 hours split across the whole
-            server. The more people play, the more world everyone gets to explore.
+            Once a day at <strong className="t-text">9 PM Arizona</strong>, the border plugin tallies total
+            player-hours from the previous day and expands the border based on which tier the server hit.
+            The thresholds scale with how many people are actively playing — 10 hours from one person
+            counts more than 10 hours split across the whole server. The more people play, the more world
+            everyone gets to explore.
           </p>
         </CloudText>
 
@@ -323,7 +328,7 @@ export default function AboutPage() {
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
-              <span>Expansion happens automatically every Sunday. Check the <a href="/map" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">BlueMap</a> to see the current border.</span>
+              <span>Expansion happens automatically every night at 9 PM Arizona. Check the <a href="/map" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">BlueMap</a> to see the current border.</span>
             </div>
           </div>
         </div>
@@ -353,7 +358,7 @@ export default function AboutPage() {
           <p className="t-text-dim leading-relaxed text-center text-sm">
             The ones marked <strong className="t-text">in-house</strong> were written by carsonxd
             specifically for this server. The rest are community plugins
-            (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, BlueMap, DiscordSRV).
+            (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, BlueMap).
           </p>
         </CloudText>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">

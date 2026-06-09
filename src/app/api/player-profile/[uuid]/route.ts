@@ -149,6 +149,7 @@ export async function GET(
       wave: number;
       difficulty: number;
       duration_ms: number;
+      gear_mode?: string | null; // 1.7.0+; null on pre-feature rows (kit-era)
       score: number;
       damage: number;
       money: number;
@@ -176,6 +177,7 @@ export async function GET(
       winner: string | null;
       mvp: string | null;
       team: string | null;
+      gear_mode?: string | null; // 1.7.0+; null on pre-feature rows (kit-era)
       kills: number;
       deaths: number;
       money: number;
