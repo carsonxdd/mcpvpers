@@ -39,6 +39,9 @@ const FAST_BOARDS: { key: string; path: string }[] = [
   { key: 'advancements', path: `leaderboard?stat=advancements&limit=${ROSTER_LIMIT}` },
   { key: 'xp_levels', path: `leaderboard?stat=xp_levels&limit=${ROSTER_LIMIT}` },
   { key: 'power_level', path: `leaderboard?stat=power_level&limit=${ROSTER_LIMIT}` },
+  // EssentialsX baltop (PiStatsAPI 1.12.0+) — 404 until it ships to DatHost,
+  // which getJson maps to an empty board.
+  { key: 'balance', path: `economy/baltop?limit=${ROSTER_LIMIT}` },
   { key: 'peaceful_rep', path: 'reputation/leaderboard/peaceful' },
   { key: 'violence_rep', path: 'reputation/leaderboard/violence' },
   { key: 'lawmen', path: 'reputation/leaderboard/lawmen' },
@@ -49,6 +52,28 @@ const SLOW_BOARD = { key: 'blocks_mined', path: `leaderboard?stat=blocks_mined&l
 let cache: Snapshot | null = null;
 let refreshing = false;
 let blocksRefreshing = false;
+let rosterBoardsRefreshing = false;
+
+// The upstream rate-limits bursts (429s), so roster-sized fan-outs must
+// trickle through a few at a time instead of firing the whole roster at once.
+const FANOUT_CONCURRENCY = 4;
+
+async function mapLimit<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>,
+): Promise<R[]> {
+  const results: R[] = new Array(items.length);
+  let next = 0;
+  const workers = Array.from({ length: Math.min(limit, items.length) }, async () => {
+    while (next < items.length) {
+      const i = next++;
+      results[i] = await fn(items[i]);
+    }
+  });
+  await Promise.all(workers);
+  return results;
+}
 
 async function getJson<T>(path: string, timeoutMs: number): Promise<T | null> {
   try {
@@ -115,16 +140,15 @@ async function fetchOutlaw(timeoutMs: number): Promise<Entry[]> {
 // out per-player reputation across the roster and ranking by unique commenders
 // in the last 90 days. One call per roster player — fine at this scale; a real
 // plugin endpoint would be the move if the roster ever gets large.
-async function fetchCommendations(timeoutMs: number): Promise<Entry[]> {
-  const roster = await getJson<{ uuid: string; name: string }[]>('players', timeoutMs);
-  if (!Array.isArray(roster)) return [];
-  const rows = await Promise.all(
-    roster.map((p) =>
-      getJson<{ unique_commenders_90d?: number }>(
-        `reputation/player/${encodeURIComponent(p.name)}`,
-        timeoutMs,
-      ).then((rep) => ({ uuid: p.uuid, name: p.name, value: rep?.unique_commenders_90d ?? 0 })),
-    ),
+async function fetchCommendations(
+  roster: { uuid: string; name: string }[],
+  timeoutMs: number,
+): Promise<Entry[]> {
+  const rows = await mapLimit(roster, FANOUT_CONCURRENCY, (p) =>
+    getJson<{ unique_commenders_90d?: number }>(
+      `reputation/player/${encodeURIComponent(p.name)}`,
+      timeoutMs,
+    ).then((rep) => ({ uuid: p.uuid, name: p.name, value: rep?.unique_commenders_90d ?? 0 })),
   );
   return rows
     .filter((r) => r.value > 0)
@@ -138,16 +162,15 @@ async function fetchCommendations(timeoutMs: number): Promise<Entry[]> {
 // (one call per roster player). Each board is keyed `skill:<SKILL_ENUM>` (e.g.
 // `skill:MINING`) and ranks all roster players by that skill's level descending,
 // so a profile can read its "#N of <roster size>" straight out of the snapshot.
-async function fetchSkillBoards(timeoutMs: number): Promise<Record<string, Entry[]>> {
-  const roster = await getJson<{ uuid: string; name: string }[]>('players', timeoutMs);
-  if (!Array.isArray(roster)) return {};
-  const perPlayer = await Promise.all(
-    roster.map((p) =>
-      getJson<{ skills?: { skill: string; level: number }[] }>(
-        `players/${encodeURIComponent(p.uuid)}/skills`,
-        timeoutMs,
-      ).then((s) => ({ uuid: p.uuid, name: p.name, skills: s?.skills ?? [] })),
-    ),
+async function fetchSkillBoards(
+  roster: { uuid: string; name: string }[],
+  timeoutMs: number,
+): Promise<Record<string, Entry[]>> {
+  const perPlayer = await mapLimit(roster, FANOUT_CONCURRENCY, (p) =>
+    getJson<{ skills?: { skill: string; level: number }[] }>(
+      `players/${encodeURIComponent(p.uuid)}/skills`,
+      timeoutMs,
+    ).then((s) => ({ uuid: p.uuid, name: p.name, skills: s?.skills ?? [] })),
   );
   const bySkill = new Map<string, { uuid: string; name: string; level: number }[]>();
   for (const player of perPlayer) {
@@ -179,34 +202,52 @@ async function refreshBlocks(): Promise<void> {
   }
 }
 
+// Background track for the roster-sized fan-outs (commendations + per-skill
+// boards). They run sequentially with bounded concurrency — fired together with
+// the old unbounded Promise.all they tripped the upstream's rate limiter
+// (~80-call burst → 429s on everything, including profile views). Only
+// overwrites the cached boards on real data, so a rate-limited pass never
+// blanks them.
+async function refreshRosterBoards(): Promise<void> {
+  if (rosterBoardsRefreshing) return;
+  rosterBoardsRefreshing = true;
+  try {
+    const roster = await getJson<{ uuid: string; name: string }[]>('players', FAST_TIMEOUT_MS);
+    if (!Array.isArray(roster) || roster.length === 0) return;
+    const commendations = await fetchCommendations(roster, FAST_TIMEOUT_MS);
+    if (commendations.length && cache) cache.boards.commendations = commendations;
+    const skillBoards = await fetchSkillBoards(roster, FAST_TIMEOUT_MS);
+    if (Object.keys(skillBoards).length && cache) Object.assign(cache.boards, skillBoards);
+  } finally {
+    rosterBoardsRefreshing = false;
+  }
+}
+
 async function refresh(): Promise<void> {
   if (refreshing) return;
   refreshing = true;
   try {
-    const [fast, outlaw, commendations, skillBoards, eventScore, pvpWins] = await Promise.all([
+    const [fast, outlaw, eventScore, pvpWins] = await Promise.all([
       Promise.all(
         FAST_BOARDS.map((b) =>
           fetchBoard(b.path, FAST_TIMEOUT_MS).then((rows): [string, Entry[]] => [b.key, rows]),
         ),
       ),
       fetchOutlaw(FAST_TIMEOUT_MS),
-      fetchCommendations(FAST_TIMEOUT_MS),
-      fetchSkillBoards(FAST_TIMEOUT_MS),
       fetchEventBoard(`events/leaderboard?stat=score&limit=${ROSTER_LIMIT}`, 'total_score', FAST_TIMEOUT_MS),
       fetchEventBoard(`events/pvp/leaderboard?stat=wins&limit=${ROSTER_LIMIT}`, 'wins', FAST_TIMEOUT_MS),
     ]);
     const boards: Record<string, Entry[]> = { ...(cache?.boards ?? {}) };
     for (const [key, rows] of fast) boards[key] = rows;
     boards.outlaw_rep = outlaw;
-    boards.commendations = commendations;
     boards.event_score = eventScore;
     boards.pvp_wins = pvpWins;
-    Object.assign(boards, skillBoards);
     cache = { boards, updatedAt: Date.now() };
   } finally {
     refreshing = false;
   }
   void refreshBlocks();
+  void refreshRosterBoards();
 }
 
 // Returns the warm snapshot, refreshing on a cold start (awaited, ~0.5s) or in

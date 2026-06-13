@@ -14,6 +14,7 @@ type StatKey =
   | 'advancements'
   | 'xp_levels'
   | 'power_level'
+  | 'balance'
   | 'peaceful_rep'
   | 'violence_rep'
   | 'outlaw_rep'
@@ -41,6 +42,7 @@ const VANILLA_CATEGORIES: { label: string; key: StatKey }[] = [
 ];
 const PLUGIN_CATEGORIES: { label: string; key: StatKey }[] = [
   { label: 'Power Level', key: 'power_level' },
+  { label: 'Balance', key: 'balance' },
   { label: 'Peaceful Rep', key: 'peaceful_rep' },
   { label: 'Outlaw Rep', key: 'outlaw_rep' },
   { label: 'Violence Rep', key: 'violence_rep' },
@@ -66,6 +68,7 @@ const headerByKey: Record<StatKey, string> = {
   advancements: 'Advancements',
   xp_levels: 'Levels',
   power_level: 'Power',
+  balance: 'Balance',
   peaceful_rep: 'Peaceful',
   violence_rep: 'Violence',
   outlaw_rep: 'Outlaw',
@@ -116,6 +119,7 @@ function formatValue(stat: StatKey, entry: LeaderboardEntry): string {
   if (stat === 'peaceful_rep' || stat === 'violence_rep' || stat === 'outlaw_rep')
     return entry.value.toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 });
   if (stat === 'event_score') return Math.round(entry.value).toLocaleString();
+  if (stat === 'balance') return `$${Math.round(entry.value).toLocaleString()}`;
   return entry.value.toLocaleString();
 }
 

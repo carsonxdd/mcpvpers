@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
 import EventRunDetail from '@/components/EventRunDetail';
+import GearChip from '@/components/GearChip';
 
 type PvpEntry = {
   rank: number;
@@ -27,6 +28,7 @@ type PvpMatch = {
   duration_ms: number;
   winner: string | null;
   mvp: string | null;
+  gear_mode?: string | null;
   ended_at: number;
 };
 
@@ -152,7 +154,7 @@ export default function PvpPage() {
         </div>
 
         {/* Payouts */}
-        <div className="mc-panel p-5 mb-12">
+        <div className="mc-panel p-5 mb-4">
           <h2 className="font-pixel t-text-dim text-xs mb-1">Payouts</h2>
           <p className="t-text-muted text-[11px] mb-4">Cash hits your balance the moment the match ends.</p>
           <div className="space-y-3 text-sm">
@@ -161,6 +163,35 @@ export default function PvpPage() {
             <PayoutRow amount="$2,500 pool" label="TDM win" who="split among the winning team" />
             <PayoutRow amount="$1,250 / $750 / $500" label="FFA podium" who="1st · 2nd · 3rd" />
             <PayoutRow amount="$500" label="MVP" who="most valuable player of the match" />
+          </div>
+        </div>
+
+        {/* Gear modes — PvP is where HARDCORE bites hardest */}
+        <div className="mc-panel p-5 mb-12">
+          <h2 className="font-pixel t-text-dim text-xs mb-1">Gear modes</h2>
+          <p className="t-text-muted text-[11px] mb-4">
+            Every match runs in one of three gear modes - check the chip on the match before you queue up.
+          </p>
+          <div className="space-y-2.5 text-sm">
+            <div className="flex gap-2.5">
+              <span className="font-pixel text-[9px] px-1.5 py-0.5 rounded shrink-0 h-fit min-w-[6rem] text-center bg-xp/15 text-xp">KIT</span>
+              <span className="t-text-muted leading-snug">
+                Most matches. Gear&apos;s provided, your inventory is vaulted, deaths cost nothing.
+              </span>
+            </div>
+            <div className="flex gap-2.5">
+              <span className="font-pixel text-[9px] px-1.5 py-0.5 rounded shrink-0 h-fit min-w-[6rem] text-center bg-gold/15 text-gold">BYOG</span>
+              <span className="t-text-muted leading-snug">
+                Bring your own gear, but you keep it no matter what - durability and consumables are the only risk.
+              </span>
+            </div>
+            <div className="flex gap-2.5">
+              <span className="font-pixel text-[9px] px-1.5 py-0.5 rounded shrink-0 h-fit min-w-[6rem] text-center bg-redstone/15 text-redstone">HARDCORE</span>
+              <span className="t-text-muted leading-snug">
+                The real-stakes mode: die and your inventory drops where you fell, free for anyone to grab -
+                winners walk away with the losers&apos; gear. You confirm before joining.
+              </span>
+            </div>
           </div>
         </div>
 
@@ -280,6 +311,7 @@ export default function PvpPage() {
                           Draw
                         </span>
                       )}
+                      <GearChip mode={m.gear_mode} />
                       <span className="t-text-dim min-w-0 truncate">
                         {m.players} {m.players === 1 ? 'player' : 'players'}
                         {duration && <span className="t-text-muted max-md:hidden"> · {duration}</span>}

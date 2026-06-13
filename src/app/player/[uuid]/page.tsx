@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
-import { bossByRaidKey, lootTier, gearMode } from '@/lib/bossDisplay';
+import { bossByRaidKey, lootTier } from '@/lib/bossDisplay';
+import { formatMaterial, formatPrice } from '@/lib/shopDisplay';
+import GearChip from '@/components/GearChip';
 
 type Advancement = {
   key: string;
@@ -64,6 +66,13 @@ type Reputation = {
   play_seconds: number;
   last_seen_ts: number;
   outlaw_tier: string;
+  // Daily login streak (PiStatsAPI 1.8.0+) — ABSENT on older prod builds, so
+  // every read is guarded. The stored streak only resets on the next claim:
+  // trust streak_active for "is this streak alive right now".
+  daily_reward_streak?: number;
+  best_daily_reward_streak?: number;
+  streak_active?: boolean;
+  claimed_today?: boolean;
 };
 
 type EventRecentRun = {
@@ -129,6 +138,17 @@ type PvpPlayer = {
   }[];
 };
 
+type MarketListing = {
+  seller: string;
+  material: string;
+  amount: number;
+  custom_name: string | null;
+  enchanted: boolean;
+  price: number;
+  listed_ms: number;
+  expires_ms: number;
+};
+
 type ProfileResponse = {
   uuid: string | null;
   name: string | null;
@@ -138,13 +158,42 @@ type ProfileResponse = {
   reputation: Reputation | null;
   // skill enum (e.g. "MINING") or "POWER_LEVEL" -> server rank within the roster
   skillRanks: Record<string, { rank: number; total: number }>;
+  // snapshot-derived skill levels (no XP data) — used when the live /skills
+  // call fails (the upstream rate-limits bursts)
+  skillsFallback: { power_level: number; skills: { skill: string; level: number }[] } | null;
   // Boss Rush (PiEvents) — null when PiEvents isn't live or the player never joined a run
   events: EventPlayer | null;
   // role board key (score|damage|boss_damage|tank|support|adds|clears) -> server rank
   eventRanks: Record<string, { rank: number; total: number }>;
+  // true when the events surface is live upstream — lets the page show a zeroed
+  // Boss Rush section for players who haven't joined a run yet
+  eventsAvailable: boolean;
   // PvP (TDM/FFA) — null until PvP ships / the player has fought a match
   pvp: PvpPlayer | null;
+  // PvP board key (wins|kills|kd|streak|mvps|matches|earnings) -> server rank
+  pvpRanks: Record<string, { rank: number; total: number }>;
+  // same as eventsAvailable, for the PvP surface
+  pvpAvailable: boolean;
+  // this player's active /market listings (PiShop) — empty pre-ship / none up
+  marketListings: MarketListing[];
 };
+
+// GET + parse with one delayed retry. The upstream rate-limits bursts, and a
+// profile view fires several calls at once — a failed first attempt is usually
+// a transient 429, so wait a beat and try once more before giving up.
+function fetchJsonRetry<T>(url: string, retryDelayMs = 4000): Promise<T | null> {
+  const attempt = () =>
+    fetch(url)
+      .then((r) => (r.ok ? (r.json() as Promise<T>) : null))
+      .catch(() => null);
+  return attempt().then(
+    (first) =>
+      first ??
+      new Promise<T | null>((resolve) => {
+        setTimeout(() => attempt().then(resolve), retryDelayMs);
+      }),
+  );
+}
 
 function formatPlaytime(seconds: number): string {
   const totalMinutes = Math.floor(seconds / 60);
@@ -166,6 +215,7 @@ function formatDistance(cm: number): string {
 function formatStat(key: string, value: number): string {
   if (key === 'playtime') return formatPlaytime(value);
   if (key === 'distance') return formatDistance(value);
+  if (key === 'balance') return `$${Math.round(value).toLocaleString()}`;
   return value.toLocaleString();
 }
 
@@ -205,6 +255,17 @@ const SKILL_GROUPS: { name: string; skills: string[] }[] = [
   { name: 'Crafting & Utility', skills: ['ACROBATICS', 'ALCHEMY', 'REPAIR', 'SMELTING', 'SALVAGE'] },
 ];
 
+// Zeroed skill line for players mcMMO hasn't tracked yet (or while the skills
+// fetch is in flight) — keeps the section present on every profile.
+const EMPTY_SKILLS: SkillsResponse = {
+  uuid: '',
+  name: '',
+  power_level: 0,
+  skills: Object.keys(SKILL_LABELS).map((skill) => ({
+    skill, level: 0, xp: 0, xp_to_next: 0, child: false,
+  })),
+};
+
 const tierClass: Record<string, string> = {
   Drifter: 'tier-drifter',
   Bandit: 'tier-bandit',
@@ -239,7 +300,9 @@ export default function PlayerPage() {
 
   const [profile, setProfile] = useState<ProfileResponse | null>(null);
   const [adv, setAdv] = useState<AdvancementsResponse | null>(null);
+  const [advFailed, setAdvFailed] = useState(false);
   const [skills, setSkills] = useState<SkillsResponse | null>(null);
+  const [skillsFailed, setSkillsFailed] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -263,18 +326,23 @@ export default function PlayerPage() {
         // returns empty data). Best-effort: the stats profile renders without it.
         const canonical = profileData.uuid;
         if (canonical) {
-          fetch(`/api/stats/players/${canonical}/advancements`)
-            .then((r) => (r.ok ? (r.json() as Promise<AdvancementsResponse>) : null))
-            .then((advData) => {
-              if (!cancelled) setAdv(advData);
-            })
-            .catch(() => {});
-          fetch(`/api/stats/players/${canonical}/skills`)
-            .then((r) => (r.ok ? (r.json() as Promise<SkillsResponse>) : null))
-            .then((skillData) => {
-              if (!cancelled) setSkills(skillData);
-            })
-            .catch(() => {});
+          // Failures are recorded (not swallowed) so the sections can render a
+          // visible "couldn't load" state instead of silently disappearing —
+          // the profile layout must be identical on every visit.
+          fetchJsonRetry<AdvancementsResponse>(
+            `/api/stats/players/${canonical}/advancements`,
+          ).then((advData) => {
+            if (cancelled) return;
+            if (advData) setAdv(advData);
+            else setAdvFailed(true);
+          });
+          fetchJsonRetry<SkillsResponse>(`/api/stats/players/${canonical}/skills`).then(
+            (skillData) => {
+              if (cancelled) return;
+              if (skillData) setSkills(skillData);
+              else setSkillsFailed(true);
+            },
+          );
         }
       })
       .catch((e) => {
@@ -290,6 +358,9 @@ export default function PlayerPage() {
   }, [uuid]);
 
   const name = profile?.name ?? adv?.name ?? 'Player';
+  // Balance lives on the header card (opposite the head), not in the stats
+  // grid — keeps the grid at its 9-card layout.
+  const balance = profile?.stats.find((s) => s.key === 'balance') ?? null;
   const rep = profile?.reputation ?? null;
   const badge = rep ? stateBadge(rep) : null;
   const advPct = adv && adv.total > 0 ? Math.round((adv.completed / adv.total) * 100) : 0;
@@ -349,6 +420,14 @@ export default function PlayerPage() {
               )}
             </div>
           </div>
+          {balance && (
+            <div className="ml-auto shrink-0 relative z-10 text-right">
+              <p className="font-pixel t-text-muted text-[10px] mb-1.5">Bal</p>
+              <p className="t-text font-medium whitespace-nowrap max-md:text-sm">
+                {formatStat('balance', balance.value)}
+              </p>
+            </div>
+          )}
         </div>
 
         {loading && <ProfileSkeleton />}
@@ -370,7 +449,7 @@ export default function PlayerPage() {
             <div className="mb-8">
               <h2 className="font-pixel t-text text-sm mb-3 px-1">Stats</h2>
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
-                {profile.stats.map((s) => (
+                {profile.stats.filter((s) => s.key !== 'balance').map((s) => (
                   <StatCard key={s.key} stat={s} />
                 ))}
               </div>
@@ -391,37 +470,99 @@ export default function PlayerPage() {
                       <span>
                         State: <span className={badge.className}>{badge.label}</span>
                       </span>
+                      {/* Login streak (1.8.0+; fields absent on older prod). A lapsed
+                          streak is about to reset — show the best instead. */}
+                      {rep.streak_active && (rep.daily_reward_streak ?? 0) >= 1 ? (
+                        <span>
+                          🔥 <span className="text-gold">{rep.daily_reward_streak}-day</span> login
+                          streak{rep.claimed_today ? ' · ✓ claimed today' : ''}
+                        </span>
+                      ) : (rep.best_daily_reward_streak ?? 0) >= 1 ? (
+                        <span>
+                          Best login streak:{' '}
+                          <span className="t-text-dim">{rep.best_daily_reward_streak} days</span>
+                        </span>
+                      ) : null}
                     </div>
                   )}
                 </div>
               </div>
             )}
 
-            {/* mcMMO Skills */}
-            {skills && skills.skills.length > 0 && (
-              <SkillsPanel data={skills} ranks={profile?.skillRanks ?? {}} />
+            {/* mcMMO Skills — always present. Live data when the /skills call
+                lands; snapshot-derived levels (no XP bars) when it fails; zeros
+                while loading / for untracked players. The error note only shows
+                when the live call failed AND the snapshot has nothing — zeros
+                there would misread as a real level-0 player. */}
+            {(() => {
+              const liveSkills = skills && skills.skills.length > 0 ? skills : null;
+              const fb = profile.skillsFallback;
+              const fallback: SkillsResponse | null = fb
+                ? {
+                    uuid: profile.uuid ?? '',
+                    name: profile.name ?? '',
+                    power_level: fb.power_level,
+                    skills: fb.skills.map((s) => ({ ...s, xp: 0, xp_to_next: 0, child: false })),
+                  }
+                : null;
+              if (skillsFailed && !liveSkills && !fallback) {
+                return (
+                  <div className="mb-8">
+                    <h2 className="font-pixel t-text text-sm mb-3 px-1">mcMMO Skills</h2>
+                    <div className="mc-panel p-4 text-center t-text-muted text-xs">
+                      Couldn&apos;t load skills — refresh to try again.
+                    </div>
+                  </div>
+                );
+              }
+              return (
+                <SkillsPanel
+                  data={liveSkills ?? fallback ?? EMPTY_SKILLS}
+                  ranks={profile.skillRanks ?? {}}
+                />
+              );
+            })()}
+
+            {/* Boss Rush (PiEvents) — always visible; zeroed for players with
+                no runs yet (or while the events surface isn't live upstream) */}
+            <BossRushPanel
+              data={profile.events ?? EMPTY_EVENTS}
+              ranks={profile.eventRanks ?? {}}
+            />
+
+            {/* PvP Arena (PiEvents) — same: zeroed until their first match */}
+            <PvpPanel data={profile.pvp ?? EMPTY_PVP} ranks={profile.pvpRanks ?? {}} />
+
+            {/* Recent earnings (event payouts) — hidden until the player has any */}
+            {profile.events?.recent_payouts && profile.events.recent_payouts.length > 0 && (
+              <EarningsPanel payouts={profile.events.recent_payouts} />
             )}
 
-            {/* Boss Rush (PiEvents) — only for players who've actually joined a run */}
-            {profile.events && profile.events.events > 0 && (
-              <BossRushPanel data={profile.events} ranks={profile.eventRanks ?? {}} />
+            {/* Active /market listings — hidden when they have nothing up for sale */}
+            {profile.marketListings && profile.marketListings.length > 0 && (
+              <MarketPanel listings={profile.marketListings} />
             )}
 
-            {/* PvP Arena (PiEvents) — only for players who've fought a match */}
-            {profile.pvp && profile.pvp.matches > 0 && (
-              <PvpPanel data={profile.pvp} />
-            )}
-
-            {/* Advancements */}
-            {adv && (
-              <div>
-                <div className="flex items-baseline justify-between mb-3 px-1">
-                  <h2 className="font-pixel t-text text-sm">Advancements</h2>
+            {/* Advancements — always present; the grid needs upstream data, so
+                pre-load and on failure it's a note rather than a missing section */}
+            <div>
+              <div className="flex items-baseline justify-between mb-3 px-1">
+                <h2 className="font-pixel t-text text-sm">Advancements</h2>
+                {adv && (
                   <span className="font-pixel t-text-muted text-[10px]">
                     {adv.completed}/{adv.total} · {advPct}%
                   </span>
+                )}
+              </div>
+              {!adv && (
+                <div className="mc-panel p-4 text-center t-text-muted text-xs">
+                  {advFailed
+                    ? "Couldn't load advancements — refresh to try again."
+                    : 'Loading advancements…'}
                 </div>
-                {adv.categories.map((cat) => (
+              )}
+              {adv &&
+                adv.categories.map((cat) => (
                   <div key={cat.key} className="mb-8">
                     <div className="flex items-baseline justify-between mb-3 px-1">
                       <h3 className="font-pixel t-text-dim text-xs">{cat.label}</h3>
@@ -461,8 +602,7 @@ export default function PlayerPage() {
                     </div>
                   </div>
                 ))}
-              </div>
-            )}
+            </div>
           </>
         )}
       </section>
@@ -603,6 +743,20 @@ function SkillTile({ skill, rank }: { skill: SkillEntry; rank?: { rank: number; 
   );
 }
 
+// Zeroed stat lines for players with no event history yet — the upstream
+// player endpoints 404 for them, but we still want the sections visible (with
+// zeros) whenever the surface itself is live.
+const EMPTY_EVENTS: EventPlayer = {
+  uuid: null, name: '', events: 0, clears: 0, total_damage: 0, total_boss_damage: 0,
+  total_damage_taken: 0, total_healing: 0, total_adds: 0, total_score: 0, best_score: 0,
+  total_lives_lost: 0, survivals: 0, total_money: 0, best_pit: 0, pit_clears: 0,
+};
+
+const EMPTY_PVP: PvpPlayer = {
+  uuid: '', name: '', matches: 0, wins: 0, kills: 0, deaths: 0, kd: 0,
+  total_money: 0, best_killstreak: 0, mvps: 0,
+};
+
 // Boss Rush role stats. `board` is the events role board the rank comes from.
 const EVENT_FIELDS: { field: keyof EventPlayer; label: string; board: string }[] = [
   { field: 'total_score', label: 'Score', board: 'score' },
@@ -622,22 +776,6 @@ function eventTimeAgo(ts: number): string {
   const hours = Math.floor(mins / 60);
   if (hours < 24) return `${hours}h ago`;
   return `${Math.floor(hours / 24)}d ago`;
-}
-
-// Gear-mode chip (PiStatsAPI 1.7.0). KIT is the default/most common, so in these
-// dense rows we hide it and only chip BYOG/HARDCORE. `null`/absent = kit-era.
-function GearChip({ mode }: { mode?: string | null }) {
-  const key = mode ?? 'KIT';
-  const g = gearMode[key];
-  if (!g || key === 'KIT') return null;
-  return (
-    <span
-      className="font-pixel text-[9px] px-1 py-0.5 rounded shrink-0"
-      style={{ color: g.color, background: `color-mix(in srgb, ${g.color} 15%, transparent)` }}
-    >
-      {g.label}
-    </span>
-  );
 }
 
 function BossRushPanel({
@@ -738,21 +876,30 @@ function BossRushPanel({
   );
 }
 
-function PvpPanel({ data }: { data: PvpPlayer }) {
+function PvpPanel({
+  data,
+  ranks,
+}: {
+  data: PvpPlayer;
+  ranks: Record<string, { rank: number; total: number }>;
+}) {
   const losses = Math.max(0, data.matches - data.wins);
   return (
     <div className="mb-8">
-      <div className="flex items-baseline justify-between mb-3 px-1">
+      <div className="flex items-baseline justify-between mb-3 px-1 gap-2 flex-wrap">
         <h2 className="font-pixel t-text text-sm">PvP Arena</h2>
-        <span className="font-pixel t-text-muted text-[10px]">
-          {data.matches} {data.matches === 1 ? 'match' : 'matches'} · {data.wins}W-{losses}L
+        <span className="font-pixel t-text-muted text-[10px] flex items-baseline gap-2">
+          {ranks.wins && <RankLabel rank={ranks.wins.rank} total={ranks.wins.total} />}
+          <span>
+            {data.matches} {data.matches === 1 ? 'match' : 'matches'} · {data.wins}W-{losses}L
+          </span>
         </span>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-        <PvpTile label="Kills" value={data.kills.toLocaleString()} />
-        <PvpTile label="K/D" value={data.kd.toFixed(2)} />
-        <PvpTile label="Best Streak" value={data.best_killstreak.toLocaleString()} />
-        <PvpTile label="MVPs" value={data.mvps.toLocaleString()} accent />
+        <PvpTile label="Kills" value={data.kills.toLocaleString()} rank={ranks.kills} />
+        <PvpTile label="K/D" value={data.kd.toFixed(2)} rank={ranks.kd} />
+        <PvpTile label="Best Streak" value={data.best_killstreak.toLocaleString()} rank={ranks.streak} />
+        <PvpTile label="MVPs" value={data.mvps.toLocaleString()} rank={ranks.mvps} accent />
       </div>
       <div className="mc-panel p-4 mt-3 flex flex-wrap justify-center gap-x-6 gap-y-1.5 text-xs t-text-muted">
         <span>Deaths: <span className="t-text-dim">{data.deaths}</span></span>
@@ -787,11 +934,91 @@ function PvpPanel({ data }: { data: PvpPlayer }) {
   );
 }
 
-function PvpTile({ label, value, accent }: { label: string; value: string; accent?: boolean }) {
+function PvpTile({
+  label,
+  value,
+  rank,
+  accent,
+}: {
+  label: string;
+  value: string;
+  rank?: { rank: number; total: number };
+  accent?: boolean;
+}) {
   return (
     <div className="mc-panel p-4">
       <p className="font-pixel t-text-muted text-[10px] mb-1.5">{label}</p>
       <p className={`text-lg font-medium leading-none ${accent ? 'text-gold' : 't-text'}`}>{value}</p>
+      {rank && (
+        <p className="text-xs mt-2">
+          <RankLabel rank={rank.rank} total={rank.total} />
+        </p>
+      )}
+    </div>
+  );
+}
+
+// Event payout feed — "where their money came from lately". Reasons are the
+// plugin's own strings (e.g. "Boss Rush clear", "PvP win"), passed through as-is.
+function EarningsPanel({
+  payouts,
+}: {
+  payouts: { money: number; reason: string; at: number }[];
+}) {
+  return (
+    <div className="mb-8">
+      <h2 className="font-pixel t-text text-sm mb-3 px-1">Recent earnings</h2>
+      <div className="mc-panel overflow-hidden">
+        {payouts.map((p, i) => (
+          <div
+            key={`${p.at}-${i}`}
+            className="flex items-center gap-3 px-4 py-2 text-xs t-border-20 border-b last:border-b-0"
+          >
+            <span className="text-gold shrink-0 whitespace-nowrap">
+              +${Math.round(p.money).toLocaleString()}
+            </span>
+            <span className="t-text-dim min-w-0 truncate">{p.reason}</span>
+            <span className="t-text-muted ml-auto shrink-0 whitespace-nowrap">
+              {eventTimeAgo(p.at)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// The player's active /market listings — same row shape as the /economy
+// market panel, minus the seller column (it's them).
+function MarketPanel({ listings }: { listings: MarketListing[] }) {
+  return (
+    <div className="mb-8">
+      <h2 className="font-pixel t-text text-sm mb-3 px-1">Selling on the market</h2>
+      <div className="mc-panel overflow-hidden">
+        {listings.map((l, i) => (
+          <div
+            key={`${l.listed_ms}-${i}`}
+            className="flex items-center gap-3 px-4 py-2.5 text-sm t-border-20 border-b last:border-b-0"
+          >
+            <span className="t-text-dim min-w-0 truncate">
+              {l.custom_name ? (
+                <span className="italic">{l.custom_name}</span>
+              ) : (
+                formatMaterial(l.material)
+              )}
+              {l.enchanted && <span aria-hidden> ✨</span>}
+              <span className="t-text-muted"> ×{l.amount}</span>
+            </span>
+            <span className="text-gold whitespace-nowrap shrink-0">{formatPrice(l.price)}</span>
+            <span className="t-text-muted text-xs ml-auto shrink-0 whitespace-nowrap max-md:hidden">
+              {eventTimeAgo(l.listed_ms)}
+            </span>
+          </div>
+        ))}
+      </div>
+      <p className="t-text-muted text-[11px] mt-2 px-1">
+        Buy in-game with <code className="text-gold">/market</code>.
+      </p>
     </div>
   );
 }

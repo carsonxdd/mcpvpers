@@ -61,5 +61,40 @@
     "title": "The Border Now Grows Every Night at 9 PM",
     "body": "Border expansion is now a nightly event: once a day at 9 PM Arizona, the border grows based on everyone's combined playtime from the previous day. Play more, get more world — and now you can actually watch it happen.\n\nWe also fixed the scaling math. The old formula punished busy nights so hard that the border was pinned to the minimum +100 no matter how much everyone played. Group playtime actually counts now — big nights mean big expansions.",
     "tags": ["Map Expansion", "Plugin Update"]
+  },
+  {
+    "id": 10,
+    "date": "2026-06-13",
+    "title": "The Pit Opens — Boss Rush Raids & the PvP Arena",
+    "body": "A colosseum now stands about 650 blocks from spawn, and it's running events. Type /event to open the hub.\n\nBoss Rush: party up against six raids — from the Zombie King up through Korrin Brakkus, the Undefeated. Waves of armored mobs trickle in, then the boss. You get limited lives, role kits (tank, healer, dps, ranged, trapper, berserker), placeable cobwebs and barricades for crowd control, and a payout split by performance — top damage, best tank, best support all earn bonuses.\n\nWant it harder? Raids run at a Pit level (1–5): mobs hit harder and have way more health, but payouts and loot chances climb with it. Clear a raid and everyone rolls loot — common, rare on a lucky roll, and a shot at an epic (top-3 scorers get better odds): named armor and weapons, Fortune and Silk Touch picks, even a fishing rod if the right boss falls. Run it at Pit 1 or higher and won epics come back PITFORGED: enchants past the vanilla cap, found nowhere else in the game. One rule: it's clear or nothing — wipe the raid and there's no payout and no loot.\n\nPvP is live too: Team Deathmatch and Free-For-All with kits, fort barricades you can build and enemies can siege, kill payouts, win pools, and an MVP bonus. Anyone can spectate a running event with /event spectate.\n\nEvery event runs in a gear mode: [KIT] (green — gear provided, your inventory is vaulted and fully restored, zero risk), [BYOG] (gold — bring your own gear, but deaths never drop it), or [HARDCORE] (red — the real-stakes mode: die and your inventory drops where you fell, free for anyone to grab). Own-gear events make you click through a warning before joining, so nobody gets surprised. Arena fights never touch your reputation — no murders, no bounties, no knockouts from event kills.",
+    "tags": ["Event", "Plugin Update"]
+  },
+  {
+    "id": 11,
+    "date": "2026-06-13",
+    "title": "Money Hits the Frontier — /shop and /market",
+    "body": "The Frontier has an economy now. Everyone gets $100 to start — check your pocket with /bal, see who's rich with /baltop, pay people with /pay.\n\n/shop opens the server store: 104 items across 7 categories — and prices move like a stock ticker. Once a day at midnight, every item re-prices off what the server actually traded: dump a mountain of iron and tomorrow iron pays less (and costs less to buy back — buy and sell move together). Quiet items drift back toward normal, and nothing ever swings past 60%–140% of base. Prices hold steady all day, so what you see is what you get until midnight. The shop also only buys so much of each item per day — hit the warehouse cap and it stops buying until tomorrow. One catch: only clean items sell. Renamed, enchanted, or damaged gear won't vendor — you can't cash out event loot.\n\n/market is the player-to-player side: browse what people are selling, or hold a stack and type /market sell <price> to list it. Sellers pay a small fee, and if you're offline when it sells, the money lands in your mailbox.\n\nWhere does money come from? Events. Boss Rush clears and PvP matches both pay out — participation, kills, wins, and MVP bonuses. Fight, earn, spend.",
+    "tags": ["Plugin Update", "Rule Change"]
+  },
+  {
+    "id": 12,
+    "date": "2026-06-13",
+    "title": "Frontier Housekeeping",
+    "body": "Endermen can no longer steal blocks. They'll still teleport around being creepy, but your builds are safe — and creepers still work, so don't get cocky.\n\nReputation now completely ignores arena combat: kills in events don't make you a murderer, don't trigger bounties, and players who opted out of PvP can still fight in the colosseum.\n\nPlus the usual round of fixes and new in-game announcements pointing at all of the above.",
+    "tags": ["Plugin Update", "Rule Change"]
+  },
+  {
+    "id": 13,
+    "date": "2026-06-13",
+    "title": "Raid Keys — Start Your Own Raids",
+    "body": "You don't need an admin to raid anymore. Every player now carries a Raid Key — type /event key at the colosseum to open your key board.\n\nYour key starts at Pit 0 with the first raid unlocked. Clear a raid and the next one opens; clear all six at a level and your key levels up to the next Pit — tougher mobs, bigger payouts, better loot, all the way to Pit 5. Everyone who fights in a clear gets credit on their own key, so you can be carried by stronger friends and still make progress.\n\nThe catch: starting a run costs money ($150 at Pit 0, climbing with the Pit), win or lose — and if you wipe a run at your key's level, the key DEPLETES a Pit until you win one back a level down. You get 3 starts a day. Joining someone else's run? Always free, unlimited. Watch chat for the ⚷ broadcast when someone opens a run.\n\nKey runs pay out a bit less than admin events — and like any raid, a wipe pays nothing — but they're yours to start whenever the arena's open. Bring a party.",
+    "tags": ["Event", "Plugin Update"]
+  },
+  {
+    "id": 14,
+    "date": "2026-06-13",
+    "title": "Daily Login Rewards Are Live",
+    "body": "Log in each day and get paid. Your first join of the day drops cash plus a haul of loot straight into your inventory — no command needed, it just lands a few seconds after you spawn.\n\nThe catch: it's a streak. Show up two days in a row and the payout climbs; day 1 starts at $100 and grows to $500 by a 14-day streak. Miss a day and the streak resets to 1, so keep it going. Hit a milestone day and you'll get bonus loot — and the whole server hears about it.\n\nRun /daily anytime to check your current streak, your best streak, and what tomorrow pays.",
+    "tags": ["Plugin Update"]
   }
 ]

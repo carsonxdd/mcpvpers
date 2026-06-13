@@ -21,7 +21,8 @@ export default function AboutPage() {
           <p className="t-text-dim leading-relaxed mb-4">
             mc.pvpers.us runs on a simple idea: the fewer rules a server has, the more interesting it
             gets. We don&apos;t curate playstyles. We give you the tools (Lands claims, a cowboy-style
-            reputation system, mcMMO, proximity voice chat) and let the world fill in around them.
+            reputation system, mcMMO, an arena events system, a player-driven economy, proximity
+            voice chat) and let the world fill in around them.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
             If you want to build, claim your land and build. If you want to fight, the wilderness is
@@ -130,6 +131,43 @@ export default function AboutPage() {
             </p>
           </Expander>
 
+          <Expander title="Arena events: Boss Rush & PvP">
+            <p className="t-text-dim leading-relaxed mb-3">
+              A colosseum stands about 650 blocks from spawn and it&apos;s running events.{' '}
+              <code className="text-gold">/event</code> opens the hub: co-op{' '}
+              <strong className="t-text">Boss Rush</strong> raids against six bosses with Pit
+              difficulty levels and above-vanilla-cap <strong className="t-text">Pitforged</strong>{' '}
+              loot, plus <strong className="t-text">TDM/FFA arena PvP</strong> that pays out cash.
+              Every player carries a Raid Key (<code className="text-gold">/event key</code>) to
+              start their own raids.
+            </p>
+            <p className="t-text-dim leading-relaxed">
+              Full raids, payouts, loot tables, and live boards on{' '}
+              <a href="/events" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+                the events hub
+              </a>
+              .
+            </p>
+          </Expander>
+
+          <Expander title="Economy: shop & market">
+            <p className="t-text-dim leading-relaxed mb-3">
+              The Frontier runs on real money. Everyone starts with{' '}
+              <strong className="t-text">$100</strong>; you earn from events and selling to the{' '}
+              <code className="text-gold">/shop</code> (daily-ticker pricing), and trade with other
+              players on the <code className="text-gold">/market</code>.{' '}
+              <code className="text-gold">/bal</code>, <code className="text-gold">/baltop</code>,
+              and <code className="text-gold">/pay</code> for everyone.
+            </p>
+            <p className="t-text-dim leading-relaxed">
+              How money works, the price ticker, and the market are all on{' '}
+              <a href="/economy" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+                the economy page
+              </a>
+              .
+            </p>
+          </Expander>
+
           <Expander title="Lands: claims & safe zones">
             <p className="t-text-dim leading-relaxed mb-3">
               Use <code className="text-gold">/lands</code> to claim chunks you want to protect.
@@ -200,6 +238,9 @@ export default function AboutPage() {
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/trade</code> &mdash; opens the two-window trade GUI with another player.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/pvp on|off|status</code>: Pacifists and Retired opt in or out of PvP (30-min toggle cooldown). Outlaws and Lawmen are always on.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/lands</code> &mdash; open the claims menu. Defaults already block griefing inside your claim.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/event</code> &mdash; open the events hub: Boss Rush raids and arena PvP. <code className="text-gold">/event key</code> starts your own raid.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/shop</code> and <code className="text-gold">/market</code> &mdash; the server store and the player-to-player market.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/bal</code>, <code className="text-gold">/baltop</code>, <code className="text-gold">/pay &lt;player&gt; &lt;amount&gt;</code> &mdash; check your money, see who&apos;s rich, send cash.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/graves</code> &mdash; lists every grave you&apos;ve got waiting, so you can find your stuff after a death.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/stats</code> &mdash; your playtime, deaths, and session numbers (the same data the website reads).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/tab hide</code> &mdash; clean up the tab list if you&apos;d rather not see everyone&apos;s stats while you play.</span></li>
@@ -230,7 +271,7 @@ export default function AboutPage() {
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">50% of online players</strong> in bed skips the night. No need to wrangle everyone.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Phantom spawn rate is reduced.</strong> They still show up, just not nightly. Sleeping mostly keeps them off.</span></li>
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Mob griefing is vanilla in the wilderness</strong> (creepers blow stuff up, endermen pick up blocks) and <strong className="t-text">off inside Lands claims by default</strong>. Builds are safe; the world isn&apos;t a museum.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Mob griefing is vanilla in the wilderness</strong> (creepers blow stuff up) and <strong className="t-text">off inside Lands claims by default</strong>. Endermen can&apos;t pick up blocks anywhere — server-wide. Builds are safe; the world isn&apos;t a museum.</span></li>
             </ul>
           </Expander>
 
@@ -268,21 +309,16 @@ export default function AboutPage() {
             </p>
           </Expander>
 
-          <Expander title="Community boss raids">
-            <p className="t-text-dim leading-relaxed">
-              The boss raid won the &ldquo;next event&rdquo; vote and event frequency won
-              &ldquo;weekly.&rdquo; carsonxd is targeting <strong className="t-text">every two
-              weeks realistically</strong> while shooting for weekly. Format is still being
-              built; first raid likely in the opening weeks.
-            </p>
-          </Expander>
-
-          <Expander title="Jobs, quests & deeper economy">
+          <Expander title="Jobs & quests">
             <p className="t-text-dim leading-relaxed">
               The Quests poll won yes; the Jobs poll won later-after-economy. Both are coming, but
               not day one. We want to land the right plugin and format rather than ship something
-              that gets ripped out two weeks in. Player shops and a deeper economy sit in the same
-              bucket. Pipe up on Discord if you&apos;ve got a strong opinion on which plugin.
+              that gets ripped out two weeks in. (The economy, server shop, and player market{' '}
+              <strong className="t-text">are</strong> live now &mdash; see{' '}
+              <a href="/economy" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+                the economy page
+              </a>
+              .) Pipe up on Discord if you&apos;ve got a strong opinion on which plugin.
             </p>
           </Expander>
         </div>
@@ -340,10 +376,10 @@ export default function AboutPage() {
         <CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">What&apos;s next</h2></CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed">
-            The server&apos;s lean on purpose. Jobs, quests, player shops, more events: they all
-            won their polls, but none of them ship day one. We add features when the format&apos;s
-            actually right for the group, not because the plugin list looked thin. Ping carsonxd on
-            Discord if you want to push something up the queue.
+            The server&apos;s lean on purpose. The arena events system and the economy are live;
+            jobs and quests won their polls but don&apos;t ship day one. We add features when the
+            format&apos;s actually right for the group, not because the plugin list looked thin.
+            Ping carsonxd on Discord if you want to push something up the queue.
           </p>
         </CloudText>
       </section>

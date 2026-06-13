@@ -43,6 +43,7 @@ export type PvpMatch = {
   duration_ms: number; // 0 on pre-tracking rows
   winner: string | null; // team color (TDM) / player name (FFA); null on draw
   mvp: string | null; // top killer; null on pre-tracking
+  gear_mode?: string | null; // KIT|BYOG|HARDCORE (1.7.0+); null on pre-feature rows
   ended_at: number; // epoch millis
 };
 
@@ -125,4 +126,13 @@ export async function getPvpSnapshot(): Promise<PvpSnapshot> {
     void refresh();
   }
   return cache ?? EMPTY;
+}
+
+// Find a player's row (with rank) within a named PvP board.
+export function pvpRowFor(
+  snapshot: PvpSnapshot,
+  boardKey: string,
+  uuid: string,
+): PvpEntry | undefined {
+  return snapshot.boards[boardKey]?.find((e) => e.uuid === uuid);
 }

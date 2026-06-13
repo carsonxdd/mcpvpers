@@ -18,7 +18,7 @@ const skillGroups = [
     glow: '',
     accent: 'border-redstone/40',
     blurb: "Pick your weapon and it gets better at killing things. PvP awards rep, so choose your fights.",
-    skills: ['Swords', 'Axes', 'Unarmed', 'Archery', 'Taming'],
+    skills: ['Swords', 'Axes', 'Unarmed', 'Archery', 'Crossbows', 'Maces', 'Tridents', 'Spears', 'Taming'],
   },
   {
     name: 'Crafting & utility',
@@ -168,7 +168,7 @@ export default function McmmoPage() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
-            Fifteen skills, passive bonuses on everything you do, active abilities at higher
+            Nineteen skills, passive bonuses on everything you do, active abilities at higher
             levels. Mine faster, chop trees in one swing, brew exotic potions, dodge fall damage.
             The longer you play, the more your numbers compound.
           </p>

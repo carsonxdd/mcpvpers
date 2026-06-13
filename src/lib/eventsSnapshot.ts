@@ -48,6 +48,7 @@ export type EventRun = {
   duration_ms: number; // 0 on pre-tracking rows
   winner: string | null; // PvP only (team color / FFA name; null on draw / BR)
   mvp: string | null; // BR top scorer / PvP top killer; null on pre-tracking
+  gear_mode?: string | null; // KIT|BYOG|HARDCORE (1.7.0+); null on pre-feature rows
   ended_at: number; // epoch millis
 };
 

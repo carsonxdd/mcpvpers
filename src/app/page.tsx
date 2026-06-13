@@ -43,15 +43,7 @@ export default function Home() {
 
         <LaunchCountdown />
 
-        <p className="t-text-dim text-sm mb-6 text-center">
-          Polls closed.{' '}
-          <a
-            href="/polls"
-            className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
-          >
-            See what the community voted in &rarr;
-          </a>
-        </p>
+        <div className="mb-6" />
 
         <CopyButton text="mc.pvpers.us" label="mc.pvpers.us" className="text-lg max-md:text-sm mb-4" />
         <LiveServerStatus />

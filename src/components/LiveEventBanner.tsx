@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { bossByRaidKey } from '@/lib/bossDisplay';
+import GearChip from '@/components/GearChip';
 
 // Polls the always-200 /api/events/live endpoint and renders a pulsing banner
 // while an event is happening. `active:false` (idle / not shipped) → renders
@@ -12,11 +13,12 @@ type LiveEvent =
   | { active: false }
   | {
       active: true;
-      name: string;
+      name: string | null;
       mode: string; // BOSS_RUSH | TDM | FFA
       raid: string | null;
       difficulty: number;
       state: string; // LOBBY | COUNTDOWN | ACTIVE | …
+      gear_mode?: string | null; // KIT|BYOG|HARDCORE (1.7.0+); absent pre-feature
       players: number;
       spectators: number;
       wave: number;
@@ -55,14 +57,20 @@ export default function LiveEventBanner() {
   const isBoss = live.mode === 'BOSS_RUSH';
   const boss = bossByRaidKey(live.raid);
   const href = isBoss ? '/events/boss-rush' : '/events/pvp';
+  // Player-started key runs are only identifiable by the live snapshot's name
+  // ("<raid>-key-p<pit>"). Joining one is always free — stronger hook than an
+  // admin event, so the copy swaps to the player-hype version.
+  const keyRun = /-key-p\d+$/.test(live.name ?? '');
+  const raidLabel = boss ? `${boss.icon} ${boss.raid}` : 'raid';
+  const pit = live.difficulty >= 1 ? ` · Pit ${live.difficulty}` : '';
 
   let message: string;
-  if (forming) {
-    message = `⚔ ${live.name} is forming — get on the server to join!`;
+  if (forming && keyRun) {
+    message = `⚷ Player key run forming: ${raidLabel}${pit} — anyone can join free!`;
+  } else if (forming) {
+    message = `⚔ ${live.name ?? 'An event'} is forming — get on the server to join!`;
   } else if (isBoss) {
-    const raidLabel = boss ? `${boss.icon} ${boss.raid}` : 'raid';
-    const pit = live.difficulty >= 1 ? ` · Pit ${live.difficulty}` : '';
-    message = `🔴 LIVE: ${raidLabel}${pit} — wave ${live.wave}/${live.max_wave}, ${live.players} fighting`;
+    message = `🔴 LIVE${keyRun ? ' ⚷ key run' : ''}: ${raidLabel}${pit} — wave ${live.wave}/${live.max_wave}, ${live.players} fighting`;
   } else {
     message = `🔴 LIVE: ${live.mode} — ${live.players} fighting, ${live.spectators} watching`;
   }
@@ -79,6 +87,7 @@ export default function LiveEventBanner() {
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-redstone" />
         </span>
         <span className="t-text-dim text-sm leading-snug">{message}</span>
+        <GearChip mode={live.gear_mode} showKit />
         <span className="ml-auto text-[11px] t-text-muted shrink-0 max-md:hidden">
           {forming ? 'Join →' : 'Watch →'}
         </span>

@@ -63,6 +63,7 @@ const commandsByTier = [
       { cmd: '/badge yes|no', desc: 'Accept or decline the Citizen badge after your first outlaw kill.' },
       { cmd: '/commend <player>', desc: 'Award peaceful rep. Limited charges, 7-day cooldown per recipient.' },
       { cmd: '/donate', desc: "Open the donation chest. Items fund the Sheriff's Office treasury; donors earn capped peaceful rep." },
+      { cmd: '/daily', desc: 'Show your daily login reward streak — current streak, best streak, and what tomorrow pays. The reward itself is automatic on your first join each day.' },
       { cmd: '/report <player> <reason>', desc: 'File a complaint. Requires 2h playtime. 24h cooldown per target.' },
       { cmd: '/bounty list|track <player>', desc: 'View active bounties or get a tracking compass (Lawman+ for tracking).' },
       { cmd: '/bounty treasury', desc: "See the current value sitting in the Sheriff's Office treasury — the shared pool that funds every bounty." },

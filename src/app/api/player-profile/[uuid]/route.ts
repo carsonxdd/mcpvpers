@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getSnapshot, rowFor } from '@/lib/leaderboardSnapshot';
 import { getEventsSnapshot, eventRowFor, type EventEntry } from '@/lib/eventsSnapshot';
+import { getPvpSnapshot, pvpRowFor, PVP_BOARDS } from '@/lib/pvpSnapshot';
 
 export const runtime = 'nodejs';
 
@@ -27,6 +28,7 @@ const PROFILE_STATS: { key: string; label: string; board: string }[] = [
   { key: 'ores_mined', label: 'Ores Mined', board: 'ores_mined' },
   { key: 'distance', label: 'Distance', board: 'distance' },
   { key: 'xp_levels', label: 'XP Levels', board: 'xp_levels' },
+  { key: 'balance', label: 'Balance', board: 'balance' },
   { key: 'advancements', label: 'Advancements', board: 'advancements' },
   { key: 'deaths', label: 'Deaths', board: 'deaths' },
 ];
@@ -49,6 +51,12 @@ type Reputation = {
   play_seconds: number;
   last_seen_ts: number;
   outlaw_tier: string;
+  // Daily login streak (PiStatsAPI 1.8.0+) — absent on older builds. The object
+  // is passed through to the client untouched, so these are type-parity only.
+  daily_reward_streak?: number;
+  best_daily_reward_streak?: number;
+  streak_active?: boolean;
+  claimed_today?: boolean;
 };
 
 async function getJson<T>(path: string): Promise<T | null> {
@@ -81,22 +89,41 @@ export async function GET(
 ) {
   const { uuid: idOrName } = await params;
 
-  // Roster (online + name↔uuid) and both warm snapshots in parallel.
-  const [roster, snapshot, eventsSnapshot] = await Promise.all([
+  // Roster (online + name↔uuid) and all three warm snapshots in parallel.
+  const [roster, snapshot, eventsSnapshot, pvpSnapshot] = await Promise.all([
     getJson<PlayerRow[]>('players'),
     getSnapshot(),
     getEventsSnapshot(),
+    getPvpSnapshot(),
   ]);
 
   const players = Array.isArray(roster) ? roster : [];
   const lower = idOrName.toLowerCase();
-  const player = UUID_RE.test(idOrName)
+  const byUuid = UUID_RE.test(idOrName);
+  let player = byUuid
     ? players.find((p) => p.uuid?.toLowerCase() === lower)
     : players.find((p) => p.name?.toLowerCase() === lower);
 
+  // Roster fallback: the /players call can flake (5s timeout) or lag behind the
+  // boards. Every clickable leaderboard row comes from a snapshot board, so
+  // resolve name↔uuid from those before declaring the player unknown — the
+  // profile then renders identically no matter which board they were clicked
+  // from. Online status is unknowable on this path; default to offline.
+  if (!player) {
+    for (const rows of Object.values(snapshot.boards)) {
+      const row = byUuid
+        ? rows.find((e) => e.uuid?.toLowerCase() === lower)
+        : rows.find((e) => e.name?.toLowerCase() === lower);
+      if (row?.uuid) {
+        player = { uuid: row.uuid, name: row.name, online: false, playtime_seconds: 0, deaths: 0 };
+        break;
+      }
+    }
+  }
+
   if (!player) {
     return NextResponse.json(
-      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {}, events: null, eventRanks: {}, pvp: null },
+      { uuid: null, name: null, online: false, found: false, stats: emptyStats(), reputation: null, skillRanks: {}, skillsFallback: null, events: null, eventRanks: {}, eventsAvailable: false, pvp: null, pvpRanks: {}, pvpAvailable: false, marketListings: [] },
       { headers },
     );
   }
@@ -121,14 +148,26 @@ export async function GET(
   // website-built skill boards in the snapshot (upstream has no per-skill
   // leaderboard). Map: skill enum (e.g. "MINING") or "POWER_LEVEL" -> rank/total.
   const skillRanks: Record<string, { rank: number; total: number }> = {};
+  // Snapshot-derived skill levels, doubling as a fallback for the client's live
+  // /skills call (which can 429 under the upstream rate limiter). XP progress
+  // isn't in the boards, so the page only uses this when the live call fails.
+  const fallbackSkills: { skill: string; level: number }[] = [];
   for (const [key, rows] of Object.entries(snapshot.boards)) {
     if (!key.startsWith('skill:')) continue;
     const row = rows.find((e) => e.uuid === uuid);
-    if (row) skillRanks[key.slice('skill:'.length)] = { rank: row.rank, total: rows.length };
+    if (row) {
+      const skill = key.slice('skill:'.length);
+      skillRanks[skill] = { rank: row.rank, total: rows.length };
+      fallbackSkills.push({ skill, level: row.value });
+    }
   }
   const powerBoard = snapshot.boards.power_level ?? [];
   const powerRow = rowFor(snapshot, 'power_level', uuid);
   if (powerRow) skillRanks.POWER_LEVEL = { rank: powerRow.rank, total: powerBoard.length };
+  const skillsFallback =
+    fallbackSkills.length > 0
+      ? { power_level: powerRow?.value ?? 0, skills: fallbackSkills }
+      : null;
 
   const reputation = await getJson<Reputation>(
     `reputation/player/${encodeURIComponent(player.name)}`,
@@ -185,18 +224,50 @@ export async function GET(
       ended_at: number;
     }[];
   };
-  const [events, pvp] = eventsSnapshot.available
-    ? await Promise.all([
-        getJson<EventPlayer>(`events/player/${encodeURIComponent(player.name)}`),
-        getJson<PvpPlayer>(`events/pvp/player/${encodeURIComponent(player.name)}`),
-      ])
-    : [null, null];
+  // Active player-market listings (PiShop). The upstream /shop/market endpoint
+  // is global; we filter to this player's listings by seller name. 404/503
+  // pre-ship → null → empty array, and the profile section hides itself.
+  type MarketListing = {
+    seller: string;
+    material: string;
+    amount: number;
+    custom_name: string | null;
+    enchanted: boolean;
+    price: number;
+    listed_ms: number;
+    expires_ms: number;
+  };
+  // Each surface gates on its own snapshot — PvP can be live while Boss Rush
+  // data is unreachable (and vice versa); one being down shouldn't hide the other.
+  const [events, pvp, market] = await Promise.all([
+    eventsSnapshot.available
+      ? getJson<EventPlayer>(`events/player/${encodeURIComponent(player.name)}`)
+      : null,
+    pvpSnapshot.available
+      ? getJson<PvpPlayer>(`events/pvp/player/${encodeURIComponent(player.name)}`)
+      : null,
+    getJson<{ listings: MarketListing[] }>('shop/market'),
+  ]);
+  const nameLower = player.name.toLowerCase();
+  const marketListings = Array.isArray(market?.listings)
+    ? market.listings.filter((l) => l.seller?.toLowerCase() === nameLower)
+    : [];
   const ROLE_BOARDS = ['score', 'damage', 'boss_damage', 'tank', 'support', 'adds', 'clears'];
   const eventRanks: Record<string, { rank: number; total: number }> = {};
   for (const boardKey of ROLE_BOARDS) {
     const row = eventRowFor(eventsSnapshot, boardKey, uuid);
     const total = eventsSnapshot.categories[boardKey]?.length ?? 0;
     if (row && total > 0) eventRanks[boardKey] = { rank: row.rank, total };
+  }
+
+  // PvP server ranks, mirrored from the PvP snapshot's boards (wins | kills |
+  // kd | streak | mvps | matches | earnings). Top-25 boards: a player outside
+  // the cut simply has no rank entry, same as the events role boards.
+  const pvpRanks: Record<string, { rank: number; total: number }> = {};
+  for (const boardKey of PVP_BOARDS) {
+    const row = pvpRowFor(pvpSnapshot, boardKey, uuid);
+    const total = pvpSnapshot.boards[boardKey]?.length ?? 0;
+    if (row && total > 0) pvpRanks[boardKey] = { rank: row.rank, total };
   }
 
   // Commendations: value comes from the player's own reputation (authoritative),
@@ -220,9 +291,17 @@ export async function GET(
       stats,
       reputation,
       skillRanks,
+      skillsFallback,
       events,
       eventRanks,
+      // Surface-availability flags: true means the upstream is live, so the
+      // profile can render a zeroed section for players with no data yet
+      // (events/pvp are null when the player never joined a run/match).
+      eventsAvailable: eventsSnapshot.available,
       pvp,
+      pvpRanks,
+      pvpAvailable: pvpSnapshot.available,
+      marketListings,
     },
     { headers },
   );

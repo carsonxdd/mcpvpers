@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const runtime = 'nodejs';
 
-const ALLOWED_KINDS = new Set(['players', 'leaderboard', 'border', 'server', 'reputation', 'events']);
+const ALLOWED_KINDS = new Set(['players', 'leaderboard', 'border', 'server', 'reputation', 'events', 'shop']);
 const UPSTREAM = process.env.PISTATS_URL ?? 'http://stained.dathost.net:17249';
 const REVALIDATE_SECONDS = 30;
 const TIMEOUT_MS = 5000;

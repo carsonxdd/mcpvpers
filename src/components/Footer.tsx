@@ -5,8 +5,8 @@ export default function Footer() {
     <footer className="relative z-20 t-bg t-border-30 border-t transition-colors duration-300">
 
       <div className="max-w-7xl mx-auto px-4 py-10">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div>
+        <div className="grid grid-cols-2 md:grid-cols-12 gap-8">
+          <div className="col-span-2 md:col-span-4">
             <h3 className="font-pixel text-gold text-xs mb-3 glow-gold">mc.pvpers.us</h3>
             <p className="t-text-muted text-sm leading-relaxed">
               A Vanilla+ Minecraft server focused on community, exploration, and adventure.
@@ -14,23 +14,41 @@ export default function Footer() {
             </p>
           </div>
 
-          <div>
-            <h3 className="font-pixel t-text-dim text-xs mb-3">Links</h3>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-2">
-              <Link href="/about" className="t-text-muted text-sm hover:text-xp transition-colors">About & Rules</Link>
+          <div className="md:col-span-2">
+            <h3 className="font-pixel t-text-dim text-xs mb-3">Server</h3>
+            <div className="flex flex-col gap-2">
+              <Link href="/about" className="t-text-muted text-sm hover:text-xp transition-colors">About &amp; Rules</Link>
               <Link href="/reputation" className="t-text-muted text-sm hover:text-xp transition-colors">Reputation</Link>
               <Link href="/mcmmo" className="t-text-muted text-sm hover:text-xp transition-colors">mcMMO</Link>
-              <Link href="/polls" className="t-text-muted text-sm hover:text-xp transition-colors">Polls</Link>
-              <Link href="/leaderboards" className="t-text-muted text-sm hover:text-xp transition-colors">Leaderboards</Link>
               <Link href="/wanted" className="t-text-muted text-sm hover:text-xp transition-colors">Wanted</Link>
-              <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">Modpacks</Link>
-              <Link href="/map" className="t-text-muted text-sm hover:text-xp transition-colors">BlueMap</Link>
             </div>
           </div>
 
-          <div>
+          <div className="md:col-span-2">
+            <h3 className="font-pixel t-text-dim text-xs mb-3">Play</h3>
+            <div className="flex flex-col gap-2">
+              <Link href="/events" className="t-text-muted text-sm hover:text-xp transition-colors">Events</Link>
+              <Link href="/economy" className="t-text-muted text-sm hover:text-xp transition-colors">Economy</Link>
+              <Link href="/leaderboards" className="t-text-muted text-sm hover:text-xp transition-colors">Leaderboards</Link>
+              <Link href="/map" className="t-text-muted text-sm hover:text-xp transition-colors">Map</Link>
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
+            <h3 className="font-pixel t-text-dim text-xs mb-3">Visit</h3>
+            <div className="flex flex-col gap-2">
+              <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">Modpacks</Link>
+              <Link href="/bedrock" className="t-text-muted text-sm hover:text-xp transition-colors">Bedrock</Link>
+              <Link href="/version-catchup" className="t-text-muted text-sm hover:text-xp transition-colors">Versions</Link>
+              <Link href="/gallery" className="t-text-muted text-sm hover:text-xp transition-colors">Gallery</Link>
+            </div>
+          </div>
+
+          <div className="md:col-span-2">
             <h3 className="font-pixel t-text-dim text-xs mb-3">Connect</h3>
             <div className="flex flex-col gap-2">
+              <Link href="/news" className="t-text-muted text-sm hover:text-xp transition-colors">News</Link>
+              <Link href="/polls" className="t-text-muted text-sm hover:text-xp transition-colors">Polls</Link>
               <a href="https://discord.gg/3fyMmcSf4C" className="t-text-muted text-sm hover:text-xp transition-colors" target="_blank" rel="noopener noreferrer">Discord</a>
               <Link href="/modpacks" className="t-text-muted text-sm hover:text-xp transition-colors">CurseForge</Link>
             </div>

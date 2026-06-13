@@ -5,6 +5,7 @@ import Link from 'next/link';
 import CloudTitle from '@/components/CloudTitle';
 import { bosses, accentFor, tierLabel, lootTier, tierChip, bossByRaidKey, SHARED_MECHANICS, type Boss } from '@/lib/bossDisplay';
 import EventRunDetail from '@/components/EventRunDetail';
+import GearChip from '@/components/GearChip';
 import RecentPlunder from '@/components/RecentPlunder';
 
 type EventEntry = {
@@ -36,6 +37,7 @@ type EventRun = {
   duration_ms: number;
   winner: string | null;
   mvp: string | null;
+  gear_mode?: string | null;
   ended_at: number;
 };
 
@@ -280,6 +282,9 @@ export default function BossRushPage() {
                 const canExpand = typeof run.id === 'number';
                 const expanded = canExpand && expandedRun === run.id;
                 const duration = formatDuration(run.duration_ms);
+                // The Gauntlet (endless raid) always ends in a "wipe" by design —
+                // render it as "reached wave N", never as a failure.
+                const isGauntlet = run.raid === 'gauntlet';
                 return (
                   <div key={run.id ?? i} className="t-border-20 border-b last:border-b-0">
                     <button
@@ -290,18 +295,25 @@ export default function BossRushPage() {
                     >
                       <span
                         className={`font-pixel text-[10px] px-2 py-1 rounded shrink-0 ${
-                          run.cleared ? 'bg-xp/15 text-xp' : 'bg-redstone/15 text-redstone'
+                          isGauntlet
+                            ? 'bg-gold/15 text-gold'
+                            : run.cleared
+                              ? 'bg-xp/15 text-xp'
+                              : 'bg-redstone/15 text-redstone'
                         }`}
                       >
-                        {run.cleared ? 'Cleared' : 'Wiped'}
+                        {isGauntlet ? `Wave ${run.wave}` : run.cleared ? 'Cleared' : 'Wiped'}
                       </span>
                       {run.difficulty >= 1 && (
                         <span className="font-pixel text-[10px] px-2 py-1 rounded shrink-0 bg-violet-500/15 text-violet-300">
                           Pit {run.difficulty}
                         </span>
                       )}
+                      <GearChip mode={run.gear_mode} />
                       <span className="t-text-dim min-w-0 truncate">
-                        {boss ? (
+                        {isGauntlet ? (
+                          <>The Gauntlet</>
+                        ) : boss ? (
                           <>
                             <span aria-hidden>{boss.icon}</span> {boss.raid}
                           </>
@@ -310,7 +322,7 @@ export default function BossRushPage() {
                             {run.players} {run.players === 1 ? 'player' : 'players'}
                           </>
                         )}
-                        <span className="t-text-muted"> · wave {run.wave}</span>
+                        {!isGauntlet && <span className="t-text-muted"> · wave {run.wave}</span>}
                         {duration && <span className="t-text-muted max-md:hidden"> · {duration}</span>}
                       </span>
                       {run.mvp && (
@@ -410,12 +422,38 @@ export default function BossRushPage() {
             </p>
           </div>
 
+          {/* Raid Keys - player-started runs (server-side only; no keys API yet) */}
+          <div className="mc-panel p-5 mb-4 border-l-2 border-gold/50">
+            <div className="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
+              <h3 className="font-pixel text-gold text-xs">⚷ Raid Keys</h3>
+              <span className="font-pixel text-gold/80 text-[10px]">start your own raids</span>
+            </div>
+            <p className="t-text-muted text-[11px] mb-3 leading-snug">
+              Don&apos;t wait for an admin - every player carries a <span className="text-gold">Raid
+              Key</span>. Type <code className="text-gold">/event key</code> in game to open your key
+              board. Clear the six raids in order to climb; clear all six at a level and the next Pit
+              unlocks, all the way to Pit 5.
+            </p>
+            <p className="t-text-muted text-[11px] mb-3 leading-snug">
+              Starting a run costs money - <span className="t-text-dim">$150 × (Pit + 1)</span>, sunk
+              win or lose, 3 starts a day - and wiping a run at your key&apos;s level{' '}
+              <span className="text-redstone">depletes</span> the key one Pit until you win one back.
+              But joining someone else&apos;s run is always free, and everyone who fights in a clear
+              gets credit at their own level.
+            </p>
+            <p className="t-text-muted text-[11px] leading-snug">
+              Key runs pay out a bit less than admin events (money ×0.75, loot rolls unchanged) - and
+              like any raid, a wipe pays nothing. Watch chat for the ⚷ broadcast when someone opens a run.
+            </p>
+          </div>
+
           {/* How loot drops */}
           <div className="mc-panel p-5 mb-4">
             <h3 className="font-pixel t-text-dim text-xs mb-1">How loot drops</h3>
             <p className="t-text-muted text-[11px] mb-4">
-              Only on a clear - no clear, no loot (the money still pays). Nothing is guaranteed: a
-              clear can drop zero epics or a fistful.
+              It&apos;s clear or nothing: <span className="t-text-dim">a wiped raid pays no money and
+              drops no loot</span> - no participation floor, no bonuses. Even on a clear nothing is
+              guaranteed: it can drop zero epics or a fistful.
             </p>
             <div className="space-y-2.5 text-sm">
               <div className="flex gap-2.5">
@@ -450,7 +488,8 @@ export default function BossRushPage() {
             <h3 className="font-pixel t-text-dim text-xs mb-1">Payouts &amp; awards</h3>
             <p className="t-text-muted text-[11px] mb-4">
               Flat across every raid - the Pit scales them up (+15%/level), and only the loot tables
-              scale with difficulty otherwise.
+              scale with difficulty otherwise. <span className="t-text-dim">All of it pays only on a
+              clear - a wiped raid pays nothing.</span>
             </p>
             <div className="space-y-3 text-sm">
               <PayoutRow amount="$250 + 3 emeralds" label="Participation" who="everyone who joins and stays" />

@@ -10,6 +10,16 @@
     "icon": "star"
   },
   {
+    "name": "Events",
+    "description": "In-house. Boss Rush raids, TDM/FFA arena PvP, Pit difficulty, Pitforged loot. /event opens the hub.",
+    "icon": "swords"
+  },
+  {
+    "name": "Shop",
+    "description": "In-house. Server shop with daily-ticker pricing plus a player market. /shop and /market.",
+    "icon": "shopping-cart"
+  },
+  {
     "name": "mcMMO",
     "description": "19 skills with passive bonuses and active abilities. Full version, no lite mode.",
     "icon": "trending-up"

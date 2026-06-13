@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { lootTier } from '@/lib/bossDisplay';
+import GearChip from '@/components/GearChip';
 
 // Inline expansion for a single run/match. Fetches /api/events/run/{id} once when
 // mounted (i.e. when its row is expanded) and renders the score/kill-sorted roster
@@ -30,6 +31,7 @@ type RunDetail = {
   mode: string;
   cleared: boolean;
   difficulty: number;
+  gear_mode?: string | null; // KIT|BYOG|HARDCORE (1.7.0+); null on pre-feature rows
   roster: RosterRow[];
   loot: { name: string; item: string; tier: string }[];
 };
@@ -72,6 +74,18 @@ export default function EventRunDetail({ runId }: { runId: number }) {
 
   return (
     <div className="px-4 py-4 t-surface-light/40">
+      {/* Run-detail header shows the gear mode incl. the default KIT — the
+          parent row only flags BYOG/HARDCORE. */}
+      {run.gear_mode && (
+        <div className="flex items-center gap-2 mb-2">
+          <GearChip mode={run.gear_mode} showKit />
+          <span className="t-text-muted text-[10px]">
+            {run.gear_mode === 'KIT' && 'Gear provided - nothing at stake'}
+            {run.gear_mode === 'BYOG' && 'Own gear, no drops on death'}
+            {run.gear_mode === 'HARDCORE' && 'Own gear - deaths dropped inventories where players fell'}
+          </span>
+        </div>
+      )}
       <div className="overflow-x-auto">
         <table className="w-full text-xs border-collapse min-w-[34rem]">
           <thead>

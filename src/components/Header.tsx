@@ -7,23 +7,45 @@ import WeatherToggle from './WeatherToggle';
 import { useWeather } from './WeatherProvider';
 import { useTheme } from './ThemeProvider';
 
-const navLinks = [
+type NavLeaf = { href: string; label: string };
+type NavItem = NavLeaf | { label: string; children: NavLeaf[] };
+
+const navItems: NavItem[] = [
   { href: '/', label: 'Home' },
-  { href: '/about', label: 'About' },
-  { href: '/wanted', label: 'Wanted' },
-  { href: '/modpacks', label: 'Modpacks' },
-  { href: '/bedrock', label: 'Bedrock' },
-  { href: '/version-catchup', label: 'Versions' },
-  { href: '/map', label: 'BlueMap' },
-  { href: '/leaderboards', label: 'Leaderboards' },
-  { href: '/events', label: 'Events' },
-  // Economy: the /economy page is built but describes ship-day features (PiShop +
-  // the real economy). Uncomment on DatHost ship day — same gate as the Part 4
-  // news entries. Page lives at src/app/economy/page.tsx.
-  // { href: '/economy', label: 'Economy' },
-  { href: '/gallery', label: 'Gallery' },
-  { href: '/polls', label: 'Polls' },
-  { href: '/news', label: 'News' },
+  {
+    label: 'Server',
+    children: [
+      { href: '/about', label: 'About' },
+      { href: '/reputation', label: 'Reputation' },
+      { href: '/mcmmo', label: 'mcMMO' },
+      { href: '/wanted', label: 'Wanted' },
+    ],
+  },
+  {
+    label: 'Play',
+    children: [
+      { href: '/events', label: 'Events' },
+      { href: '/economy', label: 'Economy' },
+      { href: '/leaderboards', label: 'Leaderboards' },
+    ],
+  },
+  {
+    label: 'Join',
+    children: [
+      { href: '/modpacks', label: 'Modpacks' },
+      { href: '/bedrock', label: 'Bedrock' },
+      { href: '/version-catchup', label: 'Versions' },
+    ],
+  },
+  { href: '/map', label: 'Map' },
+  {
+    label: 'Community',
+    children: [
+      { href: '/gallery', label: 'Gallery' },
+      { href: '/polls', label: 'Polls' },
+      { href: '/news', label: 'News' },
+    ],
+  },
 ];
 
 function ServerStatus({ light }: { light?: boolean }) {
@@ -37,16 +59,24 @@ function ServerStatus({ light }: { light?: boolean }) {
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const [openMenu, setOpenMenu] = useState<string | null>(null);
   const { weather } = useWeather();
   const { theme } = useTheme();
   const isRaining = (weather === 'rain' || weather === 'thunderstorm') && theme === 'light';
 
   useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setIsOpen(false); };
+    if (!isOpen && !openMenu) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { setIsOpen(false); setOpenMenu(null); }
+    };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [isOpen]);
+  }, [isOpen, openMenu]);
+
+  const triggerClass = (active: boolean) =>
+    `flex items-center gap-1 px-3 py-1.5 text-[13px] hover-surface rounded-md transition-all duration-[1500ms] cursor-pointer ${
+      isRaining ? 'text-gray-200 hover:text-white' : `t-text-dim hover:t-text ${active ? 't-text' : ''}`
+    }`;
 
   return (
     <header
@@ -64,17 +94,63 @@ export default function Header() {
         </Link>
 
         <nav className="hidden lg:flex items-center gap-0.5">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`px-3 py-1.5 text-[13px] hover-surface rounded-md transition-all duration-[1500ms] ${
-                isRaining ? 'text-gray-200 hover:text-white' : 't-text-dim hover:t-text'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navItems.map((item) =>
+            'children' in item ? (
+              <div
+                key={item.label}
+                className="relative"
+                onMouseEnter={() => setOpenMenu(item.label)}
+                onMouseLeave={() => setOpenMenu(null)}
+              >
+                <button
+                  type="button"
+                  className={triggerClass(openMenu === item.label)}
+                  aria-haspopup="true"
+                  aria-expanded={openMenu === item.label}
+                  onClick={() => setOpenMenu(openMenu === item.label ? null : item.label)}
+                >
+                  {item.label}
+                  <svg
+                    width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+                    className={`transition-transform duration-200 ${openMenu === item.label ? 'rotate-180' : ''}`}
+                  >
+                    <path d="M6 9l6 6 6-6" />
+                  </svg>
+                </button>
+                {openMenu === item.label && (
+                  <div
+                    className={`absolute left-0 top-full min-w-[170px] rounded-md border backdrop-blur-md py-1 z-50 shadow-lg ${
+                      isRaining ? '' : 't-bg-95 t-border-30'
+                    }`}
+                    style={isRaining ? { backgroundColor: 'rgba(110, 120, 130, 0.96)', borderColor: 'rgba(90, 100, 110, 0.3)' } : undefined}
+                  >
+                    {item.children.map((c) => (
+                      <Link
+                        key={c.href}
+                        href={c.href}
+                        onClick={() => setOpenMenu(null)}
+                        className={`block px-4 py-2 text-[13px] hover-surface transition-all duration-[1500ms] ${
+                          isRaining ? 'text-gray-200 hover:text-white' : 't-text-dim hover:text-gold'
+                        }`}
+                      >
+                        {c.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`px-3 py-1.5 text-[13px] hover-surface rounded-md transition-all duration-[1500ms] ${
+                  isRaining ? 'text-gray-200 hover:text-white' : 't-text-dim hover:t-text'
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
 
         <div className="flex items-center gap-2 max-md:gap-1">
@@ -100,21 +176,41 @@ export default function Header() {
 
       {isOpen && (
         <nav
-          className={`lg:hidden backdrop-blur-md border-t transition-all duration-[1500ms] ${isRaining ? '' : 't-bg-95 t-border-30'}`}
+          className={`lg:hidden backdrop-blur-md border-t transition-all duration-[1500ms] max-h-[calc(100vh-3.5rem)] overflow-y-auto ${isRaining ? '' : 't-bg-95 t-border-30'}`}
           style={isRaining ? { backgroundColor: 'rgba(110, 120, 130, 0.95)', borderColor: 'rgba(90, 100, 110, 0.3)' } : undefined}
         >
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setIsOpen(false)}
-              className={`block px-4 py-3 text-sm hover-surface border-b transition-all duration-[1500ms] ${
-                isRaining ? 'text-gray-200 hover:text-white border-gray-500/20' : 't-text-dim hover:text-gold t-border-20'
-              }`}
-            >
-              {link.label}
-            </Link>
-          ))}
+          {navItems.map((item) =>
+            'children' in item ? (
+              <div key={item.label}>
+                <p className={`px-4 pt-3 pb-1 font-pixel text-[10px] uppercase tracking-wider ${isRaining ? 'text-gray-300' : 't-text-muted'}`}>
+                  {item.label}
+                </p>
+                {item.children.map((c) => (
+                  <Link
+                    key={c.href}
+                    href={c.href}
+                    onClick={() => setIsOpen(false)}
+                    className={`block px-6 py-2.5 text-sm hover-surface border-b transition-all duration-[1500ms] ${
+                      isRaining ? 'text-gray-200 hover:text-white border-gray-500/20' : 't-text-dim hover:text-gold t-border-20'
+                    }`}
+                  >
+                    {c.label}
+                  </Link>
+                ))}
+              </div>
+            ) : (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={() => setIsOpen(false)}
+                className={`block px-4 py-3 text-sm font-medium hover-surface border-b transition-all duration-[1500ms] ${
+                  isRaining ? 'text-gray-200 hover:text-white border-gray-500/20' : 't-text-dim hover:text-gold t-border-20'
+                }`}
+              >
+                {item.label}
+              </Link>
+            )
+          )}
         </nav>
       )}
     </header>
