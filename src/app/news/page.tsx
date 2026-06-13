@@ -6,6 +6,7 @@ const tagColors: Record<string, string> = {
   'Plugin Update': 'bg-enchant/10 text-enchant',
   'Rule Change': 'bg-redstone/10 text-redstone',
   'Map Expansion': 'bg-gold/10 text-gold',
+  'Site Update': 'bg-diamond/10 text-diamond',
 };
 
 export default function NewsPage() {

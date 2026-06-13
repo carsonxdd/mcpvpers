@@ -96,5 +96,12 @@
     "title": "Daily Login Rewards Are Live",
     "body": "Log in each day and get paid. Your first join of the day drops cash plus a haul of loot straight into your inventory — no command needed, it just lands a few seconds after you spawn.\n\nThe catch: it's a streak. Show up two days in a row and the payout climbs; day 1 starts at $100 and grows to $500 by a 14-day streak. Miss a day and the streak resets to 1, so keep it going. Hit a milestone day and you'll get bonus loot — and the whole server hears about it.\n\nRun /daily anytime to check your current streak, your best streak, and what tomorrow pays.",
     "tags": ["Plugin Update"]
+  },
+  {
+    "id": 15,
+    "date": "2026-06-13",
+    "title": "The Site Caught Up — Economy, Events & Deeper Profiles",
+    "body": "The website got a big update to match everything now live on the server. A few things worth a click:\n\nThere's a new Economy page that lays out how money works — the shop's daily price ticker, the player market, and where cash comes from and goes. The Events hub has full Boss Rush raid pages (every boss, Pit levels, and the loot tables) plus a PvP Arena page with payouts and live boards.\n\nPlayer profiles go a lot deeper now: click any name on the leaderboards to see that player's advancements, mcMMO skills, reputation, and event stats. The leaderboards themselves are split into Vanilla and Plugins sections with new boards — Balance, Power Level, Event Score, PvP Wins, and more.\n\nWe also tidied the navigation into a handful of menus instead of a wall of tabs, and every page is now linked in the footer. Have a look around.",
+    "tags": ["Site Update"]
   }
 ]
