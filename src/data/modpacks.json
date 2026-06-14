@@ -2,7 +2,7 @@
   "qol": {
     "name": "QoL Modpack",
     "description": "The full experience. Performance optimizations plus quality-of-life features that enhance gameplay without giving unfair advantages.",
-    "importCode": "vIV9yflY",
+    "importCode": "6AYd4IcO",
     "mods": [
       { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
       { "name": "Iris Shaders", "description": "Shader support compatible with Sodium", "featured": true, "category": "Visuals" },
@@ -42,7 +42,7 @@
   "potato": {
     "name": "FPS Boost",
     "description": "For machines that need every frame they can get. Performance first, minimal extras.",
-    "importCode": "zbmKZDVX",
+    "importCode": "iGaFuMve",
     "mods": [
       { "name": "Sodium", "description": "Modern rendering engine — massive FPS gains", "featured": true, "category": "Performance" },
       { "name": "Lithium", "description": "General-purpose game optimization", "featured": true, "category": "Performance" },
