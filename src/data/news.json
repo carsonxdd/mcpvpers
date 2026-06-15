@@ -1,5 +1,12 @@
 [
   {
+    "id": 17,
+    "date": "2026-06-14",
+    "title": "Shop Tuning — Selling Pays Less",
+    "body": "The server store just got a rebalance. Selling raw goods to the shop now pays about half of what it did before — buy prices haven't changed, so the gap between what you pay and what you get back is wider.\n\nWhy: the old sell rates were pumping too much money into the economy and feeding inflation. Trimming the payouts keeps cash worth something. If you want top dollar for your loot, the player market (/market) is still the place to set your own price.",
+    "tags": ["Plugin Update", "Rule Change"]
+  },
+  {
     "id": 16,
     "date": "2026-06-14",
     "title": "Survivors Rewarded — Totems Handed Out, Death Counts Wiped",
