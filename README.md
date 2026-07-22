@@ -154,11 +154,26 @@ Batch applying the 06-10 handoff updates (PiShop 1.3.0 / PiStatsAPI 1.11.0 / PiE
 - **Gear-mode chips everywhere events render** — shared `GearChip` component (profile's local copy replaced); BYOG/HARDCORE chips on the raid log and PvP match log rows, all-modes chip + description on the run-detail header and the live banner. PvP page gained a gear-modes explainer panel
 - **Live banner** — detects player key runs by the `/-key-p\d+$/` name suffix and swaps to "⚷ Player key run forming … anyone can join free!"
 
+## Multi-tenant platform (2026-07-21)
+
+The repo now doubles as a multi-tenant platform: other Minecraft server owners can sign up via Discord and get a branded site at `/s/[slug]` (home, rules, news, leaderboards), editable from `/dashboard`. The original mc.pvpers.us site is untouched — its pages moved verbatim into a `src/app/(pvpers)/` route group (URLs unchanged) with its own layout carrying `Header`/`Footer`/`MusicPlayer`; the root layout keeps only theme/weather/backgrounds, which tenant sites inherit for free. A tenant site has zero DB/auth dependency in the shared root layout, so if the platform's database is ever unreachable, the main pvpers site is unaffected — only `/dashboard`, `/login`, `/get-started`, and `/s/*` depend on it.
+
+- **Stack** — Auth.js v5 (`next-auth@5`, Discord OAuth, database sessions) + Drizzle ORM + Postgres (`docker-compose.yml`, container `mcpvpers-postgres`, host port **5435**). Migrations in `src/db/migrations/`, schema in `src/db/schema/` (Auth.js tables + `tenants`/`memberships` + `tenantRules`/`tenantNews`)
+- **Entitlements** — `src/lib/billing/plans.ts` is a pure, client-safe plan registry (`free`: 2 sites + live stats; `pro`: reserved, not yet purchasable). `sitesRemaining()` gates site creation
+- **Tenant resolution** — no middleware; the slug is a route param resolved via `src/lib/tenant-context.ts`. Reserved slugs are enforced in `src/lib/reserved-slugs.ts`
+- **Per-tenant stats proxy** — `src/app/api/s/[slug]/stats/[...path]/route.ts` mirrors the pvpers stats proxy (allowlist `server|players|leaderboard`, 30s revalidate) with SSRF guards in `src/lib/pistats-url.ts` (save-time + request-time host validation, since tenants supply their own PiStatsAPI URL)
+- **Dashboard** — `src/app/(platform)/` — sign in, site list, create/settings/rules/news/connection management per site. Server actions in `src/lib/actions/` all check the caller's role via `requireTenantRole` before writing
+- **Dev tooling** — `scripts/seed-test-tenant.ts` seeds a `testfall` tenant for local testing (`npx tsx scripts/seed-test-tenant.ts`)
+
 ## Getting Started
 
 ```bash
 # Install dependencies
 npm install
+
+# Start the platform's Postgres container (only needed for /dashboard, /login, /s/*)
+docker compose up -d postgres
+npm run db:migrate
 
 # Start development server
 npm run dev
@@ -167,11 +182,17 @@ npm run dev
 npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Open [http://localhost:3000](http://localhost:3000) in your browser. The original pvpers site works with no database at all — Postgres is only required for the multi-tenant dashboard and tenant sites.
 
 ## Environment
 
-No environment variables required for basic development. The stats proxy at `/api/stats/[...path]` defaults to the DatHost production PiStatsAPI endpoint (`http://stained.dathost.net:17249`); set `PISTATS_URL` to point at a different upstream (e.g. `http://localhost:8081` for the Pi dev mirror).
+No environment variables required for the base pvpers site. The stats proxy at `/api/stats/[...path]` defaults to the DatHost production PiStatsAPI endpoint (`http://stained.dathost.net:17249`); set `PISTATS_URL` to point at a different upstream (e.g. `http://localhost:8081` for the Pi dev mirror).
+
+The multi-tenant platform (`/dashboard`, `/login`, `/get-started`, `/s/*`) needs a few more, in `.env.local`:
+
+- `DATABASE_URL` — Postgres connection string (`postgres://mcpvpers:<password>@localhost:5435/mcpvpers` for the local `docker-compose.yml` setup)
+- `AUTH_SECRET`, `AUTH_URL` — Auth.js session secret and canonical origin
+- `AUTH_DISCORD_ID`, `AUTH_DISCORD_SECRET` — from a Discord app (developer portal) with redirect URI `<AUTH_URL>/api/auth/callback/discord`. Sign-in fails (redirects to Discord with a blank client id) until these are set
 
 ## Tech Stack
 
@@ -182,12 +203,18 @@ No environment variables required for basic development. The stats proxy at `/ap
 
 ## Project Structure
 
-- `src/app/` — Pages (file-based routing) and API routes under `src/app/api/`
-- `src/components/` — Reusable UI components
-- `src/lib/` — Shared logic: `launch.ts` (launch timestamp), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes), `eventsSnapshot.ts` (warm Boss Rush cache: role boards + summary + recent runs), `bossDisplay.ts` (shared boss/loot types, rarity colors, the `gearMode` KIT/BYOG/HARDCORE badge map, and helpers for the `/events` hub and per-raid pages)
+- `src/app/(pvpers)/` — The original mc.pvpers.us site (pages + its own layout: Header/Footer/Music). URLs unchanged from before the multi-tenant split
+- `src/app/(platform)/` — Multi-tenant dashboard: sign-in, site list, per-site settings/rules/news/connection editors
+- `src/app/s/[slug]/` — Public tenant sites (home, rules, news, leaderboards)
+- `src/app/api/` — API routes, including the pvpers stats proxy (`api/stats/`), the per-tenant stats proxy (`api/s/[slug]/stats/`), and the Auth.js handler (`api/auth/`)
+- `src/components/` — Reusable UI components; `src/components/tenant/` holds the tenant-site variants (thin, prop-driven)
+- `src/db/` — Drizzle schema (`schema/`) and migrations for the multi-tenant Postgres database
+- `src/lib/` — Shared logic: `launch.ts` (launch timestamp), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes), `eventsSnapshot.ts` (warm Boss Rush cache: role boards + summary + recent runs), `bossDisplay.ts` (shared boss/loot types, rarity colors, the `gearMode` KIT/BYOG/HARDCORE badge map, and helpers for the `/events` hub and per-raid pages), `auth/` (Auth.js config + session/role helpers), `actions/` (server actions for the dashboard), `billing/` (plan entitlements registry), `tenant-context.ts` / `tenant-config.ts` / `reserved-slugs.ts` / `pistats-url.ts` (tenant resolution + SSRF guards)
 - `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, future-polls, bosses). Wanted outlaws and reputation leaderboards are fetched live from the plugin via the stats proxy
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write
 - `public/` — Static assets (textures, audio, cursors)
+- `docker-compose.yml` — Local Postgres container for the multi-tenant platform
+- `scripts/` — One-off dev scripts (e.g. `seed-test-tenant.ts`)
 
 ## Credits
 
