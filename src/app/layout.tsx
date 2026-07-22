@@ -1,11 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
 import ParallaxBackground from '@/components/ParallaxBackground';
 import ParticleCanvas from '@/components/ParticleCanvas';
 import RainCanvas from '@/components/RainCanvas';
-import MusicPlayer from '@/components/MusicPlayer';
 import ThemeProvider from '@/components/ThemeProvider';
 import WeatherProvider from '@/components/WeatherProvider';
 
@@ -50,10 +47,7 @@ export default function RootLayout({
             <ParallaxBackground />
             <RainCanvas />
             <ParticleCanvas />
-            <Header />
-            <main className="relative z-20 flex-1 pt-14">{children}</main>
-            <Footer />
-            <MusicPlayer />
+            {children}
           </WeatherProvider>
         </ThemeProvider>
       </body>

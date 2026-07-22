@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: mcpvpers-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: mcpvpers
+      POSTGRES_PASSWORD: mcpvpers_dev_password
+      POSTGRES_DB: mcpvpers
+      PGDATA: /var/lib/postgresql/data/pgdata
+    command: ["postgres", "-c", "shared_buffers=64MB"]
+    ports:
+      # Host port 5435: 5432 = pantryapp, 5433 = EMS, 5434 = gamenight.
+      - "5435:5432"
+    volumes:
+      - mcpvpers-postgres-data:/var/lib/postgresql/data
+    # Keep the footprint small on the Pi, where this runs beside the site + Redis.
+    mem_limit: 256m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U mcpvpers -d mcpvpers"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  mcpvpers-postgres-data:
+    name: mcpvpers-postgres-data
