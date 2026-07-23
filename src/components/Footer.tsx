@@ -55,6 +55,16 @@ export default function Footer() {
           </div>
         </div>
 
+        <div className="mt-8 pt-4 t-border-20 border-t text-center">
+          <p className="t-text-muted-60 text-xs">
+            Run a Minecraft server?{' '}
+            <Link href="/get-started" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
+              Get a site like this one
+            </Link>
+            {' '}— free.
+          </p>
+        </div>
+
         <div className="mt-8 pt-4 t-border-20 border-t flex flex-col sm:flex-row items-center justify-between gap-2">
           <p className="t-text-muted-60 text-xs">
             &copy; {new Date().getFullYear()} mc.pvpers.us. Not affiliated with Mojang Studios.

@@ -15,9 +15,14 @@ export default async function PlatformLayout({
     <>
       <header className="fixed top-0 left-0 right-0 z-40 t-surface backdrop-blur border-b border-white/10">
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-4">
-          <Link href="/get-started" className="font-pixel text-xs text-gold">
-            Server Sites
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link href="/get-started" className="font-pixel text-xs text-gold">
+              Server Sites
+            </Link>
+            <Link href="/" className="font-pixel text-[10px] t-text-muted hover:text-gold">
+              &larr; mc.pvpers.us
+            </Link>
+          </div>
           <div className="flex items-center gap-4">
             {user ? (
               <>

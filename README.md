@@ -165,6 +165,16 @@ The repo now doubles as a multi-tenant platform: other Minecraft server owners c
 - **Dashboard** — `src/app/(platform)/` — sign in, site list, create/settings/rules/news/connection management per site. Server actions in `src/lib/actions/` all check the caller's role via `requireTenantRole` before writing
 - **Dev tooling** — `scripts/seed-test-tenant.ts` seeds a `testfall` tenant for local testing (`npx tsx scripts/seed-test-tenant.ts`)
 
+## Cross-linking the flagship site and the platform (2026-07-22)
+
+The multi-tenant platform launched live but was undiscoverable from mc.pvpers.us itself — no nav, footer, or home page mentioned it, and `/get-started` had no way back to the flagship site either. Closed the loop in both directions:
+
+- **`src/app/(pvpers)/page.tsx`** — new closing section on the home page ("Run a server of your own?") pitching the platform with a CTA button to `/get-started`, styled to match the existing `/reputation`/`/mcmmo`/`/wanted` button pattern
+- **`src/components/Footer.tsx`** — added a line above the copyright ("Run a Minecraft server? Get a site like this one — free.") linking to `/get-started`
+- **`src/app/(platform)/layout.tsx`** — added a small "← mc.pvpers.us" link next to the "Server Sites" brand mark so visitors on `/get-started`, `/login`, and the dashboard can navigate back to the flagship site
+
+All other pvpers pages (Reputation, mcMMO, Events, Economy, Modpacks, etc.) describe the actual game server and were left untouched — they're not about the platform.
+
 ## Getting Started
 
 ```bash

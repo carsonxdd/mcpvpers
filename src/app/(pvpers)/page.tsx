@@ -126,6 +126,28 @@ export default function Home() {
           </p>
         </CloudText>
       </section>
+
+      <GrassDivider />
+
+      {/* Platform cross-promo */}
+      <section className="max-w-3xl mx-auto px-4 py-16 text-center">
+        <CloudTitle>
+          <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Run a server of your own?</h2>
+        </CloudTitle>
+        <CloudText>
+          <p className="t-text-dim leading-relaxed mb-6">
+            This site runs on a platform we built for server owners: a branded home page, rules,
+            news, and live stats, all editable from a dashboard — no files, no redeploys. Free for
+            up to two sites.
+          </p>
+        </CloudText>
+        <a
+          href="/get-started"
+          className="inline-block mc-panel px-6 py-3 font-pixel text-gold text-xs glow-gold hover-surface"
+        >
+          Get your own site &rarr;
+        </a>
+      </section>
     </div>
   );
 }
