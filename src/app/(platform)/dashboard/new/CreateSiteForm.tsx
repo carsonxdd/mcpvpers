@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useActionState, useState } from 'react';
 import { createTenant, type ActionState } from '@/lib/actions/tenant';
 import { slugify } from '@/lib/reserved-slugs';
@@ -86,6 +87,12 @@ export default function CreateSiteForm() {
       >
         {pending ? 'Creating…' : 'Create site'}
       </button>
+      <p className="t-text-muted text-xs">
+        By creating a site, you agree to the{' '}
+        <Link href="/legal/terms" target="_blank" className="underline hover:text-gold">
+          Terms of Service &amp; Acceptable Use Policy
+        </Link>.
+      </p>
     </form>
   );
 }

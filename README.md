@@ -175,6 +175,13 @@ The multi-tenant platform launched live but was undiscoverable from mc.pvpers.us
 
 All other pvpers pages (Reputation, mcMMO, Events, Economy, Modpacks, etc.) describe the actual game server and were left untouched — they're not about the platform.
 
+## Terms of Service, backups, and abuse controls (2026-07-24)
+
+Closed two gaps before pointing strangers at the platform: no legal terms anywhere, and no backup of the one Postgres volume every tenant's data lives in.
+
+- **`/legal/terms`** — minimal Terms of Service + Acceptable Use Policy (what the service is, account/content responsibilities, prohibited content, as-is/no-warranty availability, contact). Linked from the platform footer, the create-site form ("by creating a site, you agree to..."), and the pvpers site footer. `terms`, `legal`, and `privacy` added to `RESERVED` in `src/lib/reserved-slugs.ts` so a tenant can't claim them
+- **`scripts/backup-postgres.sh`** — daily `pg_dump` of the `mcpvpers-postgres` container via `docker exec`, gzipped, 14-day retention (configurable via `BACKUP_DIR`/`RETENTION_DAYS` env vars). Deployed and cron'd on the Pi: `10 3 * * *` → `~/backups/mcpvpers-postgres/`, logged to `~/projects/mcpvpers/backup.log`. Restore with `gunzip -c mcpvpers-<date>.sql.gz | docker exec -i mcpvpers-postgres psql -U mcpvpers mcpvpers`
+
 ## Getting Started
 
 ```bash
@@ -224,7 +231,7 @@ The multi-tenant platform (`/dashboard`, `/login`, `/get-started`, `/s/*`) needs
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write
 - `public/` — Static assets (textures, audio, cursors)
 - `docker-compose.yml` — Local Postgres container for the multi-tenant platform
-- `scripts/` — One-off dev scripts (e.g. `seed-test-tenant.ts`)
+- `scripts/` — One-off dev scripts (`seed-test-tenant.ts`) and ops scripts (`backup-postgres.sh`, cron'd on the Pi)
 
 ## Credits
 

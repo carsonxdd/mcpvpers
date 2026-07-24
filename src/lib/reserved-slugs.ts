@@ -13,15 +13,18 @@ const RESERVED = new Set([
   "docs",
   "get-started",
   "help",
+  "legal",
   "login",
   "logout",
   "mc-pvpers",
   "official",
+  "privacy",
   "pvpers",
   "s",
   "settings",
   "staff",
   "support",
+  "terms",
   "www",
 ]);
 

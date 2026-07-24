@@ -52,6 +52,11 @@ export default async function PlatformLayout({
         </div>
       </header>
       <main className="relative z-20 flex-1 pt-14">{children}</main>
+      <footer className="relative z-20 py-6 text-center">
+        <Link href="/legal/terms" className="font-pixel text-[10px] t-text-muted hover:text-gold">
+          Terms of Service &amp; Acceptable Use
+        </Link>
+      </footer>
     </>
   );
 }
