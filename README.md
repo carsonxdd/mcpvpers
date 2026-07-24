@@ -182,6 +182,10 @@ Closed two gaps before pointing strangers at the platform: no legal terms anywhe
 - **`/legal/terms`** — minimal Terms of Service + Acceptable Use Policy (what the service is, account/content responsibilities, prohibited content, as-is/no-warranty availability, contact). Linked from the platform footer, the create-site form ("by creating a site, you agree to..."), and the pvpers site footer. `terms`, `legal`, and `privacy` added to `RESERVED` in `src/lib/reserved-slugs.ts` so a tenant can't claim them
 - **`scripts/backup-postgres.sh`** — daily `pg_dump` of the `mcpvpers-postgres` container via `docker exec`, gzipped, 14-day retention (configurable via `BACKUP_DIR`/`RETENTION_DAYS` env vars). Deployed and cron'd on the Pi: `10 3 * * *` → `~/backups/mcpvpers-postgres/`, logged to `~/projects/mcpvpers/backup.log`. Restore with `gunzip -c mcpvpers-<date>.sql.gz | docker exec -i mcpvpers-postgres psql -U mcpvpers mcpvpers`
 
+## Discord sign-in fixed in production (2026-07-24)
+
+The platform had been live since 2026-07-21 with no working Discord sign-in: the Pi's `.env.local` only ever had `DATABASE_URL` and `AUTH_SECRET`, so `AUTH_URL`/`AUTH_DISCORD_ID`/`AUTH_DISCORD_SECRET` were unset and every "Sign in with Discord" click hit Discord with `client_id=undefined`. Created a Discord app with both the local (`http://localhost:3004/...`) and prod (`https://mc.pvpers.us/...`) callback URIs registered, filled in `.env.local` on the Pi and locally, and restarted the `mcpvpers` pm2 process with `--update-env`. Sign-in now reaches Discord's real authorize screen. Noted here since it means `/get-started` → `/login` was a dead end for anyone who tried it in that window.
+
 ## Getting Started
 
 ```bash
