@@ -21,6 +21,7 @@ export default function Footer() {
               <Link href="/reputation" className="t-text-muted text-sm hover:text-xp transition-colors">Reputation</Link>
               <Link href="/mcmmo" className="t-text-muted text-sm hover:text-xp transition-colors">mcMMO</Link>
               <Link href="/wanted" className="t-text-muted text-sm hover:text-xp transition-colors">Wanted</Link>
+              <Link href="/plugins" className="t-text-muted text-sm hover:text-xp transition-colors">Plugins</Link>
             </div>
           </div>
 

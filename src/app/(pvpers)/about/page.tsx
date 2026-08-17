@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import Link from 'next/link';
 import rules from '@/data/rules.json';
 import plugins from '@/data/plugins.json';
 import GrassDivider from '@/components/GrassDivider';
@@ -393,18 +394,42 @@ export default function AboutPage() {
         <CloudText className="mb-8">
           <p className="t-text-dim leading-relaxed text-center text-sm">
             The ones marked <strong className="t-text">in-house</strong> were written by carsonxd
-            specifically for this server. The rest are community plugins
-            (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, BlueMap).
+            specifically for this server — the fifteen <strong className="t-text">Frontier</strong>{' '}
+            plugins are now open-source and released for anyone to run. The rest are community
+            plugins (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, BlueMap).
+          </p>
+          <p className="t-text-dim leading-relaxed text-center text-sm mt-3">
+            Every Frontier plugin has a full reference page — commands, permissions and every config
+            key — in{' '}
+            <Link
+              href="/plugins"
+              className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2"
+            >
+              the suite wiki
+            </Link>
+            .
           </p>
         </CloudText>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-          {plugins.map((plugin) => (
-            <div key={plugin.name} className="inventory-slot p-3">
-              <p className="font-pixel t-text text-[10px] mb-1">{plugin.name}</p>
-              <p className="t-text-muted text-xs leading-snug">{plugin.description}</p>
-            </div>
-          ))}
+          {plugins.map((plugin) =>
+            plugin.href ? (
+              <Link key={plugin.name} href={plugin.href} className="inventory-slot p-3 block">
+                <p className="font-pixel text-gold text-[10px] mb-1 leading-relaxed">
+                  {plugin.name}
+                </p>
+                <p className="t-text-muted text-xs leading-snug">{plugin.description}</p>
+              </Link>
+            ) : (
+              <div key={plugin.name} className="inventory-slot p-3">
+                <p className="font-pixel t-text text-[10px] mb-1 leading-relaxed">{plugin.name}</p>
+                <p className="t-text-muted text-xs leading-snug">{plugin.description}</p>
+              </div>
+            )
+          )}
         </div>
+        <p className="t-text-muted text-xs text-center mt-6">
+          Gold names link to their wiki page.
+        </p>
       </section>
 
       <GrassDivider />

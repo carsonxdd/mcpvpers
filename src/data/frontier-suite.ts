@@ -1,0 +1,1232 @@
+// The Frontier Suite — structured wiki data.
+// Source of truth: SUITE.md at the repo root. Keep the two in sync when a plugin ships.
+//
+// Rendering notes: string fields support a tiny inline syntax handled by
+// <Rich /> (src/components/wiki/Rich.tsx) — `code` and **bold**.
+// Config keys are auto-grouped in the UI by the segment before the first `.`,
+// so key order here only matters inside a group.
+
+export type SuiteCommand = { cmd: string; who: string; what: string };
+export type SuitePermission = { node: string; def: string; grants: string };
+export type SuiteConfigKey = { key: string; def: string; what: string };
+export type SuiteRoute = { group: string; routes: string; needs: string };
+
+export type PluginCategory =
+  | 'Flagship'
+  | 'Infrastructure'
+  | 'World'
+  | 'QoL'
+  | 'PvP'
+  | 'Ops';
+
+export type FrontierPlugin = {
+  slug: string;
+  name: string;
+  short: string;
+  version: string;
+  tagline: string;
+  category: PluginCategory;
+  kind: string;
+  oneLine: string;
+  what: string[];
+  requires: string;
+  optional: string;
+  usedBy: string;
+  hardDep: string | null;
+  commands: SuiteCommand[];
+  commandsNote?: string;
+  permissions: SuitePermission[];
+  permissionsNote?: string;
+  configPath: string;
+  configReload: string;
+  config: SuiteConfigKey[];
+  routes?: SuiteRoute[];
+  routesNote?: string;
+  notes: string[];
+  modrinth: string;
+  github: string;
+  /** Deep links to the pvpers pages that show this plugin running live. */
+  liveOnSite?: { href: string; label: string }[];
+};
+
+export const SUITE_GITHUB = 'https://github.com/carsonxdd/frontier';
+
+export const suiteMeta = {
+  paper: 'Paper 26.2+',
+  java: 'Java 25+',
+  license: 'MIT',
+  count: 15,
+  requirements:
+    'Every plugin needs Paper **26.2+** and Java **25+**. Spigot is not supported. Each GitHub Release attaches all 15 jars; Modrinth links go live with v1.0.0.',
+  thirdParty: [
+    {
+      name: 'Vault',
+      href: 'https://github.com/MilkBowl/Vault',
+      what: 'Economy bridge. Needed by Shop (effectively required), and used by Reputation and Events for money payouts. Any Vault-registered economy works — EssentialsX is what we test against.',
+    },
+    {
+      name: 'LuckPerms',
+      href: 'https://luckperms.net',
+      what: 'Any permissions plugin works. Every node in the suite follows `frontier.<plugin>.<action>`, and wildcards like `frontier.reputation.*` behave as expected.',
+    },
+    {
+      name: 'mcMMO',
+      href: 'https://www.spigotmc.org/resources/64348/',
+      what: '2.3+. Optional. Unlocks the pacifist war-mode XP boost in Reputation and the `power_level` leaderboard plus per-skill detail in StatsAPI.',
+    },
+  ],
+  installOrder: [
+    {
+      step: '1',
+      head: 'FrontierTab first',
+      body: 'It is the playtime store the rest of the suite reads. Then FrontierBorder, and the no-dependency QoL trio — FrontierGraves, FrontierMail, FrontierTrade. Instant quality of life, nothing else needed.',
+    },
+    {
+      step: '2',
+      head: 'Vault + an economy',
+      body: 'Then FrontierShop and FrontierReputation. Without an economy the shop GUIs still open but every transaction is refused, and Reputation quietly skips its money payouts.',
+    },
+    {
+      step: '3',
+      head: 'FrontierEvents',
+      body: 'Once you have somewhere to build arenas. It runs inside your normal survival world — you do not need a separate map.',
+    },
+    {
+      step: '4',
+      head: 'FrontierStatsAPI',
+      body: 'Only if a website or bot will consume it. It opens an HTTP port with no authentication, so firewall it or put it behind a reverse proxy.',
+    },
+    {
+      step: '5',
+      head: 'Everything else, anytime',
+      body: 'The locks, Heads, EnderTracker, Backup and Announcements have no dependencies and no ordering requirements.',
+    },
+  ],
+  installHow:
+    'Drop the jars in `plugins/`, then do a **full restart** — never `/reload`, and never overwrite a jar while the server is running. Edit `plugins/Frontier<Name>/config.yml`, then use that plugin’s reload subcommand where one exists (each plugin page lists whether it has one).',
+  permissionsPrimer:
+    'Player features default to **true**, staff features to **op**. Every node follows `frontier.<plugin>.<action>`, so a LuckPerms setup is e.g. `lp group default permission set frontier.shop.use true`. Wildcards work: `frontier.reputation.*`.',
+  timezonePrimer:
+    'Several plugins have a "midnight" — the shop ticker rollover, daily deals, black-market windows, daily login rewards, the border expansion hour. They all read the JVM’s default timezone. **FrontierBorder’s `server-timezone`** sets that for the entire server (`America/New_York`, `Europe/Berlin`, … or `system` to leave the host’s alone). Set it once, before anything else.',
+  dataFlow: [
+    'FrontierTab → playtime → FrontierBorder, FrontierReputation, FrontierStatsAPI',
+    'FrontierEvents → "are they in an event?" → FrontierGraves, FrontierTab, FrontierReputation',
+    'FrontierShop / FrontierReputation / FrontierEvents → deliver items → FrontierMail',
+    'FrontierBorder → server timezone → every plugin’s "midnight"',
+    'FrontierBorder, Reputation, Events, Shop, mcMMO → read off disk → FrontierStatsAPI',
+  ],
+};
+
+export const plugins: FrontierPlugin[] = [
+  // ───────────────────────────────────────────────────────── Reputation
+  {
+    slug: 'reputation',
+    name: 'FrontierReputation',
+    short: 'Reputation',
+    version: '1.7.2',
+    tagline: 'Wild West reputation, bounties, wanted posters and daily login rewards.',
+    category: 'Flagship',
+    kind: 'Flagship · economy/social',
+    oneLine:
+      'Wild West reputation: outlaws, lawmen, bounties, wanted posters, marshals, `/pvp` war mode, daily rewards',
+    what: [
+      'Every player is in one of four states: **Pacifist** (the default — cannot die from PvP, gets knocked out at 1 HP and robbed instead), **Lawman** (a five-tier ladder from Citizen to Marshal, entered by killing an outlaw and taking the badge), **Outlaw** (Drifter to Legend of the Frontier, listed on `/wanted` and bounty-able) or **Retired**.',
+      'Rep is never negative — three independent pools (outlaw / peaceful / violence) grow from actions, and the lawman ladder needs *both* peaceful and violence rep plus a number of unique commenders, so a pure builder and a pure killer both cap at Citizen. Self-defense is free (a kill within 30 s of being hit by the victim earns no outlaw rep), outlaw-on-outlaw kills are neutral rivalry, and there is deliberately no revenge timer — revenge is served through the existing bounty, report, badge and hot-revenge paths.',
+      'Bounties are item-escrow placed by Senior Sheriffs, funded by a `/donate` treasury; players run justice themselves through reports, commendations, restitution and pardons, each with anti-abuse caps. A streak-based daily login reward (money + item kits) rounds it out. Tuned for a friend-group server of roughly 10–20 active players.',
+    ],
+    requires:
+      'Paper 26.2+, Java 25+, **FrontierTab** — hard dependency, provides the tab/chat tier prefixes. The plugin will not load without it.',
+    optional:
+      'Vault + an economy (daily-reward money and rep-reward payouts; skipped without it) · FrontierMail (daily-reward overflow items go to `/mailbox` instead of dropping at your feet) · FrontierEvents (arena/event combat is exempt from all reputation effects) · mcMMO (XP boost while PvP-effective) · FrontierBorder (its `server-timezone` sets the "midnight" used by daily/weekly resets) · any claim plugin that cancels PvP damage (Lands, WorldGuard, GriefPrevention — inside PvP-denied claims the rep system does nothing)',
+    usedBy:
+      'FrontierStatsAPI (reads `data.db` for leaderboards, wanted posters, profiles, economy and streaks) · FrontierTab (displays the tier prefixes)',
+    hardDep: 'FrontierTab',
+    commands: [
+      { cmd: '/rep [help]', who: 'Everyone', what: 'Rules summary (states, redemption paths, key commands); shown automatically on first join' },
+      { cmd: '/whois <player>', who: 'Everyone', what: 'Full reputation lookup — state, rep pools, tiers, recent crimes; self-view while Outlaw appends the redemption path' },
+      { cmd: '/wanted [player]', who: 'Everyone', what: 'Top-5 outlaws by tier, or one player’s wanted poster' },
+      { cmd: '/badge <yes|no>', who: 'Everyone', what: 'Accept or decline the Deputy badge after your first outlaw kill' },
+      { cmd: '/commend <player> <reason>', who: 'Everyone', what: 'Award peaceful rep (uses a charge; charges accrue from playtime; 6 h cooldown per recipient)' },
+      { cmd: '/commend list [player]', who: 'Everyone', what: 'Commendations you (or another player) received — commender, reason, date' },
+      { cmd: '/donate', who: 'Everyone', what: 'Open the donation chest; items fund the bounty treasury, donors earn capped peaceful rep' },
+      { cmd: '/donate log [count] | pool | top', who: 'Everyone', what: 'Donation ledger, current pool contents, top donors' },
+      { cmd: '/report <player> <reason>', who: 'Everyone', what: 'File a complaint (needs `reports.reporter_min_playtime_hours` playtime; 24 h cooldown per target)' },
+      { cmd: '/report list|view|approve|deny|reverse …', who: 'Deputy+', what: 'Adjudicate reports; false reports cost the reporter peaceful rep' },
+      { cmd: '/bounty [list]', who: 'Everyone', what: 'Active bounties' },
+      { cmd: '/bounty track <player>', who: 'Everyone', what: 'Tracking compass toward a wanted outlaw (cooldown + accuracy fuzz from config)' },
+      { cmd: '/bounty treasury', who: 'Everyone', what: 'Read-only Sheriff’s Office treasury (pool value / reserved / available)' },
+      { cmd: '/bounty place <player>', who: 'Senior Sheriff+', what: '9-slot item-escrow GUI on an outlaw; closing commits, closing empty cancels; pays the killer, refunds on pardon or 30-day inactivity' },
+      { cmd: '/daily', who: 'Everyone', what: 'Daily login streak status (current/best streak, claimed today?, tomorrow’s payout); the reward itself is granted automatically ~3 s after your first join each day' },
+      { cmd: '/pvp [on|off|status]', who: 'Pacifist / Retired', what: 'Opt into PvP ("warmode"); default off, 30-min toggle cooldown, refused while combat-tagged; Outlaws and Lawmen are always on' },
+      { cmd: '/restitution <victim>', who: 'Outlaws only', what: '27-slot UI to return stolen items (online victim → inventory, offline → mailbox); +peaceful rep per stack, gated on a logged crime' },
+      { cmd: '/pardon <player>', who: 'Sheriff+', what: 'Reduce outlaw rep — Sheriff −25 %, Senior Sheriff −50 %, Marshal −100 %; refunds active bounties; pacifist-kill rep is floored' },
+      { cmd: '/marshal grant-rep <player> <amount> <reason>', who: 'Marshal / Admin', what: 'Admin-light rep adjustment' },
+      { cmd: '/marshal audit <player> | audit-by <player>', who: 'Marshal / Admin', what: 'Corruption-detection trail of lawman actions' },
+      { cmd: '/repadmin reload', who: 'Admin', what: 'Re-read `config.yml` live' },
+      { cmd: '/repadmin setrep <player> <outlaw|peaceful|violence> <amount>', who: 'Admin', what: 'Manually set a rep pool' },
+      { cmd: '/repadmin state <player> <PACIFIST|LAWMAN|OUTLAW|RETIRED>', who: 'Admin', what: 'Manually set a state' },
+      { cmd: '/repadmin reset-rep <player> confirm', who: 'Admin', what: 'Emergency full wipe to new-player state (refunds bounties, deletes crimes/reports/commendations against the target; audit logs kept)' },
+    ],
+    commandsNote:
+      'Tier gates (Deputy+, Sheriff+, Senior Sheriff+, Marshal) are enforced in code by lawman tier — the permission nodes below are all granted to everyone except the two admin nodes.',
+    permissions: [
+      { node: 'frontier.reputation.rep', def: 'true', grants: '`/rep`' },
+      { node: 'frontier.reputation.whois', def: 'true', grants: '`/whois`' },
+      { node: 'frontier.reputation.wanted', def: 'true', grants: '`/wanted`' },
+      { node: 'frontier.reputation.badge', def: 'true', grants: '`/badge`' },
+      { node: 'frontier.reputation.commend', def: 'true', grants: '`/commend` (award + list)' },
+      { node: 'frontier.reputation.donate', def: 'true', grants: '`/donate` (UI + log/pool/top)' },
+      { node: 'frontier.reputation.report', def: 'true', grants: '`/report` — filing; adjudication gated by lawman tier in code' },
+      { node: 'frontier.reputation.bounty', def: 'true', grants: '`/bounty` — placement gated Senior Sheriff+ in code' },
+      { node: 'frontier.reputation.daily', def: 'true', grants: '`/daily`' },
+      { node: 'frontier.reputation.pvp', def: 'true', grants: '`/pvp` opt-in toggle' },
+      { node: 'frontier.reputation.restitution', def: 'true', grants: '`/restitution` — outlaws only, checked in code' },
+      { node: 'frontier.reputation.pardon', def: 'true', grants: '`/pardon` — Sheriff+ checked in code' },
+      { node: 'frontier.reputation.marshal', def: 'true', grants: '`/marshal` — Marshal tier or admin, checked in code' },
+      { node: 'frontier.reputation.admin', def: 'op', grants: '`/repadmin`, plus admin bypass of the tier gate on `/marshal`' },
+      { node: 'frontier.reputation.combat.bypass', def: 'op', grants: 'Bypass the combat-tag teleport-command block' },
+    ],
+    permissionsNote:
+      'Legacy `pireputation.*` nodes are declared as children of the matching `frontier.reputation.*` nodes, so old permission grants keep working.',
+    configPath: 'plugins/FrontierReputation/config.yml',
+    configReload: '`/repadmin reload` — never use Bukkit `/reload`, it wipes in-memory knockout and provocation state',
+    config: [
+      { key: 'ladders.outlaw.<tier>', def: 'drifter 25 / bandit 75 / outlaw 175 / notorious 350 / legend 600', what: 'One entry per outlaw tier, fields: `rep` (threshold), `multiplier` (bounty multiplier 1.0 → 3.0), `title`' },
+      { key: 'ladders.lawman.<tier>', def: 'citizen 30/5/0 · deputy 80/25/2 · sheriff 200/80/4 · senior_sheriff 400/180/5 · marshal 700/350/6', what: 'One entry per lawman tier, fields: `peaceful`, `violence`, `unique_commenders`, `title`' },
+      { key: 'rep_actions.outlaw.unprovoked_kill_pacifist', def: '50', what: 'Outlaw rep for an unprovoked kill of a Pacifist' },
+      { key: 'rep_actions.outlaw.unprovoked_kill_lawman', def: '15', what: '…of a Lawman' },
+      { key: 'rep_actions.outlaw.unprovoked_kill_outlaw', def: '0', what: '…of an Outlaw (outlaw-vs-outlaw is rivalry, not crime)' },
+      { key: 'rep_actions.outlaw.unprovoked_kill_newcomer', def: '75', what: '…of a player still under newcomer protection (worse than a normal pacifist kill)' },
+      { key: 'rep_actions.outlaw.villager_kill', def: '3', what: 'Killing a villager' },
+      { key: 'rep_actions.outlaw.village_structure_break', def: '2', what: 'Breaking village structures' },
+      { key: 'rep_actions.outlaw.farm_mob_kill', def: '1', what: 'Killing farm animals' },
+      { key: 'rep_actions.outlaw.donation_chest_theft_per_stack', def: '5', what: 'Stealing from the donation chest, per stack' },
+      { key: 'rep_actions.outlaw.pet_kill', def: '1', what: 'Killing a tamed mob owned by someone else' },
+      { key: 'rep_actions.lawman_peaceful.online_hour_clean', def: '0.5', what: 'Peaceful rep per clean online hour' },
+      { key: 'rep_actions.lawman_peaceful.commend_received', def: '10', what: 'Peaceful rep per commendation received' },
+      { key: 'rep_actions.lawman_peaceful.restitution_stack', def: '5', what: 'Peaceful rep per stack returned via `/restitution`' },
+      { key: 'rep_actions.lawman_peaceful.defend_player', def: '3', what: 'Peaceful rep for defending another player' },
+      { key: 'rep_actions.lawman_peaceful.report_approved', def: '2', what: 'Peaceful rep when your report is approved' },
+      { key: 'rep_actions.lawman_violence.kill_<tier>', def: 'drifter 10 / bandit 20 / outlaw 40 / notorious 75 / legend 150', what: 'Violence rep for killing an outlaw of each tier' },
+      { key: 'rep_actions.lawman_violence.assist_pct', def: '25', what: 'Percent of the kill’s violence rep credited to assisting attackers' },
+      { key: 'donations.enabled', def: 'true', what: 'Enable the `/donate` chest and treasury' },
+      { key: 'donations.weekly_rep_cap_per_donor', def: '10', what: 'Max peaceful rep a donor can earn per week' },
+      { key: 'donations.outlaws_can_earn_rep', def: 'false', what: 'Outlaws can deposit but earn no rep' },
+      { key: 'donations.item_values.<MATERIAL>', def: 'DIAMOND 0.5, NETHERITE_SCRAP 1.0, NETHERITE_INGOT 4.0, EMERALD 0.25, GOLD_INGOT 0.1, IRON_INGOT 0.05, COOKED_BEEF/BREAD 0.02, OAK/SPRUCE/BIRCH_LOG 0.01', what: 'Diamond-equivalent value per material (drives donation rep, theft rep, restitution rep, treasury value)' },
+      { key: 'restitution.require_logged_crime', def: 'true', what: 'Restitution rep only if the outlaw has a logged crime against the victim (items still deliver either way)' },
+      { key: 'restitution.rep_per_diamond_equivalent', def: '10', what: 'Value ceiling on restitution rep (stops dirt wash-trading)' },
+      { key: 'reports.enabled', def: 'true', what: 'Enable `/report`' },
+      { key: 'reports.reporter_min_playtime_hours', def: '2', what: 'Playtime needed before you can file a report' },
+      { key: 'reports.pending_expiry_days', def: '7', what: 'Unadjudicated reports expire after this' },
+      { key: 'reports.reporter_cooldown_per_target_hours', def: '24', what: 'One report per target per this window' },
+      { key: 'reports.false_report_penalty', def: '-10', what: 'Peaceful rep change for a denied/false report' },
+      { key: 'reports.reverse_window_hours', def: '24', what: 'Window in which an approved report can be reversed' },
+      { key: 'reports.severity_rep.{minor,moderate,serious}', def: '5 / 20 / 50', what: 'Outlaw rep added on approval, by severity' },
+      { key: 'commend.enabled', def: 'true', what: 'Enable `/commend`' },
+      { key: 'commend.same_recipient_cooldown_hours', def: '6', what: 'Cooldown before commending the same player again' },
+      { key: 'commend.anti_trade_cooldown_hours', def: '6', what: 'Blocks A→B then B→A commend trades within this window' },
+      { key: 'commend.list_limit', def: '10', what: 'Rows shown by `/commend list`' },
+      { key: 'ladder_requirements.unique_commenders_window_days', def: '90', what: 'Commendations older than this don’t count toward the unique-commender gate' },
+      { key: 'ladder_requirements.enforce_unique_commenders', def: 'true', what: 'Set false to disable unique-commender gating on the lawman ladder' },
+      { key: 'caps.online_clean_rep_per_day', def: '6', what: 'Daily cap on peaceful rep from clean playtime' },
+      { key: 'caps.defend_player_cooldown_sec', def: '600', what: 'Cooldown between defend-player rep awards' },
+      { key: 'caps.commend_charge_hours', def: '10', what: 'Playtime hours per commend charge earned' },
+      { key: 'caps.commend_max_stockpile', def: '8', what: 'Max stored commend charges' },
+      { key: 'caps.outlaw_kills_full_reward_per_24h', def: '3', what: 'Outlaw kills per 24 h that pay the full reward' },
+      { key: 'caps.weekly_server_diamond_cap', def: '100', what: 'Server-wide weekly cap on diamonds paid as rewards' },
+      { key: 'caps.weekly_server_netherite_cap', def: '50', what: 'Same for netherite' },
+      { key: 'caps.restitution_rep_per_day', def: '20', what: 'Daily cap on peaceful rep from `/restitution` (0 = off)' },
+      { key: 'redemption.death_to_lawman_pct', def: '15', what: '% of outlaw rep lost when killed by a lawman' },
+      { key: 'redemption.death_to_bounty_hunter_pct', def: '20', what: '% lost when killed for a bounty' },
+      { key: 'redemption.pardon_pct.{sheriff,senior_sheriff,marshal}', def: '25 / 50 / 100', what: '% of outlaw rep removed by a pardon, per pardoning tier' },
+      { key: 'redemption.pardon_unforgivable_floor_pct', def: '50', what: '% of pacifist-kill rep that survives any pardon (0 = off)' },
+      { key: 'redemption.offline_decay_pct_per_week', def: '2', what: 'Outlaw rep decay while offline' },
+      { key: 'states.pacifist.knockout_enabled', def: 'true', what: 'Pacifists get knocked out instead of dying to PvP' },
+      { key: 'states.pacifist.knockout_duration_sec', def: '30', what: 'Phase 1: fully invulnerable, debuffed, robbable' },
+      { key: 'states.pacifist.knockout_cooldown_sec', def: '300', what: 'Phase 2: after wake-up the knockout is disarmed — a lethal hit is a real death (attacker takes full pacifist-kill rep)' },
+      { key: 'states.pacifist.knockout_regen_amplifier', def: '1', what: 'Wake-up Regeneration level (0 = I, 1 = II, 2 = III)' },
+      { key: 'states.pacifist.knockout_regen_duration_sec', def: '5', what: 'Wake-up Regeneration length' },
+      { key: 'states.pacifist.knockout_max_items_taken', def: '3', what: 'Distinct stack-clicks the attacker may take in the theft GUI' },
+      { key: 'states.pacifist.knockout_theft_hotbar_only', def: 'false', what: 'true = only the victim’s hotbar is robbable (false = hotbar + main inventory; armor and offhand never)' },
+      { key: 'states.pacifist.knockout_theft_max_per_stack', def: '16', what: 'Per-stack cap on items taken (64 = full stacks)' },
+      { key: 'states.pacifist.knockout_with_theft_outlaw_rep', def: '1', what: 'Base outlaw rep for robbing a knocked-out player' },
+      { key: 'states.pacifist.knockout_theft_rep_per_diamond_eq', def: '0.25', what: 'Extra rep per diamond-equivalent stolen (0 = flat)' },
+      { key: 'states.pacifist.pacifist_vs_pacifist_warn', def: 'true', what: 'First hit between two pacifists is cancelled with a warning' },
+      { key: 'states.pacifist.pacifist_vs_pacifist_warn_cooldown_sec', def: '600', what: 'Warning silenced for this long per attacker→victim pair' },
+      { key: 'states.pacifist.newcomer_protection_hours', def: '5', what: 'New players under this playtime are protected (and killing them costs `unprovoked_kill_newcomer`)' },
+      { key: 'states.pacifist.pvp_opt_in_enabled', def: 'true', what: 'Enable `/pvp` warmode for Pacifists and Retired' },
+      { key: 'states.pacifist.pvp_toggle_cooldown_min', def: '30', what: 'Cooldown between `/pvp` toggles' },
+      { key: 'states.pacifist.outlaw_land_protection_bypass', def: 'true', what: 'PvP-effective attackers can hit Outlaw victims even inside PvP-denied claims (stops outlaws bunkering)' },
+      { key: 'states.pacifist.mcmmo_warmode_xp_multiplier', def: '1.05', what: 'mcMMO XP × this while PvP-effective (1.0 disables; needs mcMMO)' },
+      { key: 'states.lawman.auto_retire_after_inactive_days', def: '30', what: 'Inactive lawmen become Retired (rep frozen, restored on next fight)' },
+      { key: 'states.spawn.radius_blocks', def: '200', what: 'Spawn-region radius for the spawn-kill override' },
+      { key: 'states.spawn.spawn_kill_rep_override', def: '30', what: 'Outlaw rep for a kill inside the spawn region' },
+      { key: 'states.spawn.overworld_only', def: 'true', what: 'Spawn override applies only in the overworld' },
+      { key: 'broadcasts.promotion_cooldown_per_player_min', def: '10', what: 'Min minutes between promotion broadcasts for one player' },
+      { key: 'broadcasts.max_broadcasts_per_minute_server', def: '3', what: 'Server-wide broadcast rate cap' },
+      { key: 'bounties.marshal_min_diamond_equivalent', def: '5', what: 'Minimum bounty value' },
+      { key: 'bounties.marshal_max_diamond_equivalent', def: '64', what: 'Maximum bounty value' },
+      { key: 'bounties.bounty_inactive_refund_days', def: '30', what: 'Bounties refund if the target is absent this long' },
+      { key: 'bounties.tracking_compass_cooldown_min', def: '10', what: 'Per-player `/bounty track` cooldown' },
+      { key: 'bounties.tracking_compass_accuracy_blocks', def: '100', what: 'Fuzz applied to the tracked position' },
+      { key: 'bounties.max_pct_of_treasury_per_bounty', def: '50', what: 'Max % of the available treasury a single bounty may reserve' },
+      { key: 'bounties.claim_allowed.{lawman,pacifist,retired,outlaw}', def: 'true / true / true / false', what: 'Which states may claim a bounty by killing the target' },
+      { key: 'rewards.enabled', def: 'true', what: 'Server-generated item drops on outlaw kills' },
+      { key: 'rewards.<tier>', def: 'drifter DIAMOND:1 … legend DIAMOND:10 + NETHERITE_SCRAP:4', what: 'One entry per outlaw tier, fields: `base` (item list) and `bonus_rolls` (list of `{chance, items}`); items are `MATERIAL:count` or `MATERIAL:1dN` dice' },
+      { key: 'anti_abuse.alt_detection', def: 'true', what: 'Detect alt accounts by shared IP' },
+      { key: 'anti_abuse.alt_shared_ip_window_days', def: '14', what: 'Window for shared-IP alt matching' },
+      { key: 'anti_abuse.combat_log_window_sec', def: '10', what: 'Disconnecting within this many seconds of PvP damage counts as combat-logging' },
+      { key: 'anti_abuse.combat_log_npc_duration_sec', def: '30', what: 'Combat-log stand-in duration' },
+      { key: 'anti_abuse.respawn_invuln_sec', def: '30', what: 'Post-respawn invulnerability (drops on your first aggression)' },
+      { key: 'anti_abuse.block_teleport_commands', def: 'true', what: 'Block teleport-style commands while combat-tagged' },
+      { key: 'anti_abuse.blocked_teleport_commands', def: 'home, tpa, tpaccept, tpahere, spawn, back, warp, rtp, wild', what: 'The blocked command list' },
+      { key: 'onboarding.first_join_welcome', def: 'true', what: '3-line welcome on a player’s first ever join' },
+      { key: 'onboarding.first_crime_redemption_hint', def: 'true', what: 'One-shot "how to clear your name" hint on first becoming an Outlaw' },
+      { key: 'audio.enabled', def: 'true', what: 'Single-recipient sound cues on state changes' },
+      { key: 'audio.master_volume_multiplier', def: '1.0', what: 'Multiplied onto every cue’s volume' },
+      { key: 'audio.events.{became_wanted,badge_prompt,bounty_resolved,fully_redeemed}', def: 'all true', what: 'Toggle each of the four cues' },
+      { key: 'daily_reward.enabled', def: 'true', what: 'Daily login rewards' },
+      { key: 'daily_reward.money.by_day', def: '[100, 120, 150, 180, 210, 240, 280, 310, 340, 370, 400, 430, 460, 500]', what: 'Money per streak day (day 1 first; days past the end keep paying the last value)' },
+      { key: 'daily_reward.items.tiers.<day>', def: '1 / 3 / 7 / 14', what: 'Item kit per streak tier (highest tier at or below the current streak applies); one list per tier of `MATERIAL:count`' },
+      { key: 'daily_reward.items.milestones.<day>', def: '3: GOLD_INGOT:8 · 7: DIAMOND:4 + EXPERIENCE_BOTTLE:16', what: 'Extra items on that exact streak day' },
+      { key: 'daily_reward.items.repeating.<interval>', def: '14: DIAMOND:8 + ENCHANTED_GOLDEN_APPLE:1', what: 'Bonus on every multiple of the interval' },
+      { key: 'daily_reward.broadcast_milestones', def: 'true', what: 'Announce milestone streaks server-wide' },
+      { key: 'daily_reward.sound', def: 'true', what: 'Sound cue on claim' },
+      { key: 'crime_log_retention_days', def: '90', what: 'Crimes older than this age out (drives natural rep recovery)' },
+      { key: 'last_seen_coord_rounding', def: '100', what: 'Broadcast and poster coordinates rounded to this many blocks' },
+    ],
+    notes: [
+      'All state lives in `plugins/FrontierReputation/data.db` (SQLite, WAL mode; schema auto-migrates on boot). Never use Bukkit `/reload` — restart instead. `/repadmin reload` is safe for config.',
+      'Inside any claim where PvP is denied the plugin does nothing (no knockout, no rep) — except Outlaw victims, who lose claim protection when `outlaw_land_protection_bypass` is on. Keep claim-plugin "war" modes off; they create the two-factions dynamic the design rejects.',
+      'Daily and weekly resets roll at midnight in the server’s JVM timezone; set FrontierBorder’s `server-timezone` if your host clock is UTC.',
+      'Only plain PvP damage is seen — environmental kills (lava pushes, traps) earn no rep. Multi-attacker assist credit and friend-farmed commendations are known open items.',
+      'Most-tweaked knobs: `ladders.lawman` thresholds (scale unique-commenders to your player count), `states.pacifist.knockout_*`, `redemption.*`, and the `daily_reward` money curve.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-reputation',
+    github: `${SUITE_GITHUB}/tree/master/reputation`,
+    liveOnSite: [
+      { href: '/reputation', label: 'How reputation plays on mc.pvpers.us' },
+      { href: '/wanted', label: 'The live wanted list' },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────── Shop
+  {
+    slug: 'shop',
+    name: 'FrontierShop',
+    short: 'Shop',
+    version: '1.7.4',
+    tagline:
+      'Server shop and player market GUIs with daily-ticker pricing, deals, a rotating black market and upgradeable custom items.',
+    category: 'Flagship',
+    kind: 'Flagship · economy',
+    oneLine:
+      'Server shop + player market with **daily-ticker pricing**, sign shops, daily deals, black market, custom items',
+    what: [
+      '`/shop` opens an 8-category, 119-item server shop where every slot is its own terminal (left-click buy 1, shift-left buy a stack, right-click sell 1, shift-right sell everything matching), and `/market` opens a player market for listing your own items at your own price.',
+      'Prices ride a **daily ticker**: each item has a price index that re-prices *once a day at local midnight* from yesterday’s net player flow (clamped 60–140 %), buy and sell both ride the same index so the spread never changes and a dumped item eventually becomes cheap to buy back. Prices never move mid-day; the anti-farm guard is a daily **warehouse cap** (the server buys at most `appetite × 5` of each item per day) rather than price-crushing, and only plain, unenchanted, undamaged items sell.',
+      'On top of that: seeded **daily deals**, `[shop]` **sign shops** on chests, and a buy-only **black market** that opens on fixed weekly windows with per-window stock and rosters that rotate by weekday — selling vanilla contraband you can’t normally get in survival (spawn eggs, mob heads, loot-only gear), captured mob spawners, and five tiered custom trinkets plus three consumables that players level up at an **Upgrade Station**.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional:
+      'Vault + a Vault-registered economy (all money; without it the GUIs open but every transaction is refused with "The economy is offline") · FrontierBorder (its `server-timezone` sets the "local midnight" used by the ticker, deals and black-market windows) · a claim plugin such as Lands or GriefPrevention (protects sign-shop chests from hoppers and pistons — the plugin only guards sign/chest breaking and explosions)',
+    usedBy:
+      'FrontierStatsAPI (reads `demand.db` / `market.db` / `sales.db` read-only for catalog, market, deals, price history and black-market endpoints)',
+    hardDep: null,
+    commands: [
+      { cmd: '/shop', who: 'Everyone', what: 'Open the server shop GUI' },
+      { cmd: '/shop upgrade', who: 'Everyone', what: 'Open the Upgrade Station (same as the anvil button in `/shop`) — pay money to raise the held custom item one tier' },
+      { cmd: '/shop reload', who: 'Admin', what: 'Re-read `config.yml` and rebuild the catalog (ticker indexes and market data kept)' },
+      { cmd: '/market', who: 'Everyone', what: 'Browse the player market GUI (also the emerald in `/shop`)' },
+      { cmd: '/market sell <price>', who: 'Everyone', what: 'List the whole held stack at a price (listing tax applies)' },
+      { cmd: '/shopadmin listings [player]', who: 'Admin', what: 'List live market listings with IDs (console-friendly)' },
+      { cmd: '/shopadmin removelisting <id>', who: 'Admin', what: 'Pull a listing — item returns to the seller’s mailbox, seller notified (staff can also shift-click a listing in `/market`)' },
+      { cmd: '/shopadmin price <material> <buy> <sell> [appetite]', who: 'Admin', what: 'Persistent price override written to `overrides.yml`; `price <material> clear` removes it' },
+      { cmd: '/shopadmin ticker <material>', who: 'Admin', what: 'Show index, overnight change, live prices, today’s sold/bought and warehouse left (`demand` is an alias)' },
+      { cmd: '/shopadmin ticker reset <material|all>', who: 'Admin', what: 'Snap the index back to 100 % and clear today’s counters' },
+      { cmd: '/shopadmin deals', who: 'Admin', what: 'Show today’s daily deals with effective prices' },
+      { cmd: '/shopadmin blackmarket [status]', who: 'Admin', what: 'Inspect the black-market window and remaining stock' },
+      { cmd: '/shopadmin blackmarket open [day…] [minutes]', who: 'Admin', what: 'Force a window open (default 30 min); add a weekday (`open friday 60`) to preview only that night’s roster' },
+      { cmd: '/shopadmin blackmarket close', who: 'Admin', what: 'Close a window early — stays shut for the rest of that scheduled window' },
+    ],
+    commandsNote:
+      'Sign shops have no command: place a sign on a chest or barrel and write `[shop]` / `<amount>` / `<price>`; the chest’s first item becomes the offer.',
+    permissions: [
+      { node: 'frontier.shop.use', def: 'true', grants: '`/shop`, `/shop upgrade`, `/market`, `/market sell`' },
+      { node: 'frontier.shop.signshop', def: 'true', grants: 'Creating `[shop]` signs on chests and barrels' },
+      { node: 'frontier.shop.admin', def: 'op', grants: '`/shop reload`, all of `/shopadmin`, shift-click listing removal in `/market`, breaking other players’ shop signs' },
+    ],
+    permissionsNote:
+      'Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes, so old permission grants keep working.',
+    configPath: 'plugins/FrontierShop/config.yml',
+    configReload: '`/shop reload`',
+    config: [
+      { key: 'ticker.drift-max', def: '0.05', what: 'Biggest one-day index move from player flow (5 %)' },
+      { key: 'ticker.drift-idle', def: '0.02', what: 'Quiet-day drift back toward 100 % of base' },
+      { key: 'ticker.index-min', def: '0.60', what: 'Prices never fall below this fraction of base' },
+      { key: 'ticker.index-max', def: '1.40', what: '…or rise above this' },
+      { key: 'ticker.warehouse-multiple', def: '5', what: 'Server buys `appetite × this` of each item per day, then refuses until midnight' },
+      { key: 'ticker.default-appetite', def: '256', what: 'Appetite used when a catalog item omits it' },
+      { key: 'sounds', def: 'true', what: 'Low-volume UI, buy and sell sounds' },
+      { key: 'market.tax', def: '0.05', what: 'Cut taken from each player-market and sign-shop sale (money sink)' },
+      { key: 'market.max-listings', def: '8', what: 'Active listings per player' },
+      { key: 'market.expiry-days', def: '7', what: 'Unsold listings move to the seller’s claim chest after this' },
+      { key: 'market.max-price', def: '1000000', what: 'Listing price ceiling' },
+      { key: 'market.expiry-warn-hours', def: '24', what: 'On join, warn about listings expiring within this window' },
+      { key: 'deals.enabled', def: 'true', what: 'Daily deals on/off' },
+      { key: 'deals.count', def: '9', what: 'Deals per day (seeded by the calendar date, flip at local midnight)' },
+      { key: 'deals.buy-discount', def: '0.25', what: 'Buy deals: fraction off the static buy price' },
+      { key: 'deals.sell-bonus', def: '0.50', what: 'Sell deals: bonus on the sell base (falls back to a buy deal if it would cross half the buy price)' },
+      { key: 'blackmarket.schedule', def: 'Tuesday 21:00 for 3 h, Friday 21:00 for 3 h', what: 'List of weekly windows, fields: `day` (uppercase weekday), `open-hour` (0–23), `duration-hours`; server-local time' },
+      { key: 'blackmarket.announce', def: 'true', what: 'Broadcast open and close' },
+      { key: 'blackmarket.items', def: '49 entries (6 always-on, 17 Tuesday "Deep & Dark", 26 Friday "Wild & Sky")', what: 'One entry per good, fields: `material` *or* `custom: <id>` (custom item / `spawner_<mob>`), `buy`, `stock` (per window; omit or -1 = unlimited), optional `days: [WEEKDAY…]` to rotate; max ~45 shown per window' },
+      { key: 'blackmarket.random-spawners.{nice,hostile}', def: 'not in shipped config', what: 'Optional mob-name pools for the `spawner_random_nice` / `spawner_random_hostile` ids; built-in pool used when missing' },
+      { key: 'mount-trinket.include-boats', def: 'true', what: 'Saddle of Swiftness also gives boats a velocity assist' },
+      { key: 'mount-trinket.max-level', def: '3', what: 'Number of tiers' },
+      { key: 'mount-trinket.level-{1,2,3}-bonus', def: '0.50 / 1.00 / 1.50', what: 'Mount-speed bonus at each tier (+50 % / +100 % / +150 %)' },
+      { key: 'mount-trinket.level-{2,3}-cost', def: '40000 / 90000', what: 'Upgrade Station cost to reach tier 2 / 3' },
+      { key: 'ghast-locket.max-level', def: '3', what: 'Ghastbound Locket tiers (I no fall damage, II sneak-glide, III double-jump)' },
+      { key: 'ghast-locket.level-{2,3}-cost', def: '30000 / 60000', what: 'Upgrade costs' },
+      { key: 'ghast-locket.double-jump-power', def: '0.9', what: 'Tier III leap upward velocity' },
+      { key: 'verdant-band.max-level', def: '3', what: 'Verdant Band tiers (radius crop growth)' },
+      { key: 'verdant-band.level-{1,2,3}-radius', def: '4 / 6 / 8', what: 'Growth radius per tier' },
+      { key: 'verdant-band.level-{2,3}-cost', def: '25000 / 50000', what: 'Upgrade costs' },
+      { key: 'verdant-band.interval-ticks', def: '40', what: 'How often a carrier’s surroundings are sampled' },
+      { key: 'verdant-band.blocks-per-pass', def: '12', what: 'Random blocks checked per pass (keep small)' },
+      { key: 'verdant-band.grow-chance', def: '0.6', what: 'Chance a sampled crop advances a stage' },
+      { key: 'verdant-band.level3-burst-chance', def: '0.15', what: 'Tier III: chance to fully grow one crop per pass' },
+      { key: 'miner-lantern.max-level', def: '3', what: 'Miner’s Lantern tiers (Night Vision, + Haste I, + Haste II underground)' },
+      { key: 'miner-lantern.level-{2,3}-cost', def: '18000 / 36000', what: 'Upgrade costs' },
+      { key: 'miner-lantern.sky-light-threshold', def: '3', what: '"Underground" = block sky light ≤ this' },
+      { key: 'miner-lantern.interval-ticks', def: '40', what: 'Re-check interval' },
+      { key: 'warden-sigil.max-level', def: '3', what: 'Warden’s Sigil tiers (sculk ignores you, mobs shed aggro, sneak-vanish)' },
+      { key: 'warden-sigil.level-{2,3}-cost', def: '30000 / 55000', what: 'Upgrade costs' },
+      { key: 'warden-sigil.aggro-drop-chance', def: '0.5', what: 'Tier II: chance a targeting mob loses your trail' },
+      { key: 'tempest-vial.power', def: '1.6', what: 'Launch strength of the single-use Tempest Vial' },
+      { key: 'tempest-vial.glide-seconds', def: '6', what: 'Slow Falling tail length' },
+      { key: 'spawner-compass.max-radius-chunks', def: '16', what: 'Diviner’s Compass scan radius (≈256 blocks)' },
+      { key: 'spawner-compass.chunks-per-batch', def: '6', what: 'Async chunk loads per tick (lower = gentler)' },
+      { key: 'spawner-compass.min-skip-blocks', def: '8.0', what: 'Ignore spawners closer than this' },
+      { key: 'spawner-compass.timeout-seconds', def: '15', what: 'Give up (item not consumed) after this long' },
+      { key: 'signshops.enabled', def: 'true', what: 'Sign-shop master switch' },
+      { key: 'history.retention-days', def: '90', what: '`sales.db` rows older than this are pruned on boot' },
+      { key: 'categories.<key>.name', def: 'e.g. `&eBuilding Blocks`', what: 'Category display name (colour codes allowed)' },
+      { key: 'categories.<key>.icon', def: 'e.g. BRICKS', what: 'Category icon material' },
+      { key: 'categories.<key>.items', def: '8 categories, 119 items: building 22, art 11, wood 10, ores 14, farming 15, mobdrops 18, food 13, utility 16', what: 'One entry per item, fields: `material`, `buy` (0 = not sold), `sell` (0 = not bought), optional `appetite` (units/day); keep buy ≥ ~3× sell; max 45 items per category' },
+    ],
+    notes: [
+      'Data files in `plugins/FrontierShop/`: `demand.db` (ticker state), `market.db` (listings, mailbox, notices), `sales.db` (price history, deal picks, black-market window/stock), `overrides.yml` (admin price overrides — kept separate so `config.yml` is never rewritten). All SQLite files run in WAL mode so other tools can read them live; if a DB fails to open the shop degrades to in-memory and keeps working.',
+      'Midnight rollover is lazy (missed days are replayed on first access) and keyed to the JVM timezone; the same clock drives daily deals and black-market windows, so set FrontierBorder’s `server-timezone` on a UTC host.',
+      'The plugin warns on boot if any catalog pair is arbitrage-risky (`sell` more than ~60 % of `buy`); fix in config or with `/shopadmin price`. Boat and utility sinks like Lead and Name Tag ship with `sell: 0` on purpose.',
+      'Black-market stock is per window and keyed by entry (custom id or material), so several rows sharing a material never collide; closing a window with `/shopadmin blackmarket close` keeps it shut until the next scheduled one. The v1.7.4 `spawner_random_*` entries are not in the shipped config — add rows yourself.',
+      'Most-tweaked knobs: catalog prices and appetites, `market.tax`, `blackmarket.schedule` and roster `days`, and the `level-N-cost` curves for the Upgrade Station.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-shop',
+    github: `${SUITE_GITHUB}/tree/master/shop`,
+    liveOnSite: [{ href: '/economy', label: 'The live catalog, deals and market' }],
+  },
+
+  // ───────────────────────────────────────────────────────── Events
+  {
+    slug: 'events',
+    name: 'FrontierEvents',
+    short: 'Events',
+    version: '1.0.1',
+    tagline:
+      'Arena events for survival servers — co-op Boss Rush raids, player-started raid keys, the endless Gauntlet, TDM/FFA, duel tournaments with wagers — with three gear modes and crash-safe isolation.',
+    category: 'Flagship',
+    kind: 'Flagship · minigames',
+    oneLine:
+      'Event engine: Boss Rush raids, the Gauntlet, keystone Raid Keys, TDM/FFA, duel tournaments with wagers, arenas, kits',
+    what: [
+      'An event and minigame engine that runs inside a normal survival world. **Boss Rush** is the flagship: a party fights trickle-spawned waves of armored mobs up to a phased, scripted boss across six themed raids (plus the endless **Gauntlet**), with per-wave lives, class kits, cobweb and barricade traps, a **Pit** difficulty ladder (1–5) that scales mobs, payouts and loot odds, and four-tier RNG loot including above-vanilla-cap **Pitforged** gear.',
+      '**Raid Keys** let players start their own raids WoW-keystone style with no admin present. **TDM/FFA** PvP with kits, placeable cobwebs and siegeable fort barricades, and **Duel Tournaments** (1v1 single-elimination bracket, best-of-3 final, parimutuel wagers) round out the modes.',
+      'Every event runs in one of three **gear modes** — `[KIT]` (provided loadouts, nothing at stake), `[BYOG]` (bring your own gear, deaths never drop it) or `[HARDCORE]` (your gear drops where you fall) — behind a click-through consent gate. Two design pillars stand out: **no item loss unless explicitly opted into** (Boss Rush intercepts fatal hits instead of letting you die; event deaths don’t inflate your real death count; inventories are snapshotted to SQLite on join and restored even after a crash), and **the arena never needs a reset** (block changes are prevented rather than rolled back; traps decay or are swept; the colosseum is grief-proof even between events). Everything player-facing is GUI-driven, and anyone can spectate a running event.',
+    ],
+    requires:
+      'Paper 26.2+, Java 25+. `sqlite-jdbc` is downloaded automatically at first boot.',
+    optional:
+      'Vault + any economy (money payouts, wagers, raid-key start costs — without it runs still complete and loot and stats still happen, money is skipped) · FrontierMail (loot that won’t fit or arrives while offline is mailed to `/mailbox`; otherwise ground-drop, or lost for offline players) · FrontierGraves (stray graves are swept out of the arena at teardown)',
+    usedBy:
+      'FrontierReputation (uses `EventApi` to exempt arena combat from murders, bounties and PvP opt-out) · FrontierTab (does not count event deaths) · FrontierGraves (implements `GraveApi`, refuses to spawn graves in a live event) · FrontierStatsAPI (serves `stats.db` on `/api/events/*` and `/api/events/pvp/*`)',
+    hardDep: null,
+    commands: [
+      { cmd: '/event  (also hub, gui)', who: 'Everyone', what: 'While an event is live: the Event Hub GUI (join/leave/spectate, kit, team, info); mid-match the join button becomes Spectate. With no event running: the read-only "How Events Work" info board' },
+      { cmd: '/event join [team]', who: 'Everyone', what: 'Join the current event (allowed through the countdown); first join of a BYOG or hardcore event shows the risk warning plus a click-through confirm' },
+      { cmd: '/event leave', who: 'Everyone', what: 'Leave the event (inventory restored; forfeits payout mid-match; the starter walking out of their own key run counts as a wipe)' },
+      { cmd: '/event spectate  (also watch)', who: 'Everyone', what: 'Watch any event, even mid-match — spectator mode, arena leash, no effect on results or payouts; `/event leave` to exit' },
+      { cmd: '/event kit', who: 'Everyone', what: 'Open the kit selector (auto-opens on join; picks lock at match start; explains there are none in own-gear events)' },
+      { cmd: '/event team', who: 'Everyone', what: 'Open the team selector (team modes)' },
+      { cmd: '/event key  (also keys)', who: 'Everyone', what: 'Raid-key board GUI: your key’s Pit, the six raids with cleared/next/locked status, one-click starts' },
+      { cmd: '/event key start <raid> [pit] [kit|byog]', who: 'Everyone', what: 'Start a key run directly; lower Pits than your key = practice runs' },
+      { cmd: '/event info', who: 'Everyone', what: 'Current event info, including the gear-mode tag' },
+      { cmd: '/event stats [player]', who: 'Everyone', what: 'Your (or another player’s) cumulative Boss Rush and PvP totals' },
+      { cmd: '/event leaderboard  (also top)', who: 'Everyone', what: 'Top players from `stats.db`' },
+      { cmd: '/event bet <fighter> <amount>', who: 'Everyone', what: 'Duels only: parimutuel stake on the current pairing while the betting window is open (fighters of that match excluded; top-ups OK, no side-switching)' },
+      { cmd: '/event create <name> <type> <arena> [teams|raid] [pit] [kit|byog|hardcore]', who: 'Admin', what: 'Create an event; `type` = `BOSS_RUSH`, `TDM`, `FFA`, `KOTH` or `DUEL`; Boss Rush takes a raid key plus optional Pit; a trailing gear word picks the mode (default `defaults.gear-mode`)' },
+      { cmd: '/event start  |  /event forcestart', who: 'Admin', what: 'Start with countdown / start now' },
+      { cmd: '/event stop  (also cancel)', who: 'Admin', what: 'Cancel the event (refunds key start fees)' },
+      { cmd: '/event forceend [clear|wipe]', who: 'Admin', what: 'Force-resolve a stuck live event: default = clear payout, `wipe` = resolve as a loss (aliases `forceresolve`, `forcepayout`)' },
+      { cmd: '/event settings <key> <value>', who: 'Admin', what: 'Tune `time`, `scorelimit`, `respawn`, `respawndelay`, `difficulty`, `gearmode` (only while the lobby is empty), `testmode` (dev toggle: 1 glass-jaw add per wave and a 30-HP boss)' },
+      { cmd: '/event difficulty <n>  (also pit <n>)', who: 'Admin', what: 'Shorthand for `settings difficulty <n>`' },
+      { cmd: '/event admin', who: 'Admin', what: 'Control-panel GUI: create wizard (mode → arena → raid → Pit → gear), start/stop, lobby settings, force-join and kick' },
+      { cmd: '/event forcejoin <player> [team]', who: 'Admin', what: 'Add an online player to the lobby (skips the consent gate but still warns them)' },
+      { cmd: '/event kick <player>', who: 'Admin', what: 'Remove a player (inventory restored; win condition re-checked)' },
+      { cmd: '/event statedit get|set|add|reset|run …', who: 'Admin', what: 'Edit persisted stats rows in `stats.db` for online or offline players; bare `statedit` prints the field list' },
+      { cmd: '/arena create|delete|setlobby|setspawn|pos1|pos2|setcenter|radius|height|list|info', who: 'Admin', what: 'Build and inspect arenas: `setcenter` + `radius <x> <z>` + `height` define the elliptical combat ring, `pos1`/`pos2` the outer stands box, `setlobby` the lobby spawn, `setspawn <name> red` a combat spawn' },
+      { cmd: '/kit list  |  /kit give <name>', who: 'Admin', what: 'List configured kits / give yourself one to test' },
+    ],
+    commandsNote:
+      'All three commands are player-only. `/event` is one command; rows marked Admin are gated on `frontier.events.admin` inside the command.',
+    permissions: [
+      { node: 'frontier.events.use', def: 'true', grants: '`/event` participation subcommands (join, leave, spectate, kit, team, key, info, stats, leaderboard, bet, hub)' },
+      { node: 'frontier.events.admin', def: 'op', grants: '`/arena`, `/kit`, and the admin subcommands of `/event`; also lets you start a key run without holding a key' },
+      { node: 'frontier.events.bypass', def: 'op', grants: 'Exempt from the in-event command whitelist and from arena containment / idle grief protection (staff)' },
+    ],
+    configPath: 'plugins/FrontierEvents/config.yml',
+    configReload: 'Restart required — there is no reload command, config is parsed at enable',
+    config: [
+      { key: 'defaults.duration', def: '300', what: 'Event duration in seconds (0 = no time limit) — PvP-mode default' },
+      { key: 'defaults.score-limit', def: '50', what: 'First team or player to reach this wins (0 = no limit)' },
+      { key: 'defaults.countdown', def: '10', what: 'Seconds of countdown before an event starts' },
+      { key: 'defaults.respawn', def: 'true', what: 'Allow respawning in PvP (`false` = elimination mode)' },
+      { key: 'defaults.respawn-delay', def: '3', what: 'Seconds before respawn' },
+      { key: 'defaults.gear-mode', def: 'kit', what: '`kit`, `byog` or `hardcore` — used when create doesn’t specify one' },
+      { key: 'kits.<name>', def: '11 kits: knight, archer, tank, scout, pvp_healer, rush_tank, rush_dps, rush_healer, rush_ranged, rush_trapper, rush_berserker', what: 'One entry per kit, fields: `icon`, `description` (lore lines), `items` (`MATERIAL[:amount[:ENCHANT=lvl]]`, potions as `POTION:amount:TYPE`), `armor.{helmet,chestplate,leggings,boots}`, `effects` (`EFFECT:ticks:amplifier`), optional `role: healer` (adds a live "Healing" sidebar line)' },
+      { key: 'pvp.kits', def: '[knight, archer, tank, scout, pvp_healer]', what: 'Kits offered in TDM/FFA (must exist in `kits:`); first entry is the default' },
+      { key: 'pvp.cobweb.{enabled, cap, decay-seconds, max-height, refund}', def: 'true, 6, 60, 3, false', what: 'Placeable kit cobwebs in PvP: per-player cap, seconds before they crumble, max blocks above feet, refund on decay' },
+      { key: 'pvp.barricade.{enabled, material, amount, decay-seconds, max-height, kits}', def: 'true, OAK_PLANKS, 10, 0, 3, [knight, archer, tank, scout]', what: 'Fort planks: `amount` doubles as the cap; `decay-seconds: 0` = stands until match end (enemies can still break them ~3 s/block); which kits carry them' },
+      { key: 'pvp.rewards.participation.money', def: '150', what: 'Paid to everyone who finishes a match' },
+      { key: 'pvp.rewards.win-pool.money', def: '2500', what: 'TDM: split evenly among the winning team' },
+      { key: 'pvp.rewards.ffa-podium', def: '[1250, 750, 500]', what: 'FFA top 3 by kills (used instead of win-pool)' },
+      { key: 'pvp.rewards.per-kill.{money, cap}', def: '25, 500', what: 'Per kill and the per-match cap (0 = uncapped)' },
+      { key: 'pvp.rewards.mvp-bonus.money', def: '500', what: 'Most kills overall, either mode' },
+      { key: 'duel.kits', def: '[]', what: 'Kits offered in duels; empty = `pvp.kits`' },
+      { key: 'duel.round-seconds', def: '90', what: 'Seconds per round; on timeout the higher damage total wins (coin flip at 0–0)' },
+      { key: 'duel.final-best-of', def: '3', what: 'The final is best-of-N; earlier matches are best-of-1' },
+      { key: 'duel.intermission-seconds', def: '6', what: 'Breather between matches and between final rounds' },
+      { key: 'duel.rewards.{participation, per-duel-win, champion, runner-up}', def: '150, 200, 1500, 500', what: 'Duel purse' },
+      { key: 'duel.wagers.{enabled, rake, min-bet, max-bet, window-seconds}', def: 'true, 0.05, 10, 2000, 20', what: 'Parimutuel betting: house cut at settle, stake limits per player per match, betting window after a pairing is announced' },
+      { key: 'boss-rush.lives', def: '2', what: 'Lives **per wave**; anyone who ran out is revived at the next wave — you only wipe if the whole team is down within one wave' },
+      { key: 'boss-rush.min-players', def: '1', what: 'Minimum players to start (solo works)' },
+      { key: 'boss-rush.wave-break.{countdown-seconds, regen-seconds}', def: '5, 4', what: 'Between-wave breather: action-bar countdown before the next wave (0 = instant) and seconds of Regeneration II for survivors' },
+      { key: 'boss-rush.scaling.{boss-hp-per-player, adds-per-player, add-multiplier, max-adds}', def: '0.5, 0.25, 1.0, 0', what: 'Party-size scaling: boss HP per extra player, extra adds per extra player, global dial on every wave’s add count (drop to ~0.4 for solo testing), hard cap on adds per wave (0 = uncapped)' },
+      { key: 'boss-rush.pit.max-level', def: '5', what: 'Highest Pit level' },
+      { key: 'boss-rush.pit.{hp-per-level, damage-per-level, speed-per-level, speed-mult-cap}', def: '1.00, 0.00, 0.10, 1.75', what: 'Linear per-Pit multipliers on mob HP, damage and movement speed (default: Pit makes mobs tankier and faster, not harder-hitting), plus the speed ceiling' },
+      { key: 'boss-rush.pit.money-per-level', def: '0.75', what: 'All Boss Rush money × (1 + 0.75 · Pit)' },
+      { key: 'boss-rush.pit.{rare-chance-per-level, epic-chance-per-level, rare-chance-cap, epic-chance-cap}', def: '0.10, 0.05, 0.75, 0.75', what: 'Loot odds added per Pit and the ceilings they can never exceed (`legendary-chance-*` keys are present but commented out)' },
+      { key: 'boss-rush.pit.pitforged-loot-threshold', def: '1', what: 'At or above this Pit a won epic roll draws from the raid’s `pitforged` table instead of its epics' },
+      { key: 'boss-rush.kit-scaling.{enabled, protection, sharpness, power, unbreaking, armor-tier-bump}', def: 'true, [0,1,2,3,4,2], [0,1,1,2,3,4], [0,1,1,2,3,4], [0,0,1,1,2,2], [0,0,0,0,0,1]', what: 'Pit-indexed lists (index 0 = Pit 0) layering enchants onto provided kits and bumping armor material tiers (leather → chain → iron → diamond) so kits keep pace; own-gear modes are never touched' },
+      { key: 'boss-rush.stuck-mob.{enabled, glow-seconds, kill-seconds, move-threshold}', def: 'true, 8, 20, 1.0', what: 'Wave-stall failsafe: an add that stops moving glows and is teleported to the arena centre, then force-removed if still stuck; the boss is exempt' },
+      { key: 'boss-rush.max-active / max-active-per-player / max-active-solo', def: '8, 2, 4', what: 'How many adds are alive at once (the wave total trickles in): base for a 2-player group, extra per player beyond the 2nd, and a gentler cap for a solo player; a per-wave `max-active` in `raids:` overrides' },
+      { key: 'boss-rush.equipment.{enabled, base-chance, rise-per-wave, max-chance}', def: 'true, 0.35, 0.18, 0.9', what: 'Mob gear ramp by wave tier (leather → gold → chain → iron; wood → stone → iron → diamond weapons); nothing drops' },
+      { key: 'boss-rush.equipment.{spear-chance, spear-chance-per-wave, spear-chance-max}', def: '0.18, 0.07, 0.85', what: 'Fraction of armed melee adds carrying a spear instead of a sword, rising per wave' },
+      { key: 'boss-rush.kits', def: '[rush_tank, rush_dps, rush_healer, rush_ranged, rush_trapper, rush_berserker]', what: 'Kits offered in Boss Rush; first is the default' },
+      { key: 'boss-rush.barricade.{enabled, material, amount, decay-seconds, max-height, kits}', def: 'true, OAK_PLANKS, 8, 30, 3, [rush_tank, rush_healer]', what: 'Temporary cover blocks (cap = amount, crumble after N seconds, refunded on decay)' },
+      { key: 'boss-rush.cobweb.{enabled, cap, decay-seconds, max-height, refund}', def: 'true, 6, 8, 3, true', what: 'Crowd-control webs every kit carries; short decay so nobody can wall off the boss' },
+      { key: 'boss-rush.taunt.{enabled, duration-seconds, cooldown-seconds, kits}', def: 'true, 5, 12, [rush_tank]', what: 'Right-click taunt tool that forces every live mob onto the tank (outranks a boss fixate)' },
+      { key: 'boss-rush.rewards.wipe-pays-nothing', def: 'true', what: 'A wipe pays no money and no items' },
+      { key: 'boss-rush.rewards.participation.{money, items}', def: '250, [EMERALD:3]', what: 'Flat floor for everyone who joins and stays' },
+      { key: 'boss-rush.rewards.pool.money', def: '5000', what: 'Performance pool split by weighted score' },
+      { key: 'boss-rush.rewards.weights.{damage, damage-taken, healing, adds, survival-bonus, death-penalty}', def: '1.0, 0.8, 12.0, 6.0, 200.0, 120.0', what: 'Score = Σ(metric × weight) − livesLost × death-penalty + survival-bonus if survived' },
+      { key: 'boss-rush.rewards.{metric-cap, min-score}', def: '0.0, 1.0', what: 'Anti-abuse cap per metric (0 = uncapped) and minimum score to share the pool' },
+      { key: 'boss-rush.rewards.clear-bonus.{money, items}', def: '1000, []', what: 'Everyone gets this if the boss actually dies' },
+      { key: 'boss-rush.rewards.category-bonus.money', def: '750', what: 'Flat extra for topping a category (Top Damage / Best Tank / Best Support / Most Adds / Survivor)' },
+      { key: 'boss-rush.rewards.jackpot.{enabled, top, items}', def: 'true, 1, [SPAWNER:1]', what: 'Rare top-placement drop on a clear (raids that define their own `loot` table use that instead)' },
+      { key: 'boss-rush.default-raid', def: 'zombie', what: 'Raid used when create doesn’t name one' },
+      { key: 'boss-rush.raids.<key>', def: '6 raids + gauntlet: zombie, skeleton, wither, spider, illager, champion', what: 'One entry per raid, fields: `display`; `waves` (list of `{mobs: {TYPE: total}, max-active}` add waves ending in `{boss: <boss key>}`); `loot.{epic-top, rare-chance, epic-chance, epic-top-chance}` and item lists `loot.{pitforged, epic, rare, common}`' },
+      { key: 'boss-rush.raids.gauntlet.{display, endless, boss-every, boss-hp-mult, bosses}', def: 'The Gauntlet, true, 5, 0.6, [all six bosses]', what: 'Endless raid: waves are generated from `pool`, every 5th wave the next boss in rotation spawns at 60 % of its raid HP' },
+      { key: 'boss-rush.raids.gauntlet.escalation.{hp-per-wave, damage-per-wave, count-per-wave, count-cap}', def: '0.06, 0.03, 0.04, 45', what: 'Compounding per-wave multipliers on top of Pit and party scaling; hard cap on a wave’s adds' },
+      { key: 'boss-rush.raids.gauntlet.rewards.{participation-money, money-per-wave-base, money-per-wave-growth}', def: '100, 75, 25', what: 'Money banked per cleared wave (paid at run end, Pit-multiplied, so a wipe never zeroes it)' },
+      { key: 'boss-rush.raids.gauntlet.milestone-every', def: '10', what: 'Server-wide broadcast every N cleared waves' },
+      { key: 'boss-rush.raids.gauntlet.loot-scaling.{rare-chance-per-wave, epic-chance-per-wave, rare-chance-cap, epic-chance-cap}', def: '0.01, 0.005, 0.75, 0.50', what: 'Boss-kill loot odds climb with depth, up to the caps' },
+      { key: 'boss-rush.raids.gauntlet.pool', def: '10 wave templates', what: 'Same format as `waves`; themes mixed from all six raids' },
+      { key: 'bosses.<key>', def: '6 bosses: zombie_king, skeleton_king, wither_king, broodmother, grand_augur, pit_champion', what: 'One entry per boss, fields: `base` (EntityType), `health`, `damage`, `speed`, `knockback-resist`, `armor`, `bossbar.{title, color}`, `phases` (list of `{at, name, announce, bossbar, on-enter, abilities}`); abilities are `ground_slam`, `summon_adds`, `fixate`, `volley`, `enrage`, `debuff`, `fangs`, `leap`, each with a `cooldown` and its own params' },
+      { key: 'keys.enabled', def: 'true', what: 'Player-started raid keys on/off' },
+      { key: 'keys.raid-order', def: '[zombie, skeleton, spider, wither, illager, champion]', what: 'Ladder unlock order (non-endless raids only; the Gauntlet can never be a key run)' },
+      { key: 'keys.start-cost-base', def: '150', what: 'Starting a run costs base × (Pit + 1), sunk win or lose (refunded only on admin stop or crash); joining is free' },
+      { key: 'keys.daily-starts / keys.cooldown-minutes', def: '3, 15', what: 'Per-player limits on starts (joins are unlimited)' },
+      { key: 'keys.min-players', def: '3', what: 'Bodies required in the lobby before a key run can launch' },
+      { key: 'keys.reward-multiplier', def: '0.75', what: 'Key-run money payouts are scaled by this (loot rolls untouched)' },
+      { key: 'keys.wipe-pays-nothing', def: 'true', what: 'A wiped key run pays nothing (admin raids keep normal wipe payouts)' },
+      { key: 'keys.arena', def: '""', what: 'Arena for key runs; empty = the first arena defined' },
+    ],
+    notes: [
+      'Arenas are two-zone: an inner elliptical combat ring (`setcenter` + `radius` + `height`) inside an outer stands box (`pos1`/`pos2`). Before a match players roam the stands and are kept out of the ring; during it the leash flips to the ring. A box-only arena also works. The whole footprint is build-protected even when idle for anyone without `frontier.events.bypass`, natural mob spawns are blocked in it, and outsiders are bounced off the combat floor.',
+      'Two SQLite files live in `plugins/FrontierEvents/`: `vault.db` (inventory snapshots, placed traps — restored and swept on boot after a crash) and `stats.db` (`event_history`, `event_players`, `loot_log`, `payout_log`, `player_totals`, `pvp_totals`, `player_keys`, `live_event`) — the latter is what FrontierStatsAPI serves.',
+      'Loot is public, money is private: every drop is broadcast as `<name> received <item>`, while each earner is whispered their own `You earned $X` line. Event deaths never touch your real death statistic or spawn a grave.',
+      'The legendary loot tier is fully built but disabled in the shipped config (too much permanent power leaking into survival); uncomment the `loot.legendary` blocks and `legendary-chance` keys to re-enable it.',
+      'The most common owner tweaks are `boss-rush.scaling.add-multiplier` (lower it for a small server), the `rewards` money figures if your economy is tighter or looser, `defaults.gear-mode`, and `keys.min-players` / `keys.daily-starts` to control key-run pacing. Remember every edit needs a restart.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-events',
+    github: `${SUITE_GITHUB}/tree/master/events`,
+    liveOnSite: [
+      { href: '/events', label: 'The events hub' },
+      { href: '/events/boss-rush', label: 'Boss Rush raids and bosses' },
+      { href: '/events/pvp', label: 'Arena PvP' },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────── StatsAPI
+  {
+    slug: 'statsapi',
+    name: 'FrontierStatsAPI',
+    short: 'Stats API',
+    version: '1.16.0',
+    tagline:
+      'A read-only HTTP/JSON API baked into the server so a website or bot can show live stats without RCON, FTP or a database.',
+    category: 'Infrastructure',
+    kind: 'Infrastructure',
+    oneLine:
+      'Embedded HTTP/JSON API (35 routes) serving every plugin’s data to a website or bot',
+    what: [
+      'Starts a small HTTP server on its own port and answers `GET` requests with server status, player summaries, leaderboards (playtime with all/week/month windows, deaths, XP, mob kills, blocks and ores mined, distance, advancements, mcMMO power level), per-player advancement and mcMMO skill detail, and everything the other Frontier plugins keep on disk — border, reputation, events/PvP, shop, economy.',
+      'Its defining decision is that it reads sibling plugins **off disk, not through their APIs**: FrontierTab’s YAML files, SQLite databases opened read-only, EssentialsX userdata — so a sibling being disabled or on an older version degrades a route to an omitted field or a `503`, never a crash. It is cheap by design (one JSON parse per player instead of ~1,100 statistic calls, cached baltop and advancement catalog) and includes a CORS allow-list, per-IP rate limiting and preflight handling.',
+    ],
+    requires:
+      'Paper 26.2+, Java 25+, **FrontierTab** — its per-player files are the player index, so there are no players, leaderboards or today-stats without it. `sqlite-jdbc` is downloaded automatically at first boot (needs outbound internet once).',
+    optional:
+      'FrontierBorder (`/api/border`) · FrontierReputation (`/api/reputation/*`) · FrontierEvents (`/api/events/*`) · FrontierShop (`/api/shop/*`) · mcMMO (`/api/players/{uuid}/skills` and the `power_level` leaderboard) · EssentialsX (`/api/economy/baltop`; discovered by folder, not declared)',
+    usedBy:
+      'Nothing in-game — consumers are websites and bots. This site is the reference consumer.',
+    hardDep: 'FrontierTab',
+    commands: [
+      { cmd: '/statsapi reload', who: 'Admin', what: 'Re-read `config.yml` (rate limit, ores list, CORS origins); port changes still need a restart' },
+      { cmd: '/statsapi resetdeaths', who: 'Admin', what: 'Prints a warning and does nothing' },
+      { cmd: '/statsapi resetdeaths confirm', who: 'Admin', what: 'Reset every player’s **vanilla** `minecraft:deaths` statistic to 0 (online via the API, offline by rewriting their stats file); note this is *not* the deaths number the API serves' },
+    ],
+    permissions: [
+      { node: 'frontier.statsapi.admin', def: 'op', grants: '`/statsapi reload` and `/statsapi resetdeaths`' },
+    ],
+    configPath: 'plugins/FrontierStatsAPI/config.yml',
+    configReload: '`/statsapi reload` — everything except `port`, which needs a restart',
+    config: [
+      { key: 'port', def: '17249', what: 'HTTP listener port; binds all interfaces; read once at enable' },
+      { key: 'allowed-origins', def: '["https://example.com", "http://localhost:3000"]', what: 'CORS allow-list — an `Origin` header that exactly matches an entry gets it echoed back; anything else gets no CORS header (browsers block, curl doesn’t care)' },
+      { key: 'rate-limit', def: '60', what: 'Max requests per client IP per fixed 60-second window; over it returns `429`' },
+      { key: 'ores', def: '19 materials (coal → ancient debris, incl. deepslate and nether variants)', what: 'Bukkit `Material` names that count toward `?stat=ores_mined`; unknown names log a warning and are skipped (`blocks_mined` needs no list)' },
+    ],
+    routes: [
+      { group: 'Server', routes: '/api/server, /api/plugins', needs: '—' },
+      { group: 'Players', routes: '/api/players, /api/players/{uuid}, /api/players/{uuid}/advancements, /api/players/{uuid}/skills', needs: 'FrontierTab; world advancement files; mcMMO for skills' },
+      { group: 'Leaderboards', routes: '/api/leaderboard?stat=&window=&limit=', needs: 'FrontierTab (+ mcMMO for `power_level`)' },
+      { group: 'Border', routes: '/api/border', needs: 'FrontierBorder' },
+      { group: 'Economy', routes: '/api/economy/baltop?limit=', needs: 'EssentialsX userdata' },
+      { group: 'Reputation', routes: '/api/reputation/leaderboard/{outlaws|peaceful|violence|lawmen|donors|streaks}, /api/reputation/{wanted|economy|donations|recent}, /api/reputation/player/{name}', needs: 'FrontierReputation' },
+      { group: 'Events', routes: '/api/events/{leaderboard|categories|recent|summary|live}, /api/events/loot/recent, /api/events/run/{id}, /api/events/player/{nameOrUuid}', needs: 'FrontierEvents' },
+      { group: 'PvP', routes: '/api/events/pvp/{leaderboard|recent}, /api/events/pvp/player/{nameOrUuid}', needs: 'FrontierEvents' },
+      { group: 'Shop', routes: '/api/shop/{catalog|market|deals|history}', needs: 'FrontierShop' },
+    ],
+    routesNote:
+      'Base URL `http://<host>:<port>`, all `GET`, all JSON. Full route parameters, response shapes and error cases are in `docs/API.md` in the repo.',
+    notes: [
+      'There is **no authentication and no bind-address option**. Everything served is public-leaderboard grade, but `/api/reputation/wanted` includes last-seen coordinates and `/api/plugins` lists every installed plugin and version — put it behind a reverse proxy or firewall if that matters.',
+      'The `deaths` field is FrontierTab’s own counter (excludes event-arena deaths). `/statsapi resetdeaths` zeroes the vanilla statistic, which no route reads — use `/tab reset <player> deaths` for the number the API shows.',
+      'A `503 … not available` on an events or reputation sub-route usually means the sibling is on an older build that hasn’t created that table or column yet; upgrade it and the flag latches the first time the schema is seen.',
+      '"Address already in use" at boot means another process holds the port — the plugin still enables but serves nothing until you change `port` and restart.',
+      'Day boundaries (`today_*`, streaks, shop deals) use the JVM timezone; FrontierBorder’s `server-timezone` sets that for the whole server.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-statsapi',
+    github: `${SUITE_GITHUB}/tree/master/statsapi`,
+    liveOnSite: [
+      { href: '/leaderboards', label: 'Leaderboards this API feeds' },
+      { href: '/get-started/pistats', label: 'Wiring it to a site' },
+    ],
+  },
+
+  // ───────────────────────────────────────────────────────── Border
+  {
+    slug: 'border',
+    name: 'FrontierBorder',
+    short: 'Border',
+    version: '2.3.1',
+    tagline:
+      'The world border grows itself from combined player-hours — one predictable expansion a night.',
+    category: 'World',
+    kind: 'World',
+    oneLine:
+      'Playtime-gated world border that grows on a daily schedule; sets the server timezone',
+    what: [
+      'The overworld starts small and earns its growth from how much everyone played. Once a day, at a configured local hour, FrontierBorder reads yesterday’s AFK-aware playtime from FrontierTab, matches the combined hours against a tier table, clamps the result by current world size, and animates the border outward (the Nether follows at 1/8 scale, the End optionally).',
+      'The distinctive choices: expansion is *scheduled* — one nightly event everyone can watch, sized by the previous full day — rather than a silent trickle, and thresholds scale with the number of active players so five people playing an hour each is harder to clear than one person playing five.',
+      'It also carries two small server-wide policies: it sets the JVM’s default timezone from `server-timezone` before any other plugin loads (so every plugin’s "midnight" is your local midnight even on hosts that run Java in UTC), and it can cancel enderman block grief without touching `mobGriefing`.',
+    ],
+    requires:
+      'Paper 26.2+, Java 25+, **FrontierTab** — source of playtime; the plugin refuses to load without it.',
+    optional: 'None. A Discord webhook URL can be set for expansion announcements.',
+    usedBy:
+      'FrontierTab (reads `data.yml` plus config for the `Border: 1500 → 1750` header element) · FrontierStatsAPI (serves `data.yml` on `/api/border`)',
+    hardDep: 'FrontierTab',
+    commands: [
+      { cmd: '/borderinfo', who: 'Everyone', what: 'Radius / max, center, total expansions, paused state, and tonight’s preview (yesterday’s hours, active players, blocks earned) or period progress in continuous mode' },
+      { cmd: '/border info', who: 'Admin', what: 'Same output as `/borderinfo`' },
+      { cmd: '/border expand <amount>', who: 'Admin', what: 'Grow the radius by `<amount>` blocks now (animated over `expand-duration`, clamped to `max-radius`); recorded as `manual`' },
+      { cmd: '/border set <radius>', who: 'Admin', what: 'Set the radius directly (instant), mirror to other dimensions, and reset the period counters so auto-expansion is re-armed' },
+      { cmd: '/border pause', who: 'Admin', what: 'Pause automatic expansion (playtime still accrues; flag persists across restarts)' },
+      { cmd: '/border resume', who: 'Admin', what: 'Resume automatic expansion' },
+      { cmd: '/border reset', who: 'Admin', what: 'Zero the period playtime counter and re-arm expansion for this period' },
+      { cmd: '/border autopregen [on|off]', who: 'Admin', what: 'Show or toggle automatic ring pre-generation after expansions (writes `auto-pregen` back to config.yml)' },
+      { cmd: '/border pregen', who: 'Admin', what: 'Pre-generate every chunk inside the current overworld border, with a broadcast progress bar every 10 s' },
+      { cmd: '/border cancelpregen', who: 'Admin', what: 'Stop a running pre-generation' },
+    ],
+    commandsNote: 'All commands also work from console.',
+    permissions: [
+      { node: 'frontier.border.admin', def: 'op', grants: '`/border` and every subcommand' },
+      { node: 'frontier.border.info', def: 'true', grants: '`/borderinfo`' },
+    ],
+    configPath: 'plugins/FrontierBorder/config.yml',
+    configReload:
+      'Restart required — no reload command. Only `auto-pregen` is written live, by `/border autopregen`.',
+    config: [
+      { key: 'server-timezone', def: 'system', what: 'IANA zone id (e.g. `America/New_York`) applied to the whole JVM at load; `system` leaves the host default alone; unknown ids are logged and ignored' },
+      { key: 'border.initial-radius', def: '1750', what: 'Radius (not diameter) applied on first boot' },
+      { key: 'border.max-radius', def: '10000', what: 'Hard ceiling; expansion stops here' },
+      { key: 'border.dimensions.nether', def: 'true', what: 'Mirror the overworld border into the Nether at 1/8 scale' },
+      { key: 'border.dimensions.end', def: 'false', what: 'Mirror into the End at 1:1; `false` pushes the End border to the vanilla maximum (unbounded)' },
+      { key: 'reset-mode', def: 'daily', what: '`daily` or `weekly` — the period model used by continuous mode and `/border reset`' },
+      { key: 'reset-hour', def: '0', what: 'Hour (0–23, server-local) the period counter resets' },
+      { key: 'week-reset-day', def: 'SUNDAY', what: 'Day the weekly reset fires; only used when `reset-mode: weekly`' },
+      { key: 'expansion-mode', def: 'scheduled', what: '`scheduled` = one expansion per day at `expansion-hour` sized by yesterday’s playtime; `continuous` = top up toward the earned tier on every check' },
+      { key: 'expansion-hour', def: '21', what: 'Hour (0–23, server-local) the scheduled expansion fires (first check at or after this hour)' },
+      { key: 'expansion-tiers', def: '5 tiers: 8h→500, 5h→400, 3h→300, 1.5h→200, 0.5h→100', what: 'Combined player-hours → blocks; one entry per tier, fields `hours`, `blocks`; first match wins so list highest-hours first' },
+      { key: 'scaling.enabled', def: 'true', what: 'Multiply tier hour thresholds by `activePlayers^exponent` (a lone player is never scaled)' },
+      { key: 'scaling.exponent', def: '1.15', what: 'Population-scaling exponent' },
+      { key: 'scaling.min-active-seconds', def: '0', what: 'Period playtime needed to count as an "active" player (0 = any participation)' },
+      { key: 'world-size-caps', def: '3 caps: <4000→500, <7000→375, <10000→250', what: 'Clamp on any single expansion by current radius; one entry per cap, fields `below-radius`, `max-blocks`; first match wins so list smallest radius first' },
+      { key: 'check-interval-minutes', def: '10', what: 'Scheduler period; also the precision of the expansion time' },
+      { key: 'expand-duration', def: '60', what: 'Seconds the border animates outward' },
+      { key: 'announce-expansion', def: 'true', what: 'Chat broadcast plus sound to everyone online on expansion' },
+      { key: 'broadcast-sound', def: 'ENTITY_PLAYER_LEVELUP', what: 'Any Bukkit `Sound` name; an invalid name is silent' },
+      { key: 'discord-webhook-url', def: '""', what: 'POSTs an embed on every automatic expansion; empty = off' },
+      { key: 'auto-pregen', def: 'false', what: 'Ring-pregenerate the new band after each automatic expansion (CPU-heavy; enable on the live server, not a test box)' },
+      { key: 'prevent-enderman-grief', def: 'true', what: 'Cancel enderman block pickup and placement without touching the `mobGriefing` gamerule' },
+    ],
+    notes: [
+      'Scheduled mode reads *yesterday’s* playtime, so a fresh server’s first expansion happens the day after people first play; a zero-playtime day simply doesn’t expand.',
+      '`plugins/FrontierBorder/data.yml` is the plugin’s public state (`current-radius`, `total-expansions`, `paused`, `expansion-history` with `{date, from, to, player-hours, active-players, triggered-by}`) — safe to read from other tools. The plugin re-applies the border every boot and syncs `current-radius` back if someone runs vanilla `/worldborder set`.',
+      '`/border set` also zeroes the period counters. If you only want to correct the radius, use vanilla `/worldborder set` instead — that is picked up without touching the schedule.',
+      '`/border autopregen` calls `saveConfig()`, which strips the comments from config.yml — hand-edit if you want to keep them.',
+      'Both list keys are "first match wins": tiers highest-hours first, caps smallest-radius first, or you silently get the wrong number.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-border',
+    github: `${SUITE_GITHUB}/tree/master/border`,
+    liveOnSite: [{ href: '/about#world-border', label: 'The live border and its tier table' }],
+  },
+
+  // ───────────────────────────────────────────────────────── Tab
+  {
+    slug: 'tab',
+    name: 'FrontierTab',
+    short: 'Tab',
+    version: '1.2.1',
+    tagline:
+      'Tab-list stats plus the per-player playtime and deaths store the rest of the suite is built on.',
+    category: 'QoL',
+    kind: 'QoL · foundation',
+    oneLine:
+      'Tab-list header/footer with playtime, deaths, session, border, End status',
+    what: [
+      'Renders a two-line tab header (server name, then TPS · players · border radius with its predicted next expansion · total deaths · End padlock), decorates every player’s list entry with their death count, ping and an `[AFK]` tag, and gives each viewer a personal footer showing all-time playtime and session time.',
+      'Behind the display is a small per-player stats store (`data/<uuid>.yml`) that tracks **AFK-excluded playtime in daily buckets**, deaths and XP levels earned. Two decisions make it the suite’s foundation: playtime is stored per calendar day so any reader can compute week or month leaderboards without the plugin ever "closing" a period, and it keeps its own deaths counter that ignores deaths inside a FrontierEvents arena — FrontierBorder and FrontierStatsAPI both read these files straight off disk.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional:
+      'FrontierBorder (enables the `Border: 1500 → 1750` header element) · FrontierEndLock (enables the `End: \u{1f512}` element while the End is locked) · FrontierEvents (makes deaths inside events not count)',
+    usedBy:
+      'FrontierBorder (reads daily playtime buckets to size expansion) · FrontierStatsAPI (serves all player stats and leaderboards) · FrontierReputation (registers a name prefix so tier titles show in tab)',
+    hardDep: null,
+    commands: [
+      { cmd: '/tab', who: 'Everyone', what: 'Show the subcommands you’re allowed to use' },
+      { cmd: '/tab hide', who: 'Everyone', what: 'Hide your own header and footer (saved to your data file; player-only)' },
+      { cmd: '/tab show', who: 'Everyone', what: 'Show your header and footer again' },
+      { cmd: '/tab reload', who: 'Admin', what: 'Reload `config.yml` and restart the refresh timer' },
+      { cmd: '/tab set <player> playtime <value>', who: 'Admin', what: 'Overwrite a player’s playtime (`<value>` = raw seconds or `1d2h30m` style); works on offline players' },
+      { cmd: '/tab set <player> deaths <n>', who: 'Admin', what: 'Overwrite the deaths counter; works on offline players' },
+      { cmd: '/tab reset <player> [playtime|deaths]', who: 'Admin', what: 'Zero one stat, or both if omitted; works on offline players' },
+      { cmd: '/stats [player]', who: 'Everyone', what: 'Playtime, deaths, current session, AFK status for you or another (offline players found by last name)' },
+    ],
+    permissions: [
+      { node: 'frontier.tab.admin', def: 'op', grants: '`/tab reload`, `/tab set`, `/tab reset`' },
+      { node: 'frontier.tab.hide', def: 'true', grants: '`/tab hide` and `/tab show`' },
+      { node: 'frontier.tab.stats', def: 'true', grants: '`/stats`' },
+    ],
+    configPath: 'plugins/FrontierTab/config.yml',
+    configReload: '`/tab reload`',
+    config: [
+      { key: 'refresh-interval', def: '40', what: 'Ticks between tab re-renders and AFK re-checks (also the playtime resolution); 40 = every 2 s' },
+      { key: 'afk-timeout-minutes', def: '5', what: 'Minutes without a block-level move, interact, break/place or chat before a player is tagged `[AFK]`; AFK time is not counted as playtime' },
+      { key: 'playtime-bucket-retain-days', def: '35', what: 'Daily buckets older than this fold into the archive total on save; keep it above the longest window any reader wants (30 d for the month leaderboard)' },
+      { key: 'tps-thresholds.green', def: '18.0', what: 'TPS at or above this shows green' },
+      { key: 'tps-thresholds.yellow', def: '15.0', what: 'TPS at or above this (but below green) shows yellow; else red' },
+      { key: 'ping-thresholds.green', def: '80', what: 'Ping (ms) at or below this shows green' },
+      { key: 'ping-thresholds.yellow', def: '150', what: 'Ping at or below this shows yellow; else red' },
+      { key: 'show-playtime', def: 'true', what: 'Footer `⏱ Played` line' },
+      { key: 'show-deaths', def: 'true', what: 'Reserved — deaths currently always render on the player entry' },
+      { key: 'show-session-time', def: 'true', what: 'Footer `🕐 Session` line' },
+      { key: 'show-ping', def: 'true', what: 'Reserved — ping currently always renders on the player entry' },
+      { key: 'show-tps', def: 'true', what: 'Header: TPS element' },
+      { key: 'show-player-count', def: 'true', what: 'Header: online player count' },
+      { key: 'show-border', def: 'true', what: 'Header: border radius → next expansion (needs FrontierBorder; silently skipped otherwise)' },
+      { key: 'show-total-deaths', def: 'false', what: 'Header: sum of deaths of online players' },
+      { key: 'show-end-lock', def: 'false', what: 'Header: `End: \u{1f512}` while locked (needs FrontierEndLock)' },
+      { key: 'server-name', def: '"My Server"', what: 'Header line 1 (gold, bold)' },
+    ],
+    notes: [
+      'The `deaths` shown in tab (and by anything reading FrontierTab, e.g. the FrontierStatsAPI deaths leaderboard) is FrontierTab’s **own** counter, not the vanilla `minecraft:deaths` statistic — resetting vanilla stats does not change it; use `/tab set` or `/tab reset`.',
+      'Playtime that "freezes" is AFK exclusion working as designed: standing on a farm or only turning your head counts as AFK after `afk-timeout-minutes`.',
+      'Data is saved every 5 minutes (async), on quit, and on shutdown; a hard crash loses at most 5 minutes of playtime.',
+      'The code falls back to `true` for `show-total-deaths` and `show-end-lock` if the keys are missing, so deleting them turns those elements *on* — keep them explicit.',
+      'Daily buckets roll at the JVM’s midnight; install FrontierBorder (or set `-Duser.timezone`) if you want them to roll at your local midnight.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-tab',
+    github: `${SUITE_GITHUB}/tree/master/tab`,
+    liveOnSite: [{ href: '/leaderboards', label: 'The leaderboards built on this data' }],
+  },
+
+  // ───────────────────────────────────────────────────────── Graves
+  {
+    slug: 'graves',
+    name: 'FrontierGraves',
+    short: 'Graves',
+    version: '1.1.1',
+    tagline: 'Permanent, shared player graves — keep your inventory on death, claim it later.',
+    category: 'QoL',
+    kind: 'QoL',
+    oneLine: 'Permanent graves — keep your inventory on death, claim it later',
+    what: [
+      'When a player dies their drops are not scattered on the ground: the plugin cancels them, places an invisible armor stand wearing the victim’s head as a marker at the death spot (clamped inside world height, so void deaths still get a reachable grave), and stores the inventory in `graves.yml`.',
+      'Anyone can right-click the marker to open a shared loot GUI; several players can browse the same grave at once and take what they want, and whatever they leave stays. Graves never decay on a timer — a grave despawns only when the last viewer closes it empty — and the dead player gets their XP levels back the first time they open it.',
+      'Graves are shared rather than owner-locked on purpose: it keeps death meaningful (your gear is on the floor, go get it) while removing the worst part of vanilla, the 5-minute despawn timer and lava or void loss. Whether someone else loots you is a social question, not a plugin one.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional:
+      'FrontierEvents — deaths inside an event (fighter or spectator) never make a grave, and FrontierEvents can sweep stray graves out of an arena at teardown',
+    usedBy: 'FrontierEvents (looks up the `GraveApi` service to clear arena graves)',
+    hardDep: null,
+    commands: [
+      { cmd: '/grave  |  /grave list', who: 'Everyone', what: 'List your active graves: world, block coordinates and creation time' },
+      { cmd: '/grave nearest', who: 'Everyone', what: 'Coordinates and distance of your closest grave in your current world' },
+      { cmd: '/graves', who: 'Everyone', what: 'Alias for `/grave list`' },
+      { cmd: '/graveadmin  |  /graveadmin info', who: 'Admin', what: 'Total number of graves on the server' },
+      { cmd: '/graveadmin reload', who: 'Admin', what: 'Reload `config.yml` and re-read `graves.yml` from disk' },
+      { cmd: '/graveadmin wipe', who: 'Admin', what: 'Remove every grave (marker and stored items) — irreversible' },
+    ],
+    commandsNote: '`/grave` and `/graves` are player-only; `/graveadmin` also works from console.',
+    permissions: [
+      { node: 'frontier.graves.admin', def: 'op', grants: '`/graveadmin` (info, reload, wipe)' },
+    ],
+    configPath: 'plugins/FrontierGraves/config.yml',
+    configReload: '`/graveadmin reload`',
+    config: [
+      { key: 'enabled', def: 'true', what: 'Master toggle. `false` = deaths drop items normally' },
+      { key: 'restore-xp', def: 'true', what: 'Store the victim’s XP level and return it when the owner first opens the grave. When `true`, dropped XP orbs are suppressed and the player respawns at level 0; when `false` vanilla XP drop applies. Non-owners never receive the XP' },
+      { key: 'announce-death', def: 'true', what: 'Broadcast `<name>’s grave appeared at x, y, z.` to the server (the victim is always told privately)' },
+    ],
+    notes: [
+      'Storage is `plugins/FrontierGraves/graves.yml` — one record per grave (owner, location, XP, contents) written on every add, remove, XP claim and GUI close. Items sit in this file, not as ground entities, so chunk unloads, lag and the item timer can’t eat them.',
+      'The GUI is take-only: putting items into a grave is blocked, so it can’t be used as free storage. Only the owner gets the XP, only once, only on click — if someone else empties and closes the grave first, the stored XP is gone with it.',
+      'If the death already keeps inventory (`keepInventory`), the plugin does nothing.',
+      'Graves open at LOWEST event priority, so land-protection plugins usually can’t block looting a grave inside someone else’s claim. There is no owner-only mode.',
+      'Grave times in `/grave list` use the JVM default timezone. A grave in a world that no longer exists shows as `?`, is skipped by `nearest`, and can only be cleared with `/graveadmin wipe`.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-graves',
+    github: `${SUITE_GITHUB}/tree/master/graves`,
+  },
+
+  // ───────────────────────────────────────────────────────── Mail
+  {
+    slug: 'mail',
+    name: 'FrontierMail',
+    short: 'Mail',
+    version: '1.0.0',
+    tagline: 'Offline text mail and a per-player item mailbox.',
+    category: 'QoL',
+    kind: 'QoL',
+    oneLine: 'Offline messages + item mailbox; other plugins deliver into it',
+    what: [
+      'Short text messages (`/mail`) and a per-player item mailbox (`/mailbox`) that other players — and other Frontier plugins — can drop items into while the recipient is offline.',
+      'Two design choices keep items safe: `/senditem` removes the stack from your hand only after it has been written to the recipient’s mailbox, so a full mailbox never eats an item; and `/mailbox` is a chest GUI where whatever you drag out is yours and whatever you leave stays mailed — nothing is auto-dumped into your inventory, so a full inventory can’t spill mail onto the ground. Everything is stored per player as a JSON file: no database, nothing to configure beyond two limits.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy:
+      'FrontierEvents (mails event payouts that don’t fit or are owed to an offline player, as "Event Rewards") · FrontierReputation (mails daily-login reward items that overflow the inventory, as "Daily Reward"). FrontierShop does **not** use it — the market keeps its own mailbox.',
+    hardDep: null,
+    commands: [
+      { cmd: '/mail send <player> <message…>', who: 'Everyone', what: 'Send a text message. Recipient must have played before (or be online); online recipients are pinged immediately' },
+      { cmd: '/mail read', who: 'Everyone', what: 'Print all stored messages (newest last, `(new)` marker on unread) and mark them all read' },
+      { cmd: '/mail clear', who: 'Everyone', what: 'Delete all of your messages' },
+      { cmd: '/mailbox', who: 'Everyone', what: 'Open your item mailbox GUI. Items you take out are removed; items you leave stay' },
+      { cmd: '/senditem <player>', who: 'Everyone', what: 'Mail the stack in your main hand. Refuses on empty hand, self-send, or a full mailbox' },
+    ],
+    commandsNote:
+      'All three commands are player-only. Names tab-complete from the online list, but any player who has ever joined is accepted.',
+    permissions: [
+      { node: 'frontier.mail.use', def: 'true', grants: '`/mail`, `/mailbox`' },
+      { node: 'frontier.mail.senditem', def: 'true', grants: '`/senditem`' },
+    ],
+    configPath: 'plugins/FrontierMail/config.yml',
+    configReload: 'Restart required — values are read on use, so `/reload confirm` also works',
+    config: [
+      { key: 'max-messages', def: '50', what: 'Maximum stored messages per player. At the cap the oldest message is silently dropped to make room (FIFO), so mail is never refused — only forgotten' },
+      { key: 'notify-on-join', def: 'true', what: 'Send "You have N unread messages / N items" 2 seconds after a player joins' },
+      { key: 'max-mailbox-items', def: '27', what: 'Maximum items in a player’s mailbox. Unlike messages, a full mailbox refuses new items: `/senditem` tells the sender it’s full and plugin deliveries fall back to their own handling. The GUI grows in 9-slot rows up to 54; values above 54 are stored but only the first 54 show at once' },
+    ],
+    notes: [
+      'Storage is `plugins/FrontierMail/data/<uuid>.json`, one file per player holding messages and items. Files are read on demand and rewritten after every change; there is no cache and no save-on-shutdown step.',
+      'Item mail keeps enchantments, names, lore and custom data intact through the round-trip; only exotic items with genuinely fractional or very large numeric fields can lose precision.',
+      '"Has never played on this server": `send` and `senditem` require the recipient to have joined at least once under that exact name. Offline-mode servers and name changes can make the lookup miss.',
+      'Timestamps in `/mail read` use the JVM default timezone. Rearranging items inside the mailbox before closing can shuffle the remembered "from" between items — the items themselves are always correct.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-mail',
+    github: `${SUITE_GITHUB}/tree/master/mail`,
+  },
+
+  // ───────────────────────────────────────────────────────── Trade
+  {
+    slug: 'trade',
+    name: 'FrontierTrade',
+    short: 'Trade',
+    version: '1.0.0',
+    tagline: 'Scam-proof player-to-player item trading.',
+    category: 'QoL',
+    kind: 'QoL',
+    oneLine: 'Safe two-sided trade GUI',
+    what: [
+      '`/trade <player>` sends a request; on `/tradeaccept` both players get the same shared chest GUI — your items on the left, theirs on the right, a confirm button in the middle. The trade only executes when both have confirmed, and any change to either side un-confirms both, so the classic "confirm, then swap the diamond for dirt" scam is impossible.',
+      'No economy, no database, no persistence — a session lives in memory and is unwound (items handed back) when either player closes the GUI, disconnects, or the plugin disables, so items can never get stuck in the window.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None.',
+    hardDep: null,
+    commands: [
+      { cmd: '/trade <player>', who: 'Everyone', what: 'Send a request. Refused if either of you is already trading, the target is offline or yourself, you’re farther than `max-distance` (or in another world, when a limit is set), or you already have a live request to them' },
+      { cmd: '/tradeaccept', who: 'Everyone', what: 'Accept the request currently addressed to you and open the trade GUI for both. Refused if the requester logged off or either of you is now in another trade' },
+      { cmd: '/tradedeny', who: 'Everyone', what: 'Decline the pending request; the requester is told' },
+    ],
+    commandsNote: 'All player-only. `/trade` tab-completes online players other than yourself.',
+    permissions: [
+      { node: 'frontier.trade.use', def: 'true', grants: '`/trade`, `/tradeaccept`, `/tradedeny`' },
+    ],
+    configPath: 'plugins/FrontierTrade/config.yml',
+    configReload:
+      'Restart required — values are read per request/session, so `/reload confirm` also works',
+    config: [
+      { key: 'request-timeout', def: '30', what: 'Seconds a request stays open; when it lapses both players get an "expired" message. A newer request to the same target overrides an older one' },
+      { key: 'max-distance', def: '0', what: 'Max block distance for `/trade <player>`; `0` = unlimited. When > 0 the players must also be in the same world. Checked at request time only, not on accept' },
+      { key: 'trade-rows', def: '3', what: 'Item rows per side (clamped 1–3). Each side gets rows × 3 slots; the GUI is rows + 1 tall (extra row = status panes and confirm button)' },
+    ],
+    notes: [
+      'Pending requests are keyed by target: if two people `/trade` the same player, the second request silently replaces the first, and the target accepts whoever asked most recently.',
+      'Completion moves the offered stacks straight into the other player’s inventory; anything that doesn’t fit drops at their feet. If a player disconnects mid-trade their offered items are dropped at their last location for anyone to pick up — trade near your base, not in the wilderness.',
+      'Any close of the trade GUI (including the client-side close on respawn or disconnect) cancels the whole session for both players; there is no pause.',
+      'Command aliases defined in `commands.yml` will not work — the plugin dispatches on the exact labels `trade` / `tradeaccept` / `tradedeny`.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-trade',
+    github: `${SUITE_GITHUB}/tree/master/trade`,
+  },
+
+  // ───────────────────────────────────────────────────────── EnderTracker
+  {
+    slug: 'endertracker',
+    name: 'FrontierEnderTracker',
+    short: 'Ender Tracker',
+    version: '1.0.0',
+    tagline:
+      'Who actually killed the dragon? Per-player damage credit, live sidebar and a ranked leaderboard for every Ender Dragon fight.',
+    category: 'World',
+    kind: 'World',
+    oneLine: 'Per-player Ender Dragon damage tracking, live sidebar, fight history',
+    what: [
+      'From the moment a dragon spawns, every hit a player lands is credited to them — melee, arrows, TNT and tamed pets are all traced back to the responsible player, and non-player damage (crystals, environment) is ignored.',
+      'A scoreboard sidebar shows the top contributors live during the fight; when the dragon dies the plugin broadcasts a ranked leaderboard with percentages (and a "Final blow" line if the killer wasn’t the top damager), updates lifetime stats, appends a JSON record to a fight log, and can run reward console commands for the top contributor(s). By default it counts *final* damage (after the dragon’s armor and effects) so the numbers reflect true contribution, and it is reload-safe: a dragon already alive when the plugin loads is adopted on the first hit.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None — its `stats.yml` and `fights.jsonl` are stable, readable files for outside tools.',
+    hardDep: null,
+    commands: [
+      { cmd: '/dragondmg', who: 'Everyone', what: 'Your damage in the current fight, or in the last completed one (player only)' },
+      { cmd: '/dragondmg top', who: 'Everyone', what: 'Top 10 for the current fight, or the last fight if none is running' },
+      { cmd: '/dragondmg stats [player]', who: 'Everyone', what: 'Lifetime total damage / fights joined / killing blows (defaults to you; console must name a player)' },
+      { cmd: '/dragondmg history [n]', who: 'Everyone', what: 'Last `n` (1–20, default 5) logged fights: id, time, killer, top damager' },
+      { cmd: '/dragondmg reset', who: 'Admin', what: 'Clear the current fight’s totals and drop the sidebar (does not touch `stats.yml`)' },
+      { cmd: '/dragondmg reload', who: 'Admin', what: 'Reload `config.yml`' },
+    ],
+    commandsNote: '`/dragondmg` also answers to `/ddmg` and `/dragondamage`.',
+    permissions: [
+      { node: 'frontier.endertracker.use', def: 'true', grants: '`/dragondmg`, `top`, `history` (base command node)' },
+      { node: 'frontier.endertracker.stats', def: 'true', grants: '`/dragondmg stats`' },
+      { node: 'frontier.endertracker.admin', def: 'op', grants: '`/dragondmg reset`, `/dragondmg reload`' },
+    ],
+    configPath: 'plugins/FrontierEnderTracker/config.yml',
+    configReload:
+      '`/dragondmg reload` — keys are read live; a running fight keeps its sidebar title until the next fight',
+    config: [
+      { key: 'use-final-damage', def: 'true', what: '`true` = damage after armor and effects (true contribution); `false` = raw pre-mitigation damage' },
+      { key: 'show-sidebar', def: 'true', what: 'Live scoreboard sidebar during a fight' },
+      { key: 'sidebar-top-n', def: '5', what: 'Rows shown on the sidebar (min 1)' },
+      { key: 'sidebar-refresh-ticks', def: '20', what: 'Sidebar refresh period in ticks (min 5); 20 = 1 s' },
+      { key: 'sidebar-title', def: "'&5&lDragon Damage'", what: 'Sidebar title (`&` colour codes)' },
+      { key: 'broadcast-on-death', def: 'true', what: 'Ranked chat leaderboard when the dragon dies' },
+      { key: 'show-percent', def: 'true', what: 'Append each player’s share of total damage to the broadcast' },
+      { key: 'reward-commands', def: '[]', what: 'Console commands run for the top contributor(s); placeholders `{player}`, `{rank}`, `{damage}` (e.g. `give {player} diamond 3`)' },
+      { key: 'reward-top-n', def: '1', what: 'How many top players receive the reward commands' },
+      { key: 'persist-stats', def: 'true', what: 'Write lifetime totals to `stats.yml`' },
+      { key: 'storage', def: 'yaml', what: 'Storage backend; only `yaml` is implemented (`sqlite` is accepted but ignored)' },
+      { key: 'log-fights', def: 'true', what: 'Append a per-fight record to `fights.jsonl` on each dragon death' },
+      { key: 'max-history', def: '200', what: 'Trim `fights.jsonl` to this many lines (0 = unlimited)' },
+    ],
+    notes: [
+      'During a fight the sidebar is set on **every online player** (not just those in the End) and any other plugin’s sidebar is overridden until the fight ends — set `show-sidebar: false` if another scoreboard plugin matters more.',
+      'Only one dragon is tracked at a time; a second dragon (another End world, or a respawn while the first lives) is ignored until the active one dies or `/dragondmg reset` is run.',
+      '`stats.yml` is `<uuid>: {name, total, fights, kills}`; `fights.jsonl` is one JSON object per line (`id`, `time`, `world`, `killer`, `durationMs`, `total`, ranked `participants[]`) — append-only, trimmed from the head.',
+      'Both files are written on the main thread and `history` reads the whole log each call — fine at the default `max-history`, so don’t set it to `0` on a busy server.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-endertracker',
+    github: `${SUITE_GITHUB}/tree/master/endertracker`,
+  },
+
+  // ───────────────────────────────────────────────────────── EndLock
+  {
+    slug: 'endlock',
+    name: 'FrontierEndLock',
+    short: 'End Lock',
+    version: '1.0.0',
+    tagline: 'Keeps the End closed until an admin opens it.',
+    category: 'World',
+    kind: 'World',
+    oneLine: 'Lock the End until staff open it',
+    what: [
+      'Locks the End so a fresh survival server can reach the Dragon fight together instead of one player rushing it in week one. While locked, players without bypass cannot enter an End portal, place End portal frames, or push Eyes of Ender into frames.',
+      'Flipping the lock off broadcasts a decorated "The End Has Been Unlocked!" banner. The lock state persists in `config.yml` and the End starts locked on a fresh install.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'FrontierTab (optionally shows an `End: \u{1f512}` element in the header while locked).',
+    hardDep: null,
+    commands: [
+      { cmd: '/endlock on', who: 'Admin', what: 'Lock the End; broadcasts "The End has been locked!"' },
+      { cmd: '/endlock off', who: 'Admin', what: 'Unlock the End; broadcasts a banner' },
+      { cmd: '/endlock status', who: 'Admin', what: 'Show LOCKED / UNLOCKED (running `/endlock` with no argument also shows status and usage)' },
+    ],
+    permissions: [
+      { node: 'frontier.endlock.admin', def: 'op', grants: '`/endlock`' },
+      { node: 'frontier.endlock.bypass', def: 'false', grants: 'Ignore the lock: enter portals, place frames, use eyes' },
+    ],
+    configPath: 'plugins/FrontierEndLock/config.yml',
+    configReload: 'Restart required — use `/endlock on|off` instead of editing',
+    config: [
+      { key: 'locked', def: 'true', what: 'Whether the End is currently locked. Written by `/endlock on|off` and again on shutdown; read once at startup' },
+    ],
+    notes: [
+      'Don’t edit `config.yml` while the server runs: the plugin holds the state in memory and rewrites `locked` on shutdown, so hand edits get overwritten. Use the command, or edit with the server stopped.',
+      'Only player portal travel is blocked. Entities, and teleports that aren’t End-portal travel (plugin `/tp`, End gateways, other portal plugins), are not.',
+      '`frontier.endlock.bypass` defaults to false, but ops with a `*` wildcard grant will have it. Bypass is per-player, and turning the lock on does not kick players already in the End.',
+      'Frame placement is cancelled at HIGH event priority; a plugin at a higher priority un-cancelling it, WorldEdit, or `/setblock` will get around it.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-endlock',
+    github: `${SUITE_GITHUB}/tree/master/endlock`,
+  },
+
+  // ───────────────────────────────────────────────────────── NetherLock
+  {
+    slug: 'netherlock',
+    name: 'FrontierNetherLock',
+    short: 'Nether Lock',
+    version: '1.0.0',
+    tagline: 'Keeps the Nether closed until an admin opens it.',
+    category: 'World',
+    kind: 'World',
+    oneLine: 'Lock the Nether until staff open it',
+    what: [
+      'The sibling of FrontierEndLock, for servers that want a "stone age" opening week before anyone can rush Nether gear. While locked, players without bypass cannot travel through a Nether portal or light one on obsidian with flint & steel or a fire charge, and portal creation by fire from any source (lava, fire spread, dispensers, ghast fireballs) is cancelled.',
+      'Unlocking broadcasts a "The Nether Has Been Unlocked!" banner. State persists in `config.yml`; unlike EndLock, the Nether ships **open** until you run `/netherlock on`.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None.',
+    hardDep: null,
+    commands: [
+      { cmd: '/netherlock on', who: 'Admin', what: 'Lock the Nether; broadcasts "The Nether has been locked!"' },
+      { cmd: '/netherlock off', who: 'Admin', what: 'Unlock the Nether; broadcasts a banner' },
+      { cmd: '/netherlock status', who: 'Admin', what: 'Show LOCKED / UNLOCKED (running `/netherlock` with no argument also shows status and usage)' },
+    ],
+    permissions: [
+      { node: 'frontier.netherlock.admin', def: 'op', grants: '`/netherlock`' },
+      { node: 'frontier.netherlock.bypass', def: 'false', grants: 'Ignore the lock: travel through, light and create portals' },
+    ],
+    configPath: 'plugins/FrontierNetherLock/config.yml',
+    configReload: 'Restart required — use `/netherlock on|off` instead of editing',
+    config: [
+      { key: 'locked', def: 'false', what: 'Whether the Nether is currently locked. Written by `/netherlock on|off` and again on shutdown; read once at startup. If the key is missing entirely the plugin falls back to `true` (locked)' },
+    ],
+    notes: [
+      'Don’t edit `config.yml` while the server runs: the plugin holds the state in memory and rewrites `locked` on shutdown. Use the command, or edit with the server stopped.',
+      'Only player portal travel is blocked — `/tp`, other portal plugins, and entities riding through (boats, pets, items) are not. Existing portals stay lit when you lock; the lock stops travel through them, not their existence.',
+      '`frontier.netherlock.bypass` defaults to false, but a `*` wildcard grant includes it.',
+      'A hand-emptied `config.yml` produces a locked Nether (missing key defaults to `true`); run `/netherlock off` to fix.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-netherlock',
+    github: `${SUITE_GITHUB}/tree/master/netherlock`,
+  },
+
+  // ───────────────────────────────────────────────────────── Heads
+  {
+    slug: 'heads',
+    name: 'FrontierHeads',
+    short: 'Heads',
+    version: '1.0.0',
+    tagline: 'PvP kills drop the victim’s head as a trophy.',
+    category: 'PvP',
+    kind: 'PvP',
+    oneLine: 'Drop the victim’s head on PvP kills',
+    what: [
+      'When one player kills another, the victim’s skinned head lands in the death drops (subject to `drop-chance`), named `<victim>’s Head`, optionally with "Slain by <killer>" and the date as lore, and optionally a chat line announcing the claim.',
+      'It does nothing else: no mob heads, no crafting, no shop hooks. The trigger is strictly PvP — the killer must be a different player, so suicides and mob or environment deaths never drop a head. The head is added to the vanilla drop list, so it obeys whatever else touches drops (graves plugins collect it too).',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None — FrontierGraves collects the head like any other drop.',
+    hardDep: null,
+    commands: [
+      { cmd: '/headsadmin status', who: 'Admin', what: 'Print `enabled`, `drop-chance`, `announce-kill` (also the no-argument default)' },
+      { cmd: '/headsadmin reload', who: 'Admin', what: 'Re-read `config.yml`' },
+    ],
+    permissions: [
+      { node: 'frontier.heads.admin', def: 'op', grants: '`/headsadmin`' },
+    ],
+    configPath: 'plugins/FrontierHeads/config.yml',
+    configReload: '`/headsadmin reload`',
+    config: [
+      { key: 'enabled', def: 'true', what: 'Master toggle. `false` = no heads ever drop' },
+      { key: 'drop-chance', def: '1.0', what: 'Probability (0.0–1.0) that a PvP kill drops a head; `1.0` = always' },
+      { key: 'announce-kill', def: 'true', what: 'Broadcast `<killer> claimed <victim>’s head.` when a head drops' },
+      { key: 'custom-lore', def: 'true', what: 'Add lore `Slain by <killer>` and the current date to the head' },
+    ],
+    notes: [
+      'If another plugin cancels the death event (an arena or event plugin, for example) the head is skipped — the listener ignores cancelled events.',
+      'Arrows and tridents count as player kills; wolves and TNT only if the server attributes them to the shooter.',
+      'With a graves plugin installed the head goes into the victim’s grave, so the killer has to loot it — intended.',
+      'The lore date uses the JVM default timezone; on hosts running UTC it rolls at 00:00 UTC. Names and lore use legacy `&` colour codes.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-heads',
+    github: `${SUITE_GITHUB}/tree/master/heads`,
+  },
+
+  // ───────────────────────────────────────────────────────── Backup
+  {
+    slug: 'backup',
+    name: 'FrontierBackup',
+    short: 'Backup',
+    version: '1.0.0',
+    tagline: 'Scheduled world backups zipped on a rolling window.',
+    category: 'Ops',
+    kind: 'Ops',
+    oneLine: 'Scheduled zip backups with rotation',
+    what: [
+      'On a fixed interval (and on `/backup start`) the plugin saves the configured worlds on the main thread, then zips their folders asynchronously into `backup-<yyyy-MM-dd-HH-mm>.zip` in a directory of your choice, and prunes the oldest zips once the count exceeds `max-backups`.',
+      'It is deliberately small: no cloud upload, no restore command, no incremental diffs — just a rolling window of zips that a host panel or an rsync job can pick up. Because the zip step runs off the main thread, the tick loop is never blocked by file I/O, and a single-flight guard refuses a second backup while one is running.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None.',
+    hardDep: null,
+    commands: [
+      { cmd: '/backup start', who: 'Admin', what: 'Start a backup now (refused if one is already in progress)' },
+      { cmd: '/backup list', who: 'Admin', what: 'List `backup-*.zip` files in the backup directory, newest first, with date and size' },
+      { cmd: '/backup', who: 'Admin', what: 'Print usage' },
+    ],
+    permissions: [
+      { node: 'frontier.backup.admin', def: 'op', grants: '`/backup start`, `/backup list`' },
+    ],
+    configPath: 'plugins/FrontierBackup/config.yml',
+    configReload: 'Restart required',
+    config: [
+      { key: 'backup-interval', def: '720', what: 'Minutes between automatic backups (720 = twice a day). The first automatic backup runs one full interval after startup, never at boot' },
+      { key: 'max-backups', def: '3', what: 'Rolling retention: once more than this many `backup-*.zip` files exist, the oldest (by file modification time) are deleted after each run' },
+      { key: 'backup-directory', def: 'backups', what: 'Where zips are written, relative to the server root' },
+      { key: 'worlds', def: '[world]', what: 'World folder names to include, relative to the server root. On Paper 26.1+ every dimension lives under `world/dimensions/`, so one `world` entry captures overworld, nether and end; add entries for separately-created worlds' },
+      { key: 'announce', def: 'true', what: 'Broadcast "Starting world backup…" / "Backup complete!" / failure messages to chat' },
+    ],
+    notes: [
+      'There is no restore command — restoring means stopping the server and unzipping by hand. Size `max-backups` to your disk; each zip is a full copy of every listed world and a mature survival world can be several GB per zip.',
+      'The zip is a "hot" copy: worlds are saved first, but auto-save is not paused while the zip walks the folder. For a guaranteed-consistent copy, `save-off` + `save-all` first, or back up while the server is stopped.',
+      'Entries in `worlds:` are folder names relative to the server root, not Bukkit world names; a missing folder logs `World folder not found, skipping`.',
+      'Filenames use the JVM’s default timezone, so hosts running UTC get UTC timestamps. Pruning sorts by file modification time, not by the timestamp in the name — copying old zips into the directory gives them a fresh mtime.',
+      'Watch console for `Automatic backups scheduled every N minutes.` on boot, and use `/backup start` to test immediately.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-backup',
+    github: `${SUITE_GITHUB}/tree/master/backup`,
+  },
+
+  // ───────────────────────────────────────────────────────── Announcements
+  {
+    slug: 'announcements',
+    name: 'FrontierAnnouncements',
+    short: 'Announcements',
+    version: '1.0.0',
+    tagline: 'Rotating server-wide announcements with a per-player mute.',
+    category: 'Ops',
+    kind: 'Ops',
+    oneLine: 'Rotating chat announcements, per-player mute',
+    what: [
+      'Every `interval` seconds the plugin broadcasts the next message from a configured list to everyone online (padded with a blank line above and below so it stands out from chat), then advances to the next one, looping back to the top when the list ends.',
+      'Two deliberate choices: the timer skips its slot without advancing when nobody is online, so an empty server never burns through the rotation; and any player can opt out for themselves with `/muteannouncements`, a choice that is saved to disk and survives relogs and restarts. No dependencies, no external storage.',
+    ],
+    requires: 'Paper 26.2+, Java 25+',
+    optional: 'None.',
+    usedBy: 'None.',
+    hardDep: null,
+    commands: [
+      { cmd: '/announcements reload', who: 'Admin', what: 'Re-read `config.yml`, restart the timer and rewind to message #1 (any other or omitted argument prints usage)' },
+      { cmd: '/muteannouncements', who: 'Everyone', what: 'Toggle whether you receive announcements (player-only). Aliases: `/muteann`, `/mutebroadcasts`' },
+    ],
+    permissions: [
+      { node: 'frontier.announcements.admin', def: 'op', grants: '`/announcements reload`' },
+      { node: 'frontier.announcements.mute', def: 'true', grants: '`/muteannouncements`' },
+    ],
+    configPath: 'plugins/FrontierAnnouncements/config.yml',
+    configReload: '`/announcements reload`',
+    config: [
+      { key: 'enabled', def: 'true', what: 'Master switch. `false` = the timer is never started' },
+      { key: 'interval', def: '420', what: 'Seconds between announcements (420 = 7 minutes). The first message goes out one full interval after boot or reload, not immediately' },
+      { key: 'prefix', def: '"&8[&6Server&8] &f"', what: 'Prepended to every broadcast; `&` colour codes are translated' },
+      { key: 'messages', def: '19-entry example list', what: 'Sent in order, one per interval, looping. `&` colour codes are translated; the prefix is added automatically. Empty list = nothing is sent' },
+    ],
+    notes: [
+      'Replace the shipped `messages:` list before going live — the defaults advertise the rest of the Frontier suite and a placeholder `example.com/…` website; they show the intended tone, not text you want broadcast verbatim.',
+      'Per-player mutes live in `plugins/FrontierAnnouncements/muted.yml` (a `muted:` list of UUIDs). Deleting the file un-mutes everyone.',
+      'Messages use legacy `&` colour codes, not MiniMessage — `<gold>` style tags are sent literally. `prefix:` applies to broadcasts only; command replies use a fixed `[Announcement]` prefix.',
+      'If nothing is broadcasting: check `enabled: true`, a non-empty `messages:` list, at least one player online, and remember the first message fires only after a full interval.',
+    ],
+    modrinth: 'https://modrinth.com/plugin/frontier-announcements',
+    github: `${SUITE_GITHUB}/tree/master/announcements`,
+  },
+];
+
+export const pluginBySlug = (slug: string) => plugins.find((p) => p.slug === slug);
+
+export const categoryOrder: PluginCategory[] = [
+  'Flagship',
+  'Infrastructure',
+  'World',
+  'QoL',
+  'PvP',
+  'Ops',
+];
+
+export const categoryBlurb: Record<PluginCategory, string> = {
+  Flagship: 'The three big ones. Each is a full system on its own.',
+  Infrastructure: 'Plumbing. No player-facing features, everything else feeds it.',
+  World: 'Changes the shape or the pace of the world itself.',
+  QoL: 'Small, sharp fixes for things vanilla gets wrong.',
+  PvP: 'Combat flavour.',
+  Ops: 'Server-owner tooling.',
+};
+
+/** Flattened command index — powers the "every command" search. */
+export const allCommands = plugins.flatMap((p) =>
+  p.commands.map((c) => ({ ...c, plugin: p.short, slug: p.slug }))
+);

@@ -2,91 +2,155 @@
   {
     "name": "Lands",
     "description": "Claim chunks, trust friends, federate into nations. Wars are off until the reputation integration ships.",
-    "icon": "shield"
+    "icon": "shield",
+    "inHouse": false,
+    "href": null
   },
   {
-    "name": "Reputation",
-    "description": "In-house. Cowboy reputation system. Pacifist knockout, wanted outlaws, lawman badge, real-item bounties.",
-    "icon": "star"
+    "name": "FrontierReputation",
+    "description": "In-house. Cowboy reputation system. Pacifist knockout, wanted outlaws, lawman badge, real-item bounties, daily login streaks.",
+    "icon": "star",
+    "inHouse": true,
+    "href": "/plugins/reputation"
   },
   {
-    "name": "Events",
-    "description": "In-house. Boss Rush raids, TDM/FFA arena PvP, Pit difficulty, Pitforged loot. /event opens the hub.",
-    "icon": "swords"
+    "name": "FrontierEvents",
+    "description": "In-house. Boss Rush raids, the Gauntlet, raid keys, TDM/FFA arena PvP, duel tournaments, Pit difficulty, Pitforged loot. /event opens the hub.",
+    "icon": "swords",
+    "inHouse": true,
+    "href": "/plugins/events"
   },
   {
-    "name": "Shop",
-    "description": "In-house. Server shop with daily-ticker pricing plus a player market. /shop and /market.",
-    "icon": "shopping-cart"
+    "name": "FrontierShop",
+    "description": "In-house. Server shop with daily-ticker pricing, a player market, sign shops, daily deals and a weekly black market. /shop and /market.",
+    "icon": "shopping-cart",
+    "inHouse": true,
+    "href": "/plugins/shop"
   },
   {
     "name": "mcMMO",
     "description": "19 skills with passive bonuses and active abilities. Full version, no lite mode.",
-    "icon": "trending-up"
+    "icon": "trending-up",
+    "inHouse": false,
+    "href": null
   },
   {
-    "name": "Graves",
-    "description": "In-house. Dying drops your inventory into a grave. Despawns the moment you empty it.",
-    "icon": "package"
+    "name": "FrontierGraves",
+    "description": "In-house. Dying drops your inventory into a grave. Never decays on a timer — it despawns the moment it's emptied.",
+    "icon": "package",
+    "inHouse": true,
+    "href": "/plugins/graves"
   },
   {
-    "name": "Heads",
+    "name": "FrontierHeads",
     "description": "In-house. Player heads drop from PvP kills only. Trophies for actual fights.",
-    "icon": "user"
+    "icon": "user",
+    "inHouse": true,
+    "href": "/plugins/heads"
   },
   {
-    "name": "Border",
-    "description": "In-house. World border grows daily from combined playtime, scaled to active-player count.",
-    "icon": "globe"
+    "name": "FrontierBorder",
+    "description": "In-house. World border grows daily from combined playtime, scaled to active-player count. Also sets the server timezone.",
+    "icon": "globe",
+    "inHouse": true,
+    "href": "/plugins/border"
   },
   {
-    "name": "Tab",
+    "name": "FrontierTab",
     "description": "In-house. Custom tab list with session/all-time playtime, deaths, ping, and server TPS (ticks per second; 20 is smooth). Feeds the playtime data the border expansion reads.",
-    "icon": "list"
+    "icon": "list",
+    "inHouse": true,
+    "href": "/plugins/tab"
   },
   {
-    "name": "Stats API",
-    "description": "In-house. Local HTTP server feeding the website's live leaderboards, border status, and wanted list.",
-    "icon": "activity"
+    "name": "FrontierStatsAPI",
+    "description": "In-house. Local HTTP server feeding this website's live leaderboards, border status, shop catalog and wanted list.",
+    "icon": "activity",
+    "inHouse": true,
+    "href": "/plugins/statsapi"
   },
   {
-    "name": "Mail",
+    "name": "FrontierMail",
     "description": "In-house. Send messages or items to offline players. Both arrive on their next login.",
-    "icon": "mail"
+    "icon": "mail",
+    "inHouse": true,
+    "href": "/plugins/mail"
   },
   {
-    "name": "Trade",
-    "description": "In-house. Two-window trade GUI between players. Both sides confirm before items swap.",
-    "icon": "arrow-left-right"
+    "name": "FrontierTrade",
+    "description": "In-house. Two-window trade GUI between players. Both sides confirm before items swap, and any change un-confirms both.",
+    "icon": "arrow-left-right",
+    "inHouse": true,
+    "href": "/plugins/trade"
   },
   {
-    "name": "Announcements",
-    "description": "In-house. Rotating chat tips and announcements on a timer.",
-    "icon": "megaphone"
+    "name": "FrontierEnderTracker",
+    "description": "In-house. Tracks who actually damaged the Ender Dragon. Live sidebar during the fight, ranked leaderboard when it dies.",
+    "icon": "crosshair",
+    "inHouse": true,
+    "href": "/plugins/endertracker"
+  },
+  {
+    "name": "FrontierEndLock",
+    "description": "In-house. Keeps the End closed until staff open it, so nobody solos the Dragon in week one.",
+    "icon": "lock",
+    "inHouse": true,
+    "href": "/plugins/endlock"
+  },
+  {
+    "name": "FrontierNetherLock",
+    "description": "In-house. Same idea for the Nether — an optional stone-age opening week.",
+    "icon": "lock",
+    "inHouse": true,
+    "href": "/plugins/netherlock"
+  },
+  {
+    "name": "FrontierBackup",
+    "description": "In-house. Scheduled zipped world backups on a rolling window.",
+    "icon": "archive",
+    "inHouse": true,
+    "href": "/plugins/backup"
+  },
+  {
+    "name": "FrontierAnnouncements",
+    "description": "In-house. Rotating chat tips and announcements on a timer, with a per-player mute.",
+    "icon": "megaphone",
+    "inHouse": true,
+    "href": "/plugins/announcements"
   },
   {
     "name": "CoreProtect",
     "description": "Block logging and rollback. Grief protection and investigation tool.",
-    "icon": "search"
+    "icon": "search",
+    "inHouse": false,
+    "href": null
   },
   {
     "name": "LuckPerms",
     "description": "Group-based permissions for staff and rep tiers.",
-    "icon": "key"
+    "icon": "key",
+    "inHouse": false,
+    "href": null
   },
   {
     "name": "EssentialsX",
-    "description": "Core server commands: /home, /tpa, /spawn, /msg, and more.",
-    "icon": "terminal"
+    "description": "Core server commands: /home, /tpa, /spawn, /msg, and more. Also provides the economy the shop and events pay out in.",
+    "icon": "terminal",
+    "inHouse": false,
+    "href": null
   },
   {
     "name": "BlueMap",
     "description": "Live web-based world map at map.pvpers.us with real-time player positions and claim outlines.",
-    "icon": "map"
+    "icon": "map",
+    "inHouse": false,
+    "href": null
   },
   {
     "name": "Simple Voice Chat",
     "description": "Proximity voice chat. Hear nearby players, fade out at range. Walkie-talkies and group channels supported. Client mod required (pre-installed in both modpacks).",
-    "icon": "mic"
+    "icon": "mic",
+    "inHouse": false,
+    "href": null
   }
 ]

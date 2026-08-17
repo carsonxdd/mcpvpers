@@ -19,6 +19,7 @@ const navItems: NavItem[] = [
       { href: '/reputation', label: 'Reputation' },
       { href: '/mcmmo', label: 'mcMMO' },
       { href: '/wanted', label: 'Wanted' },
+      { href: '/plugins', label: 'Plugins' },
     ],
   },
   {
