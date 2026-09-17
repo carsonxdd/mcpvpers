@@ -9,7 +9,7 @@ import WeatherProvider from '@/components/WeatherProvider';
 export const metadata: Metadata = {
   title: 'mc.pvpers.us | Vanilla+ Minecraft Server',
   description:
-    'A Vanilla+ Minecraft community server. Explore, build, and compete on mc.pvpers.us. Running Paper 26.1 with quality-of-life plugins.',
+    'A Vanilla+ Minecraft community server. Explore, build, and compete on mc.pvpers.us. Running Paper 26.3 with quality-of-life plugins.',
   keywords: ['minecraft', 'server', 'vanilla+', 'pvpers', 'community', 'survival'],
 };
 

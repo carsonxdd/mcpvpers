@@ -54,7 +54,7 @@ export default function Home() {
           <div className="grid grid-cols-2 gap-4 text-sm">
             <div>
               <span className="t-text-muted text-xs">Version</span>
-              <p className="text-xp font-pixel text-sm glow-xp">26.1.2</p>
+              <p className="text-xp font-pixel text-sm glow-xp">26.3</p>
             </div>
             <div>
               <span className="t-text-muted text-xs">Gameplay</span>

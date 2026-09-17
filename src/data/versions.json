@@ -1,5 +1,39 @@
 [
   {
+    "version": "26.3",
+    "name": "Wilderness Bound",
+    "year": 2026,
+    "month": "September",
+    "summary": "An autumn-colored dappled forest biome with poplar trees, abandoned camps to stumble across in the wild, and a pile of new building and furniture options.",
+    "details": [
+      "Dappled Forest — autumn-themed forest biome found near cold biomes, with colorful poplar trees and shelf mushrooms",
+      "Poplar Wood — full wood set: logs, planks, stairs, slabs, doors, fences, signs, and boats",
+      "Abandoned Camps — new structures across many biomes with loot, straw beds, and explorer maps to other structures",
+      "Straw Beds — single-use beds that skip the night without resetting your spawn point",
+      "Cushions — sittable decorative seats in 16 colors",
+      "Wool & Concrete Stairs/Slabs — all 16 colors, and the wool ones dampen sound"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_26.3"
+  },
+  {
+    "version": "26.2",
+    "name": "Chaos Cubed",
+    "year": 2026,
+    "month": "June",
+    "summary": "Sulfur caves arrive underground along with the sulfur cube, a mob that absorbs blocks and changes how it moves based on what it ate. Also adds geysers, an experimental Vulkan renderer, and an in-game friends list.",
+    "details": [
+      "Sulfur Caves — underground biome banded with sulfur and cinnabar, home to sulfur pools",
+      "Sulfur Cube — passive mob that absorbs blocks and changes speed, bounce, and friction to match; splits when killed",
+      "Sulfur & Cinnabar Blocks — building sets with stairs, slabs, walls, polished and brick variants",
+      "Geysers — potent sulfur under water and magma erupts periodically and launches anything above it",
+      "Vulkan Renderer — experimental graphics option with OpenGL fallback",
+      "Friends List — manage friends and see who is online from the title screen or pause menu"
+    ],
+    "trailer": "",
+    "wiki": "https://minecraft.wiki/w/Java_Edition_26.2"
+  },
+  {
     "version": "26.1",
     "name": "Tiny Takeover",
     "year": 2026,

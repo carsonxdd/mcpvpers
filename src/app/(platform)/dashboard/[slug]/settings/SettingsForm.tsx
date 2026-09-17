@@ -92,7 +92,7 @@ export default function SettingsForm({ initial }: { initial: SettingsFormValues 
       </Field>
 
       <div className="grid gap-6 sm:grid-cols-2">
-        <Field label="Version" hint='e.g. "Paper 26.1".'>
+        <Field label="Version" hint='e.g. "Paper 26.3".'>
           <input name="serverVersion" maxLength={40} defaultValue={initial.serverVersion} className={inputClass} />
         </Field>
         <Field label="Gameplay tags" hint="Comma-separated: Survival, SMP, PvE…">
