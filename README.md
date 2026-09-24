@@ -18,7 +18,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
 - Occasional shooting stars streak across the night sky in dark mode during clear weather (pixelated comet + fading tail, motion aligned to the tilt)
 - World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages. The tier table is now dynamic — thresholds scale with active player count via the plugin's scaling exponent, and a "Preview" row of buttons (1p / 2p / 3p / 5p / 10p) lets visitors see what the requirements look like at different participation levels
-- Launch countdown on the home page (target: Saturday May 23, 2026 at 5 PM Arizona) — ticks down to days/hours/min/sec, swaps to a "We're live" tile at zero
+- Season 2 banner in the home-page hero (`Season2Banner`): autumn stripe, falling pixel leaves, countdown to Saturday Oct 3, 2026 at 5 PM Arizona (`SEASON2_AT`), swaps to "Season 2 is live" at zero. Replaced the Season 1 launch countdown (`LaunchCountdown`, now unmounted)
 - Live server status (online player count, polled every 30s) below the home-page IP copy, fed by the PiStatsAPI plugin via a server-side proxy — hidden until the launch timestamp passes, then auto-activates without a refresh
 - Live world-border widget on the about page (current radius, weekly playtime, active players, total expansions), fed by the same proxy
 - Leaderboards backed by real player data, split into a **Vanilla** section (Playtime, Deaths, Mob Kills, Blocks Mined, Ores Mined, Distance, Advancements, XP Levels) and a **Plugins** section (Power Level, Peaceful/Outlaw/Violence Rep, Lawmen, Commendations, plus broad **Event Score** and **PvP Wins** totals) via a top `[Vanilla] [Plugins]` toggle, with mc-heads.net player avatars. The granular Boss Rush / PvP role boards live on the `/events/*` tabs; only the broad totals surface here. Served from a warm in-process snapshot (`src/lib/leaderboardSnapshot.ts`) that refreshes in the background, so tab switches are instant and slow upstream calls never sit on a visitor's load. Each tab shows 50 rows, a "Load more" expands to 100, and beyond 100 ranks paginate. Top three ranks are colored gold / silver / bronze. Every player row links through to a full per-player stat profile (`/player/<username>`)
@@ -199,6 +199,15 @@ The 15 in-house plugins are being published as standalone open-source jars (MIT,
 - **Nav** — "Plugins" added to the Server dropdown in the header and to the Server column in the footer
 - **Caveat** — the Modrinth links point at the planned project slugs and 404 until v1.0.0; the hub carries that note rather than hiding the links. Until then, download from GitHub Releases
 
+## Season 2: new world on 26.3 (2026-09-24)
+
+Season 2 launches Saturday Oct 3, 2026 at 5 PM Arizona on a fresh 26.3 (Wilderness Bound) world, so the Dappled Forest generates naturally.
+
+- **Home hero** — `LaunchCountdown` swapped for `Season2Banner` (countdown to `SEASON2_AT` in `src/lib/launch.ts`). `LAUNCH_AT` is untouched because `LiveServerStatus` still gates on it
+- **Border starts at a 5,000-block radius** (Season 1 was 1,750). Updated on `/about#world-border`, the `/map` legend, and the `BorderTiers` new-chunk estimates (now ~15.8k–82k chunks per tier, recomputed for the 5,000 start). The bigger start is mainly for the Nether: at 1/8 scale it opens around 625 blocks each way instead of ~220
+- **The End is locked for Season 2's first week** — sealed until Saturday Oct 10. `/about` Nether & End expander updated; Season 1's dragon-night unlock kept as history
+- **News** — Season 2 announcement post (id 19), plus the 26.3 update post (id 18) and a new `Version Update` tag color on `/news`
+
 ## Getting Started
 
 ```bash
@@ -243,7 +252,7 @@ The multi-tenant platform (`/dashboard`, `/login`, `/get-started`, `/s/*`) needs
 - `src/app/api/` — API routes, including the pvpers stats proxy (`api/stats/`), the per-tenant stats proxy (`api/s/[slug]/stats/`), and the Auth.js handler (`api/auth/`)
 - `src/components/` — Reusable UI components; `src/components/tenant/` holds the tenant-site variants (thin, prop-driven) and `src/components/wiki/` the Frontier Suite reference UI (search, filterable tables, grouped config reference)
 - `src/db/` — Drizzle schema (`schema/`) and migrations for the multi-tenant Postgres database
-- `src/lib/` — Shared logic: `launch.ts` (launch timestamp), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes), `eventsSnapshot.ts` (warm Boss Rush cache: role boards + summary + recent runs), `bossDisplay.ts` (shared boss/loot types, rarity colors, the `gearMode` KIT/BYOG/HARDCORE badge map, and helpers for the `/events` hub and per-raid pages), `auth/` (Auth.js config + session/role helpers), `actions/` (server actions for the dashboard), `billing/` (plan entitlements registry), `tenant-context.ts` / `tenant-config.ts` / `reserved-slugs.ts` / `pistats-url.ts` (tenant resolution + SSRF guards)
+- `src/lib/` — Shared logic: `launch.ts` (`LAUNCH_AT` Season 1 timestamp, gates live server status; `SEASON2_AT` for the Season 2 banner), `polls.ts` (poll storage + close gate), `leaderboardSnapshot.ts` (warm in-process leaderboard cache shared by the leaderboards and profile routes), `eventsSnapshot.ts` (warm Boss Rush cache: role boards + summary + recent runs), `bossDisplay.ts` (shared boss/loot types, rarity colors, the `gearMode` KIT/BYOG/HARDCORE badge map, and helpers for the `/events` hub and per-raid pages), `auth/` (Auth.js config + session/role helpers), `actions/` (server actions for the dashboard), `billing/` (plan entitlements registry), `tenant-context.ts` / `tenant-config.ts` / `reserved-slugs.ts` / `pistats-url.ts` (tenant resolution + SSRF guards)
 - `src/data/` — JSON content files (rules, plugins, versions, news, modpacks, polls, poll-results, future-polls, bosses) plus `frontier-suite.ts`, the typed reference data behind `/plugins` (mirrors `SUITE.md` at the repo root). Wanted outlaws and reputation leaderboards are fetched live from the plugin via the stats proxy
 - `SUITE.md` — upstream reference doc for the 15 Frontier plugins; the source of truth `src/data/frontier-suite.ts` is derived from
 - `data/` — Runtime state (poll counts, etc.) — gitignored, created at first write

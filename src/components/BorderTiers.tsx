@@ -9,11 +9,11 @@ type BorderStatus = {
 };
 
 const BASE_TIERS = [
-  { tier: 1, hours: 0.5, blocks: 100, color: 'text-xp', chunks: '~5,600' },
-  { tier: 2, hours: 1.5, blocks: 200, color: 'text-xp', chunks: '~11,500' },
-  { tier: 3, hours: 3,   blocks: 300, color: 'text-enchant', chunks: '~17,800' },
-  { tier: 4, hours: 5,   blocks: 400, color: 'text-gold', chunks: '~24,300' },
-  { tier: 5, hours: 8,   blocks: 500, color: 'text-redstone', chunks: '~31,200' },
+  { tier: 1, hours: 0.5, blocks: 100, color: 'text-xp', chunks: '~15,800' },
+  { tier: 2, hours: 1.5, blocks: 200, color: 'text-xp', chunks: '~31,900' },
+  { tier: 3, hours: 3,   blocks: 300, color: 'text-enchant', chunks: '~48,300' },
+  { tier: 4, hours: 5,   blocks: 400, color: 'text-gold', chunks: '~65,000' },
+  { tier: 5, hours: 8,   blocks: 500, color: 'text-redstone', chunks: '~82,000' },
 ];
 
 const PREVIEW_SIZES = [1, 2, 3, 5, 10];
@@ -143,7 +143,7 @@ export default function BorderTiers() {
         </table>
       </div>
       <p className="t-text-muted text-[11px] mt-3">
-        *Approximate new chunks at starting border (1,750 radius). Larger borders reveal more chunks per expansion.
+        *Approximate new chunks at starting border (5,000 radius). Larger borders reveal more chunks per expansion.
       </p>
     </div>
   );

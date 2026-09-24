@@ -1,5 +1,19 @@
 [
   {
+    "id": 19,
+    "date": "2026-09-24",
+    "title": "Season 2 — New World, Saturday Oct 3",
+    "body": "Season 2 starts Saturday October 3 at 5 PM Arizona. It's a brand new world, generated fresh on 26.3, so the Dappled Forest shows up naturally out in the wild instead of only at a warp.\n\nThe big change: the border starts at a 5,000-block radius, up from 1,750. That fixes the Nether. The Nether border runs at 1/8 scale, so last season it opened at barely 220 blocks each way, which was way too cramped. This time it starts around 625 each way. The border still grows every night at 9 PM based on how much everyone plays, same tiers as before.\n\nThe End is locked for the first week. The portal's findable, but it stays sealed until Saturday October 10.\n\nTo get ready: make sure your CurseForge profile is on 26.3 (see the last post if you haven't moved it over yet). Countdown's on the home page.",
+    "tags": ["Event", "Map Expansion"]
+  },
+  {
+    "id": 18,
+    "date": "2026-09-19",
+    "title": "We're on 26.3 — Come See the Dappled Forest",
+    "body": "The server is updated to Minecraft 26.3 (Wilderness Bound). Hop on at mc.pvpers.us, you'll need a 26.3 client to connect.\n\nFirst stop: /warp dappledforest. That drops you in the new autumn biome, poplar trees, shelf mushrooms, and all the orange you could want. While you're there, try out the new wool and concrete slabs and stairs (all 16 colors, and the wool ones muffle sound). Also new: cushions you can actually sit on, straw beds that skip the night without moving your spawn, and abandoned camps with loot scattered around the wild.\n\nMoving your modpack to 26.3 in CurseForge: click on your pvpers profile, then the three dots next to Play, and hit Clone As. Make sure you select the new 26.3 version. Your old profile stays put as a backup.\n\nHeads up: cloning resets the RAM you set, so go back into Profile Options and set it again. The QoL pack wants 8–10 GB (8192–10240 MB). If you're on FPS Boost, 4 GB still works, but give it more if you've got it.\n\nLast thing: Simple Voice Chat is in both packs, so use it. Press V to open the voice menu, set your mic, and talk to whoever's nearby. It's more fun than typing in chat.",
+    "tags": ["Version Update", "Event"]
+  },
+  {
     "id": 17,
     "date": "2026-06-14",
     "title": "Shop Tuning — Selling Pays Less",

@@ -7,6 +7,7 @@ const tagColors: Record<string, string> = {
   'Rule Change': 'bg-redstone/10 text-redstone',
   'Map Expansion': 'bg-gold/10 text-gold',
   'Site Update': 'bg-diamond/10 text-diamond',
+  'Version Update': 'bg-grass/10 text-grass',
 };
 
 export default function NewsPage() {

@@ -408,3 +408,30 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
   .wanted-frame { transition: none; }
   .wanted-frame:hover { transform: none !important; }
 }
+
+/* Season 2 banner — pixel leaves drifting down behind the panel content */
+.season-leaf {
+  position: absolute;
+  top: -12px;
+  width: 6px;
+  height: 6px;
+  opacity: 0;
+  animation: leaf-fall linear infinite;
+  pointer-events: none;
+}
+
+@keyframes leaf-fall {
+  0%   { transform: translate(0, 0) rotate(0deg); opacity: 0; }
+  10%  { opacity: 0.9; }
+  50%  { transform: translate(14px, 120px) rotate(90deg); }
+  90%  { opacity: 0.8; }
+  100% { transform: translate(-6px, 260px) rotate(180deg); opacity: 0; }
+}
+
+.season-stripe {
+  background: linear-gradient(90deg, #B5451B, #D2691E, #FFAA00, #CD7F32, #B5451B);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-leaf { display: none; }
+}

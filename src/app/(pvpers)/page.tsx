@@ -3,7 +3,7 @@ import GrassDivider from '@/components/GrassDivider';
 import CloudTitle from '@/components/CloudTitle';
 import CloudText from '@/components/CloudText';
 import LiveServerStatus from '@/components/LiveServerStatus';
-import LaunchCountdown from '@/components/LaunchCountdown';
+import Season2Banner from '@/components/Season2Banner';
 
 type Feature = { title: string; description: string; href?: string };
 
@@ -41,7 +41,7 @@ export default function Home() {
         </CloudTitle>
         <div className="mb-8" />
 
-        <LaunchCountdown />
+        <Season2Banner />
 
         <div className="mb-6" />
 

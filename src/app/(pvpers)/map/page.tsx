@@ -34,7 +34,7 @@ export default function MapPage() {
                 <span className="t-text-dim">World Border</span>
               </div>
               <p className="t-text-muted pl-5 mb-1">
-                The visible world is bounded by the world border. It starts at 1,750 blocks
+                The visible world is bounded by the world border. It starts at 5,000 blocks
                 from spawn and expands every night at 9 PM Arizona based on combined community playtime.
               </p>
               <p className="t-text-muted pl-5">

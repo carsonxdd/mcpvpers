@@ -282,11 +282,20 @@ export default function AboutPage() {
               bunch (7 to 6 in favor of unlocking immediately), so it stays a community call;
               we&apos;ll see how it plays out.
             </p>
+            <p className="t-text-dim leading-relaxed mb-3">
+              <strong className="t-text">Season 2 gives the Nether room.</strong> The Nether border
+              follows the overworld at 1/8 scale, so Season 1&apos;s 1,750-block start left it about
+              220 blocks each way, which was way too cramped. Season 2 starts at 5,000, so the Nether
+              opens at about 625 blocks each way and keeps growing with the overworld.
+            </p>
+            <p className="t-text-dim leading-relaxed mb-3">
+              <strong className="t-text">The End is locked for Season 2&apos;s first week.</strong>{' '}
+              The portal is findable but sealed until Saturday October 10. After that it&apos;s
+              open: elytra, shulkers, end cities, all fair game.
+            </p>
             <p className="t-text-dim leading-relaxed">
-              <strong className="t-text">The End was locked at launch</strong> — the portal was
-              findable but sealed, saved for the group. We took the Ender Dragon down together on
-              group night (around May 30), and <strong className="t-text">the End is now permanently
-              open</strong>: elytra, shulkers, end cities, all of it is fair game.
+              In Season 1 the End stayed locked until we took the Ender Dragon down together on
+              group night (around May 30).
             </p>
           </Expander>
         </div>
@@ -333,7 +342,7 @@ export default function AboutPage() {
         </div>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4 text-center">
-            The world doesn&apos;t start infinite. It opens at a <strong className="t-text">1,750-block radius</strong> from
+            The world doesn&apos;t start infinite. Season 2 opens at a <strong className="t-text">5,000-block radius</strong> from
             spawn and grows every night based on how much the community plays.
           </p>
           <p className="t-text-dim leading-relaxed text-center">
