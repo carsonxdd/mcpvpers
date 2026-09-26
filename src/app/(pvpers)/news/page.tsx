@@ -1,5 +1,6 @@
 import news from '@/data/news.json';
 import CloudTitle from '@/components/CloudTitle';
+import GazetteFeed from '@/components/GazetteFeed';
 
 const tagColors: Record<string, string> = {
   Event: 'bg-xp/10 text-xp',
@@ -19,6 +20,8 @@ export default function NewsPage() {
         <div className="text-center">
           <CloudTitle><h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-8 glow-gold">News & Changelog</h1></CloudTitle>
         </div>
+
+        <GazetteFeed />
 
         <div className="space-y-5">
           {sorted.map((entry) => (

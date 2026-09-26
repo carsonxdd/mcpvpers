@@ -14,6 +14,7 @@ export const metadata = {
 
 const categories: { name: string; icon: string; blurb: string }[] = [
   { name: 'Building', icon: '🧱', blurb: 'Stone, dirt, glass, concrete — the bulk stuff bases eat by the stack.' },
+  { name: 'Art & Decor', icon: '🖼️', blurb: 'Decorative blocks for making a build look finished.' },
   { name: 'Wood', icon: '🪵', blurb: 'Every log and plank type, for when the nearest forest is a trek.' },
   { name: 'Ores & Minerals', icon: '⛏️', blurb: 'Iron, gold, diamonds, copper, redstone, and the rest of the rock.' },
   { name: 'Farming', icon: '🌾', blurb: 'Crops, seeds, saplings, and animal goods to skip the grind.' },
@@ -30,7 +31,7 @@ export default function EconomyPage() {
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-4">
             The Frontier runs on real money now. Everyone starts with{' '}
-            <strong className="t-text">$100</strong>, earns more by fighting in events and selling to
+            <strong className="t-text">$300</strong>, earns more by fighting in events and selling to
             the shop, and spends it at the server store, the player market, and whatever comes next.
           </p>
           <p className="t-text-dim leading-relaxed">
@@ -52,8 +53,8 @@ export default function EconomyPage() {
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
               <span>
-                <strong className="t-text">You start with $100.</strong> Every player gets a one-time
-                grant the day the economy goes live. From there it&apos;s on you.
+                <strong className="t-text">You start with $300.</strong> Every player gets it once,
+                the first time they join. From there it&apos;s on you.
               </span>
             </li>
             <li className="flex gap-3">
@@ -93,8 +94,7 @@ export default function EconomyPage() {
         <div className="text-center"><CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">The Shop</h2></CloudTitle></div>
         <CloudTextSmall className="text-center mb-8">
           <p className="t-text-dim">
-            <code className="text-gold">/shop</code> opens the server store — 104 items across seven
-            categories, with prices that actually react to the server.
+            <code className="text-gold">/shop</code> opens the server store: 200 items in 8 categories, with prices that actually react to the server.
           </p>
         </CloudTextSmall>
 
@@ -118,7 +118,9 @@ export default function EconomyPage() {
             midnight.
           </p>
           <p className="t-text-dim text-sm leading-relaxed">
-            One catch: <strong className="t-text">only clean items sell.</strong> Renamed, enchanted,
+            Selling to the shop pays <strong className="t-text">about one third</strong> of the buy
+            price, so the <code className="text-gold">/market</code> is where the better prices are.
+            One more catch: <strong className="t-text">only clean items sell.</strong> Renamed, enchanted,
             or damaged gear never matches the catalog — so you can&apos;t cash out event loot at the
             shop.
           </p>
@@ -144,7 +146,7 @@ export default function EconomyPage() {
         {/* Live deals strip + black-market status — self-hides until PiShop ships */}
         <ShopDeals />
 
-        <h3 className="font-pixel text-gold text-xs glow-gold uppercase tracking-widest mb-4 text-center">The seven categories</h3>
+        <h3 className="font-pixel text-gold text-xs glow-gold uppercase tracking-widest mb-4 text-center">The eight categories</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           {categories.map((cat) => (
             <div key={cat.name} className="inventory-slot p-4 flex gap-3 items-start">
@@ -253,8 +255,17 @@ export default function EconomyPage() {
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
               <span>
+                <strong className="t-text">Voice bonus.</strong> Stay connected to Simple Voice Chat for
+                60 seconds straight on a day you log in and you get another{' '}
+                <strong className="t-text">50%</strong> of that day&apos;s reward money, once a day.
+                Only &ldquo;connected or not&rdquo; is checked.
+              </span>
+            </li>
+            <li className="flex gap-3">
+              <span className="text-xp shrink-0">+</span>
+              <span>
                 Run <code className="text-gold">/daily</code> anytime to check your current streak, your
-                best streak, and what tomorrow pays.
+                best streak, what tomorrow pays, and whether today&apos;s voice bonus is paid.
               </span>
             </li>
           </ul>

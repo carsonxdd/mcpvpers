@@ -32,7 +32,14 @@ const LEAVES = [
   { left: '89%', delay: '5s', duration: '6.8s', color: '#B5451B' },
 ];
 
-const HIGHLIGHTS = ['Fresh world', '5,000-block border', 'Dappled Forest'];
+const HIGHLIGHTS = [
+  'Fresh world',
+  '5,000-block border',
+  'Shop open day one',
+  'Land upkeep',
+  'Colosseum Night',
+  'PvP is opt-in',
+];
 
 export default function Season2Banner() {
   const isLoaded = useSyncExternalStore(subscribeNoop, () => true, () => false);
@@ -68,7 +75,7 @@ export default function Season2Banner() {
           New world · 26.3 Wilderness Bound
         </div>
         <div className="font-pixel text-gold text-3xl max-md:text-2xl glow-gold mb-2">Season 2</div>
-        <div className="font-pixel text-bronze text-xs max-md:text-[10px] mb-4">The Dappled Forest</div>
+        <div className="font-pixel text-bronze text-xs max-md:text-[10px] mb-4">Homestead</div>
 
         {remaining.done ? (
           <div className="font-pixel text-xp text-lg glow-xp mb-4">Season 2 is live</div>

@@ -11,18 +11,111 @@ const features: Feature[] = [
   {
     title: 'Your land, your rules',
     description:
-      'Lands claims give you full permission control. Decide who builds, who opens chests, and whether anyone can swing a sword inside your border.',
+      'Lands claims give you full permission control. Decide who builds and who opens chests. Just keep the land bank topped up. Land costs upkeep now.',
   },
   {
-    title: 'Outside is outside',
+    title: 'Fight if you want to',
     description:
-      'No safety in the wilderness for anyone in the fight. PvP is always on for outlaws and lawmen, opt-in for pacifists. Your stuff is yours to defend either way.',
+      "PvP is off unless you turn it on. Opt in to hunt outlaws, or skip it and just build. If you want a real fight, the colosseum's open, and there's a PvP event in the pit every night.",
   },
   {
     title: 'Frontier reputation',
     description:
       "PvP is a choice you make, not a class you're stuck with. Pacifists can opt in to hunt outlaws but keep one-hit-kill protection. Cross lines and your name lands on wanted posters with a bounty. Take outlaws down and you earn the lawman badge.",
     href: '/reputation',
+  },
+];
+
+// Keep in step with the Season 2 news post (id 20) and the /about expanders.
+const season2 = [
+  {
+    title: 'The shop is open day one',
+    description:
+      '/shop buys and sells 200 items. Prices shift once a day at midnight based on what everyone traded. /market is for selling to each other at your own price.',
+  },
+  {
+    title: 'Land has upkeep',
+    description:
+      "Every land pays $1 per chunk per day from its land bank (/lands bank deposit <amount>). If the bank can't cover it, the land loses its newest chunks, and whatever's on them is fair game. Your own balance is never touched.",
+  },
+  {
+    title: 'PvP is opt-in only',
+    description:
+      "Other players can't hit or shoot you unless you've typed /pvp on, except in the colosseum pit. For 5 seconds after any teleport you can't hit or be hit.",
+  },
+  {
+    title: 'A protected spawn',
+    description:
+      "You spawn in a huge Dappled Forest. It's public: hang out, meet people, trade. Nobody can claim it, other players can't attack you, and nothing there burns.",
+  },
+  {
+    title: 'Colosseum Night',
+    description:
+      'Every night at 8 PM Arizona the colosseum runs a PvP event with a rotating mode. Rewards come from the raid loot tables, scaled to how many show up, and you keep your gear. Outside events the pit is always PvP-on, and pit kills never touch rep.',
+  },
+  {
+    title: 'Play a part',
+    description:
+      'This season leans into roleplay. Pick a part below, talk to people, and the server rewards it. Nothing is required.',
+  },
+];
+
+// Roleplay parts. Each one maps to a system that already exists.
+const parts = [
+  {
+    title: 'Lawman',
+    description:
+      'Opt into PvP, take down outlaws, and climb from Citizen to Marshal. Sheriffs post bounties and hand out pardons.',
+    href: '/reputation',
+    cta: 'How the badge works',
+  },
+  {
+    title: 'Outlaw',
+    description:
+      'Pick fights, get your face on the wanted board, and carry a price on your head. Pay restitution if you ever want to go straight.',
+    href: '/wanted',
+    cta: 'The wanted board',
+  },
+  {
+    title: 'Trader',
+    description:
+      'Run a sign shop, work the /market, or set up a stall at spawn on market day. Buy low when the ticker dips.',
+    href: '/economy',
+    cta: 'How money works',
+  },
+  {
+    title: 'Homesteader',
+    description:
+      'Settle down with neighbors, name your town, and keep the upkeep paid. Towns with more active members pay less.',
+    href: '/about#play-a-part',
+    cta: 'Towns & upkeep',
+  },
+];
+
+// Incentives for talking to people. All live from Season 2's first day. Keep in sync with /about#play-a-part.
+const talkRewards = [
+  {
+    title: 'Voice bonus',
+    description:
+      "Stay connected to Simple Voice Chat for 60 seconds on a day you log in and that day's login reward pays 50% more.",
+  },
+  {
+    title: 'Sunday shoutouts',
+    description:
+      '/commend the people who made your week. Every Sunday at 6 PM Arizona the top 3 get a shoutout in Discord and in-game.',
+  },
+  {
+    title: 'Titles you can see',
+    description: 'Your lawman or outlaw rank shows before your name in chat, in the Tab list and above your head.',
+  },
+  {
+    title: 'Towns pay less upkeep',
+    description: 'Lands with 2 or more active members get 10–30% off the daily upkeep.',
+  },
+  {
+    title: 'Market Day',
+    description:
+      'Saturdays 7:00–7:55 PM Arizona, anyone can put up a stall at the market next to spawn (/warp market). Then head to the colosseum for Colosseum Night.',
   },
 ];
 
@@ -36,7 +129,7 @@ export default function Home() {
             mc.pvpers.us
           </h1>
           <p className="t-text-dim text-sm sm:text-base max-w-md mx-auto text-center font-pixel">
-            A world with one rule and a lot of room.
+            One rule, a few guardrails, and a lot of room.
           </p>
         </CloudTitle>
         <div className="mb-8" />
@@ -69,6 +162,74 @@ export default function Home() {
               <p className="t-text font-pixel text-sm">Java</p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <GrassDivider />
+
+      {/* Season 2 at a glance */}
+      <section className="max-w-5xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <CloudTitle>
+            <h2 className="font-pixel text-gold text-lg mb-8 glow-gold">New in Season 2</h2>
+          </CloudTitle>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {season2.map((item) => (
+            <div key={item.title} className="mc-panel p-5">
+              <h3 className="font-pixel text-bronze text-[10px] mb-2 leading-relaxed">{item.title}</h3>
+              <p className="t-text-dim text-sm leading-relaxed">{item.description}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-center mt-6">
+          <a
+            href="/news"
+            className="font-pixel text-enchant text-[10px] hover:text-enchant/70 focus-visible:text-enchant/70 active:text-enchant/50 transition-colors"
+          >
+            The full Season 2 post &rarr;
+          </a>
+        </p>
+      </section>
+
+      <GrassDivider />
+
+      {/* Roleplay: pick a part + talk rewards */}
+      <section className="max-w-5xl mx-auto px-4 py-16">
+        <div className="text-center">
+          <CloudTitle>
+            <h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Pick your part</h2>
+          </CloudTitle>
+          <CloudText className="mb-8">
+            <p className="t-text-dim leading-relaxed">
+              The Frontier works better with characters in it. You don&apos;t have to roleplay, and
+              nobody gets punished for keeping to themselves. But if you pick a part and talk to
+              people, the server notices.
+            </p>
+          </CloudText>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mb-10">
+          {parts.map((part) => (
+            <a key={part.title} href={part.href} className="mc-panel p-5 hover-surface block transition-all">
+              <h3 className="font-pixel text-gold text-xs mb-2">{part.title}</h3>
+              <p className="t-text-dim text-sm leading-relaxed">{part.description}</p>
+              <p className="text-enchant text-[10px] mt-3 font-pixel">{part.cta} &rarr;</p>
+            </a>
+          ))}
+        </div>
+
+        <div className="mc-panel p-6 max-w-3xl mx-auto">
+          <h3 className="font-pixel text-bronze text-[10px] uppercase tracking-widest mb-4">
+            Rewards for talking · live from day one
+          </h3>
+          <ul className="space-y-2.5 text-sm t-text-dim list-none">
+            {talkRewards.map((r) => (
+              <li key={r.title} className="flex gap-2.5">
+                <span className="text-xp shrink-0">+</span>
+                <span><strong className="t-text">{r.title}.</strong> {r.description}</span>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -114,12 +275,12 @@ export default function Home() {
           <p className="t-text-dim leading-relaxed mb-4">
             Inside your claim, you set the rules. Lock down your base, invite the people you trust,
             and decide what they can and can&apos;t do. Outside the claim border, the wilderness is
-            the frontier. PvP on, mob griefing on, reputation rep awards firing every kill.
+            the frontier: mob griefing on, creepers doing creeper things.
           </p>
           <p className="t-text-dim leading-relaxed">
-            Pacifists keep one-hit-kill protection but can opt into PvP to hunt outlaws. Cross lines
-            in the wilderness and you land on /wanted with a bounty. Lawmen earn the badge by taking
-            outlaws down. The community votes on every system change.{' '}
+            PvP is opt-in. Other players can&apos;t hit or shoot you until you type /pvp on (the colosseum pit is the exception). Opt in and you can hunt
+            outlaws. Cross the line and you land on /wanted with a bounty. Lawmen earn the badge by
+            taking outlaws down. The community votes on every system change.{' '}
             <a href="/about#whats-live" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
               See what&apos;s live at launch &rarr;
             </a>

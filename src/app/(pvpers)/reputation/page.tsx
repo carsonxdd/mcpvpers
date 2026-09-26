@@ -10,7 +10,7 @@ const roleCards = [
     glow: 'glow-xp',
     accent: 'border-xp/40',
     blurb:
-      "The default. In the wilderness you can't be killed in PvP — attackers knock you out and can lift one stack from your hotbar. Donate, report, commend, and shape the server without ever swinging a sword.",
+      "The default. Until you type /pvp on, no other player can hurt, knock out or rob you anywhere but the colosseum pit. Opt in and the wilderness gets real: attackers can knock you out and take up to 3 grabs of 16 items each. Donate, report, commend, and shape the server without ever swinging a sword.",
   },
   {
     name: 'Outlaw',
@@ -26,7 +26,7 @@ const roleCards = [
     glow: 'glow-gold',
     accent: 'border-gold/40',
     blurb:
-      "Take the Citizen badge after your first outlaw kill. Climb Citizen → Marshal by stacking peaceful rep, violence rep, and unique commendations. Senior Sheriffs and Marshals draw bounties from the Sheriff's Office treasury; deputies adjudicate reports.",
+      "Take the Citizen badge after your first outlaw kill. Climb Citizen → Marshal by stacking peaceful rep, violence rep, and unique commendations. Sheriffs and up draw bounties from the Sheriff's Office treasury; deputies adjudicate reports.",
   },
 ];
 
@@ -34,20 +34,21 @@ const claimRows = [
   { where: 'Your claim', meaning: 'Safest area. PvP and theft locked down by Lands. Reputation system stays out of it entirely.' },
   { where: 'Allied claim', meaning: 'Depends on the trust level the owner gave you.' },
   { where: 'PvP-deny region', meaning: "If a claim or region cancels PvP damage, the rep system never sees the hit. No knockout, no rep, no combat-log timer." },
-  { where: 'Wilderness', meaning: 'The frontier. PvP on. Pacifist knockout, theft GUI, rep awards, and combat-log all fire here.' },
+  { where: 'Wilderness', meaning: "The frontier, for everyone who has PvP on (opted-in Pacifists, Outlaws, Lawmen). Knockout, theft GUI, rep awards, and combat-log all fire here. A Pacifist who never typed /pvp on can't be hit by other players, even out here." },
+  { where: 'Colosseum pit', meaning: "Always a PvP zone outside events: anyone in the pit has PvP on, whether or not they typed /pvp on. Walking in asks you to confirm. Kills in the pit never affect rep. You only keep your gear during Colosseum Night (8 PM Arizona); any other time a death there is a normal death. During an event, the event's own rules apply." },
 ];
 
 const knockoutSteps: [string, string][] = [
   ['1', 'First lethal hit is cancelled. Pacifist drops to 1 HP, debuffed, smoke particles — and is fully invulnerable to all damage for the next 30 seconds.'],
-  ['2', 'Attacker can right-click within those 30 seconds to open a theft GUI showing the pacifist’s hotbar (slots 0–8).'],
-  ['3', 'One stack max. Rep cost scales with the diamond-equivalent value of what you lift: a full stack of diamonds runs about +17 outlaw rep, a stack of dirt is barely a blip. Logged as an unprovoked-pacifist crime either way.'],
+  ['2', 'Attacker can right-click within those 30 seconds to open a theft GUI showing the pacifist’s hotbar and main inventory. Armor and offhand can’t be taken.'],
+  ['3', 'Up to 3 grabs, each capped at 16 items. Rep cost scales with the diamond-equivalent value of what you lift: 16 diamonds costs real rep, 16 dirt is barely a blip. Logged as an unprovoked-pacifist crime either way.'],
   ['4', 'On wake-up the pacifist regenerates to full (Regen II) and enters a 5-minute vulnerable cooldown. The knockout will not re-arm during that window — a lethal hit kills outright. That’s +50 outlaw rep, the heaviest single crime in the system.'],
-  ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe.'],
+  ['5', 'Inside any PvP-deny claim or region, knockout never fires. Pacifists at home are fully safe, and so is any Pacifist who hasn’t typed /pvp on.'],
 ];
 
 const bountySteps: [string, string][] = [
   ['1', "Someone wrongs you. You /report them, or ask a Sheriff directly. Anyone can /donate to grow the Sheriff's Office treasury — the same pool that funds bounty payouts."],
-  ['2', 'A Senior Sheriff or Marshal runs /bounty place <target> <amount> to draw that value from the treasury and put it on the target’s head.'],
+  ['2', 'A Sheriff, Senior Sheriff or Marshal runs /bounty place <target> <amount> to draw that value from the treasury and put it on the target’s head.'],
   ['3', 'The target appears on /wanted with the pool size visible. Anyone non-outlaw can hunt them. Anyone can run /bounty treasury to see what’s available.'],
   ['4', "A non-outlaw kills the target. Anti-collusion check runs (alt-shared IPs void the payout); if clean, the payout goes to the killer."],
   ['5', 'If the target is pardoned or goes inactive, the bounty releases back to the treasury for someone else to draw on.'],
@@ -63,7 +64,8 @@ const commandsByTier = [
       { cmd: '/badge yes|no', desc: 'Accept or decline the Citizen badge after your first outlaw kill.' },
       { cmd: '/commend <player>', desc: 'Award peaceful rep. Limited charges, 7-day cooldown per recipient.' },
       { cmd: '/donate', desc: "Open the donation chest. Items fund the Sheriff's Office treasury; donors earn capped peaceful rep." },
-      { cmd: '/daily', desc: 'Show your daily login reward streak — current streak, best streak, and what tomorrow pays. The reward itself is automatic on your first join each day.' },
+      { cmd: '/daily', desc: "Show your daily login reward streak — current streak, best streak, what tomorrow pays, and whether today's voice-chat bonus is paid. The reward itself is automatic on your first join each day." },
+      { cmd: '/rep title hide', desc: 'Hide your lawman/outlaw title in chat, Tab and above your head. (The ⚔ for an opted-in Pacifist still shows while PvP is on.)' },
       { cmd: '/report <player> <reason>', desc: 'File a complaint. Requires 2h playtime. 24h cooldown per target.' },
       { cmd: '/bounty list|track <player>', desc: 'View active bounties or get a tracking compass (Lawman+ for tracking).' },
       { cmd: '/bounty treasury', desc: "See the current value sitting in the Sheriff's Office treasury — the shared pool that funds every bounty." },
@@ -79,18 +81,13 @@ const commandsByTier = [
     tier: 'Sheriff+',
     items: [
       { cmd: '/pardon <player>', desc: "Reduce target's outlaw rep. Sheriff −25%, Senior Sheriff −50%, Marshal −100%. Pacifist-kill rep has a 50% floor — even a Marshal can't fully wipe murder." },
+      { cmd: '/bounty place <player> <amount>', desc: "Place a bounty on a wanted player, drawing the value from the Sheriff's Office treasury. (The legacy item-escrow UI is gone — bounties no longer come out of personal inventory.)" },
     ],
   },
   {
     tier: 'Deputy+',
     items: [
       { cmd: '/report list|view|approve|deny|reverse', desc: 'Adjudicate filed reports. False reports cost the reporter peaceful rep.' },
-    ],
-  },
-  {
-    tier: 'Senior Sheriff+',
-    items: [
-      { cmd: '/bounty place <player> <amount>', desc: "Place a bounty on a wanted player, drawing the value from the Sheriff's Office treasury. (The legacy item-escrow UI is gone — bounties no longer come out of personal inventory.)" },
     ],
   },
 ];
@@ -102,11 +99,11 @@ const faqs = [
   },
   {
     q: "What if I'm a pacifist in the wilderness — can I be killed there?",
-    a: 'No, not the first hit. Pacifists drop to 1 HP with Slowness, Mining Fatigue, Weakness, and Blindness for 30 seconds, and are fully invulnerable to all damage for that whole window. The attacker can right-click you to open a theft GUI and lift one stack from your hotbar. When you wake up you regenerate to full and enter a 5-minute vulnerable cooldown — a lethal hit during that window kills outright, and that pays the attacker +50 outlaw rep.',
+    a: 'Not if you leave PvP off: until you type /pvp on, other players can\'t hurt you anywhere outside the colosseum pit. If you opt in, still not on the first hit. Pacifists drop to 1 HP with Slowness, Mining Fatigue, Weakness, and Blindness for 30 seconds, and are fully invulnerable to all damage for that whole window. The attacker can right-click you to open a theft GUI and take up to 3 grabs of 16 items each from your hotbar or main inventory (never armor or offhand). When you wake up you regenerate to full and enter a 5-minute vulnerable cooldown — a lethal hit during that window kills outright, and that pays the attacker +50 outlaw rep.',
   },
   {
     q: 'What happens if I rob someone?',
-    a: 'Robbery only happens via the knockout GUI on a downed pacifist, and only one stack from their hotbar. Taking anything earns +1 outlaw rep. Pacifists in claims are not knocked out and not robbable.',
+    a: 'Robbery only happens via the knockout GUI on a downed pacifist who has PvP turned on, and only up to 3 grabs of 16 items each from their hotbar or main inventory. Armor and offhand are off-limits. Taking anything earns +1 outlaw rep. Pacifists in claims are not knocked out and not robbable.',
   },
   {
     q: 'What happens if I kill a pacifist?',
@@ -130,7 +127,7 @@ const faqs = [
   },
   {
     q: 'Where do bounty items come from?',
-    a: "From the Sheriff's Office treasury — a shared pool that anyone can grow by running /donate. Senior Sheriffs and Marshals draw from that pool to place bounties via /bounty place <player> <amount>. The donation pool and the bounty pool are the same pool; the server takes no cut. Run /bounty treasury to see what's in it.",
+    a: "From the Sheriff's Office treasury — a shared pool that anyone can grow by running /donate. Sheriffs, Senior Sheriffs and Marshals draw from that pool to place bounties via /bounty place <player> <amount>. The donation pool and the bounty pool are the same pool; the server takes no cut. Run /bounty treasury to see what's in it.",
   },
   {
     q: "Won't outlaws just hide in their claim forever?",
@@ -138,7 +135,7 @@ const faqs = [
   },
   {
     q: 'What happens if someone combat logs?',
-    a: "If you disconnect within ~10 seconds of taking PvP damage, the system flags a combat-log. Outlaw rep is awarded for the offense, and you die on next login as the penalty. While combat-tagged, /home, /tpa, /spawn, /back, /warp, /rtp, and /wild are all blocked. You fight, flee on foot, or eat the death.",
+    a: "If you disconnect within ~10 seconds of taking PvP damage, the system flags a combat-log. Outlaw rep is awarded for the offense, and you die on next login as the penalty. While combat-tagged, /home, /tpa, /back, /warp, /rtp, and /wild are all blocked. You fight, flee on foot, or eat the death.",
   },
 ];
 
@@ -195,11 +192,11 @@ export default function ReputationPage() {
           <div className="space-y-3 text-sm t-text-dim">
             {[
               ['Your claim is your home.', 'Locked down. Safe. The rep system stays out of it.'],
-              ['The wilderness is risky.', 'PvP on, rep awards apply, knockout and theft fire here.'],
-              ['Pacifists get knocked out, not killed.', 'First hit drops you to 1 HP with debuffs and 30 seconds of full invulnerability. Attackers can lift one stack from your hotbar. After you wake up there’s a 5-minute window where a lethal hit kills outright.'],
+              ['The wilderness is risky, if you have PvP on.', 'Rep awards apply, knockout and theft fire here. Leave PvP off and other players can’t touch you, even out here.'],
+              ['Opted-in Pacifists get knocked out, not killed.', 'First hit drops you to 1 HP with debuffs and 30 seconds of full invulnerability. Attackers can take up to 3 grabs of 16 items each (never armor or offhand). After you wake up there’s a 5-minute window where a lethal hit kills outright.'],
               ['Crimes raise your outlaw rep.', 'Kill a pacifist, steal, kill pets or villagers, combat-log — it all leaves a trail.'],
               ['Wanted players can be hunted.', 'Anyone non-outlaw can collect. Outlaws hunting outlaws is allowed but unpaid.'],
-              ['Bounties come from the treasury.', 'A shared Sheriff’s Office pool that anyone can grow with /donate. Senior Sheriffs and Marshals draw from it to put bounties on outlaws. The server takes no cut.'],
+              ['Bounties come from the treasury.', 'A shared Sheriff’s Office pool that anyone can grow with /donate. Sheriffs and up draw from it to put bounties on outlaws. The server takes no cut.'],
               ['Lawmen earn the badge.', 'First outlaw kill prompts the badge. Climb the ladder with peaceful rep, violence rep, and commendations from distinct players.'],
             ].map(([head, sub]) => (
               <div key={head} className="flex gap-3 items-start">
@@ -265,7 +262,9 @@ export default function ReputationPage() {
         <div className="space-y-3">
           <Expander title="Pacifist knockout">
             <p className="t-text-dim leading-relaxed mb-6">
-              Pacifists are protected by social cost, not invincibility. In the wilderness, the first
+              A Pacifist who never typed <code className="text-gold">/pvp on</code> can&apos;t be hit
+              by other players outside the colosseum pit, so none of this applies to them. Once a Pacifist opts in,
+              they&apos;re protected by social cost, not invincibility. In the wilderness, the first
               killing blow is cancelled — the pacifist drops to 1 HP, gets Slowness V / Mining Fatigue
               III / Weakness II / Blindness I for 30 seconds, and the attacker can right-click them to
               open a theft GUI.
@@ -329,7 +328,8 @@ export default function ReputationPage() {
                 tagline="The default. Most players stay here, most of the time."
                 points={[
                   'Default state for every new player. New players also get 5 hours of newcomer protection.',
-                  "Can't die in wilderness PvP — knocked out at 1 HP and looted for one stack instead.",
+                  "PvP is off until you type /pvp on: no other player can hurt, knock out or rob you. The one exception is the colosseum pit, where everyone has PvP on outside events.",
+                  "Opted in, you still can't die on the first hit in wilderness PvP — knocked out at 1 HP and looted for up to 3 grabs of 16 items instead.",
                   'Earns peaceful rep passively from clean playtime (~0.5/hr).',
                   'Can /donate items to the rewards pool — donations earn capped peaceful rep weekly.',
                   'Can /report crimes, /commend trustworthy players, and pay /restitution if they slip up.',
@@ -345,7 +345,7 @@ export default function ReputationPage() {
                 points={[
                   'Outlaw rep climbs from wilderness crimes. The big ones: pacifist kill +50, spawn-region PvP +30 (unprovoked kills within 100 blocks of spawn — self-defense still counts as provoked here, same as anywhere else), lawman kill +15. Plus knockout-theft (rep scales with the value of what was taken), pet kills, villager kills, and combat-logging.',
                   'Tiers: Drifter (25) → Bandit (75) → Outlaw (175) → Notorious (350) → Legend (600). Bounty multiplier scales 1.0× to 3.0× across them.',
-                  'Once over 25 outlaw rep, you appear on /wanted with your tier. Any non-outlaw can hunt you — Lawmen earn violence rep for the kill, and if a Senior Sheriff or Marshal has placed a bounty on you, the killer collects the payout too.',
+                  'Once over 25 outlaw rep, you appear on /wanted with your tier. Any non-outlaw can hunt you — Lawmen earn violence rep for the kill, and if a Sheriff or higher has placed a bounty on you, the killer collects the payout too.',
                   "Self-defense is free — if your victim hit you within 30s of the kill, the kill earns 0 outlaw rep.",
                   'Outlaw-on-outlaw kills are rep-neutral on both sides — private rivalry, not crime. No bounty payout, no /wanted update.',
                   'Three roads back: /restitution (return stolen items for peaceful rep), offline decay (~2%/week), or a Sheriff+ pardon. Pacifist-kill rep is floored at 50% — it fades, it doesn’t wipe.',
@@ -361,7 +361,7 @@ export default function ReputationPage() {
                   'Citizen → Deputy → Sheriff → Senior Sheriff → Marshal. The ladder requires both peaceful rep AND violence rep AND commendations from distinct players — pure builders and pure killers both cap at Citizen.',
                   "Deputy+ can adjudicate /report cases (approve, deny, reverse). False reports cost the reporter peaceful rep.",
                   'Sheriff+ can /pardon outlaws — Sheriff −25%, Senior Sheriff −50%, Marshal −100% (with a 50% floor on pacifist-kill rep).',
-                  "Senior Sheriffs and Marshals can /bounty place <player> <amount> — drawing the bounty value from the Sheriff's Office treasury (funded by community donations). Anyone can run /bounty treasury to see what's available.",
+                  "Sheriffs and up can /bounty place <player> <amount> — drawing the bounty value from the Sheriff's Office treasury (funded by community donations). Anyone can run /bounty treasury to see what's available.",
                   'Killing a pacifist as a Lawman is +50 outlaw rep — the badge is much harder to keep than to earn.',
                   'Lawmen who go inactive 30 days enter Retired (rep frozen until they fight again).',
                 ]}
@@ -374,7 +374,7 @@ export default function ReputationPage() {
               <strong className="t-text">Wanted vs. bounty.</strong> Wanted is automatic — once your
               outlaw rep crosses 25 you show up on{' '}
               <code className="font-pixel text-gold text-xs glow-gold">/wanted</code> with your
-              tier. A bounty is a separate, optional step: a Senior Sheriff or Marshal has to place
+              tier. A bounty is a separate, optional step: a Sheriff or higher has to place
               one from the treasury. A wanted player with no bounty can still be hunted (and Lawmen
               still earn violence rep for the kill), but there&apos;s no payout until someone draws
               from the pool.

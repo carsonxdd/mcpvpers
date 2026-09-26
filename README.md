@@ -208,6 +208,16 @@ Season 2 launches Saturday Oct 3, 2026 at 5 PM Arizona on a fresh 26.3 (Wilderne
 - **The End is locked for Season 2's first week** — sealed until Saturday Oct 10. `/about` Nether & End expander updated; Season 1's dragon-night unlock kept as history
 - **News** — Season 2 announcement post (id 19), plus the 26.3 update post (id 18) and a new `Version Update` tag color on `/news`
 
+### Season 2 "Homestead": guardrails + RP push
+
+The season is named **Homestead** (the Dappled Forest is the spawn biome, not the season name). The banner subtitle and highlight chips reflect it.
+
+- **News post id 20**: shop open day one (how `/shop` buy/sell clicks, the midnight ticker, the daily warehouse cap and `/market` work), land upkeep ($1/chunk/day from the land bank; an unpaid land loses its newest chunks, the owner's balance is never touched), PvP opt-in guardrails (5 s teleport protection both ways, no attacks within 100 blocks of spawn), Colosseum Night (nightly 8 PM Arizona PvP event in the colosseum pit, rotating modes, rewards from the raid loot tables scaled by turnout, gear kept; outside events the pit is always PvP-on, gear drops, and pit kills never affect rep), the protected Dappled Forest spawn (no claiming, no fire), elytra and entry always allowed on every land, and a Simple Voice Chat bonus on the daily login reward
+- **Home**: tagline is now "One rule, a few guardrails, and a lot of room." A new "New in Season 2" grid sits between the hero and the feature cards. The "Outside is outside" card became "Fight if you want to", and the blurb no longer says wilderness PvP is always on
+- **`/about`**: a "The guardrails" list under "The one rule" (the `guardrails` array in `about/page.tsx`). "Why one rule" explains why Season 1 needed them. The Lands, arena, voice chat and combat expanders carry the Season 2 changes
+- **2026-09-24 accuracy pass** (from `D:\homework\WEBSITE-CHANGES.md`): the six "Play a part" items are live from day one with real numbers, bounties are Sheriff+, the shop has 8 categories and sells back at ~1/3, the phantom line is gone, and `/news` shows the Frontier Gazette feed (`GazetteFeed.tsx`, PiStatsAPI 1.17.0 `/api/gazette`)
+- Every guardrail on the site must be enforced by server config or plugin code (Lands flags, EssentialsX, FrontierReputation, FrontierEvents). Verify on the server before changing the copy
+
 ## Getting Started
 
 ```bash

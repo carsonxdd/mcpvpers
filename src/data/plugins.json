@@ -1,7 +1,7 @@
 [
   {
     "name": "Lands",
-    "description": "Claim chunks, trust friends, federate into nations. Wars are off until the reputation integration ships.",
+    "description": "Claim chunks, trust friends, federate into nations. Land wars are disabled this season. Your claims are safe from capture.",
     "icon": "shield",
     "inHouse": false,
     "href": null
@@ -134,7 +134,7 @@
   },
   {
     "name": "EssentialsX",
-    "description": "Core server commands: /home, /tpa, /spawn, /msg, and more. Also provides the economy the shop and events pay out in.",
+    "description": "Core server commands: /home, /tpa, /back, /msg, and more. Also provides the economy the shop and events pay out in.",
     "icon": "terminal",
     "inHouse": false,
     "href": null
