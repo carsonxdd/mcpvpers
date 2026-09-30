@@ -22,7 +22,7 @@ const staff = [
 const guardrails = [
   {
     title: 'PvP is opt-in.',
-    body: "Other players can't hit or shoot you unless you've typed /pvp on (the colosseum pit is the one exception). Toggling it has a 30-minute cooldown, so you can't flip it on just to ambush someone.",
+    body: "Other players can't hit or shoot you unless you've typed /pvp on (the colosseum ring is the one exception). /pvp on unlocks after 5 hours of playtime, toggling has a 30-minute cooldown, and you can't flip it mid-fight, so nobody can switch it on just to ambush someone.",
   },
   {
     title: 'Cover after a teleport.',
@@ -38,11 +38,15 @@ const guardrails = [
   },
   {
     title: 'Land needs upkeep.',
-    body: 'Every land pays $1 per chunk per day from its land bank. If the bank can’t cover it, the land loses its newest chunks and whatever’s on them is unprotected. The owner’s own balance is never touched. That clears out abandoned claims without an admin.',
+    body: 'Every land pays $5 per chunk per day from its land bank. A land that’s still being played goes into debt when the bank runs dry and keeps its chunks. A land nobody’s touched in two weeks loses its newest chunks, and whatever’s on them is unprotected. The owner’s own balance is never touched. That clears out abandoned claims without an admin.',
   },
   {
     title: 'Fighting has a home.',
-    body: 'Step into the colosseum pit and PvP is on for you, whether or not you’ve typed /pvp on (during an event, the event’s own rules apply). Kills there never touch anyone’s rep. Every night at 8 PM Arizona the pit hosts Colosseum Night, a PvP event where you keep your gear. Any other time, a death in the pit is a normal death and you lose your gear.',
+    body: 'Step into the colosseum ring and PvP is on for you, whether or not you’ve typed /pvp on (during an event, the event’s own rules apply). Kills there never touch anyone’s rep. Every night at 8 PM Arizona the ring hosts Colosseum Night, where everyone fights in the same kit and gets their own gear back after. Any other time, die in the ring and your items drop on the floor for whoever wants them. There’s no grave.',
+  },
+  {
+    title: 'Logging out won’t save you.',
+    body: 'Quit within 10 seconds of taking PvP damage, or while knocked out, and your body stays behind for 5 minutes with everything you were carrying. Anyone can loot it, and it isn’t a crime. Whatever’s left comes back to you when you log in.',
   },
 ];
 
@@ -156,11 +160,11 @@ export default function AboutPage() {
           </h3>
           <ul className="space-y-2.5 text-sm t-text-dim list-none">
             <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Titles you can see.</strong> Your rank shows before your name in chat, in the Tab list and above your head: Deputy, Sheriff, Senior Sheriff, Marshal, or Drifter, Bandit, Outlaw, Notorious, Legend of the Frontier. Pacifists and new players show no title, but a Pacifist who typed <code className="text-gold">/pvp on</code> gets a small ⚔ so people know they&apos;ll fight. Rather not? <code className="text-gold">/rep title hide</code> hides yours (the ⚔ still shows while PvP is on).</span></li>
-            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Voice bonus.</strong> Stay connected to Simple Voice Chat for 60 seconds straight on a day you log in and you get +50% of that day&apos;s login-reward money, once a day. <code className="text-gold">/daily</code> shows whether today&apos;s bonus is paid. The server only checks whether you&apos;re connected: nothing tracks who talks or for how long.</span></li>
-            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Sunday shoutouts.</strong> <code className="text-gold">/commend &lt;player&gt; &lt;reason&gt;</code> the people who made your week. Every Sunday at 6 PM Arizona the top 3 of the past 7 days get posted in Discord and announced in-game, with a quote or two from their commendations. It counts how many different players commended you, so friends can&apos;t farm it, and you need at least 2. A quiet week posts nothing.</span></li>
-            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Towns pay less upkeep.</strong> Lands with more active members get a discount: 2 active members 10% off, 3–4 get 20%, 5 or more get 30%. Active means trusted in the land and online in the last 7 days, and each player counts toward one land only (the one they own, otherwise the one they&apos;re trusted in with the most chunks). Nations get it too. <code className="text-gold">/upkeep</code> shows your cost, active members, discount and next charge. The discount only applies if your bank can cover the discounted amount.</span></li>
+            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Voice chat, built in.</strong> Simple Voice Chat runs on the server and ships in both <a href="/modpacks" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">modpacks</a>. Walk up to someone and talk. Press <strong className="t-text">V</strong> once to check your mic and you&apos;re on. There&apos;s no reward for it and nothing tracks it. It&apos;s just the easiest way to turn a stranger into a neighbor.</span></li>
+            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Sunday shoutouts.</strong> <code className="text-gold">/commend &lt;player&gt; &lt;reason&gt;</code> the people who made your week. Every Sunday at 6 PM Arizona the top 3 of the past 7 days get posted in Discord and announced in-game, with a quote or two from their commendations. You need at least 2 commends that week to qualify, and the ranking goes by how many different players commended you, so one friend can&apos;t carry you to the top. A quiet week posts nothing.</span></li>
+            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Towns pay less upkeep.</strong> Lands with more active members get a discount: 2 active members 10% off, 3–4 get 20%, 5 or more get 30%. Active means trusted in the land and online in the last 7 days, and each player counts toward one land only (the one they own, otherwise the one they&apos;re trusted in with the most chunks). <code className="text-gold">/upkeep</code> shows your cost, active members, discount and next charge. The discount still applies if the land goes into debt.</span></li>
             <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Market Day.</strong> Every Saturday 7:00–7:55 PM Arizona at the market next to spawn (<code className="text-gold">/warp market</code>). Anyone can put up a stall there, and fire, explosions and PvP are off. Staff clear the stalls weekly. At 7:55 it&apos;s off to the colosseum for Colosseum Night at 8. <code className="text-gold">/marketday</code> shows the next one.</span></li>
-            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">The Frontier Gazette.</strong> Short Wild West write-ups when someone makes Sheriff, Senior Sheriff or Marshal, becomes Notorious or a Legend of the Frontier, a bounty is posted or collected, the End is unsealed, the border grows, or Market Day opens. They post in Discord and on{' '}<a href="/news" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">the news page</a>.</span></li>
+            <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">The Frontier Gazette.</strong> Short Wild West write-ups when someone makes Sheriff, Senior Sheriff or Marshal, becomes Notorious or a Legend of the Frontier, a bounty is posted or collected, someone wins Colosseum Night, the End is unsealed, the border grows, or Market Day opens. They post in Discord and on{' '}<a href="/news" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">the news page</a>.</span></li>
           </ul>
         </div>
       </section>
@@ -222,7 +226,7 @@ export default function AboutPage() {
 
           <Expander title="Arena events: Boss Rush & PvP">
             <p className="t-text-dim leading-relaxed mb-3">
-              A colosseum stands about 650 blocks from spawn and it&apos;s running events.{' '}
+              The colosseum runs the events.{' '}
               <code className="text-gold">/event</code> opens the hub: co-op{' '}
               <strong className="t-text">Boss Rush</strong> raids against six bosses with Pit
               difficulty levels and above-vanilla-cap <strong className="t-text">Pitforged</strong>{' '}
@@ -231,18 +235,28 @@ export default function AboutPage() {
               start their own raids.
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
-              <strong className="t-text">New in Season 2: Colosseum Night.</strong> Every night at
-              8 PM Arizona the colosseum runs a PvP event, with the mode rotating from night to
-              night. Rewards come from the raid loot tables, scaled by how many players take part.
-              During Colosseum Night you keep your gear, and there&apos;s no grave to run back to.
+              <strong className="t-text">Key runs are for playing, not farming.</strong> A run
+              costs $150 × (Pit + 1) to start, win or lose, with 3 starts a day and a 15-minute
+              cooldown. It needs 3 or more fighters to launch. Money pays out at 0.35× and only for
+              your first 2 clears a day (counted per player and per connection). A wipe pays
+              nothing. Joining someone else&apos;s run is always free.
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
-              <strong className="t-text">The pit is always a PvP zone.</strong> Whenever
-              there&apos;s no event running, anyone in the colosseum pit has PvP on, whether or not
+              <strong className="t-text">New in Season 2: Colosseum Night.</strong> Every night at
+              8 PM Arizona the colosseum runs a PvP event, with the mode rotating from night to
+              night. Everyone fights in the same Knight kit and gets their own gear back after, and
+              there&apos;s no grave to run back to. The winner takes a fixed chest: $500, 4 diamonds,
+              8 XP bottles and one jackpot roll. In team modes the cash is split across the winning
+              team.
+            </p>
+            <p className="t-text-dim leading-relaxed mb-3">
+              <strong className="t-text">The ring is always a PvP zone.</strong> Whenever
+              there&apos;s no event running, anyone in the colosseum ring has PvP on, whether or not
               they&apos;ve typed <code className="text-gold">/pvp on</code>. Walking in asks you to
-              confirm first. Kills in the pit never affect anyone&apos;s rep.{' '}
-              <strong className="t-text">Outside events you don&apos;t keep your gear:</strong> a
-              death in the pit is a normal death. During an event, the event&apos;s own rules apply.
+              confirm first. Kills in the ring never affect anyone&apos;s rep.{' '}
+              <strong className="t-text">Outside events you don&apos;t keep your gear:</strong> die
+              in the ring and your items drop on the floor for the taking, with no grave. During an
+              event, the event&apos;s own rules apply.
             </p>
             <p className="t-text-dim leading-relaxed">
               Full raids, payouts, loot tables, and live boards on{' '}
@@ -284,16 +298,33 @@ export default function AboutPage() {
               world feels alive, but most people don&apos;t want zombies popping into their base.
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
+              <strong className="t-text">Land costs money now.</strong>{' '}
+              <code className="text-gold">/lands create &lt;name&gt;</code> costs{' '}
+              <strong className="t-text">$500</strong> and claims a free 3×3 of chunks around you.
+              Each chunk after that is <strong className="t-text">$25</strong>, and unclaiming
+              refunds 15%. Everyone starts with $300, so your first land takes a little saving up
+              (or a friend with a land to join).
+            </p>
+            <p className="t-text-dim leading-relaxed mb-3">
               <strong className="t-text">New in Season 2: upkeep.</strong> Every land pays{' '}
-              <strong className="t-text">$1 per chunk per day</strong>, collected at 9 PM Arizona
-              from its land bank. A 9-chunk base is $63 a week, 16 chunks $112, 100 chunks $700
+              <strong className="t-text">$5 per chunk per day</strong>, collected at 9 PM Arizona
+              from its land bank. A 9-chunk base is $315 a week, 16 chunks $560, 100 chunks $3,500
               (before any town discount). Fund it with{' '}
               <code className="text-gold">/lands bank deposit &lt;amount&gt;</code>. New lands get 2
               days before the first payment, and owners get a warning 20 hours before a collection
-              the bank can&apos;t cover. If the bank can&apos;t pay, the land loses its{' '}
-              <strong className="t-text">newest chunks</strong>, as many as it can&apos;t afford, and
-              anything on them is unprotected. The land isn&apos;t wiped in one go, and your own
-              balance is never touched. Top up before you take a break.
+              the bank can&apos;t cover.
+            </p>
+            <p className="t-text-dim leading-relaxed mb-3">
+              <strong className="t-text">Short on cash? You go into debt, not into the wild.</strong>{' '}
+              If the owner or a trusted member has played at least 30 minutes in the last 14 days,
+              the land keeps every chunk and runs up a debt instead (at the discounted rate). While
+              it&apos;s in debt the land can&apos;t claim new chunks or withdraw from the bank, and
+              deposits pay the debt first. <code className="text-gold">/upkeep debt</code> shows
+              what&apos;s owed. A land that&apos;s been inactive for 14 days, or owes more than 14
+              days of upkeep, starts losing its <strong className="t-text">newest chunks</strong>,
+              and anything on them is unprotected. The owner can take them back for free within 30
+              days with <code className="text-gold">/upkeep reclaim</code>, unless someone else
+              claimed them first. Your own balance is never touched.
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
               Towns with more active members pay less: 10% off with 2, 20% with 3–4, 30% with 5 or
@@ -311,8 +342,7 @@ export default function AboutPage() {
             </p>
             <p className="t-text-dim leading-relaxed">
               Trust friends in with <code className="text-gold">/lands trust &lt;player&gt;</code>.
-              Nations (federated claims with shared trust) are supported. Land wars are disabled
-              this season. Your claims are safe from capture.
+              Nations and land wars are both off this season. Your claims are safe from capture.
             </p>
           </Expander>
 
@@ -322,10 +352,17 @@ export default function AboutPage() {
               graves plugin catches your stuff: dying drops your inventory into a grave at the
               spot, marked by an armor stand. Walk back, right-click, take your loot.
             </p>
-            <p className="t-text-dim leading-relaxed">
+            <p className="t-text-dim leading-relaxed mb-3">
               Graves <strong className="t-text">despawn the moment you empty them</strong>, so the
-              world doesn&apos;t fill up with abandoned markers. Move fast. Other players can see
-              the marker too.
+              world doesn&apos;t fill up with abandoned markers. Move fast:{' '}
+              <strong className="t-text">anyone can open your grave and loot it</strong>. There&apos;s
+              no timer, and your XP only goes back to you.
+            </p>
+            <p className="t-text-dim leading-relaxed">
+              <strong className="t-text">Logout bodies.</strong> Quit within 10 seconds of taking
+              PvP damage, or while knocked out, and a body stays behind for 5 minutes holding your
+              whole inventory, armor included. Anyone can loot it, and it isn&apos;t a crime.
+              Whatever&apos;s left comes back to you on your next login.
             </p>
           </Expander>
 
@@ -333,15 +370,15 @@ export default function AboutPage() {
             <p className="t-text-dim leading-relaxed mb-3">
               Simple Voice Chat is set up server-side. Once you&apos;ve got the matching client mod,
               you hear other players based on distance — close-up conversation in the same room,
-              fades out at range, gone over the horizon. Walkie-talkies and group channels are
-              supported for staying in voice with people who aren&apos;t standing next to you.
+              fades out at range, gone over the horizon. Groups let you stay in voice with people
+              who aren&apos;t standing next to you.
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
-              <strong className="t-text">New in Season 2, a voice bonus:</strong> stay connected to
-              voice chat for 60 seconds on a day you log in and you get +50% of that day&apos;s
-              login-reward money. The server only checks whether you&apos;re connected. Nothing
-              logs who talks or for how long. We&apos;d love more roleplay this season, but you
-              never have to.{' '}
+              <strong className="t-text">It takes about ten seconds to set up.</strong> Press{' '}
+              <strong className="t-text">V</strong> in-game to open the voice menu and check your
+              mic. Then just walk up to people and talk. Season 2 is about neighbors, and nothing
+              makes one faster than a conversation. There&apos;s no reward for it and nothing tracks
+              it. We&apos;d love more roleplay this season, but you never have to.{' '}
               <a href="#play-a-part" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
                 Everything else we&apos;re doing
               </a>
@@ -362,7 +399,7 @@ export default function AboutPage() {
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Mail.</strong> Send messages or items to offline players. Both arrive the next time they log in.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Trade.</strong> Two-window trade GUI between players. Both sides confirm before items swap, so nothing gets fumbled into the dirt.</span></li>
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Announcements.</strong> Rotating chat tips and reminders on a timer.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Announcements.</strong> Rotating chat tips and reminders on a timer (<code className="text-gold">/muteannouncements</code> if you&apos;ve heard them), plus <code className="text-gold">/help</code>, a clickable list of every command you can use.</span></li>
             </ul>
           </Expander>
 
@@ -371,12 +408,13 @@ export default function AboutPage() {
               Cheat sheet for everyday play. All of these work day one:
             </p>
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/help</code> (or <code className="text-gold">/commands</code>) &mdash; every command you can use, by section. Click one to run it.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/sethome</code> and <code className="text-gold">/home</code> &mdash; save and teleport back to a spot. You can keep multiple (3 to start).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/tpa &lt;player&gt;</code> &mdash; request a teleport to someone. They reply with <code className="text-gold">/tpaccept</code> or <code className="text-gold">/tpdeny</code>.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/back</code> returns to your last death or teleport.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/msg &lt;player&gt;</code> &mdash; private message someone online. <code className="text-gold">/mail</code> for offline players (delivered next login).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/trade</code> &mdash; opens the two-window trade GUI with another player.</span></li>
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/pvp on|off|status</code>: Pacifists and Retired opt in or out of PvP (30-min toggle cooldown). Outlaws and Lawmen are always on.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/pvp on|off|status</code>: Pacifists and Retired opt in or out of PvP (unlocks after 5 hours of playtime, 30-min toggle cooldown). Outlaws and Lawmen are always on.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/lands</code> &mdash; open the claims menu. Defaults already block griefing inside your claim. <code className="text-gold">/upkeep</code> shows what your land owes and when.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/marketday</code> &mdash; when the next Saturday market opens. <code className="text-gold">/warp market</code> takes you there.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><code className="text-gold">/event</code> &mdash; open the events hub: Boss Rush raids and arena PvP. <code className="text-gold">/event key</code> starts your own raid.</span></li>
@@ -401,9 +439,11 @@ export default function AboutPage() {
         <div className="space-y-3 mb-10">
           <Expander title="Combat, PvP & player heads">
             <ul className="space-y-2.5 text-sm t-text-dim list-none">
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">PvP is opt-in.</strong> Everyone starts as a Pacifist. Other players can&apos;t hit or shoot you, and you can&apos;t hit them. Type <code className="text-gold">/pvp on</code> to join the fight. Outlaws and Lawmen are always on. You become an Outlaw by attacking players, by killing villagers, or through a <code className="text-gold">/report</code> that staff approve.</span></li>
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">If you never type <code className="text-gold">/pvp on</code>, no other player can hurt, knock out or rob you outside the colosseum pit.</strong> Pacifists who turn PvP on get knocked out instead of killed, and the attacker can take up to 3 items.</span></li>
-              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Other players can&apos;t attack you within 100 blocks of spawn</strong> (traps set up beforehand still work), and for <strong className="t-text">5 seconds after any teleport</strong> you can&apos;t hit or be hit. The colosseum pit is the exception: outside events, anyone in the pit has PvP on, even if they never typed <code className="text-gold">/pvp on</code>.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">PvP is opt-in.</strong> Everyone starts as a Pacifist. Other players can&apos;t hit or shoot you, and you can&apos;t hit them. Type <code className="text-gold">/pvp on</code> to join the fight. Outlaws and Lawmen are always on. You become an Outlaw by killing or robbing players (hitting alone doesn&apos;t count), or through a <code className="text-gold">/report</code> that a Lawman upholds. Killing villagers or pets adds outlaw rep but can&apos;t put you on the wanted board by itself.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">If you never type <code className="text-gold">/pvp on</code>, no other player can hurt, knock out or rob you outside the colosseum ring.</strong> Pacifists who turn PvP on get knocked out instead of killed, and the attacker can take up to 3 stacks of up to 16 items each (never shulker boxes).</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Outlaws can&apos;t hide in claims.</strong> Anyone with PvP on can attack an Outlaw inside any land, including the Outlaw&apos;s own.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Other players can&apos;t attack you within 100 blocks of spawn</strong>, and for <strong className="t-text">5 seconds after any teleport</strong> you can&apos;t hit or be hit. The colosseum ring is the exception: outside events, anyone in the ring has PvP on, even if they never typed <code className="text-gold">/pvp on</code>.</span></li>
+              <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Combat-logging leaves a body.</strong> Quit mid-fight and your inventory stays behind for 5 minutes for anyone to loot (see Graves &amp; death).</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Server difficulty is Hard.</strong> Hunger drains, zombies break doors, mobs deal real damage.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span><strong className="t-text">Player heads drop from PvP kills only.</strong> Mob and environment deaths don&apos;t drop heads, which keeps the trophy meaningful.</span></li>
               <li className="flex gap-2.5"><span className="text-xp shrink-0">+</span><span>The reputation system gates the consequences. See{' '}<a href="/reputation" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">how rep works</a>.</span></li>
@@ -444,7 +484,7 @@ export default function AboutPage() {
           <Expander title="Wars (currently off)">
             <p className="t-text-dim leading-relaxed mb-3">
               <strong className="t-text">Land wars are disabled this season. Your claims are safe
-              from capture.</strong> Lands and nations can&apos;t declare war on each other, and
+              from capture.</strong> Lands can&apos;t declare war on each other (nations are off too), and
               the walk-through and elytra rules above always apply.
             </p>
             <p className="t-text-dim leading-relaxed">
@@ -512,7 +552,11 @@ export default function AboutPage() {
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
-              <span>If nobody plays during a week, the border stays put. It never shrinks.</span>
+              <span>A day nobody plays means no growth that night. The border never shrinks.</span>
+            </div>
+            <div className="flex gap-2.5">
+              <span className="text-xp shrink-0">+</span>
+              <span>Growth is capped while the world is young: at most <strong className="t-text">+375 blocks</strong> a night until the radius reaches 7,000, then +250 a night. The border stops at <strong className="t-text">20,000</strong>.</span>
             </div>
             <div className="flex gap-2.5">
               <span className="text-xp shrink-0">+</span>
@@ -547,7 +591,7 @@ export default function AboutPage() {
             The ones marked <strong className="t-text">in-house</strong> were written by carsonxd
             specifically for this server — the fifteen <strong className="t-text">Frontier</strong>{' '}
             plugins are now open-source and released for anyone to run. The rest are community
-            plugins (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, BlueMap).
+            plugins (Lands, mcMMO, CoreProtect, LuckPerms, EssentialsX, Vault, BlueMap, Simple Voice Chat).
           </p>
           <p className="t-text-dim leading-relaxed text-center text-sm mt-3">
             Every Frontier plugin has a full reference page — commands, permissions and every config

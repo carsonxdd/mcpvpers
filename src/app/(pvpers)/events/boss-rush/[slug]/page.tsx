@@ -79,7 +79,7 @@ export default async function RaidPage({ params }: { params: Promise<{ slug: str
           <h2 className="font-pixel t-text text-sm mb-3 px-1">The Fight</h2>
           <div className="mc-panel p-5">
             <p className="t-text-muted text-sm mb-4 leading-snug">
-              Four waves of adds, then the boss - fought across three HP phases (
+              {boss.kind === 'duel' ? 'Two waves of adds' : 'Four waves of adds'}, then the boss - fought across three HP phases (
               <span className="t-text-dim">100% → 60% → 30%</span>), its kit escalating as it drops.
             </p>
 

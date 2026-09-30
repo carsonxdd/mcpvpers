@@ -10,7 +10,7 @@ key is listed on this page.
   attaches all 15 jars.
 - **Downloads:** one Modrinth project per plugin — `modrinth.com/plugin/frontier-<name>`
   (links in each section below).
-- **Requirements (all plugins):** Paper **26.2+** and Java **25+**. Spigot is not supported.
+- **Requirements (all plugins):** Paper **26.3+** and Java **25+**. Spigot is not supported.
 - **Reference server:** everything here runs live on `mc.pvpers.us`.
 
 > Modrinth links on this page point at the planned project slugs and go live with v1.0.0.
@@ -20,21 +20,21 @@ key is listed on this page.
 
 | Plugin | Ver | One line | Kind |
 |---|---|---|---|
-| **FrontierReputation** | 1.7.2 | Wild West reputation: outlaws, lawmen, bounties, wanted posters, marshals, `/pvp` war mode, daily rewards | Flagship · economy/social |
-| **FrontierShop** | 1.7.4 | Server shop + player market with **daily-ticker pricing**, sign shops, daily deals, black market, custom items | Flagship · economy |
-| **FrontierEvents** | 1.0.1 | Event engine: Boss Rush raids, the Gauntlet, keystone Raid Keys, TDM/FFA, duel tournaments with wagers, arenas, kits | Flagship · minigames |
-| **FrontierStatsAPI** | 1.16.0 | Embedded HTTP/JSON API (35 routes) serving every plugin's data to a website or bot | Infrastructure |
-| **FrontierBorder** | 2.3.1 | Playtime-gated world border that grows on a daily schedule; sets the server timezone | World |
-| **FrontierTab** | 1.2.1 | Tab-list header/footer with playtime, deaths, session, border, End status | QoL |
-| **FrontierGraves** | 1.1.1 | Permanent graves — keep your inventory on death, claim it later | QoL |
-| **FrontierMail** | 1.0.0 | Offline messages + item mailbox; other plugins deliver into it | QoL |
-| **FrontierTrade** | 1.0.0 | Safe two-sided trade GUI | QoL |
+| **FrontierReputation** | 1.12.0 | Wild West reputation: outlaws, lawmen, bounties, wanted posters, marshals, `/pvp` war mode, daily rewards | Flagship · economy/social |
+| **FrontierShop** | 1.11.0 | Server shop + player market with **daily-ticker pricing**, sign shops, daily deals, black market, custom items | Flagship · economy |
+| **FrontierEvents** | 1.6.1 | Event engine: Boss Rush raids, the Gauntlet, keystone Raid Keys, TDM/FFA/KOTH, duel tournaments with wagers, Colosseum Night, open ring, arenas, kits | Flagship · minigames |
+| **FrontierStatsAPI** | 1.18.0 | Embedded HTTP/JSON API (36 routes) serving every plugin's data to a website or bot | Infrastructure |
+| **FrontierBorder** | 2.5.0 | Playtime-gated world border that grows on a daily schedule; sets the server timezone | World |
+| **FrontierTab** | 1.2.2 | Tab-list header/footer with playtime, deaths, session, border, End status | QoL |
+| **FrontierGraves** | 1.1.2 | Permanent graves — keep your inventory on death, claim it later | QoL |
+| **FrontierMail** | 1.0.1 | Offline messages + item mailbox; other plugins deliver into it | QoL |
+| **FrontierTrade** | 1.0.1 | Safe two-sided trade GUI | QoL |
 | **FrontierEnderTracker** | 1.0.0 | Per-player Ender Dragon damage tracking, live sidebar, fight history | World |
-| **FrontierEndLock** | 1.0.0 | Lock the End until staff open it | World |
+| **FrontierEndLock** | 1.2.0 | Lock the End until a scheduled date (or until staff open it) | World |
 | **FrontierNetherLock** | 1.0.0 | Lock the Nether until staff open it | World |
-| **FrontierHeads** | 1.0.0 | Drop the victim's head on PvP kills | PvP |
-| **FrontierBackup** | 1.0.0 | Scheduled zip backups with rotation | Ops |
-| **FrontierAnnouncements** | 1.0.0 | Rotating chat announcements, per-player mute | Ops |
+| **FrontierHeads** | 1.0.1 | Drop the victim's head on PvP kills | PvP |
+| **FrontierBackup** | 1.0.1 | Scheduled zip backups with rotation | Ops |
+| **FrontierAnnouncements** | 1.2.2 | Rotating chat announcements, the Frontier Gazette, Market Day, `/help` menu | Ops |
 
 ## Which plugin needs which
 
@@ -44,26 +44,33 @@ and degrades gracefully.
 
 | Plugin | Requires (won't load without) | Optional — unlocks… |
 |---|---|---|
-| FrontierReputation | **FrontierTab** | Vault (bounty money, treasury), mcMMO (XP boost for pacifists in war mode), FrontierEvents (event kills don't count as crimes), FrontierMail (daily-reward overflow → mailbox) |
-| FrontierShop | — | Vault (**effectively required** — no economy = shop is read-only) |
-| FrontierEvents | — | Vault (payouts, wagers), FrontierMail (reward overflow), FrontierGraves (arena grave sweep) |
-| FrontierStatsAPI | **FrontierTab** | FrontierBorder, FrontierReputation, FrontierEvents, FrontierShop, mcMMO — each adds its routes; missing ones return empty |
-| FrontierBorder | **FrontierTab** | Discord webhook for expansion announcements |
-| FrontierTab | — | FrontierBorder (border line), FrontierEndLock (End 🔒), FrontierEvents (event deaths not counted), FrontierReputation (rep prefix on names) |
+| FrontierReputation | **FrontierTab** | Vault (bounty money, treasury), mcMMO (XP boost for pacifists in war mode), FrontierEvents (event kills don't count as crimes), FrontierMail (daily-reward overflow → mailbox), Lands (hazard-rule own-land exception, spawn builders), FrontierAnnouncements (Gazette, weekly shoutout) |
+| FrontierShop | — | Vault (**effectively required** — no economy = shop is read-only), Lands (land upkeep, debt, town discount), EssentialsX (AFK detection for the dynamic cap) |
+| FrontierEvents | — | Vault (payouts, wagers), FrontierMail (reward overflow), FrontierGraves (arena grave sweep), FrontierAnnouncements (Gazette) |
+| FrontierStatsAPI | **FrontierTab** | FrontierBorder, FrontierReputation, FrontierEvents, FrontierShop, FrontierAnnouncements, mcMMO — each adds its routes; missing ones return empty |
+| FrontierBorder | **FrontierTab** | FrontierAnnouncements (Gazette), Discord webhook for expansion announcements |
+| FrontierTab | — | FrontierBorder (border line), FrontierEndLock (End 🔒), FrontierEvents (event and ring-edge deaths not counted), FrontierReputation (rep prefix on names), FrontierAnnouncements (soft dependency) |
 | FrontierGraves | — | FrontierEvents (no graves for event deaths; arena sweep) |
-| FrontierMail | — | *(is used by Shop, Reputation, Events)* |
+| FrontierMail | — | *(is used by Reputation and Events — Shop's market keeps its own mailbox)* |
+| FrontierEndLock | — | FrontierAnnouncements (Gazette post when the End opens) |
+| FrontierHeads | — | FrontierEvents (no heads for event or ring kills) |
 | everything else | — | — |
 
 **Third-party:** [Vault](https://github.com/MilkBowl/Vault) + any economy (EssentialsX
 tested), [LuckPerms](https://luckperms.net) (any perms plugin works; nodes are
-`frontier.<plugin>.<action>`), [mcMMO](https://www.spigotmc.org/resources/64348/) 2.3+.
+`frontier.<plugin>.<action>`), [mcMMO](https://www.spigotmc.org/resources/64348/) 2.3+,
+[Lands](https://www.spigotmc.org/resources/53313/) (optional: Shop land upkeep/debt/town
+discount; Reputation hazard own-land exception and spawn builders),
+[EssentialsX](https://essentialsx.net) (optional beyond the economy: Shop AFK detection for
+the dynamic cap and sell gate; StatsAPI baltop).
 
 **Data flow (who reads whom):**
 
 ```
-FrontierTab ──playtime──▶ FrontierBorder      FrontierMail ◀── Shop / Reputation / Events (deliver items)
-FrontierTab ──playtime──▶ FrontierReputation  FrontierEvents ──"in event?"──▶ Graves, Tab, Reputation
+FrontierTab ──playtime──▶ FrontierBorder      FrontierMail ◀── Reputation / Events (deliver items; Shop's market has its own mailbox)
+FrontierTab ──playtime──▶ FrontierReputation  FrontierEvents ──"in event?"──▶ Graves, Tab, Reputation, Heads
 FrontierTab ──────────────▶ FrontierStatsAPI ◀── Border, Reputation, Events, Shop, mcMMO (read on disk)
+Reputation, Border, EndLock, Events ──Gazette posts──▶ FrontierAnnouncements ──▶ StatsAPI /api/gazette
 FrontierBorder ──server-timezone──▶ every plugin's "midnight"
 ```
 
@@ -90,9 +97,11 @@ Player features default to **true**, staff features to **op**. Every node follow
 ## Timezone in one minute
 
 Several plugins have a "midnight" (shop ticker rollover, daily deals, black-market
-windows, daily rewards, border expansion hour). They all use the JVM's default timezone.
+windows, daily rewards, border expansion hour). Most use the JVM's default timezone, and
 **FrontierBorder's `server-timezone`** sets that for the whole server (`America/New_York`,
-`Europe/Berlin`, … or `system` to leave the host's). Set it once, first.
+`Europe/Berlin`, … or `system` to leave the host's). Set it once, first. A few schedules
+also have their own timezone key — EndLock's `timezone`, Announcements' `gazette.timezone`
+and `market-day.timezone`, Events' `arena-chest.timezone` — so keep those on the same zone.
 
 ---
 
@@ -117,46 +126,57 @@ windows, daily rewards, border expansion hour). They all use the JVM's default t
 ---
 
 ## FrontierReputation
-> Wild West reputation, bounties, wanted posters and daily login rewards.  **v1.7.2** · Download: [Modrinth](https://modrinth.com/plugin/frontier-reputation) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/reputation)
+> Wild West reputation, bounties, wanted posters and daily login rewards.  **v1.12.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-reputation) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/reputation)
 
-**What it does** — Every player is in one of four states: **Pacifist** (the default — cannot die from PvP, gets knocked out at 1 HP and robbed instead), **Lawman** (a five-tier ladder from Citizen to Marshal, entered by killing an outlaw and taking the badge), **Outlaw** (Drifter to Legend of the Frontier, listed on `/wanted` and bounty-able) or **Retired**. Rep is never negative — three independent pools (outlaw / peaceful / violence) grow from actions, and the lawman ladder needs *both* peaceful and violence rep plus a number of unique commenders, so a pure builder and a pure killer both cap at Citizen. Self-defense is free (a kill within 30 s of being hit by the victim earns no outlaw rep), outlaw-on-outlaw kills are neutral rivalry, and there is deliberately no revenge timer — revenge is served through the existing bounty, report, badge and hot-revenge paths. Bounties are item-escrow placed by Senior Sheriffs, funded by a `/donate` treasury; players run justice themselves through reports, commendations, restitution and pardons, each with anti-abuse caps. A streak-based daily login reward (money + item kits) rounds it out. Tuned for a friend-group server of roughly 10–20 active players.
+**What it does** — Every player is in one of four states: **Pacifist** (the default — cannot die from PvP, gets knocked out at 1 HP and robbed instead), **Lawman** (a five-tier ladder from Citizen to Marshal, entered by killing an outlaw and taking the badge), **Outlaw** (Drifter to Legend of the Frontier, listed on `/wanted` and bounty-able) or **Retired**. Rep is never negative — three independent pools (outlaw / peaceful / violence) grow from actions, and the lawman ladder needs *both* peaceful and violence rep plus a number of unique commenders, so a pure builder and a pure killer both cap at Citizen. Self-defense is free (a kill within 30 s of being hit by the victim earns no outlaw rep), outlaw-on-outlaw kills are neutral rivalry by default, and there is deliberately no revenge timer — revenge is served through the existing bounty, report, badge and hot-revenge paths. Bounties are cash: anyone but an Outlaw can put their own money on an outlaw with `/bounty place <player> <amount>`, and the killer collects the total. It only moves money between players, so it cannot mint any. The `/donate` reward pool is separate and pays the automatic item reward drops Lawmen get for outlaw kills, under weekly server-wide caps. Players run justice themselves through reports, commendations, denouncements, restitution and pardons, each with anti-abuse caps. A streak-based daily login reward (money + item kits) rounds it out. Tuned for a friend-group server of roughly 10–20 active players.
+
+Season 2 guardrails: combat-logging leaves a lootable **logout body** for 5 minutes instead of killing you on return; clean-hour rep and outlaw decay only count **real activity**; **spawn is no-PvP** and lava, fire, TNT and beds can't be used near other players; an outlaw who dies to a Lawman sheds rep **scaled by the gear they carried**; and rep-trusted **spawn builders** get build access in the Spawn land. It can also post to the **Frontier Gazette** and run a weekly commend **shoutout** (both through FrontierAnnouncements).
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+, FrontierTab (hard dependency — provides the tab/chat tier prefixes; the plugin will not load without it) |
-| Optional | Vault + an economy (daily-reward money and rep-reward payouts; skipped without it) · FrontierMail (daily-reward overflow items go to `/mailbox` instead of dropping at your feet) · FrontierEvents (arena/event combat is exempt from all reputation effects) · mcMMO (XP boost while PvP-effective) · FrontierBorder (its `server-timezone` sets the "midnight" used by daily/weekly resets) · any claim plugin that cancels PvP damage (Lands, WorldGuard, GriefPrevention — inside PvP-denied claims the rep system does nothing) |
+| Required | Paper 26.3+, Java 25+, FrontierTab (hard dependency — provides the tab/chat tier prefixes; the plugin will not load without it) |
+| Optional | Vault + an economy (daily-reward money and rep-reward payouts; skipped without it) · FrontierMail (daily-reward overflow items go to `/mailbox` instead of dropping at your feet) · FrontierEvents (arena/event combat is exempt from all reputation effects) · mcMMO (XP boost while PvP-effective) · FrontierBorder (its `server-timezone` sets the "midnight" used by daily/weekly resets) · FrontierAnnouncements (Gazette posts and the weekly commend shoutout) · Lands (own-land exception to the hazard rule; spawn-builder access to the Spawn land) · any claim plugin that cancels PvP damage (Lands, WorldGuard, GriefPrevention — inside PvP-denied claims the rep system does nothing) |
 | Used by | FrontierStatsAPI (reads `data.db` for leaderboards, wanted posters, profiles, economy and streaks) · FrontierTab (displays the tier prefixes) |
 
 **Commands**
 | Command | Who | What |
 |---|---|---|
 | `/rep [help]` | Everyone | Rules summary (states, redemption paths, key commands); shown automatically on first join |
+| `/rep title <hide\|show>` | Everyone | Hide or show your reputation title |
 | `/whois <player>` | Everyone | Full reputation lookup — state, rep pools, tiers, recent crimes; self-view while Outlaw appends the redemption path |
 | `/wanted [player]` | Everyone | Top-5 outlaws by tier, or one player's wanted poster |
 | `/badge <yes\|no>` | Everyone | Accept or decline the Deputy badge after your first outlaw kill |
 | `/commend <player> <reason>` | Everyone | Award peaceful rep (uses a charge; charges accrue from playtime; 6 h cooldown per recipient) |
 | `/commend list [player]` | Everyone | Commendations you (or another player) received — commender, reason, date |
-| `/donate` | Everyone | Open the donation chest; items fund the bounty treasury, donors earn capped peaceful rep |
+| `/denounce <player> <reason>` | Everyone (not Outlaws) | Flag a player to staff. Costs a commend charge and needs 5 h of non-AFK play; max 3 a day, once per target per week. When 2+ players on different connections denounce the same player within 7 days it goes to the staff queue, and staff can take −10 (minor) or −25 (serious) peaceful rep |
+| `/donate` | Everyone | Open the donation chest; items fund the reward pool behind Lawmen's automatic reward drops, donors earn capped peaceful rep |
 | `/donate log [count]` / `pool` / `top` | Everyone | Donation ledger, current pool contents, top donors |
 | `/report <player> <reason>` | Everyone | File a complaint (needs `reports.reporter_min_playtime_hours` playtime; 24 h cooldown per target) |
 | `/report list\|view\|approve\|deny\|reverse …` | Deputy+ | Adjudicate reports; false reports cost the reporter peaceful rep |
-| `/bounty [list]` | Everyone | Active bounties |
-| `/bounty track <player>` | Everyone | Tracking compass toward a wanted outlaw (cooldown + accuracy fuzz from config) |
-| `/bounty treasury` | Everyone | Read-only Sheriff's Office treasury (pool value / reserved / available) |
-| `/bounty place <player>` | Senior Sheriff+ | 9-slot item-escrow GUI on an outlaw; closing commits, closing empty cancels; pays the killer, refunds on pardon or 30-day inactivity |
-| `/daily` | Everyone | Daily login streak status (current/best streak, claimed today?, tomorrow's payout); the reward itself is granted automatically ~3 s after your first join each day |
-| `/pvp [on\|off\|status]` | Everyone (Pacifist/Retired) | Opt into PvP ("warmode"); default off, 30-min toggle cooldown, refused while combat-tagged; Outlaws/Lawmen are always on |
-| `/restitution <victim>` | Outlaws only | 27-slot UI to return stolen items (online victim → inventory, offline → mailbox); +peaceful rep per stack, gated on a logged crime |
-| `/pardon <player>` | Sheriff+ | Reduce outlaw rep — Sheriff −25 %, Senior Sheriff −50 %, Marshal −100 %; refunds active bounties; pacifist-kill rep is floored |
+| `/bounty [list]` | Everyone | One line per Outlaw with a bounty: total cash and number of posters |
+| `/bounty track <player>` | Everyone | Tracking compass toward an Outlaw (position fuzzed ±100 blocks, 10-min cooldown) |
+| `/bounty treasury` | Everyone | Read-only Sheriff's Office reward pool (donated items behind the automatic reward drops; separate from posted bounties) |
+| `/bounty place <player> <amount>` | Everyone but Outlaws | Post a cash bounty from your own balance (`2500`, `2,500` or `2.5k`; $250 minimum, no maximum). Pacifists and Retired wait 48h between posts (persisted), Lawmen have no cooldown. Bounties stack; the killer gets every bounty on the target as cash, a poster who kills their own target gets their money back, and a pardon, 30 days of target inactivity or a shared-IP void refunds the poster (offline too) |
+| `/daily` | Everyone | Daily login streak status (current/best streak, claimed today?, tomorrow's payout); the reward itself is granted automatically once you've played 10 minutes that day, for at most 2 accounts per connection |
+| `/pvp [on\|off\|status]` | Everyone (Pacifist/Retired) | Opt into PvP ("warmode"); default off, needs 5 h of playtime, 30-min toggle cooldown, refused while combat-tagged; Outlaws/Lawmen are always on |
+| `/restitution <victim>` | Outlaws only | 27-slot UI to return stolen items (online victim → inventory, offline → mailbox). Earns no peaceful rep: it pays down the outlaw rep charged for crimes against that victim, and only raw diamonds, emeralds, netherite and their blocks give credit (gear counts 0) |
+| `/pardon <player>` | Sheriff+ | Reduce outlaw rep — Sheriff −25 %, Senior Sheriff −50 %, Marshal −100 %; refunds active bounties; one pardon per target per 7 days across all pardoners; murder rep is floored (see `pardon_unforgivable_floor_pct`) |
 | `/marshal grant-rep <player> <amount> <reason>` | Marshal / Admin | Admin-light rep adjustment |
 | `/marshal audit <player>` / `audit-by <player>` | Marshal / Admin | Corruption-detection trail of lawman actions |
 | `/repadmin reload` | Admin | Re-read `config.yml` live |
 | `/repadmin setrep <player> <outlaw\|peaceful\|violence> <amount>` | Admin | Manually set a rep pool |
 | `/repadmin state <player> <PACIFIST\|LAWMAN\|OUTLAW\|RETIRED>` | Admin | Manually set a state |
 | `/repadmin reset-rep <player> confirm` | Admin | Emergency full wipe to new-player state (refunds bounties, deletes crimes/reports/commendations against the target; audit logs kept) |
+| `/repadmin spawnbuilders` / `spawnbuilder …` | Admin | Spawn builders — the rep-trusted players who get build access in the Spawn land |
+| `/repadmin shoutout [status\|preview\|now]` | Admin | The weekly commend shoutout: status, a preview, or post it now |
+| `/repadmin commendflags` | Admin | Commendations flagged by the anti-abuse checks |
+| `/repadmin bodies` | Admin | Logout bodies (combat-log stand-ins) |
+| `/repadmin afkflags` | Admin | Players flagged by the activity/AFK checks |
+| `/repadmin denounces` | Admin | The denouncement queue |
+| `/repadmin denounce confirm\|dismiss …` | Admin | Uphold or dismiss a queued denouncement |
 
-Tier gates (Deputy+, Sheriff+, Senior Sheriff+, Marshal) are enforced in code by lawman tier — the permission nodes below are all granted to everyone except the two admin nodes.
+Tier gates (Deputy+, Sheriff+, Senior Sheriff+, Marshal) are enforced in code by lawman tier — the permission nodes below are all granted to everyone except the three op nodes.
 
 **Permissions**
 | Node | Default | Grants |
@@ -168,7 +188,8 @@ Tier gates (Deputy+, Sheriff+, Senior Sheriff+, Marshal) are enforced in code by
 | `frontier.reputation.commend` | true | `/commend` (award + list) |
 | `frontier.reputation.donate` | true | `/donate` (UI + log/pool/top) |
 | `frontier.reputation.report` | true | `/report` — filing; adjudication gated by lawman tier in code |
-| `frontier.reputation.bounty` | true | `/bounty` — placement gated Senior Sheriff+ in code |
+| `frontier.reputation.denounce` | true | `/denounce` — Outlaws refused in code |
+| `frontier.reputation.bounty` | true | `/bounty` — placement open to everyone but Outlaws |
 | `frontier.reputation.daily` | true | `/daily` |
 | `frontier.reputation.pvp` | true | `/pvp` opt-in toggle |
 | `frontier.reputation.restitution` | true | `/restitution` — outlaws only, checked in code |
@@ -176,36 +197,37 @@ Tier gates (Deputy+, Sheriff+, Senior Sheriff+, Marshal) are enforced in code by
 | `frontier.reputation.marshal` | true | `/marshal` — Marshal tier or admin, checked in code |
 | `frontier.reputation.admin` | op | `/repadmin`, plus admin bypass of the tier gate on `/marshal` |
 | `frontier.reputation.combat.bypass` | op | Bypass the combat-tag teleport-command block |
+| `frontier.reputation.hazard.bypass` | op | Bypass the rule against lava, fire, TNT and beds near other players |
 
-Legacy `pireputation.*` nodes are declared as children of the matching `frontier.reputation.*` nodes, so old permission grants keep working.
+Legacy `pireputation.*` nodes are still declared, but children only resolve downward: holding `pireputation.x` does **not** grant `frontier.reputation.x`. Old grants appear to keep working only because every player node defaults to true.
 
 **Config** — path `plugins/FrontierReputation/config.yml`, reload: `/repadmin reload` (never use Bukkit `/reload` — it wipes in-memory knockout/provocation state)
 | Key | Default | What it controls |
 |---|---|---|
 | `ladders.outlaw.<tier>` | drifter 25 / bandit 75 / outlaw 175 / notorious 350 / legend 600 | One entry per outlaw tier, fields: `rep` (threshold), `multiplier` (bounty multiplier 1.0 → 3.0), `title` |
-| `ladders.lawman.<tier>` | citizen 30/5/0 · deputy 80/25/2 · sheriff 200/80/4 · senior_sheriff 400/180/5 · marshal 700/350/6 | One entry per lawman tier, fields: `peaceful`, `violence`, `unique_commenders`, `title` |
+| `ladders.lawman.<tier>` | citizen 30/5/0 · deputy 80/25/2 · sheriff 200/80/4 · senior_sheriff 400/180/5 · marshal 700/350/6 | One entry per lawman tier, fields: `peaceful`, `violence`, `unique_commenders`, `title`. mc.pvpers.us runs citizen 30/5/0 · deputy 60/10/1 · sheriff 170/15/3 · senior_sheriff 300/70/4 · marshal 450/100/5 |
 | `rep_actions.outlaw.unprovoked_kill_pacifist` | 50 | Outlaw rep for an unprovoked kill of a Pacifist |
 | `rep_actions.outlaw.unprovoked_kill_lawman` | 15 | …of a Lawman |
-| `rep_actions.outlaw.unprovoked_kill_outlaw` | 0 | …of an Outlaw (outlaw-vs-outlaw is rivalry, not crime) |
+| `rep_actions.outlaw.unprovoked_kill_outlaw` | 0 | …of an Outlaw (0 = outlaw-vs-outlaw is rivalry, not crime; mc.pvpers.us runs 5) |
 | `rep_actions.outlaw.unprovoked_kill_newcomer` | 75 | …of a player still under newcomer protection (worse than a normal pacifist kill) |
 | `rep_actions.outlaw.villager_kill` | 3 | Killing a villager |
 | `rep_actions.outlaw.village_structure_break` | 2 | Breaking village structures |
 | `rep_actions.outlaw.farm_mob_kill` | 1 | Killing farm animals |
 | `rep_actions.outlaw.donation_chest_theft_per_stack` | 5 | Stealing from the donation chest, per stack |
 | `rep_actions.outlaw.pet_kill` | 1 | Killing a tamed mob owned by someone else |
-| `rep_actions.lawman_peaceful.online_hour_clean` | 0.5 | Peaceful rep per clean online hour |
-| `rep_actions.lawman_peaceful.commend_received` | 10 | Peaceful rep per commendation received |
-| `rep_actions.lawman_peaceful.restitution_stack` | 5 | Peaceful rep per stack returned via `/restitution` |
+| `rep_actions.lawman_peaceful.online_hour_clean` | 1.0 | Peaceful rep per clean online hour (active minutes only; mc.pvpers.us runs 2.0) |
+| `rep_actions.lawman_peaceful.commend_received` | 10 | Peaceful rep per commendation received (mc.pvpers.us runs 5) |
 | `rep_actions.lawman_peaceful.defend_player` | 3 | Peaceful rep for defending another player |
 | `rep_actions.lawman_peaceful.report_approved` | 2 | Peaceful rep when your report is approved |
 | `rep_actions.lawman_violence.kill_<tier>` | drifter 10 / bandit 20 / outlaw 40 / notorious 75 / legend 150 | Violence rep for killing an outlaw of each tier |
 | `rep_actions.lawman_violence.assist_pct` | 25 | Percent of the kill's violence rep credited to assisting attackers |
-| `donations.enabled` | true | Enable the `/donate` chest and treasury |
+| `rep_actions.lawman_violence.lawman_death_violence_penalty` | 5 | Violence rep a Lawman loses when killed by an Outlaw |
+| `donations.enabled` | true | Enable the `/donate` chest and reward pool |
 | `donations.weekly_rep_cap_per_donor` | 10 | Max peaceful rep a donor can earn per week |
 | `donations.outlaws_can_earn_rep` | false | Outlaws can deposit but earn no rep |
-| `donations.item_values.<MATERIAL>` | DIAMOND 0.5, NETHERITE_SCRAP 1.0, NETHERITE_INGOT 4.0, EMERALD 0.25, GOLD_INGOT 0.1, IRON_INGOT 0.05, COOKED_BEEF/BREAD 0.02, OAK/SPRUCE/BIRCH_LOG 0.01 | Diamond-equivalent value per material (drives donation rep, theft rep, restitution rep, treasury value) |
-| `restitution.require_logged_crime` | true | Restitution rep only if the outlaw has a logged crime against the victim (items still deliver either way) |
-| `restitution.rep_per_diamond_equivalent` | 10 | Value ceiling on restitution rep (stops dirt wash-trading) |
+| `donations.item_values.<MATERIAL>` | DIAMOND 0.5, NETHERITE_SCRAP 1.0, NETHERITE_INGOT 4.0, EMERALD 0.25, GOLD_INGOT 0.1, IRON_INGOT 0.05, COOKED_BEEF/BREAD 0.02, OAK/SPRUCE/BIRCH_LOG 0.01 | Diamond-equivalent value per material (drives donation rep, theft rep and treasury value) |
+| `restitution.require_logged_crime` | true | Restitution only credits against crimes logged against that victim (items still deliver either way) |
+| `restitution.other_crime_rep_per_diamond_equivalent` | 0.25 | Outlaw rep paid down per diamond-equivalent returned. Only raw diamonds, emeralds, netherite and their blocks count; gear is credited 0. Restitution earns no peaceful rep |
 | `reports.enabled` | true | Enable `/report` |
 | `reports.reporter_min_playtime_hours` | 2 | Playtime needed before you can file a report |
 | `reports.pending_expiry_days` | 7 | Unadjudicated reports expire after this |
@@ -213,25 +235,31 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 | `reports.false_report_penalty` | -10 | Peaceful rep change for a denied/false report |
 | `reports.reverse_window_hours` | 24 | Window in which an approved report can be reversed |
 | `reports.severity_rep.{minor,moderate,serious}` | 5 / 20 / 50 | Outlaw rep added on approval, by severity |
+| `marshal.{grant_rep_limit, grant_rep_window_days}` | 20, 7 | Cap on rep a Marshal can hand out with `/marshal grant-rep` per window |
+| `denounce.*` | 5 h play · 3 a day · once per target per week | `/denounce`: costs a commend charge; 2+ denouncers on different connections within 7 days put the target in the staff queue; staff can take −10 (minor) or −25 (serious) peaceful rep |
 | `commend.enabled` | true | Enable `/commend` |
 | `commend.same_recipient_cooldown_hours` | 6 | Cooldown before commending the same player again |
 | `commend.anti_trade_cooldown_hours` | 6 | Blocks A→B then B→A commend trades within this window |
 | `commend.list_limit` | 10 | Rows shown by `/commend list` |
 | `ladder_requirements.unique_commenders_window_days` | 90 | Commendations older than this don't count toward the unique-commender gate |
 | `ladder_requirements.enforce_unique_commenders` | true | Set false to disable unique-commender gating on the lawman ladder |
-| `caps.online_clean_rep_per_day` | 6 | Daily cap on peaceful rep from clean playtime |
+| `caps.online_clean_rep_per_day` | 6 | Daily cap on peaceful rep from clean playtime (mc.pvpers.us runs 12) |
 | `caps.defend_player_cooldown_sec` | 600 | Cooldown between defend-player rep awards |
 | `caps.commend_charge_hours` | 10 | Playtime hours per commend charge earned |
 | `caps.commend_max_stockpile` | 8 | Max stored commend charges |
 | `caps.outlaw_kills_full_reward_per_24h` | 3 | Outlaw kills per 24 h that pay the full reward |
-| `caps.weekly_server_diamond_cap` | 100 | Server-wide weekly cap on diamonds paid as rewards |
-| `caps.weekly_server_netherite_cap` | 50 | Same for netherite |
-| `caps.restitution_rep_per_day` | 20 | Daily cap on peaceful rep from `/restitution` (0 = off) |
+| `caps.weekly_server_diamond_cap` | 100 | Server-wide weekly cap on diamonds paid as rewards (mc.pvpers.us runs 50) |
+| `caps.weekly_server_netherite_cap` | 50 | Same for netherite (mc.pvpers.us runs 20) |
+| `caps.restitution_outlaw_rep_reduction_per_day` | 0 | Daily cap on outlaw rep paid down through `/restitution` (0 = no cap) |
 | `redemption.death_to_lawman_pct` | 15 | % of outlaw rep lost when killed by a lawman |
+| `redemption.death_scaling.*` | 2 % – 15 % | Death to a Lawman sheds rep scaled by how geared the outlaw was |
+| `redemption.death_floor_pct` | 66 | Death redemption never takes unreturned murder/robbery rep below this % |
 | `redemption.death_to_bounty_hunter_pct` | 20 | % lost when killed for a bounty |
 | `redemption.pardon_pct.{sheriff,senior_sheriff,marshal}` | 25 / 50 / 100 | % of outlaw rep removed by a pardon, per pardoning tier |
-| `redemption.pardon_unforgivable_floor_pct` | 50 | % of pacifist-kill rep that survives any pardon (0 = off) |
+| `redemption.pardon_unforgivable_floor_pct` | 30 | % of murder rep that survives any pardon (0 = off); unreturned robbery rep survives in full |
+| `redemption.pardon_cooldown_days` | 7 | One pardon per target per this many days, across all pardoners |
 | `redemption.offline_decay_pct_per_week` | 2 | Outlaw rep decay while offline |
+| `outlaw_decay.*` | 7 crime-free days, then −1 per active hour | Online decay: after a week without crimes an outlaw sheds rep while actually playing |
 | `states.pacifist.knockout_enabled` | true | Pacifists get knocked out instead of dying to PvP |
 | `states.pacifist.knockout_duration_sec` | 30 | Phase 1: fully invulnerable, debuffed, robbable |
 | `states.pacifist.knockout_cooldown_sec` | 300 | Phase 2: after wake-up the knockout is disarmed — a lethal hit is a real death (attacker takes full pacifist-kill rep) |
@@ -242,6 +270,8 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 | `states.pacifist.knockout_theft_max_per_stack` | 16 | Per-stack cap on items taken (64 = full stacks) |
 | `states.pacifist.knockout_with_theft_outlaw_rep` | 1 | Base outlaw rep for robbing a knocked-out player |
 | `states.pacifist.knockout_theft_rep_per_diamond_eq` | 0.25 | Extra rep per diamond-equivalent stolen (0 = flat) |
+| `states.pacifist.knockout_theft_victim_cooldown_min` | 60 | A robbed player can't be robbed again for this long |
+| `states.pacifist.knockout_theft_makes_drifter` | true | Any robbery tops a non-outlaw robber up to Drifter (25 outlaw rep) |
 | `states.pacifist.pacifist_vs_pacifist_warn` | true | First hit between two pacifists is cancelled with a warning |
 | `states.pacifist.pacifist_vs_pacifist_warn_cooldown_sec` | 600 | Warning silenced for this long per attacker→victim pair |
 | `states.pacifist.newcomer_protection_hours` | 5 | New players under this playtime are protected (and killing them costs `unprovoked_kill_newcomer`) |
@@ -250,34 +280,41 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 | `states.pacifist.outlaw_land_protection_bypass` | true | PvP-effective attackers can hit Outlaw victims even inside PvP-denied claims (stops outlaws bunkering) |
 | `states.pacifist.mcmmo_warmode_xp_multiplier` | 1.05 | mcMMO XP × this while PvP-effective (1.0 disables; needs mcMMO) |
 | `states.lawman.auto_retire_after_inactive_days` | 30 | Inactive lawmen become Retired (rep frozen, restored on next fight) |
-| `states.spawn.radius_blocks` | 200 | Spawn-region radius for the spawn-kill override |
+| `states.spawn.radius_blocks` | 200 | Spawn-region radius for the spawn-kill override (mc.pvpers.us runs 100) |
 | `states.spawn.spawn_kill_rep_override` | 30 | Outlaw rep for a kill inside the spawn region |
 | `states.spawn.overworld_only` | true | Spawn override applies only in the overworld |
 | `broadcasts.promotion_cooldown_per_player_min` | 10 | Min minutes between promotion broadcasts for one player |
 | `broadcasts.max_broadcasts_per_minute_server` | 3 | Server-wide broadcast rate cap |
-| `bounties.marshal_min_diamond_equivalent` | 5 | Minimum bounty value |
-| `bounties.marshal_max_diamond_equivalent` | 64 | Maximum bounty value |
 | `bounties.bounty_inactive_refund_days` | 30 | Bounties refund if the target is absent this long |
 | `bounties.tracking_compass_cooldown_min` | 10 | Per-player `/bounty track` cooldown |
 | `bounties.tracking_compass_accuracy_blocks` | 100 | Fuzz applied to the tracked position |
-| `bounties.max_pct_of_treasury_per_bounty` | 50 | Max % of the available treasury a single bounty may reserve |
 | `bounties.claim_allowed.{lawman,pacifist,retired,outlaw}` | true / true / true / false | Which states may claim a bounty by killing the target |
 | `rewards.enabled` | true | Server-generated item drops on outlaw kills |
 | `rewards.<tier>` | drifter DIAMOND:1 … legend DIAMOND:10 + NETHERITE_SCRAP:4 | One entry per outlaw tier, fields: `base` (item list) and `bonus_rolls` (list of `{chance, items}`); items are `MATERIAL:count` or `MATERIAL:1dN` dice |
 | `anti_abuse.alt_detection` | true | Detect alt accounts by shared IP |
 | `anti_abuse.alt_shared_ip_window_days` | 14 | Window for shared-IP alt matching |
 | `anti_abuse.combat_log_window_sec` | 10 | Disconnecting within this many seconds of PvP damage counts as combat-logging |
-| `anti_abuse.combat_log_npc_duration_sec` | 30 | Combat-log stand-in duration |
+| `anti_abuse.combat_log_npc_duration_sec` | 30 | Unused — replaced by logout bodies |
+| `anti_abuse.logout_body.*` | 300 s | Quitting within the combat-log window, or while knocked out, leaves a body holding your whole inventory (armor included) for this long. Anyone can loot it and it is never a crime; leftovers come back on login, with no rep charge and no death on return |
+| `anti_abuse.lawman_kill_pair_cooldown_hours` | 24 | Cooldown on paying out repeat Lawman kills of the same Outlaw |
+| `anti_abuse.activity.*` | — | Activity gate: clean-hour rep and outlaw decay need real, non-AFK activity |
 | `anti_abuse.respawn_invuln_sec` | 30 | Post-respawn invulnerability (drops on your first aggression) |
 | `anti_abuse.block_teleport_commands` | true | Block teleport-style commands while combat-tagged |
-| `anti_abuse.blocked_teleport_commands` | home, tpa, tpaccept, tpahere, spawn, back, warp, rtp, wild | The blocked command list |
+| `anti_abuse.blocked_teleport_commands` | 33 commands | The blocked command list (teleport-style commands such as `/home`, `/tpa`, `/spawn`, `/back`, `/warp`) |
+| `pvp_guardrails.*` | — | Spawn is no-PvP, and lava, fire, TNT and beds can't be used near other players (own land excepted, via Lands; `frontier.reputation.hazard.bypass` skips it) |
+| `spawn_builders.*` | mc.pvpers.us: 80 peaceful, 30 h, 14 clean days | Rep-trusted players who meet these thresholds get build access in the Lands land named Spawn |
+| `gazette.*` | on (mc.pvpers.us) | Post reputation moments to the Frontier Gazette (needs FrontierAnnouncements) |
+| `shoutout.*` | on (mc.pvpers.us) | Weekly Sunday commend shoutout: players with 2+ commends in the last 7 days, ranked by unique commenders |
 | `onboarding.first_join_welcome` | true | 3-line welcome on a player's first ever join |
 | `onboarding.first_crime_redemption_hint` | true | One-shot "how to clear your name" hint on first becoming an Outlaw |
 | `audio.enabled` | true | Single-recipient sound cues on state changes |
 | `audio.master_volume_multiplier` | 1.0 | Multiplied onto every cue's volume |
 | `audio.events.{became_wanted,badge_prompt,bounty_resolved,fully_redeemed}` | all true | Toggle each of the four cues |
 | `daily_reward.enabled` | true | Daily login rewards |
-| `daily_reward.money.by_day` | [100, 120, 150, 180, 210, 240, 280, 310, 340, 370, 400, 430, 460, 500] | Money per streak day (day 1 first; days past the end keep paying the last value) |
+| `daily_reward.min_play_minutes` | 10 | Minutes played that day before the reward is granted (checked every 20 s) |
+| `daily_reward.{one_claim_per_ip, claims_per_ip}` | true, 2 | Cap how many accounts per connection can claim each day |
+| `daily_reward.voice_bonus.enabled` | false (mc.pvpers.us) | Optional Simple Voice Chat bonus on the daily reward — off here |
+| `daily_reward.money.by_day` | [100, 120, 150, 180, 210, 240, 280, 310, 340, 370, 400, 430, 460, 500] | Money per streak day (day 1 first; days past the end keep paying the last value). mc.pvpers.us runs [80, 100, 120, 140, 170, 190, 220, 250, 270, 300, 320, 340, 370, 400] |
 | `daily_reward.items.tiers.<day>` | 1 / 3 / 7 / 14 | Item kit per streak tier (highest tier at or below the current streak applies); one list per tier of `MATERIAL:count` |
 | `daily_reward.items.milestones.<day>` | 3: GOLD_INGOT:8 · 7: DIAMOND:4 + EXPERIENCE_BOTTLE:16 | Extra items on that exact streak day |
 | `daily_reward.items.repeating.<interval>` | 14: DIAMOND:8 + ENCHANTED_GOLDEN_APPLE:1 | Bonus on every multiple of the interval |
@@ -290,21 +327,24 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 - All state lives in `plugins/FrontierReputation/data.db` (SQLite, WAL mode; schema auto-migrates on boot). Never use Bukkit `/reload` — restart instead; `/repadmin reload` is safe for config.
 - Inside any claim where PvP is denied the plugin does nothing (no knockout, no rep) — except Outlaw victims, who lose claim protection when `outlaw_land_protection_bypass` is on. Keep claim-plugin "war" modes off; they create the two-factions dynamic the design rejects.
 - Daily/weekly resets roll at midnight in the server's JVM timezone; set FrontierBorder's `server-timezone` if your host clock is UTC.
+- The config table quotes shipped defaults; where mc.pvpers.us runs a different value, the row says so.
 - Only plain PvP damage is seen — environmental kills (lava pushes, traps) earn no rep; multi-attacker assist credit and friend-farmed commendations are known open items.
 - Most-tweaked knobs: `ladders.lawman` thresholds (scale unique-commenders to your player count), `states.pacifist.knockout_*`, `redemption.*`, and the `daily_reward` money curve.
 
 ---
 
 ## FrontierShop
-> Server shop and player market GUIs with daily-ticker pricing, deals, a rotating black market and upgradeable custom items.  **v1.7.4** · Download: [Modrinth](https://modrinth.com/plugin/frontier-shop) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/shop)
+> Server shop and player market GUIs with daily-ticker pricing, deals, a rotating black market and upgradeable custom items.  **v1.11.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-shop) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/shop)
 
-**What it does** — `/shop` opens an 8-category, 119-item server shop where every slot is its own terminal (left-click buy 1, shift-left buy a stack, right-click sell 1, shift-right sell everything matching), and `/market` opens a player market for listing your own items at your own price. Prices ride a **daily ticker**: each item has a price index that re-prices *once a day at local midnight* from yesterday's net player flow (clamped 60–140 %), buy and sell both ride the same index so the spread never changes and a dumped item eventually becomes cheap to buy back. Prices never move mid-day; the anti-farm guard is a daily **warehouse cap** (the server buys at most `appetite × 5` of each item per day) rather than price-crushing, and only plain, unenchanted, undamaged items sell. On top of that: seeded **daily deals**, `[shop]` **sign shops** on chests, and a buy-only **black market** that opens on fixed weekly windows with per-window stock and rosters that rotate by weekday — selling vanilla contraband you can't normally get in survival (spawn eggs, mob heads, loot-only gear), captured mob spawners, and five tiered custom trinkets plus three consumables that players level up at an **Upgrade Station**.
+**What it does** — `/shop` opens a category-based server shop (the shipped catalog has 8 categories and 119 items; mc.pvpers.us runs 200) where every slot is its own terminal (left-click buy 1, shift-left buy a stack, right-click sell 1, shift-right sell everything matching), and `/market` opens a player market for listing your own items at your own price. Prices ride a **daily ticker**: each item has a price index that re-prices *once a day at local midnight* from yesterday's net player flow (clamped 60–140 %), buy and sell both ride the same index so the spread never changes and a dumped item eventually becomes cheap to buy back. Prices never move mid-day; the anti-farm guard is a daily **warehouse cap** (by default the server buys at most `appetite × 5` of each item per day) rather than price-crushing, and only plain, unenchanted, undamaged items sell. On top of the cap: each player (and each connection) may fill only a **share** of it, the cap **scales with active players**, and the warehouse won't buy from you until you've played **30 non-AFK minutes** that week. mc.pvpers.us runs a tighter ticker (warehouse ×1, index 30–140 %, daily moves up to 10 % with a 15 % pull back toward par). On top of that: seeded **daily deals**, `[shop]` **sign shops** on chests, and a buy-only **black market** that opens on fixed weekly windows with per-window stock and rosters that rotate by weekday — selling vanilla contraband you can't normally get in survival (spawn eggs, mob heads, loot-only gear), captured mob spawners, and five tiered custom trinkets plus three consumables that players level up at an **Upgrade Station**.
+
+**Land upkeep** (with Lands): claimed chunks cost a daily upkeep. An **active** land that can't pay keeps its chunks and goes into **debt** — no new claims or bank withdrawals, and deposits pay the debt first — and only unclaims once inactive or after too long in debt (14 days on mc.pvpers.us). Unclaimed chunks can be reclaimed free for 30 days with `/upkeep reclaim`. An optional **town discount** lowers upkeep for lands with active members (on at mc.pvpers.us, off by default). Villager trade discounts from curing, Hero of the Village and gossip are **stripped**.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
-| Optional | Vault + a Vault-registered economy (all money; without it the GUIs open but every transaction is refused with "The economy is offline") · FrontierBorder (its `server-timezone` sets the "local midnight" used by the ticker, deals and black-market windows) · a claim plugin such as Lands/GriefPrevention (protects sign-shop chests from hoppers/pistons — the plugin only guards sign/chest breaking and explosions) |
+| Required | Paper 26.3+, Java 25+ |
+| Optional | Vault + a Vault-registered economy (all money; without it the GUIs open but every transaction is refused with "The economy is offline") · FrontierBorder (its `server-timezone` sets the "local midnight" used by the ticker, deals and black-market windows) · Lands (land upkeep, upkeep debt and the town discount) · EssentialsX (AFK detection for the dynamic warehouse cap and sell gate) · a claim plugin such as Lands/GriefPrevention (protects sign-shop chests from hoppers/pistons — the plugin only guards sign/chest breaking and explosions) |
 | Used by | FrontierStatsAPI (reads `demand.db` / `market.db` / `sales.db` read-only for catalog, market, deals, price history and black-market endpoints) |
 
 **Commands**
@@ -315,6 +355,9 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 | `/shop reload` | Admin | Re-read `config.yml` and rebuild the catalog (ticker indexes and market data kept) |
 | `/market` | Everyone | Browse the player market GUI (also the emerald in `/shop`) |
 | `/market sell <price>` | Everyone | List the whole held stack at a price (listing tax applies) |
+| `/upkeep [land]` (also `/town`) | Everyone | Your land's upkeep status (needs Lands) |
+| `/upkeep debt [land]` | Everyone | Show a land's upkeep debt |
+| `/upkeep reclaim` | Everyone | Reclaim chunks lost to unpaid upkeep, free, within 30 days |
 | `/shopadmin listings [player]` | Admin | List live market listings with IDs (console-friendly) |
 | `/shopadmin removelisting <id>` | Admin | Pull a listing — item returns to the seller's mailbox, seller notified (staff can also shift-click a listing in `/market`) |
 | `/shopadmin price <material> <buy> <sell> [appetite]` | Admin | Persistent price override written to `overrides.yml`; `price <material> clear` removes it |
@@ -324,6 +367,8 @@ Legacy `pireputation.*` nodes are declared as children of the matching `frontier
 | `/shopadmin blackmarket [status]` | Admin | Inspect the black-market window and remaining stock |
 | `/shopadmin blackmarket open [day…] [minutes]` | Admin | Force a window open (default 30 min); add a weekday (`open friday 60`) to preview only that night's roster |
 | `/shopadmin blackmarket close` | Admin | Close a window early — stays shut for the rest of that scheduled window |
+| `/shopadmin active` | Admin | Active-player count behind the dynamic warehouse cap |
+| `/shopadmin upkeep debts\|debt\|forgive\|audit\|lost\|minutes\|settle …` | Admin | Land-upkeep administration: list debts, inspect or forgive one, audit, lost chunks, activity minutes, settle |
 
 Sign shops have no command: place a sign on a chest/barrel and write `[shop]` / `<amount>` / `<price>`; the chest's first item becomes the offer.
 
@@ -332,19 +377,26 @@ Sign shops have no command: place a sign on a chest/barrel and write `[shop]` / 
 |---|---|---|
 | `frontier.shop.use` | true | `/shop`, `/shop upgrade`, `/market`, `/market sell` |
 | `frontier.shop.signshop` | true | Creating `[shop]` signs on chests/barrels |
+| `frontier.shop.upkeep` | true | `/upkeep` (and `/town`) |
 | `frontier.shop.admin` | op | `/shop reload`, all of `/shopadmin`, shift-click listing removal in `/market`, breaking other players' shop signs |
 
-Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes, so old permission grants keep working.
+Legacy `pishop.*` nodes are still declared, but children only resolve downward: holding `pishop.x` does **not** grant `frontier.shop.x`. Old grants appear to keep working only because the player nodes default to true.
 
 **Config** — path `plugins/FrontierShop/config.yml`, reload: `/shop reload`
 | Key | Default | What it controls |
 |---|---|---|
-| `ticker.drift-max` | 0.05 | Biggest one-day index move from player flow (5 %) |
-| `ticker.drift-idle` | 0.02 | Quiet-day drift back toward 100 % of base |
-| `ticker.index-min` | 0.60 | Prices never fall below this fraction of base |
+| `ticker.drift-max` | 0.05 | Biggest one-day index move from player flow (5 %; mc.pvpers.us runs 0.10) |
+| `ticker.drift-idle` | 0.02 | Quiet-day drift back toward 100 % of base (mc.pvpers.us runs 0.04) |
+| `ticker.pull` | mc.pvpers.us: 0.15 | Daily pull of the index back toward par |
+| `ticker.index-min` | 0.60 | Prices never fall below this fraction of base (mc.pvpers.us runs 0.30) |
 | `ticker.index-max` | 1.40 | …or rise above this |
-| `ticker.warehouse-multiple` | 5 | Server buys `appetite × this` of each item per day, then refuses until midnight |
+| `ticker.warehouse-multiple` | 5 | Server buys `appetite × this` of each item per day, then refuses until midnight (mc.pvpers.us runs 1) |
 | `ticker.default-appetite` | 256 | Appetite used when a catalog item omits it |
+| `player-share` | 0.25 | Share of an item's daily warehouse cap any one player may fill |
+| `share-per-ip` / `share-ip-exempt` | — | Also count the player share per connection (hashed IP), and the exemptions from that |
+| `dynamic-cap.*` | 1.0× – 1.5× base | Scales the daily warehouse cap with active connections, from a floor of 1.0 × base to a ceiling of 1.5 × base (AFK detection via EssentialsX) |
+| `dynamic-cap.sell-min-minutes` | 30 | Sell gate: non-AFK minutes a player needs this week before the warehouse buys from them |
+| `villager-discounts.strip` | true | Strip villager trade discounts from curing, Hero of the Village and gossip |
 | `sounds` | true | Low-volume UI/buy/sell sounds |
 | `market.tax` | 0.05 | Cut taken from each player-market and sign-shop sale (money sink) |
 | `market.max-listings` | 8 | Active listings per player |
@@ -357,8 +409,8 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `deals.sell-bonus` | 0.50 | Sell deals: bonus on the sell base (falls back to a buy deal if it would cross half the buy price) |
 | `blackmarket.schedule` | Tuesday 21:00 for 3 h, Friday 21:00 for 3 h | List of weekly windows, fields: `day` (uppercase weekday), `open-hour` (0–23), `duration-hours`; server-local time |
 | `blackmarket.announce` | true | Broadcast open/close |
-| `blackmarket.items` | 49 entries (6 always-on, 17 Tuesday "Deep & Dark", 26 Friday "Wild & Sky") | One entry per good, fields: `material` *or* `custom: <id>` (custom item / `spawner_<mob>`), `buy`, `stock` (per window; omit or -1 = unlimited), optional `days: [WEEKDAY…]` to rotate; max ~45 shown per window |
-| `blackmarket.random-spawners.{nice,hostile}` | *(not in shipped config)* | Optional mob-name pools for the `spawner_random_nice` / `spawner_random_hostile` ids; built-in pool used when missing |
+| `blackmarket.items` | 47 entries shipped (6 always-on, 16 Tuesday "Deep & Dark", 25 Friday "Wild & Sky"); mc.pvpers.us runs 44 (5 / 15 / 24) | One entry per good, fields: `material` *or* `custom: <id>` (custom item / `spawner_<mob>`), `buy`, `stock` (per window; omit or -1 = unlimited), optional `days: [WEEKDAY…]` to rotate; max ~45 shown per window |
+| `blackmarket.random-spawners.{nice,hostile}` | *(not in shipped config; mc.pvpers.us defines both)* | Optional mob-name pools for the `spawner_random_nice` / `spawner_random_hostile` ids; built-in pool used when missing |
 | `mount-trinket.include-boats` | true | Saddle of Swiftness also gives boats a velocity assist |
 | `mount-trinket.max-level` | 3 | Number of tiers |
 | `mount-trinket.level-{1,2,3}-bonus` | 0.50 / 1.00 / 1.50 | Mount-speed bonus at each tier (+50 % / +100 % / +150 %) |
@@ -390,33 +442,39 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `history.retention-days` | 90 | `sales.db` rows older than this are pruned on boot |
 | `categories.<key>.name` | e.g. `&eBuilding Blocks` | Category display name (colour codes allowed) |
 | `categories.<key>.icon` | e.g. BRICKS | Category icon material |
-| `categories.<key>.items` | 8 categories, 119 items: building 22, art 11, wood 10, ores 14, farming 15, mobdrops 18, food 13, utility 16 | One entry per item, fields: `material`, `buy` (0 = not sold), `sell` (0 = not bought), optional `appetite` (units/day); keep buy ≥ ~3× sell; max 45 items per category |
+| `categories.<key>.items` | 8 categories, 119 items shipped: building 22, art 11, wood 10, ores 14, farming 15, mobdrops 18, food 13, utility 16 (mc.pvpers.us runs 200 items, 92 of them art) | One entry per item, fields: `material`, `buy` (0 = not sold), `sell` (0 = not bought), optional `appetite` (units/day); keep buy ≥ ~3× sell; max 45 items per category |
 
 **Good to know**
 - Data files in `plugins/FrontierShop/`: `demand.db` (ticker state), `market.db` (listings, mailbox, notices), `sales.db` (price history, deal picks, black-market window/stock), `overrides.yml` (admin price overrides — kept separate so `config.yml` is never rewritten). All SQLite files run in WAL mode so other tools can read them live; if a DB fails to open the shop degrades to in-memory and keeps working.
 - Midnight rollover is lazy (missed days are replayed on first access) and keyed to the JVM timezone; the same clock drives daily deals and black-market windows, so set FrontierBorder's `server-timezone` on a UTC host.
 - The plugin warns on boot if any catalog pair is arbitrage-risky (`sell` more than ~60 % of `buy`); fix in config or with `/shopadmin price`. Boat/utility sinks like Lead and Name Tag ship with `sell: 0` on purpose.
-- Black-market stock is per window and keyed by entry (custom id or material), so several rows sharing a material never collide; closing a window with `/shopadmin blackmarket close` keeps it shut until the next scheduled one. The v1.7.4 `spawner_random_*` entries are not in the shipped config — add rows yourself.
+- Black-market stock is per window and keyed by entry (custom id or material), so several rows sharing a material never collide; closing a window with `/shopadmin blackmarket close` keeps it shut until the next scheduled one. The `spawner_random_*` entries are not in the shipped config — add rows yourself.
+- Market sales are paid straight to the seller's balance, even offline. The market's own mailbox (in `market.db`) only holds returned items — FrontierShop does not deliver through FrontierMail.
 - Most-tweaked knobs: catalog prices/appetites, `market.tax`, `blackmarket.schedule` and roster `days`, and the `level-N-cost` curves for the Upgrade Station.
 
 ---
 
 ## FrontierEvents
-> Arena events for survival servers — co-op Boss Rush raids, player-started raid keys, the endless Gauntlet, TDM/FFA, duel tournaments with wagers — with three gear modes and crash-safe isolation.  **v1.0.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-events) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/events)
+> Arena events for survival servers — co-op Boss Rush raids, player-started raid keys, the endless Gauntlet, TDM/FFA/KOTH, duel tournaments with wagers, Colosseum Night and an open PvP ring — with three gear modes and crash-safe isolation.  **v1.6.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-events) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/events)
 
-**What it does** — An event and minigame engine that runs inside a normal survival world. **Boss Rush** is the flagship: a party fights trickle-spawned waves of armored mobs up to a phased, scripted boss across six themed raids (plus the endless **Gauntlet**), with per-wave lives, class kits, cobweb/barricade traps, a **Pit** difficulty ladder (1–5) that scales mobs, payouts and loot odds, and four-tier RNG loot including above-vanilla-cap **Pitforged** gear. **Raid Keys** let players start their own raids WoW-keystone style with no admin present. **TDM/FFA** PvP with kits, placeable cobwebs and siegeable fort barricades, and **Duel Tournaments** (1v1 single-elimination bracket, best-of-3 final, parimutuel wagers) round out the modes. Every event runs in one of three **gear modes** — `[KIT]` (provided loadouts, nothing at stake), `[BYOG]` (bring your own gear, deaths never drop it) or `[HARDCORE]` (your gear drops where you fall) — behind a click-through consent gate. Two design pillars stand out: **no item loss unless explicitly opted into** (Boss Rush intercepts fatal hits instead of letting you die; event deaths don't inflate your real death count; inventories are snapshotted to SQLite on join and restored even after a crash), and **the arena never needs a reset** (block changes are prevented rather than rolled back; traps decay or are swept; the colosseum is grief-proof even between events). Everything player-facing is GUI-driven — clickable join broadcast, Event Hub, kit and team pickers, admin control panel, "How Events Work" info board — and anyone can spectate a running event.
+**What it does** — An event and minigame engine that runs inside a normal survival world. **Boss Rush** is the flagship: a party fights trickle-spawned waves of armored mobs up to a phased, scripted boss across six themed raids (plus the endless **Gauntlet**), with per-wave lives, class kits, cobweb/barricade traps, a **Pit** difficulty ladder (1–5) that scales mobs, payouts and loot odds, and four-tier RNG loot including above-vanilla-cap **Pitforged** gear. **Raid Keys** let players start their own raids WoW-keystone style with no admin present. **TDM/FFA**, **KOTH** and **FFA-KOTH** PvP with kits, placeable cobwebs and siegeable fort barricades, and **Duel Tournaments** (1v1 single-elimination bracket, best-of-3 final, parimutuel wagers) round out the modes. **Colosseum Night** is the one event that schedules itself: sign-ups open before a set start time, modes rotate (FFA, FFA-KOTH, TDM…), and everyone fights in the same **Knight** kit, getting their own gear back afterwards. The prize is a fixed winner's chest — **$500 + 4 diamonds + 8 XP bottles + one jackpot roll**, with the cash split in team modes. The **open ring** is a standing PvP ring in the colosseum; ring deaths drop items on the ring floor (no grave). Every event runs in one of three **gear modes** — `[KIT]` (provided loadouts, nothing at stake), `[BYOG]` (bring your own gear, deaths never drop it) or `[HARDCORE]` (your gear drops where you fall) — behind a click-through consent gate. Two design pillars stand out: **no item loss unless explicitly opted into** (Boss Rush intercepts fatal hits instead of letting you die; event deaths don't inflate your real death count; inventories are snapshotted to SQLite on join and restored even after a crash), and **the arena never needs a reset** (block changes are prevented rather than rolled back; traps decay or are swept; the colosseum is grief-proof even between events). Everything player-facing is GUI-driven — clickable join broadcast, Event Hub, Colosseum Night sign-up, kit and team pickers, admin control panel — and anyone can spectate a running event.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+; `sqlite-jdbc` is downloaded automatically at first boot |
-| Optional | Vault + any economy (money payouts, wagers, raid-key start costs — without it runs still complete and loot/stats still happen, money is skipped); FrontierMail (loot that won't fit or arrives while offline is mailed to `/mailbox`; otherwise ground-drop / lost for offline players); FrontierGraves (stray graves are swept out of the arena at teardown) |
-| Used by | FrontierReputation (uses `EventApi` to exempt arena combat from murders/bounties/PvP opt-out), FrontierTab (does not count event deaths), FrontierGraves (implements `GraveApi`, refuses to spawn graves in a live event), FrontierStatsAPI (serves `stats.db` on `/api/events/*` and `/api/events/pvp/*`) |
+| Required | Paper 26.3+, Java 25+; `sqlite-jdbc` is downloaded automatically at first boot |
+| Optional | Vault + any economy (money payouts, wagers, raid-key start costs — without it runs still complete and loot/stats still happen, money is skipped); FrontierMail (loot that won't fit or arrives while offline is mailed to `/mailbox`; otherwise ground-drop / lost for offline players); FrontierGraves (stray graves are swept out of the arena at teardown); FrontierAnnouncements (Gazette posts) |
+| Used by | FrontierReputation (uses `EventApi` to exempt arena combat from murders/bounties/PvP opt-out), FrontierTab (does not count event or ring-edge deaths), FrontierGraves (implements `GraveApi`, refuses to spawn graves in a live event or for ring-edge deaths), FrontierHeads (no head for event or ring kills), FrontierStatsAPI (serves `stats.db` on `/api/events/*` and `/api/events/pvp/*`) |
 
-**Commands** — all three commands are player-only. `/event` is one command; rows marked Admin are gated on `frontier.events.admin` inside the command.
+**Commands** — `/event help`, `/event night` and `/event ring` also work from console; everything else is player-only. `/event` is one command; rows marked Admin are gated on `frontier.events.admin` inside the command.
 | Command | Who | What |
 |---|---|---|
-| `/event` (also `hub`, `gui`) | Everyone | While an event is live: the Event Hub GUI (join/leave/spectate, kit, team, info); mid-match the join button becomes Spectate. With no event running: the read-only "How Events Work" info board |
+| `/event` (also `hub`, `gui`) | Everyone | While an event is live: the Event Hub GUI (join/leave/spectate, kit, team, info); mid-match the join button becomes Spectate. With no event running: the Colosseum Night sign-up GUI while sign-ups are open, otherwise the chat help list |
+| `/event help` | Everyone | Chat list of the event commands |
+| `/event night` (also `colosseum`, `chest`, `pitchest`) | Everyone | Colosseum Night schedule and sign-up |
+| `/event night now [seconds]` / `stop` / `reload` | Admin | Run Colosseum Night now (optional `[seconds]`), stop it, or reload its config |
+| `/event ring [status]` | Everyone | Open PvP ring status |
+| `/event ring open\|close` | Admin | Open or close the open ring |
 | `/event join [team]` | Everyone | Join the current event (allowed through the countdown); first join of a BYOG/hardcore event shows the risk warning + a click-through confirm |
 | `/event leave` | Everyone | Leave the event (inventory restored; forfeits payout mid-match; the starter walking out of their own key run counts as a wipe) |
 | `/event spectate` (also `watch`) | Everyone | Watch any event, even mid-match — spectator mode, arena leash, no effect on results or payouts; `/event leave` to exit |
@@ -428,7 +486,7 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `/event stats [player]` | Everyone | Your (or another player's) cumulative Boss Rush / PvP totals |
 | `/event leaderboard` (also `top`) | Everyone | Top players from `stats.db` |
 | `/event bet <fighter> <amount>` | Everyone | Duels only: parimutuel stake on the current pairing while the betting window is open (fighters of that match excluded; top-ups OK, no side-switching) |
-| `/event create <name> <type> <arena> [teams\|raid] [pit] [kit\|byog\|hardcore]` | Admin | Create an event; `type` = `BOSS_RUSH`, `TDM`, `FFA`, `KOTH` or `DUEL`; Boss Rush takes a raid key + optional Pit; a trailing gear word picks the mode (default `defaults.gear-mode`) |
+| `/event create <name> <type> <arena> [teams\|raid] [pit] [kit\|byog\|hardcore]` | Admin | Create an event; `type` = `BOSS_RUSH`, `TDM`, `FFA`, `KOTH`, `FFA_KOTH` or `DUEL`; Boss Rush takes a raid key + optional Pit; a trailing gear word picks the mode (default `defaults.gear-mode`) |
 | `/event start` / `/event forcestart` | Admin | Start with countdown / start now |
 | `/event stop` (also `cancel`) | Admin | Cancel the event (refunds key start fees) |
 | `/event forceend [clear\|wipe]` (also `forceresolve`, `forcepayout`) | Admin | Force-resolve a stuck live event: default = clear payout, `wipe` = resolve as a loss |
@@ -448,7 +506,7 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `frontier.events.admin` | op | `/arena`, `/kit`, and the admin subcommands of `/event` (create/start/stop/forceend/settings/admin/forcejoin/kick/statedit); also lets you start a key run without holding a key |
 | `frontier.events.bypass` | op | Exempt from the in-event command whitelist and from arena containment / idle grief protection (staff) |
 
-**Config** — path `plugins/FrontierEvents/config.yml`, reload: restart required (no reload command; config is parsed at enable)
+**Config** — path `plugins/FrontierEvents/config.yml`, reload: restart required for most keys (config is parsed at enable); `/event night reload` reloads the Colosseum Night config
 | Key | Default | What it controls |
 |---|---|---|
 | `defaults.duration` | `300` | Event duration in seconds (0 = no time limit) — PvP-mode default |
@@ -466,6 +524,9 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `pvp.rewards.ffa-podium` | `[1250, 750, 500]` | FFA top 3 by kills (used instead of win-pool) |
 | `pvp.rewards.per-kill.{money, cap}` | `25, 500` | Per kill and the per-match cap (0 = uncapped) |
 | `pvp.rewards.mvp-bonus.money` | `500` | Most kills overall, either mode |
+| `koth.*` | hill radius 4, height 4, 1 pt/s | King of the Hill (KOTH and FFA-KOTH): hill size and the points per second for holding it |
+| `arena-chest.*` | 20:00, 10-min sign-up, `knight` kit | Colosseum Night: start time and `timezone` (America/Phoenix on mc.pvpers.us), sign-up window, the fixed kit everyone fights in, the mode rotation (ffa / ffa_koth / tdm …) and the fixed winner's chest ($500 + 4 diamonds + 8 XP bottles + one jackpot roll; cash split in team modes) |
+| `open-ring.*` | — | The open PvP ring; deaths in it drop items on the ring floor (no grave) |
 | `duel.kits` | `[]` | Kits offered in duels; empty = `pvp.kits` |
 | `duel.round-seconds` | `90` | Seconds per round; on timeout the higher damage total wins (coin flip at 0–0) |
 | `duel.final-best-of` | `3` | The final is best-of-N; earlier matches are best-of-1 |
@@ -511,8 +572,11 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | `keys.raid-order` | `[zombie, skeleton, spider, wither, illager, champion]` | Ladder unlock order (non-endless raids only; the Gauntlet can never be a key run) |
 | `keys.start-cost-base` | `150` | Starting a run costs base × (Pit + 1), sunk win or lose (refunded only on admin stop or crash); joining is free |
 | `keys.daily-starts` / `keys.cooldown-minutes` | `3, 15` | Per-player limits on starts (joins are unlimited) |
-| `keys.min-players` | `3` | Bodies required in the lobby before a key run can launch |
-| `keys.reward-multiplier` | `0.75` | Key-run money payouts are scaled by this (loot rolls untouched) |
+| `keys.min-players` | `3` | Fighters required in the lobby before a key run can launch (spectators and disconnected players don't count; re-checked when the countdown ends). If fewer finish, pool and category money scale to fighters / min-players |
+| `keys.reward-multiplier` | `0.35` | Key-run money payouts are scaled by this (loot rolls untouched) |
+| `keys.paid-clears-per-day` | `2` | Key clears per player per day that pay money; later clears roll loot only |
+| `keys.cap-per-ip` / `keys.ip-exempt` | `true`, — | Also count the paid-clear cap per connection (hashed IP), and the exemptions from that |
+| `keys.money-needs-contribution` | `true` | Key-run money only goes to raiders who contributed (dealt or took damage, killed an add, or healed); AFK raiders get loot only |
 | `keys.wipe-pays-nothing` | `true` | A wiped key run pays nothing (admin raids keep normal wipe payouts) |
 | `keys.arena` | `""` | Arena for key runs; empty = the first arena defined |
 
@@ -521,20 +585,21 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 - Two SQLite files live in `plugins/FrontierEvents/`: `vault.db` (inventory snapshots, placed traps — restored/swept on boot after a crash) and `stats.db` (`event_history`, `event_players`, `loot_log`, `payout_log`, `player_totals`, `pvp_totals`, `player_keys`, `live_event`) — the latter is what FrontierStatsAPI serves.
 - Loot is public, money is private: every drop is broadcast as `<name> received <item>`, while each earner is whispered their own `You earned $X (…)` line. Event deaths never touch your real death statistic or spawn a grave.
 - The legendary loot tier is fully built but disabled in the shipped config (too much permanent power leaking into survival); uncomment the `loot.legendary` blocks and `legendary-chance` keys to re-enable it.
-- The most common owner tweaks are `boss-rush.scaling.add-multiplier` (lower it for a small server), the `rewards` money figures if your economy is tighter or looser, `defaults.gear-mode`, and `keys.min-players` / `keys.daily-starts` to control key-run pacing. Remember every edit needs a restart.
+- The most common owner tweaks are `boss-rush.scaling.add-multiplier` (lower it for a small server), the `rewards` money figures if your economy is tighter or looser, `defaults.gear-mode`, and `keys.min-players` / `keys.daily-starts` / `keys.paid-clears-per-day` to control key-run pacing. Remember most edits need a restart.
+- Colosseum Night and the open ring are fought under the event rules: nobody's own gear is at risk in Colosseum Night, and a death in the open ring (or just after leaving it) drops items on the ring floor instead of making a grave, isn't counted by FrontierTab and drops no head.
 
 ---
 
 ## FrontierStatsAPI
-> A read-only HTTP/JSON API baked into the server so a website or bot can show live stats without RCON, FTP or a database.  **v1.16.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-statsapi) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/statsapi)
+> A read-only HTTP/JSON API baked into the server so a website or bot can show live stats without RCON, FTP or a database.  **v1.18.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-statsapi) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/statsapi)
 
-**What it does** — Starts a small HTTP server on its own port and answers `GET` requests with server status, player summaries, leaderboards (playtime with all/week/month windows, deaths, XP, mob kills, blocks and ores mined, distance, advancements, mcMMO power level), per-player advancement and mcMMO skill detail, and everything the other Frontier plugins keep on disk — border, reputation, events/PvP, shop, economy. Its defining decision is that it reads sibling plugins **off disk, not through their APIs**: FrontierTab's YAML files, SQLite databases opened read-only, EssentialsX userdata — so a sibling being disabled or on an older version degrades a route to an omitted field or a `503`, never a crash. It is cheap by design (one JSON parse per player instead of ~1,100 statistic calls, cached baltop and advancement catalog) and includes a CORS allow-list, per-IP rate limiting and preflight handling. Full route parameters, response shapes and error cases are in the repo's docs/API.md.
+**What it does** — Starts a small HTTP server on its own port and answers `GET` requests with server status, player summaries, leaderboards (playtime with all/week/month windows, deaths, XP, mob kills, blocks and ores mined, distance, advancements, mcMMO power level), per-player advancement and mcMMO skill detail, and everything the other Frontier plugins keep on disk — border, reputation, events/PvP, shop, economy, and the Frontier Gazette feed. Its defining decision is that it reads sibling plugins **off disk, not through their APIs**: FrontierTab's YAML files, SQLite databases opened read-only, EssentialsX userdata — so a sibling being disabled or on an older version degrades a route to an omitted field or a `503`, never a crash. It is cheap by design (one JSON parse per player instead of ~1,100 statistic calls, cached baltop and advancement catalog) and includes a CORS allow-list, per-IP rate limiting and preflight handling. Full route parameters, response shapes and error cases are in the repo's docs/API.md.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+, FrontierTab (its per-player files are the player index — no players, leaderboards or today-stats without it); `sqlite-jdbc` is downloaded automatically at first boot (needs outbound internet once) |
-| Optional | FrontierBorder (`/api/border`), FrontierReputation (`/api/reputation/*`), FrontierEvents (`/api/events/*`), FrontierShop (`/api/shop/*`), mcMMO (`/api/players/{uuid}/skills` and the `power_level` leaderboard), EssentialsX (`/api/economy/baltop`; discovered by folder, not declared) |
+| Required | Paper 26.3+, Java 25+, FrontierTab (its per-player files are the player index — no players, leaderboards or today-stats without it); `sqlite-jdbc` is downloaded automatically at first boot (needs outbound internet once) |
+| Optional | FrontierBorder (`/api/border`), FrontierReputation (`/api/reputation/*`), FrontierEvents (`/api/events/*`), FrontierShop (`/api/shop/*`), FrontierAnnouncements (`/api/gazette`), mcMMO (`/api/players/{uuid}/skills` and the `power_level` leaderboard), EssentialsX (`/api/economy/baltop`; discovered by folder, not declared) |
 | Used by | none in-game — consumers are websites/bots (e.g. the reference server's companion site) |
 
 **Commands**
@@ -569,6 +634,7 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 | Events | `/api/events/{leaderboard\|categories\|recent\|summary\|live}`, `/api/events/loot/recent`, `/api/events/run/{id}`, `/api/events/player/{nameOrUuid}` | FrontierEvents |
 | PvP | `/api/events/pvp/{leaderboard\|recent}`, `/api/events/pvp/player/{nameOrUuid}` | FrontierEvents |
 | Shop | `/api/shop/{catalog\|market\|deals\|history}` | FrontierShop |
+| Gazette | `/api/gazette?limit=` | FrontierAnnouncements |
 
 **Good to know**
 - There is **no authentication and no bind-address option**; everything served is public-leaderboard grade, but `/api/reputation/wanted` includes last-seen coordinates and `/api/plugins` lists every installed plugin and version — put it behind a reverse proxy or firewall if that matters.
@@ -580,15 +646,15 @@ Legacy `pishop.*` nodes are declared as children of the `frontier.shop.*` nodes,
 ---
 
 ## FrontierBorder
-> The world border grows itself from combined player-hours — one predictable expansion a night.  **v2.3.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-border) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/border)
+> The world border grows itself from combined player-hours — one predictable expansion a night.  **v2.5.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-border) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/border)
 
-**What it does** — The overworld starts small and earns its growth from how much everyone played. Once a day, at a configured local hour, FrontierBorder reads yesterday's AFK-aware playtime from FrontierTab, matches the combined hours against a tier table, clamps the result by current world size, and animates the border outward (the Nether follows at 1/8 scale, the End optionally). The distinctive choices: expansion is *scheduled* (one nightly event everyone can watch, sized by the previous full day) rather than a silent trickle, and thresholds scale with the number of active players so five people playing an hour each is harder to clear than one person playing five. It also carries two small server-wide policies: it sets the JVM's default timezone from `server-timezone` before any other plugin loads (so every plugin's "midnight" is your local midnight even on hosts that run Java in UTC), and it can cancel enderman block grief without touching `mobGriefing`.
+**What it does** — The overworld starts small and earns its growth from how much everyone played. Once a day, at a configured local hour, FrontierBorder reads yesterday's AFK-aware playtime from FrontierTab, matches the combined hours against a tier table, clamps the result by current world size, and animates the border outward (the Nether follows at 1/8 scale, the End optionally). The distinctive choices: expansion is *scheduled* (one nightly event everyone can watch, sized by the previous full day) rather than a silent trickle, and thresholds scale with the number of active players so five people playing an hour each is harder to clear than one person playing five. It also carries two small server-wide policies: it sets the JVM's default timezone from `server-timezone` before any other plugin loads (so every plugin's "midnight" is your local midnight even on hosts that run Java in UTC), and it can cancel enderman block grief without touching `mobGriefing`. It also handles **spawn protection** — near spawn there is no fire spread or burning, no ignition, no lava, and explosions break no blocks (campfires and nether-portal lighting still work) — and can apply **gamerules** to every world, e.g. `players_sleeping_percentage`.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+, FrontierTab (source of playtime — the plugin refuses to load without it) |
-| Optional | none |
+| Required | Paper 26.3+, Java 25+, FrontierTab (source of playtime — the plugin refuses to load without it) |
+| Optional | FrontierAnnouncements (Gazette posts). A Discord webhook URL can also be set for expansion announcements |
 | Used by | FrontierTab (reads `data.yml` + config for the `Border: 1500 → 1750` header element), FrontierStatsAPI (serves `data.yml` on `/api/border`) |
 
 **Commands**
@@ -612,13 +678,14 @@ All commands also work from console.
 |---|---|---|
 | `frontier.border.admin` | op | `/border` and every subcommand |
 | `frontier.border.info` | true | `/borderinfo` |
+| `frontier.border.spawn.bypass` | op | Ignore spawn protection |
 
 **Config** — path `plugins/FrontierBorder/config.yml`, reload: restart required (no reload command; only `auto-pregen` is written live by `/border autopregen`)
 | Key | Default | What it controls |
 |---|---|---|
-| `server-timezone` | `system` | IANA zone id (e.g. `America/New_York`) applied to the whole JVM at load; `system` leaves the host default alone; unknown ids are logged and ignored |
-| `border.initial-radius` | `1750` | Radius (not diameter) applied on first boot |
-| `border.max-radius` | `10000` | Hard ceiling; expansion stops here |
+| `server-timezone` | `system` | IANA zone id (e.g. `America/New_York`) applied to the whole JVM at load; `system` leaves the host default alone; unknown ids are logged and ignored (mc.pvpers.us runs `America/Phoenix`) |
+| `border.initial-radius` | `1750` | Radius (not diameter) applied on first boot (mc.pvpers.us runs 5000) |
+| `border.max-radius` | `10000` | Hard ceiling; expansion stops here (mc.pvpers.us runs 20000) |
 | `border.dimensions.nether` | `true` | Mirror the overworld border into the Nether at 1/8 scale |
 | `border.dimensions.end` | `false` | Mirror into the End at 1:1; `false` pushes the End border to the vanilla maximum (unbounded) |
 | `reset-mode` | `daily` | `daily` or `weekly` — the period model used by continuous mode and `/border reset` |
@@ -628,9 +695,9 @@ All commands also work from console.
 | `expansion-hour` | `21` | Hour (0–23, server-local) the scheduled expansion fires (first check at/after this hour) |
 | `expansion-tiers` | 5 tiers: 8h→500, 5h→400, 3h→300, 1.5h→200, 0.5h→100 | Combined player-hours → blocks; one entry per tier, fields `hours`, `blocks`; first match wins so list highest-hours first |
 | `scaling.enabled` | `true` | Multiply tier hour thresholds by `activePlayers^exponent` (a lone player is never scaled) |
-| `scaling.exponent` | `1.15` | Population-scaling exponent |
+| `scaling.exponent` | `1.15` | Population-scaling exponent (mc.pvpers.us runs 0.5) |
 | `scaling.min-active-seconds` | `0` | Period playtime needed to count as an "active" player (0 = any participation) |
-| `world-size-caps` | 3 caps: <4000→500, <7000→375, <10000→250 | Clamp on any single expansion by current radius; one entry per cap, fields `below-radius`, `max-blocks`; first match wins so list smallest radius first |
+| `world-size-caps` | 3 caps: <4000→500, <7000→375, <10000→250 | Clamp on any single expansion by current radius; one entry per cap, fields `below-radius`, `max-blocks`; first match wins so list smallest radius first. mc.pvpers.us adds a 4th cap, <20000→250 |
 | `check-interval-minutes` | `10` | Scheduler period; also the precision of the expansion time |
 | `expand-duration` | `60` | Seconds the border animates outward |
 | `announce-expansion` | `true` | Chat broadcast + sound to everyone online on expansion |
@@ -638,6 +705,8 @@ All commands also work from console.
 | `discord-webhook-url` | `""` | POSTs an embed on every automatic expansion; empty = off |
 | `auto-pregen` | `false` | Ring-pregenerate the new band after each automatic expansion (CPU-heavy; enable on the live server, not a test box) |
 | `prevent-enderman-grief` | `true` | Cancel enderman block pickup/placement without touching the `mobGriefing` gamerule |
+| `spawn-protection.*` | mc.pvpers.us: on, 100 blocks | Within this radius of spawn: no fire spread or burning, no ignition, no lava, and explosions break no blocks; campfires and nether-portal lighting still allowed. `frontier.border.spawn.bypass` ignores it |
+| `gamerules.*` | mc.pvpers.us: players_sleeping_percentage 50 | Gamerules applied to every world |
 
 **Good to know**
 - Scheduled mode reads *yesterday's* playtime, so a fresh server's first expansion happens the day after people first play; a zero-playtime day simply doesn't expand.
@@ -649,15 +718,15 @@ All commands also work from console.
 ---
 
 ## FrontierTab
-> Tab-list stats plus the per-player playtime/deaths store the rest of the suite is built on.  **v1.2.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-tab) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/tab)
+> Tab-list stats plus the per-player playtime/deaths store the rest of the suite is built on.  **v1.2.2** · Download: [Modrinth](https://modrinth.com/plugin/frontier-tab) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/tab)
 
 **What it does** — Renders a two-line tab header (server name, then TPS · players · border radius with its predicted next expansion · total deaths · End padlock), decorates every player's list entry with their death count, ping and an `[AFK]` tag, and gives each viewer a personal footer showing all-time playtime and session time. Behind the display is a small per-player stats store (`data/<uuid>.yml`) that tracks **AFK-excluded playtime in daily buckets**, deaths and XP levels earned. Two decisions make it the suite's foundation: playtime is stored per calendar day so any reader can compute week/month leaderboards without the plugin ever "closing" a period, and it keeps its own deaths counter that ignores deaths inside a FrontierEvents arena — FrontierBorder and FrontierStatsAPI both read these files straight off disk.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
-| Optional | FrontierBorder (enables the `Border: 1500 → 1750` header element), FrontierEndLock (enables the `End: 🔒` element while the End is locked), FrontierEvents (makes deaths inside events not count) |
+| Required | Paper 26.3+, Java 25+ |
+| Optional | FrontierBorder (enables the `Border: 1500 → 1750` header element), FrontierEndLock (enables the `End: 🔒` element while the End is locked), FrontierEvents (makes deaths inside events, and ring-edge deaths just after leaving the colosseum ring, not count), FrontierAnnouncements (soft dependency) |
 | Used by | FrontierBorder (reads daily playtime buckets to size expansion), FrontierStatsAPI (serves all player stats and leaderboards), FrontierReputation (registers a name prefix so tier titles show in tab) |
 
 **Commands**
@@ -710,15 +779,15 @@ All commands also work from console.
 ---
 
 ## FrontierGraves
-> Permanent, shared player graves — keep your inventory on death, claim it later.  **v1.1.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-graves) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/graves)
+> Permanent, shared player graves — keep your inventory on death, claim it later.  **v1.1.2** · Download: [Modrinth](https://modrinth.com/plugin/frontier-graves) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/graves)
 
 **What it does** — When a player dies their drops are not scattered on the ground: the plugin cancels them, places an invisible armor stand wearing the victim's head as a marker at the death spot (clamped inside world height, so void deaths still get a reachable grave), and stores the inventory in `graves.yml`. Anyone can right-click the marker to open a shared loot GUI; several players can browse the same grave at once and take what they want, and whatever they leave stays. Graves never decay on a timer — a grave despawns only when the last viewer closes it empty — and the dead player gets their XP levels back the first time they open it. Graves are shared rather than owner-locked on purpose: it keeps death meaningful (your gear is on the floor, go get it) while removing the worst part of vanilla, the 5-minute despawn timer and lava/void loss. Whether someone else loots you is a social question, not a plugin one.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
-| Optional | FrontierEvents — deaths inside an event (fighter or spectator) never make a grave, and FrontierEvents can sweep stray graves out of an arena at teardown |
+| Required | Paper 26.3+, Java 25+ |
+| Optional | FrontierEvents — deaths inside an event (fighter or spectator) never make a grave, nor does a ring-edge death just after leaving the colosseum ring (drops stay on the floor); FrontierEvents can also sweep stray graves out of an arena at teardown |
 | Used by | FrontierEvents (looks up the `GraveApi` service to clear arena graves) |
 
 **Commands**
@@ -743,26 +812,26 @@ All commands also work from console.
 |---|---|---|
 | `enabled` | `true` | Master toggle. `false` = deaths drop items normally |
 | `restore-xp` | `true` | Store the victim's XP level and return it when the owner first opens the grave. When `true`, dropped XP orbs are suppressed and the player respawns at level 0; when `false` vanilla XP drop applies. Non-owners never receive the XP |
-| `announce-death` | `true` | Broadcast `<name>'s grave appeared at x, y, z.` to the server (the victim is always told privately) |
+| `announce-death` | `true` | Broadcast `<name>'s grave appeared at x, y, z.` to the server (the victim is always told privately). mc.pvpers.us runs `false` |
 
 **Good to know**
 - Storage is `plugins/FrontierGraves/graves.yml` — one record per grave (owner, location, XP, contents) written on every add, remove, XP claim and GUI close. Items sit in this file, not as ground entities, so chunk unloads, lag and the item timer can't eat them.
 - The GUI is take-only: putting items into a grave is blocked, so it can't be used as free storage. Only the owner gets the XP, only once, only on click — if someone else empties and closes the grave first, the stored XP is gone with it.
 - If the death already keeps inventory (`keepInventory`), the plugin does nothing.
-- Graves open at LOWEST event priority, so land-protection plugins usually can't block looting a grave inside someone else's claim. There is no owner-only mode.
+- Graves open at LOWEST event priority, so land-protection plugins usually can't block looting a grave inside someone else's claim. There is no owner-only mode — an `allow-anyone` key may still be present in `config.yml`, but the code never reads it; anyone can loot.
 - Grave times in `/grave list` use the JVM default timezone (FrontierBorder's `server-timezone` sets that server-wide if installed). A grave in a world that no longer exists shows as `?`, is skipped by `nearest`, and can only be cleared with `/graveadmin wipe`.
 
 ---
 
 ## FrontierMail
-> Offline text mail and a per-player item mailbox.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-mail) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/mail)
+> Offline text mail and a per-player item mailbox.  **v1.0.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-mail) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/mail)
 
 **What it does** — Short text messages (`/mail`) and a per-player item mailbox (`/mailbox`) that other players — and other Frontier plugins — can drop items into while the recipient is offline. Two design choices keep items safe: `/senditem` removes the stack from your hand only after it has been written to the recipient's mailbox, so a full mailbox never eats an item; and `/mailbox` is a chest GUI where whatever you drag out is yours and whatever you leave stays mailed — nothing is auto-dumped into your inventory, so a full inventory can't spill mail onto the ground. Everything is stored per player as a JSON file: no database, nothing to configure beyond two limits.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
 | Used by | FrontierEvents (mails event payouts that don't fit or are owed to an offline player, as "Event Rewards"); FrontierReputation (mails daily-login reward items that overflow the inventory, as "Daily Reward"). FrontierShop does not use it — the market keeps its own mailbox |
 
@@ -799,14 +868,14 @@ All three commands are player-only. Names tab-complete from the online list, but
 ---
 
 ## FrontierTrade
-> Scam-proof player-to-player item trading.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-trade) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/trade)
+> Scam-proof player-to-player item trading.  **v1.0.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-trade) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/trade)
 
 **What it does** — `/trade <player>` sends a request; on `/tradeaccept` both players get the same shared chest GUI — your items on the left, theirs on the right, a confirm button in the middle. The trade only executes when both have confirmed, and any change to either side un-confirms both, so the classic "confirm, then swap the diamond for dirt" scam is impossible. No economy, no database, no persistence — a session lives in memory and is unwound (items handed back) when either player closes the GUI, disconnects, or the plugin disables, so items can never get stuck in the window.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
 | Used by | none |
 
@@ -847,7 +916,7 @@ All player-only. `/trade` tab-completes online players other than yourself.
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
 | Used by | none (its `stats.yml` and `fights.jsonl` are stable, readable files for outside tools) |
 
@@ -894,16 +963,16 @@ All player-only. `/trade` tab-completes online players other than yourself.
 ---
 
 ## FrontierEndLock
-> Keeps the End closed until an admin opens it.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-endlock) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/endlock)
+> Keeps the End closed until a scheduled unlock, or until an admin opens it.  **v1.2.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-endlock) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/endlock)
 
-**What it does** — Locks the End so a fresh survival server can reach the Dragon fight together instead of one player rushing it in week one. While locked, players without bypass cannot enter an End portal, place End portal frames, or push Eyes of Ender into frames. Flipping the lock off broadcasts a decorated "The End Has Been Unlocked!" banner. The lock state persists in `config.yml` and the End starts locked on a fresh install.
+**What it does** — Locks the End so a fresh survival server can reach the Dragon fight together instead of one player rushing it in week one. While locked, players without bypass cannot enter an End portal, place End portal frames, or push Eyes of Ender into frames. The lock can open **automatically on a schedule** (`unlock-at`), with daily countdown broadcasts and final warnings before it fires; staff can still flip it by hand. Unlocking broadcasts a decorated "The End Has Been Unlocked!" banner. The lock state persists in `config.yml` and the End starts locked on a fresh install. On mc.pvpers.us the End is locked and opens on its own on **Saturday, October 10 at 5 PM Arizona**.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
-| Optional | none |
-| Used by | none |
+| Required | Paper 26.3+, Java 25+ |
+| Optional | FrontierAnnouncements (Gazette post when the End opens) |
+| Used by | FrontierTab (optionally shows an `End: 🔒` element in the header while locked) |
 
 **Commands**
 | Command | Who | What |
@@ -911,6 +980,9 @@ All player-only. `/trade` tab-completes online players other than yourself.
 | `/endlock on` | Admin | Lock the End; broadcasts "The End has been locked!" |
 | `/endlock off` | Admin | Unlock the End; broadcasts a banner |
 | `/endlock status` | Admin | Show LOCKED / UNLOCKED (running `/endlock` with no argument also shows status and usage) |
+| `/endlock schedule <yyyy-MM-ddTHH:mm>` | Admin | Schedule the automatic unlock (in the plugin's `timezone`) |
+| `/endlock schedule clear` | Admin | Cancel the scheduled unlock |
+| `/endlock reload` | Admin | Re-read `config.yml` |
 
 **Permissions**
 | Node | Default | Grants |
@@ -918,10 +990,17 @@ All player-only. `/trade` tab-completes online players other than yourself.
 | `frontier.endlock.admin` | op | `/endlock` |
 | `frontier.endlock.bypass` | false | Ignore the lock: enter portals, place frames, use eyes |
 
-**Config** — path `plugins/FrontierEndLock/config.yml`, reload: restart required (use `/endlock on|off` instead of editing)
+**Config** — path `plugins/FrontierEndLock/config.yml`, reload: `/endlock reload` (for the lock itself, use `/endlock on|off` rather than editing)
 | Key | Default | What it controls |
 |---|---|---|
-| `locked` | `true` | Whether the End is currently locked. Written by `/endlock on|off` and again on shutdown; read once at startup |
+| `locked` | `true` | Whether the End is currently locked. Written by `/endlock on|off` and again on shutdown |
+| `unlock-at` | — | Scheduled automatic unlock (`yyyy-MM-ddTHH:mm`, set with `/endlock schedule`). mc.pvpers.us: 2026-10-10 17:00 |
+| `timezone` | — | Zone `unlock-at` and the announcement times are read in (mc.pvpers.us runs `America/Phoenix`) |
+| `announce.daily-time` | — | Time of day for the daily countdown broadcast |
+| `announce.final-warnings-minutes` | — | Minutes before the unlock at which final warnings go out |
+| `announce.on-join` | — | Also show the countdown to players as they join |
+| `announce.{message, final-warning-message, date-format}` | — | Countdown and final-warning text, and how the unlock date is printed |
+| `schedule-fired` / `last-daily-announce` | — | Internal bookkeeping written by the plugin — don't edit |
 
 **Good to know**
 - Don't edit `config.yml` while the server runs: the plugin holds the state in memory and rewrites `locked` on shutdown, so hand edits get overwritten. Use the command, or edit with the server stopped.
@@ -939,7 +1018,7 @@ All player-only. `/trade` tab-completes online players other than yourself.
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
 | Used by | none |
 
@@ -970,15 +1049,15 @@ All player-only. `/trade` tab-completes online players other than yourself.
 ---
 
 ## FrontierHeads
-> PvP kills drop the victim's head as a trophy.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-heads) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/heads)
+> PvP kills drop the victim's head as a trophy.  **v1.0.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-heads) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/heads)
 
 **What it does** — When one player kills another, the victim's skinned head lands in the death drops (subject to `drop-chance`), named `<victim>'s Head`, optionally with "Slain by <killer>" and the date as lore, and optionally a chat line announcing the claim. It does nothing else: no mob heads, no crafting, no shop hooks. The trigger is strictly PvP — the killer must be a different player, so suicides and mob or environment deaths never drop a head. The head is added to the vanilla drop list, so it obeys whatever else touches drops (graves plugins collect it too).
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
-| Optional | none |
+| Required | Paper 26.3+, Java 25+ |
+| Optional | FrontierEvents — event kills and colosseum-ring kills (including ring-edge deaths) drop no head and no broadcast |
 | Used by | none (FrontierGraves collects the head like any other drop) |
 
 **Commands**
@@ -1001,7 +1080,7 @@ All player-only. `/trade` tab-completes online players other than yourself.
 | `custom-lore` | `true` | Add lore `Slain by <killer>` and the current date to the head |
 
 **Good to know**
-- If another plugin cancels the death event (an arena or event plugin, for example) the head is skipped — the listener ignores cancelled events.
+- Any FrontierEvents event kill or colosseum-ring kill, including a ring-edge death just after leaving the ring, drops no head and sends no broadcast. Separately, if another plugin cancels the death event the head is skipped — the listener ignores cancelled events.
 - Arrows and tridents count as player kills; wolves and TNT only if the server attributes them to the shooter.
 - With a graves plugin installed the head goes into the victim's grave, so the killer has to loot it — intended.
 - The lore date uses the JVM default timezone; on hosts running UTC it rolls at 00:00 UTC. Names and lore use legacy `&` colour codes.
@@ -1009,14 +1088,14 @@ All player-only. `/trade` tab-completes online players other than yourself.
 ---
 
 ## FrontierBackup
-> Scheduled world backups zipped on a rolling window.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-backup) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/backup)
+> Scheduled world backups zipped on a rolling window.  **v1.0.1** · Download: [Modrinth](https://modrinth.com/plugin/frontier-backup) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/backup)
 
 **What it does** — On a fixed interval (and on `/backup start`) the plugin saves the configured worlds on the main thread, then zips their folders asynchronously into `backup-<yyyy-MM-dd-HH-mm>.zip` in a directory of your choice, and prunes the oldest zips once the count exceeds `max-backups`. It is deliberately small: no cloud upload, no restore command, no incremental diffs — just a rolling window of zips that a host panel or an rsync job can pick up. Because the zip step runs off the main thread, the tick loop is never blocked by file I/O, and a single-flight guard refuses a second backup while one is running.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
 | Used by | none |
 
@@ -1051,26 +1130,34 @@ All player-only. `/trade` tab-completes online players other than yourself.
 ---
 
 ## FrontierAnnouncements
-> Rotating server-wide announcements with a per-player mute.  **v1.0.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-announcements) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/announcements)
+> Rotating announcements, the Frontier Gazette, Market Day and the /help menu.  **v1.2.2** · Download: [Modrinth](https://modrinth.com/plugin/frontier-announcements) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/announcements)
 
-**What it does** — Every `interval` seconds the plugin broadcasts the next message from a configured list to everyone online (padded with a blank line above and below so it stands out from chat), then advances to the next one, looping back to the top when the list ends. Two deliberate choices: the timer skips its slot without advancing when nobody is online, so an empty server never burns through the rotation; and any player can opt out for themselves with `/muteannouncements`, a choice that is saved to disk and survives relogs and restarts. No dependencies, no external storage.
+**What it does** — Every `interval` seconds the plugin broadcasts the next message from a configured list to everyone online (padded with a blank line above and below so it stands out from chat), then advances to the next one, looping back to the top when the list ends. Two deliberate choices: the timer skips its slot without advancing when nobody is online, so an empty server never burns through the rotation; and any player can opt out for themselves with `/muteannouncements`, a choice that is saved to disk and survives relogs and restarts. It also runs the **Frontier Gazette** — posts from other Frontier plugins (Reputation, Border, EndLock, Events) sent to a Discord webhook and kept as an in-game feed that FrontierStatsAPI serves on `/api/gazette` — plus a weekly **Market Day** window, and a clickable **`/help`** menu (alias `/commands`) listing every command the player can use.
 
 **Requires / integrates with**
 | | |
 |---|---|
-| Required | Paper 26.2+, Java 25+ |
+| Required | Paper 26.3+, Java 25+ |
 | Optional | none |
-| Used by | none |
+| Used by | FrontierReputation, FrontierBorder, FrontierEndLock and FrontierEvents (post to the Gazette); FrontierStatsAPI (serves the feed on `/api/gazette`) |
 
 **Commands**
 | Command | Who | What |
 |---|---|---|
+| `/help [section\|command\|word] [page]` (also `/commands`) | Everyone | Clickable list of every command you can use; filter by section, command or keyword |
+| `/marketday [status]` | Everyone | When the next (or current) Market Day is |
+| `/marketday force <open\|close>` | Admin | Force Market Day open or closed |
+| `/gazette status` / `test <trigger>` | Admin | Gazette status, or send a test post for one trigger |
 | `/announcements reload` | Admin | Re-read `config.yml`, restart the timer and rewind to message #1 (any other or omitted argument prints usage) |
 | `/muteannouncements` | Everyone | Toggle whether you receive announcements (player-only). Aliases: `/muteann`, `/mutebroadcasts` |
 
 **Permissions**
 | Node | Default | Grants |
 |---|---|---|
+| `frontier.announcements.help` | true | `/help`, `/commands` |
+| `frontier.announcements.marketday` | true | `/marketday` |
+| `frontier.announcements.marketday.admin` | op | `/marketday force` |
+| `frontier.announcements.gazette.admin` | op | `/gazette` |
 | `frontier.announcements.admin` | op | `/announcements reload` |
 | `frontier.announcements.mute` | true | `/muteannouncements` |
 
@@ -1080,7 +1167,10 @@ All player-only. `/trade` tab-completes online players other than yourself.
 | `enabled` | `true` | Master switch. `false` = the timer is never started |
 | `interval` | `420` | Seconds between announcements (420 = 7 minutes). The first message goes out one full interval after boot or reload, not immediately |
 | `prefix` | `"&8[&6Server&8] &f"` | Prepended to every broadcast; `&` colour codes are translated |
-| `messages` | 19-entry example list | Sent in order, one per interval, looping. `&` colour codes are translated; the prefix is added automatically. Empty list = nothing is sent |
+| `messages` | 20-entry example list | Sent in order, one per interval, looping. `&` colour codes are translated; the prefix is added automatically. Empty list = nothing is sent (mc.pvpers.us runs 28) |
+| `gazette.*` | mc.pvpers.us: on, with a role ping | The Frontier Gazette: Discord webhook, in-game feed, which triggers post, and `gazette.timezone` |
+| `market-day.*` | mc.pvpers.us: Saturdays 19:00–19:55 | The weekly Market Day window and `market-day.timezone` (America/Phoenix on mc.pvpers.us) |
+| `help.*` | — | The `/help` menu |
 
 **Good to know**
 - Replace the shipped `messages:` list before going live — the defaults advertise the rest of the Frontier suite and a placeholder `example.com/…` website; they show the intended tone, not text you want broadcast verbatim.

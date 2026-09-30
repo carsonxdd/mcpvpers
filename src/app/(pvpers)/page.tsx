@@ -16,12 +16,12 @@ const features: Feature[] = [
   {
     title: 'Fight if you want to',
     description:
-      "PvP is off unless you turn it on. Opt in to hunt outlaws, or skip it and just build. If you want a real fight, the colosseum's open, and there's a PvP event in the pit every night.",
+      "PvP is off unless you turn it on. Opt in to hunt outlaws, or skip it and just build. If you want a real fight, the colosseum's open, and there's a PvP event in the ring every night.",
   },
   {
     title: 'Frontier reputation',
     description:
-      "PvP is a choice you make, not a class you're stuck with. Pacifists can opt in to hunt outlaws but keep one-hit-kill protection. Cross lines and your name lands on wanted posters with a bounty. Take outlaws down and you earn the lawman badge.",
+      "PvP is a choice you make, not a class you're stuck with. Pacifists can opt in to hunt outlaws but keep one-hit-kill protection. Cross lines and your name lands on the wanted board. Take outlaws down and you earn the lawman badge.",
     href: '/reputation',
   },
 ];
@@ -36,12 +36,12 @@ const season2 = [
   {
     title: 'Land has upkeep',
     description:
-      "Every land pays $1 per chunk per day from its land bank (/lands bank deposit <amount>). If the bank can't cover it, the land loses its newest chunks, and whatever's on them is fair game. Your own balance is never touched.",
+      "Starting a land costs $500 (that covers your first 3×3), and each chunk after that is $25. Every land then pays $5 per chunk per day from its land bank (/lands bank deposit <amount>). Still playing but the bank ran dry? The land goes into debt and keeps its chunks. Walk away from it and the newest chunks go back to the wild. Your own balance is never touched.",
   },
   {
     title: 'PvP is opt-in only',
     description:
-      "Other players can't hit or shoot you unless you've typed /pvp on, except in the colosseum pit. For 5 seconds after any teleport you can't hit or be hit.",
+      "Other players can't hit or shoot you unless you've typed /pvp on, except in the colosseum ring. For 5 seconds after any teleport you can't hit or be hit.",
   },
   {
     title: 'A protected spawn',
@@ -51,7 +51,7 @@ const season2 = [
   {
     title: 'Colosseum Night',
     description:
-      'Every night at 8 PM Arizona the colosseum runs a PvP event with a rotating mode. Rewards come from the raid loot tables, scaled to how many show up, and you keep your gear. Outside events the pit is always PvP-on, and pit kills never touch rep.',
+      'Every night at 8 PM Arizona the colosseum runs a PvP event with a rotating mode. Everyone fights in the same Knight kit and gets their own gear back after. The winner takes a chest: $500, 4 diamonds, 8 XP bottles and a jackpot roll. Outside events the ring is always PvP-on and ring kills never touch rep, but die in there and your items drop on the floor for the taking.',
   },
   {
     title: 'Play a part',
@@ -65,7 +65,7 @@ const parts = [
   {
     title: 'Lawman',
     description:
-      'Opt into PvP, take down outlaws, and climb from Citizen to Marshal. Sheriffs post bounties and hand out pardons.',
+      'Opt into PvP, take down outlaws, and climb from Citizen to Marshal. Sheriffs hand out pardons, and anyone can put cash on an outlaw.',
     href: '/reputation',
     cta: 'How the badge works',
   },
@@ -92,12 +92,12 @@ const parts = [
   },
 ];
 
-// Incentives for talking to people. All live from Season 2's first day. Keep in sync with /about#play-a-part.
+// Reasons to talk to people. All live from Season 2's first day. Keep in sync with /about#play-a-part.
 const talkRewards = [
   {
-    title: 'Voice bonus',
+    title: 'Voice chat is built in',
     description:
-      "Stay connected to Simple Voice Chat for 60 seconds on a day you log in and that day's login reward pays 50% more.",
+      "Simple Voice Chat runs on the server and ships in both modpacks. Walk up to someone and talk. Press V once to check your mic and you're on. It's the fastest way to turn a stranger into a neighbor.",
   },
   {
     title: 'Sunday shoutouts',
@@ -220,7 +220,7 @@ export default function Home() {
 
         <div className="mc-panel p-6 max-w-3xl mx-auto">
           <h3 className="font-pixel text-bronze text-[10px] uppercase tracking-widest mb-4">
-            Rewards for talking · live from day one
+            Reasons to talk · live from day one
           </h3>
           <ul className="space-y-2.5 text-sm t-text-dim list-none">
             {talkRewards.map((r) => (
@@ -278,8 +278,8 @@ export default function Home() {
             the frontier: mob griefing on, creepers doing creeper things.
           </p>
           <p className="t-text-dim leading-relaxed">
-            PvP is opt-in. Other players can&apos;t hit or shoot you until you type /pvp on (the colosseum pit is the exception). Opt in and you can hunt
-            outlaws. Cross the line and you land on /wanted with a bounty. Lawmen earn the badge by
+            PvP is opt-in. Other players can&apos;t hit or shoot you until you type /pvp on (the colosseum ring is the exception). Opt in and you can hunt
+            outlaws. Cross the line and you land on /wanted, where anyone can put a cash bounty on you. Lawmen earn the badge by
             taking outlaws down. The community votes on every system change.{' '}
             <a href="/about#whats-live" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
               See what&apos;s live at launch &rarr;

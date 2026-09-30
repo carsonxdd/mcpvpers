@@ -129,7 +129,7 @@ export default function PvpPage() {
             <h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-3 glow-gold">PvP Arena</h1>
           </CloudTitle>
           <p className="relative z-10 t-text-muted text-sm max-w-xl mx-auto mb-10">
-            Step into the coliseum. Team Deathmatch and Free-for-All, fought in scheduled matches -
+            Step into the coliseum. Team Deathmatch and Free-for-All, in staff-hosted matches and every night at Colosseum Night -
             every kill pays, every win pays more, and the boards remember who showed up.
           </p>
         </div>
@@ -147,7 +147,7 @@ export default function PvpPage() {
           <div className="mc-panel p-5">
             <h2 className="font-pixel text-gold text-xs mb-2">Free-for-All</h2>
             <p className="t-text-muted text-sm leading-snug">
-              Everyone for themselves. Same arena, same kit, no allies - last one standing (or top of
+              Everyone for themselves. Same arena, pick your class kit, no allies - last one standing (or top of
               the kill count at time) takes the podium. Watch your back; everyone&apos;s a target.
             </p>
           </div>
@@ -158,11 +158,11 @@ export default function PvpPage() {
           <h2 className="font-pixel t-text-dim text-xs mb-1">Payouts</h2>
           <p className="t-text-muted text-[11px] mb-4">Cash hits your balance the moment the match ends.</p>
           <div className="space-y-3 text-sm">
-            <PayoutRow amount="$150" label="Participation" who="everyone who joins and stays" />
+            <PayoutRow amount="$150" label="Participation" who="everyone who finishes the match" />
             <PayoutRow amount="$25 / kill" label="Bounty" who="capped at $500 per match" />
             <PayoutRow amount="$2,500 pool" label="TDM win" who="split among the winning team" />
             <PayoutRow amount="$1,250 / $750 / $500" label="FFA podium" who="1st · 2nd · 3rd" />
-            <PayoutRow amount="$500" label="MVP" who="most valuable player of the match" />
+            <PayoutRow amount="$500" label="MVP" who="most kills in the match" />
           </div>
         </div>
 
@@ -189,7 +189,7 @@ export default function PvpPage() {
               <span className="font-pixel text-[9px] px-1.5 py-0.5 rounded shrink-0 h-fit min-w-[6rem] text-center bg-redstone/15 text-redstone">HARDCORE</span>
               <span className="t-text-muted leading-snug">
                 The real-stakes mode: die and your inventory drops where you fell, free for anyone to grab -
-                winners walk away with the losers&apos; gear. You confirm before joining.
+                winners walk away with the losers&apos; gear, and anything nobody picks up is gone when the match ends. You confirm before joining.
               </span>
             </div>
           </div>

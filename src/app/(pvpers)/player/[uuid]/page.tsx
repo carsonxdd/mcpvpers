@@ -286,7 +286,9 @@ function stateBadge(rep: Reputation): { label: string; className: string } {
   }
   if (state === 'PACIFIST') return { label: 'Pacifist', className: 'text-xp glow-xp' };
   if (!state) return { label: 'Unknown', className: 't-text-muted' };
-  // Lawman ladder (Citizen / Deputy / Sheriff / Senior Sheriff / Marshal).
+  // Everything else (LAWMAN / RETIRED) title-cases the raw state. The API has no
+  // lawman ladder tier (reputation/player only returns outlaw_tier), so this
+  // renders "Lawman" or "Retired", never Deputy / Sheriff.
   const label = state
     .toLowerCase()
     .replace(/_/g, ' ')

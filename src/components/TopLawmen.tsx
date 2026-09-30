@@ -16,6 +16,8 @@ const lawmenTierColor: Record<string, string> = {
   Sheriff: 'text-enchant glow-enchant',
   Deputy: 'text-enchant',
   Citizen: 't-text-dim',
+  Civilian: 't-text-muted',
+  Retired: 't-text-muted',
 };
 
 export default function TopLawmen() {

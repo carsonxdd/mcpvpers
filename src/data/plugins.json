@@ -1,28 +1,28 @@
 [
   {
     "name": "Lands",
-    "description": "Claim chunks, trust friends, federate into nations. Land wars are disabled this season. Your claims are safe from capture.",
+    "description": "Claim chunks and trust friends. Your first land costs $500 (/lands create, includes a free 3x3), and extra chunks are $25 each. Upkeep is $5 per chunk per day; an active land that can't pay goes into debt instead of losing chunks (/upkeep). Nations and land wars are off this season.",
     "icon": "shield",
     "inHouse": false,
     "href": null
   },
   {
     "name": "FrontierReputation",
-    "description": "In-house. Cowboy reputation system. Pacifist knockout, wanted outlaws, lawman badge, real-item bounties, daily login streaks.",
+    "description": "In-house. Cowboy reputation system. Pacifist knockout, wanted outlaws, lawman badge, cash bounties, daily login streaks.",
     "icon": "star",
     "inHouse": true,
     "href": "/plugins/reputation"
   },
   {
     "name": "FrontierEvents",
-    "description": "In-house. Boss Rush raids, the Gauntlet, raid keys, TDM/FFA arena PvP, duel tournaments, Pit difficulty, Pitforged loot. /event opens the hub.",
+    "description": "In-house. Boss Rush raids, the Gauntlet, raid keys, TDM/FFA/KOTH arena PvP, duel tournaments, Colosseum Night, the open PvP ring, Pit difficulty, Pitforged loot. /event opens the hub.",
     "icon": "swords",
     "inHouse": true,
     "href": "/plugins/events"
   },
   {
     "name": "FrontierShop",
-    "description": "In-house. Server shop with daily-ticker pricing, a player market, sign shops, daily deals and a weekly black market. /shop and /market.",
+    "description": "In-house. Server shop with daily-ticker pricing, a player market, sign shops, daily deals and a weekly black market, plus land upkeep and debt. /shop, /market and /upkeep.",
     "icon": "shopping-cart",
     "inHouse": true,
     "href": "/plugins/shop"
@@ -92,7 +92,7 @@
   },
   {
     "name": "FrontierEndLock",
-    "description": "In-house. Keeps the End closed until staff open it, so nobody solos the Dragon in week one.",
+    "description": "In-house. Keeps the End closed so nobody solos the Dragon in week one. It opens on its own on Saturday, Oct 10 at 5 PM Arizona, with countdown broadcasts on the way.",
     "icon": "lock",
     "inHouse": true,
     "href": "/plugins/endlock"
@@ -113,7 +113,7 @@
   },
   {
     "name": "FrontierAnnouncements",
-    "description": "In-house. Rotating chat tips and announcements on a timer, with a per-player mute.",
+    "description": "In-house. Rotating chat tips with a per-player mute, the /help menu (also /commands), the Frontier Gazette, and Market Day on Saturday evenings.",
     "icon": "megaphone",
     "inHouse": true,
     "href": "/plugins/announcements"

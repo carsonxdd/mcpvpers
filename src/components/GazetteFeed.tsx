@@ -1,6 +1,6 @@
 // The Frontier Gazette: in-world write-ups of big server moments (new Marshal,
-// bounty collected, Market Day open...). Served by PiStatsAPI
-// 1.17.0+ at /api/gazette, fetched server-side here with a short revalidate so
+// bounty collected, Market Day open...). Served by FrontierStatsAPI
+// (1.17.0+, prod runs 1.18.0) at /api/gazette, fetched server-side here with a short revalidate so
 // the news page picks up new entries within a minute.
 //
 // `body` can carry player-written commendation reasons, so it is only ever

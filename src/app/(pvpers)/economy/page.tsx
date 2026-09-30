@@ -13,14 +13,14 @@ export const metadata = {
 };
 
 const categories: { name: string; icon: string; blurb: string }[] = [
-  { name: 'Building', icon: '🧱', blurb: 'Stone, dirt, glass, concrete — the bulk stuff bases eat by the stack.' },
-  { name: 'Art & Decor', icon: '🖼️', blurb: 'Decorative blocks for making a build look finished.' },
-  { name: 'Wood', icon: '🪵', blurb: 'Every log and plank type, for when the nearest forest is a trek.' },
+  { name: 'Building', icon: '🧱', blurb: 'Stone, dirt, glass — the bulk stuff bases eat by the stack.' },
+  { name: 'Art & Decor', icon: '🖼️', blurb: 'Concrete and decorative blocks for making a build look finished.' },
+  { name: 'Wood', icon: '🪵', blurb: 'Logs and stems, for when the nearest forest is a trek.' },
   { name: 'Ores & Minerals', icon: '⛏️', blurb: 'Iron, gold, diamonds, copper, redstone, and the rest of the rock.' },
-  { name: 'Farming', icon: '🌾', blurb: 'Crops, seeds, saplings, and animal goods to skip the grind.' },
+  { name: 'Farming', icon: '🌾', blurb: 'Crops, seeds, and animal goods to skip the grind.' },
   { name: 'Mob Drops', icon: '💀', blurb: 'Gunpowder, string, bones, ender pearls — the stuff mobs cough up.' },
   { name: 'Food', icon: '🍖', blurb: 'Cooked meals and ingredients so you never raid your own pantry.' },
-  { name: 'Utility & Sinks', icon: '🧨', blurb: 'Name tags, saddles, sponges, XP bottles, TNT. Buy-only money sinks.' },
+  { name: 'Utility & Sinks', icon: '🧨', blurb: 'Sponges, XP bottles, TNT, plus name tags, saddles and leads (those three are buy-only).' },
 ];
 
 export default function EconomyPage() {
@@ -104,10 +104,10 @@ export default function EconomyPage() {
             Every item carries a price index, and it re-prices <strong className="t-text">once a
             day</strong>, at midnight server time, off what the server actually traded the day
             before. Sell the shop a mountain of iron and tomorrow iron ticks down (up to{' '}
-            <strong className="t-text">5%</strong>); if everyone was buying, it ticks up; on a quiet
-            day it drifts back toward normal. Buy and sell prices ride the{' '}
+            <strong className="t-text">10%</strong>); if everyone was buying, it ticks up; and every
+            day it gets pulled a bit back toward normal. Buy and sell prices ride the{' '}
             <strong className="t-text">same index</strong>, so a crashed item is also a bargain to
-            buy — and nothing ever swings below <strong className="t-text">60%</strong> or above{' '}
+            buy — and nothing ever swings below <strong className="t-text">30%</strong> or above{' '}
             <strong className="t-text">140%</strong> of base.
           </p>
           <h3 className="font-pixel text-enchant text-xs mb-3 glow-enchant uppercase tracking-wider">Steady all day, capped per day</h3>
@@ -115,11 +115,20 @@ export default function EconomyPage() {
             Prices hold steady all day — no mid-session surprises — they only move at midnight. The
             shop also only buys so much of each item per day: hit the{' '}
             <strong className="t-text">warehouse cap</strong> and it stops buying that item until
-            midnight.
+            midnight. Season 2 caps are a lot tighter than Season 1&apos;s, and they grow (up to
+            1.5×) when more people are playing.
+          </p>
+          <p className="t-text-dim text-sm leading-relaxed mb-3">
+            Nobody gets to drain the cap alone: one player, and separately one connection, can
+            sell at most <strong className="t-text">25%</strong> of an item&apos;s daily cap. And
+            the shop only buys from people who&apos;ve played{' '}
+            <strong className="t-text">30 active minutes</strong> that week.
           </p>
           <p className="t-text-dim text-sm leading-relaxed">
-            Selling to the shop pays <strong className="t-text">about one third</strong> of the buy
-            price, so the <code className="text-gold">/market</code> is where the better prices are.
+            Selling to the shop pays <strong className="t-text">a third of the buy price at
+            best</strong>, and usually a lot less (the typical item pays under a fifth). Some things,
+            like emeralds, saddles, leads and name tags, don&apos;t sell at all. The{' '}
+            <code className="text-gold">/market</code> is where the better prices are.
             One more catch: <strong className="t-text">only clean items sell.</strong> Renamed, enchanted,
             or damaged gear never matches the catalog — so you can&apos;t cash out event loot at the
             shop.
@@ -138,8 +147,14 @@ export default function EconomyPage() {
           <p className="t-text-dim text-sm leading-relaxed">
             Twice a week — <strong className="t-text">Tuesday and Friday, 9 PM to midnight</strong>{' '}
             server time — the black market opens: buy-only exotic goods (golden apples, totems,
-            wither skulls…) at steep prices, with limited stock per window. When it&apos;s gone,
-            it&apos;s gone until the next market night.
+            wither skulls on Tuesdays…) at steep prices, with limited stock per window. When
+            it&apos;s gone, it&apos;s gone until the next market night.
+          </p>
+          <p className="t-text-dim text-sm leading-relaxed mt-3">
+            The headliners: a single <strong className="t-text">Elytra for $90,000</strong>, Fridays
+            only; a rotating <strong className="t-text">spawner</strong> each window; the
+            Diviner&apos;s Compass; the Repair Token; and upgradeable trinkets like the Saddle of
+            Swiftness (<code className="text-gold">/shop upgrade</code>).
           </p>
         </div>
 
@@ -195,13 +210,14 @@ export default function EconomyPage() {
             </li>
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
-              <span>Sellers pay a <strong className="t-text">listing fee</strong> when an item sells.</span>
+              <span>Sellers pay a <strong className="t-text">5% fee</strong> when an item sells. Up to <strong className="t-text">8 listings</strong> at a time, and each one runs for 7 days.</span>
             </li>
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
               <span>
-                Offline when it sells? The money lands in your{' '}
-                <strong className="t-text">mailbox</strong>. Listings survive restarts.
+                Offline when it sells? The money goes <strong className="t-text">straight to your
+                balance</strong> anyway. Cancelled or expired listings come back to your{' '}
+                <code className="text-gold">/mailbox</code>. Listings survive restarts.
               </span>
             </li>
           </ul>
@@ -227,8 +243,8 @@ export default function EconomyPage() {
         <div className="text-center"><CloudTitle><h2 className="font-pixel text-gold text-lg mb-6 glow-gold">Daily login rewards</h2></CloudTitle></div>
         <CloudTextSmall className="text-center mb-8">
           <p className="t-text-dim">
-            Show up each day and get paid. Your first join of the day drops cash and a haul of loot
-            straight into your inventory — no command to run.
+            Show up each day and get paid. After your first 10 minutes of play each day, cash and a
+            haul of loot drop straight into your inventory — no command to run.
           </p>
         </CloudTextSmall>
         <div className="mc-panel p-6 sm:p-8">
@@ -237,16 +253,17 @@ export default function EconomyPage() {
               <span className="text-xp shrink-0">+</span>
               <span>
                 <strong className="t-text">It&apos;s a streak.</strong> Day 1 pays{' '}
-                <strong className="t-text">$100</strong> and the payout climbs every consecutive day,
-                up to <strong className="t-text">$500</strong> at a 14-day streak (then $500 every day
-                you keep it alive). Miss a day and it resets to 1, so keep it going.
+                <strong className="t-text">$80</strong> and the payout climbs every consecutive day,
+                up to <strong className="t-text">$400</strong> at a 14-day streak (then $400 every day
+                you keep it alive). Miss a day and it resets to 1, so keep it going. Only 2 accounts
+                per connection can claim each day.
               </span>
             </li>
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
               <span>
                 <strong className="t-text">Loot every day, and it upgrades with the streak</strong> —
-                golden carrots and iron at first, then gold, diamonds, and XP bottles as the days
+                golden carrots, iron and a little gold at first, then diamonds and XP bottles as the days
                 stack up. Hit a <strong className="t-text">milestone</strong> day — 3, 7, and every
                 14th day after that — and you&apos;ll bag bonus loot (the every-two-weeks milestone
                 drops diamonds and an enchanted golden apple), with a server-wide shout-out.
@@ -255,24 +272,14 @@ export default function EconomyPage() {
             <li className="flex gap-3">
               <span className="text-xp shrink-0">+</span>
               <span>
-                <strong className="t-text">Voice bonus.</strong> Stay connected to Simple Voice Chat for
-                60 seconds straight on a day you log in and you get another{' '}
-                <strong className="t-text">50%</strong> of that day&apos;s reward money, once a day.
-                Only &ldquo;connected or not&rdquo; is checked.
-              </span>
-            </li>
-            <li className="flex gap-3">
-              <span className="text-xp shrink-0">+</span>
-              <span>
                 Run <code className="text-gold">/daily</code> anytime to check your current streak, your
-                best streak, what tomorrow pays, and whether today&apos;s voice bonus is paid.
+                best streak, and what tomorrow pays.
               </span>
             </li>
           </ul>
           <p className="t-text-muted text-xs mt-5">
-            The day rolls over at <strong className="t-text">5 PM Arizona</strong> (UTC midnight), same as
-            the rest of the server&apos;s daily resets — so your streak ticks over mid-afternoon, not at
-            local midnight.
+            The day rolls over at <strong className="t-text">midnight Arizona</strong>, the same time
+            the shop re-prices.
           </p>
         </div>
         {/* Live board — self-hides until PiStatsAPI 1.8.0 ships to prod */}
@@ -292,10 +299,15 @@ export default function EconomyPage() {
             MVP bonuses. Selling to the shop is the steady-drip alternative.
           </p>
           <p className="t-text-dim leading-relaxed mb-4">
-            And where it leaves: <strong className="t-text">Raid Key start fees</strong> are the
-            biggest repeatable sink — $150 × (Pit + 1), sunk win or lose, up to three starts a day —
-            alongside the shop&apos;s buy-only utility goods, the black market&apos;s steep prices,
-            and the market&apos;s listing fee. Key runs also pay out at 0.75× to keep them honest.
+            And where it leaves: <strong className="t-text">land</strong> is the biggest sink —
+            $500 to start a land, $25 for each chunk after the first 3×3, and{' '}
+            <strong className="t-text">$5 per chunk per day</strong> in upkeep.{' '}
+            <strong className="t-text">Raid Key start fees</strong> are next — $150 × (Pit + 1), sunk
+            win or lose, up to three starts a day — alongside the shop&apos;s buy-only utility
+            goods, the black market&apos;s steep prices, and the market&apos;s 5% fee. Key runs pay
+            out at 0.35×, and only your first 2 clears a day pay at all. Villagers won&apos;t bail
+            you out either: curing them or Hero of the Village no longer drops trades below list
+            price.
           </p>
           <p className="t-text-dim leading-relaxed">
             Full payout tables live on the{' '}

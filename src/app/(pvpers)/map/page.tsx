@@ -43,20 +43,13 @@ export default function MapPage() {
                 </a>
               </p>
             </div>
-            {/*
-              Land Claims overlay disabled at launch — we're not feeding Lands claim
-              outlines to BlueMap yet. Restore this block (and the 2-column grid wrapper
-              above) once the integration ships. See README "Future polls" for the
-              post-launch vote on whether to enable the overlay.
-
-              <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="w-3 h-3 bg-grass/30 border border-grass/60 rounded-sm inline-block" />
-                  <span className="t-text-dim">Land Claims</span>
-                </div>
-                <p className="t-text-muted pl-5">Protected territory via Lands plugin.</p>
+            <div className="mt-3">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="w-3 h-3 bg-grass/30 border border-grass/60 rounded-sm inline-block" />
+                <span className="t-text-dim">Land Claims</span>
               </div>
-            */}
+              <p className="t-text-muted pl-5">Claimed land. Lands draws every claim&apos;s outline on the map.</p>
+            </div>
           </div>
         </div>
       </section>

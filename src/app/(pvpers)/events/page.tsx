@@ -26,11 +26,11 @@ const MODES: { title: string; icon: string; blurb: string; href: string | null; 
     cta: 'Step in the ring →',
   },
   {
-    title: 'More modes coming',
-    icon: '🎯',
-    blurb: 'KOTH, duels, and more are in the works. Watch this space.',
-    href: null,
-    cta: 'Soon™',
+    title: 'Colosseum Night',
+    icon: '🏟️',
+    blurb: 'Every night at 8 PM Arizona. Same Knight kit for everyone, winner takes the chest. KOTH and duel tournaments run when staff host them.',
+    href: '/about#whats-live',
+    cta: 'How it works →',
   },
 ];
 
@@ -43,7 +43,7 @@ export default function EventsHubPage() {
             <h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-3 glow-gold">Events</h1>
           </CloudTitle>
           <p className="relative z-10 t-text-muted text-sm max-w-xl mx-auto">
-            Scheduled server events that pay out cash and drop gear. Pick your mode - fight a boss
+            Nightly Colosseum Night, player-started raids and staff-hosted matches that pay out cash and drop gear. Pick your mode - fight a boss
             with the party, or fight the party.
           </p>
         </div>

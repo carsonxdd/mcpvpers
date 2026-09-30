@@ -81,9 +81,9 @@
     "ladderLabel": "Mid ladder",
     "accent": "venom",
     "icon": "🕷️",
-    "description": "Fast, lightly armored, and wrapped in a venom cloud that thickens when she frenzies. Her broods swarm the floor - keep moving and stay out of the poison.",
+    "description": "Fast, lightly armored, and once she's bloodied she pulses poison around her - harder and more often as she frenzies. Her broods swarm the floor - keep moving and stay out of the ring.",
     "moves": [
-      { "name": "Venom", "description": "A poison cloud clings to her - stronger when frenzied. Don't stand in it." },
+      { "name": "Venom", "description": "From 60% HP she pulses a Poison ring (6 blocks) every 12s - every 9s with Poison II once frenzied. Don't stand in it." },
       { "name": "Brood", "description": "Summons cave-spider broods while she darts in and out." }
     ],
     "loot": [
@@ -117,7 +117,7 @@
     "ladderLabel": "Late ladder",
     "accent": "fire",
     "icon": "🔥",
-    "description": "Wither-skull volleys, heavy slams, and the meanest enrage on the ladder. If your damage isn't there by the final phase, the throne keeps its king.",
+    "description": "Wither-skull volleys, heavy slams, and an enrage that ties Maelgrave's for the meanest on the ladder. If your damage isn't there by the final phase, the throne keeps its king.",
     "moves": [
       { "name": "Wither Skulls", "description": "Volleys of wither skulls raked across the arena." },
       { "name": "Crushing Slam", "description": "Heavy melee slams when you're in close." }
@@ -188,10 +188,10 @@
     "ladderLabel": "Duel",
     "accent": "gold",
     "icon": "🏆",
-    "description": "Not on the ladder - a one-on-one gladiator duel. He lunges across the pit and slams on landing, and once you've bloodied him he calls in two 'seconds' to even the odds.",
+    "description": "The sixth rung of the key ladder - a gladiator duel any party size can take on, after two waves of Vindicators and Pillagers. He lunges across the pit and slams on landing, and once you've bloodied him he calls in a Vindicator 'second' to even the odds.",
     "moves": [
       { "name": "Leap", "description": "Lunges across the pit and slams on landing - heed the ⚠ INCOMING warning." },
-      { "name": "Seconds", "description": "Brings in two 'seconds' once he's bloodied." }
+      { "name": "Second", "description": "Calls in one Vindicator at 60% HP." }
     ],
     "loot": [
       { "tier": "pitforged", "name": "Champion's Pike, Pitforged", "item": "Diamond Spear", "enchants": "Sharp VI, Knockback III, Unb IV", "lore": "The reach that ended every challenge, lengthened. Reforged in the Pit." },

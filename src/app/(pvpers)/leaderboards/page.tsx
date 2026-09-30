@@ -26,28 +26,30 @@ type StatKey =
 type PlaytimeWindow = 'all' | 'month' | 'week';
 type Section = 'vanilla' | 'plugins';
 
-// Two sections, swapped by the top [Vanilla] [Plugins] toggle. Vanilla = pure
-// survival stats; Plugins = progression/rep + broad event totals. The granular
+// Two sections, swapped by the top [Vanilla] [Plugins] toggle. Vanilla = survival
+// stats (Deaths and XP Levels are FrontierTab's own counters, not the vanilla
+// statistic - see `hint`); Plugins = progression/rep + broad event totals. The granular
 // Boss Rush / PvP role boards stay on the /events/* tabs — only the broad
 // Event Score + PvP Wins totals surface here.
-const VANILLA_CATEGORIES: { label: string; key: StatKey }[] = [
+// `hint` renders as the pill's tooltip and as a caption under the pills.
+const VANILLA_CATEGORIES: { label: string; key: StatKey; hint?: string }[] = [
   { label: 'Playtime', key: 'playtime' },
-  { label: 'Deaths', key: 'deaths' },
+  { label: 'Deaths', key: 'deaths', hint: "Counted by FrontierTab - event and ring deaths don't count." },
   { label: 'Mob Kills', key: 'mob_kills' },
   { label: 'Blocks Mined', key: 'blocks_mined' },
   { label: 'Ores Mined', key: 'ores_mined' },
-  { label: 'Distance Walked', key: 'distance' },
+  { label: 'Distance', key: 'distance', hint: "Walking, sprinting, crouching and swimming - boats, horses and elytra don't count." },
   { label: 'Advancements', key: 'advancements' },
-  { label: 'XP Levels', key: 'xp_levels' },
+  { label: 'XP Levels', key: 'xp_levels', hint: 'Levels earned over time (FrontierTab), not current level.' },
 ];
-const PLUGIN_CATEGORIES: { label: string; key: StatKey }[] = [
+const PLUGIN_CATEGORIES: { label: string; key: StatKey; hint?: string }[] = [
   { label: 'Power Level', key: 'power_level' },
   { label: 'Balance', key: 'balance' },
   { label: 'Peaceful Rep', key: 'peaceful_rep' },
   { label: 'Outlaw Rep', key: 'outlaw_rep' },
   { label: 'Violence Rep', key: 'violence_rep' },
   { label: 'Lawmen', key: 'lawmen' },
-  { label: 'Commendations', key: 'commendations' },
+  { label: 'Commendations', key: 'commendations', hint: 'Unique players who commended them in the last 90 days.' },
   { label: 'Event Score', key: 'event_score' },
   { label: 'PvP Wins', key: 'pvp_wins' },
 ];
@@ -210,6 +212,7 @@ export default function LeaderboardsPage() {
   const data: LeaderboardEntry[] = board ?? [];
   // Blocks Mined can lag the rest of the snapshot right after a restart.
   const warming = !loading && !error && activeKey === 'blocks_mined' && board === undefined;
+  const activeHint = [...VANILLA_CATEGORIES, ...PLUGIN_CATEGORIES].find((c) => c.key === activeKey)?.hint;
 
   const totalPages = Math.max(1, Math.ceil(data.length / PAGE_SIZE));
   const safePage = Math.min(page, totalPages - 1);
@@ -260,7 +263,7 @@ export default function LeaderboardsPage() {
 
         <div className="flex flex-wrap gap-1.5 mb-4 justify-center relative z-10">
           {(section === 'vanilla' ? VANILLA_CATEGORIES : PLUGIN_CATEGORIES).map((cat) => (
-            <button key={cat.key} onClick={() => selectCategory(cat.key)}
+            <button key={cat.key} onClick={() => selectCategory(cat.key)} title={cat.hint}
               className={`mc-pill ${activeKey === cat.key ? 'mc-pill-active' : ''}`}>
               {cat.label}
             </button>
@@ -276,6 +279,10 @@ export default function LeaderboardsPage() {
               </button>
             ))}
           </div>
+        )}
+
+        {activeHint && (
+          <p className="t-text-muted text-xs text-center mb-4 relative z-10">{activeHint}</p>
         )}
 
         {/* Freshness line — the snapshot refreshes in the background every few minutes. */}

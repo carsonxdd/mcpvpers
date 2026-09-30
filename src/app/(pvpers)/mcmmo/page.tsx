@@ -299,9 +299,16 @@ export default function McmmoPage() {
               <a href="/reputation" className="text-enchant hover:text-enchant/70 transition-colors underline underline-offset-2">
                 reputation system
               </a>
-              , so grinding combat XP off pacifists will earn you outlaw rep fast. Mob kills are
-              clean. Grind on zombies, skeletons, and animals if you don&apos;t want a bounty on
-              your head.
+              . Pacifists aren&apos;t free XP: they have PvP off by default and get knocked out at
+              1 HP instead of dying, and unprovoked kills or robberies earn you outlaw rep fast. Mob
+              kills are clean - grind on zombies, skeletons, and wild or farm animals if you
+              don&apos;t want a bounty on your head. Villagers (+3 outlaw rep) and other
+              players&apos; pets (+1) are not clean.
+            </p>
+            <p className="t-text-dim leading-relaxed mb-3">
+              Being fair game pays, too: while you&apos;re PvP-effective (<code>/pvp on</code>, an
+              Outlaw, or a Lawman) your mcMMO XP gets a <strong className="t-text">×1.05</strong>{' '}
+              boost.
             </p>
             <p className="t-text-dim leading-relaxed">
               Lawmen who fight outlaws get to grind combat skills <em>and</em> violence rep at the

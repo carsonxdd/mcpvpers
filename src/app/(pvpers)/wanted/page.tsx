@@ -8,18 +8,14 @@ import CloudText from '@/components/CloudText';
 import TopLawmen from '@/components/TopLawmen';
 
 type Crime = { kind: string; count: number };
-type RewardItem = { material: string; count: number };
-type LastSeen = { world: string; x: number; y: number; z: number };
+type LastSeen = { world: string; x: number; z: number };
 type Outlaw = {
   name: string;
   uuid?: string | null;
   outlawRep: number;
   tier: string;
-  bountyMultiplier?: number;
-  bountyDiamonds: number;
-  postedBy?: string;
   lastSeen?: LastSeen | null;
-  rewardItems: RewardItem[];
+  bountyTotal: number;
   crimes: Crime[];
 };
 
@@ -29,8 +25,8 @@ type UpstreamOutlaw = {
   outlaw_rep: number;
   tier: string;
   top_crimes?: { type: string; count: number }[];
-  bounty_total_diamond_eq?: number;
-  reward_items?: { material: string; count: number }[];
+  // FrontierStatsAPI 1.19.0+: sum of every cash bounty posted on this outlaw, in dollars.
+  bounty_total?: number | null;
   last_seen_world?: string | null;
   last_seen_x?: number | null;
   last_seen_y?: number | null;
@@ -45,25 +41,30 @@ const tierClass: Record<string, string> = {
   Legend: 'tier-legend tier-legend-glow',
 };
 
-const tierMultiplier: Record<string, number> = {
-  Drifter: 1.0,
-  Bandit: 1.5,
-  Outlaw: 2.0,
-  Notorious: 2.5,
-  Legend: 3.0,
-};
-
+// Keys match FrontierReputation's CrimeType. Unknown types fall through to title case.
 const crimeLabels: Record<string, string> = {
   UNPROVOKED_KILL_PACIFIST: 'Pacifist kills',
-  KNOCKOUT_THEFT: 'Knockout thefts',
+  UNPROVOKED_KILL_NEWCOMER: 'Newcomer kills',
+  UNPROVOKED_KILL_LAWMAN: 'Lawman kills',
+  UNPROVOKED_KILL_OUTLAW: 'Outlaw kills',
+  ROBBERY: 'Robberies',
   VILLAGER_KILL: 'Villager kills',
   PET_KILL: 'Pet kills',
-  PVP_KILL: 'PvP kills',
+  FARM_MOB_KILL: 'Farm animal kills',
+  VILLAGE_STRUCTURE_BREAK: 'Village vandalism',
+  DONATION_CHEST_THEFT: 'Donation chest thefts',
   SPAWN_REGION_KILL: 'Spawn-region PvP',
+  REPORT_APPROVED: 'Upheld reports',
+  // Older keys, harmless if one turns up.
+  KNOCKOUT_THEFT: 'Knockout thefts',
+  PVP_KILL: 'PvP kills',
   LAWMAN_KILL: 'Lawman kills',
-  COMBAT_LOG: 'Combat logs',
-  REPORT_APPROVED: 'Reports filed',
 };
+
+// The game rounds last-seen spots to 100 blocks on posters and broadcasts; match it.
+function roundCoord(n: number): number {
+  return Math.round(n / 100) * 100 || 0;
+}
 
 function titleCaseFromSnake(s: string): string {
   return s
@@ -74,10 +75,6 @@ function titleCaseFromSnake(s: string): string {
 
 function crimeLabel(type: string): string {
   return crimeLabels[type] ?? titleCaseFromSnake(type);
-}
-
-function materialLabel(material: string): string {
-  return titleCaseFromSnake(material);
 }
 
 const worldLabels: Record<string, string> = {
@@ -92,12 +89,11 @@ function worldLabel(world: string): string {
 
 function fromUpstream(u: UpstreamOutlaw): Outlaw {
   const lastSeen: LastSeen | null =
-    u.last_seen_world != null && u.last_seen_x != null && u.last_seen_y != null && u.last_seen_z != null
+    u.last_seen_world != null && u.last_seen_x != null && u.last_seen_z != null
       ? {
           world: u.last_seen_world,
-          x: Math.round(u.last_seen_x),
-          y: Math.round(u.last_seen_y),
-          z: Math.round(u.last_seen_z),
+          x: roundCoord(u.last_seen_x),
+          z: roundCoord(u.last_seen_z),
         }
       : null;
   return {
@@ -105,9 +101,7 @@ function fromUpstream(u: UpstreamOutlaw): Outlaw {
     uuid: u.uuid ?? null,
     outlawRep: u.outlaw_rep,
     tier: u.tier,
-    bountyDiamonds: Math.round(u.bounty_total_diamond_eq ?? 0),
-    bountyMultiplier: tierMultiplier[u.tier],
-    rewardItems: u.reward_items ?? [],
+    bountyTotal: u.bounty_total ?? 0,
     lastSeen,
     crimes: (u.top_crimes ?? []).map((c) => ({
       kind: crimeLabel(c.type),
@@ -130,9 +124,8 @@ export default function WantedPage() {
       })
       .then((json) => {
         if (cancelled) return;
-        const transformed = (json.wanted ?? []).map(fromUpstream);
-        transformed.sort((a, b) => b.bountyDiamonds - a.bountyDiamonds);
-        setOutlaws(transformed);
+        // Upstream already orders by outlaw rep, highest first.
+        setOutlaws((json.wanted ?? []).map(fromUpstream));
       })
       .catch(() => {
         if (!cancelled) setError(true);
@@ -145,7 +138,7 @@ export default function WantedPage() {
     };
   }, []);
 
-  const totalBounty = outlaws.reduce((s, o) => s + o.bountyDiamonds, 0);
+  const withBounty = outlaws.filter((o) => o.bountyTotal > 0).length;
   const hasOutlaws = outlaws.length > 0;
 
   return (
@@ -159,8 +152,10 @@ export default function WantedPage() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed">
-            These outlaws crossed the line in the wilderness. A Marshal put up real items.
-            Bring them down and the bounty&apos;s yours.
+            These outlaws crossed the line in the wilderness. Any non-outlaw can bring them down.
+            Some carry a cash bounty other players put up, and the killer takes all of it. Post
+            your own with /bounty place &lt;player&gt; &lt;amount&gt;. The rest still pay a Lawman
+            in violence rep and a reward drop.
           </p>
         </CloudText>
 
@@ -168,7 +163,7 @@ export default function WantedPage() {
         {hasOutlaws && (
           <div className="mt-8 grid grid-cols-3 gap-3 max-w-md mx-auto">
             <Stat label="Wanted" value={outlaws.length.toString()} />
-            <Stat label="Total bounty" value={`${totalBounty}◆`} />
+            <Stat label="With bounty" value={withBounty.toString()} />
             <Stat label="Highest tier" value={outlaws[0].tier} />
           </div>
         )}
@@ -246,7 +241,8 @@ export default function WantedPage() {
 
             <p className="text-center t-text-muted text-xs italic mt-12 max-w-xl mx-auto">
               Outlaws below the Drifter threshold (25 rep) don&apos;t make the board. Self-defense kills
-              and outlaw-on-outlaw kills don&apos;t feed the list either.
+              and outlaw-on-outlaw kills don&apos;t feed the list either. Last-seen spots are rounded
+              to the nearest 100 blocks, same as in game.
             </p>
           </>
         )}
@@ -261,9 +257,9 @@ export default function WantedPage() {
         </CloudTitle>
         <CloudText>
           <p className="t-text-dim leading-relaxed mb-6">
-            Crimes in the wilderness raise outlaw rep. Cross 25 and you&apos;re on the board.
-            Pacifist kills, knockout-thefts, spawn-region PvP, combat-logging: every offense has a
-            number behind it. The reputation page lays out the full ladder, the redemption paths,
+            Crimes in the wilderness raise outlaw rep. Hit 25 and you&apos;re on the board, and any
+            robbery gets you there in one go. Newcomer kills (+75), pacifist kills (+50), lawman
+            kills (+15), robbery, pet and villager kills: every offense has a number behind it. The reputation page lays out the full ladder, the redemption paths,
             and every command.
           </p>
         </CloudText>
@@ -338,59 +334,23 @@ function Poster({
           </p>
           <p className={`font-pixel text-[10px] uppercase tracking-widest mt-1.5 ${tier}`}>
             {outlaw.tier}
-            {outlaw.bountyMultiplier != null && (
-              <span style={{ color: '#6b3a1a' }}> · ×{outlaw.bountyMultiplier.toFixed(1)}</span>
-            )}
           </p>
         </div>
 
-        {/* Reward */}
-        <div className="wanted-divider mt-5 pt-3 text-center relative z-10">
-          <p
-            className="font-pixel text-[9px] tracking-[0.25em]"
-            style={{ color: '#5a2f15' }}
-          >
-            REWARD
-          </p>
-          <p
-            className="font-pixel text-2xl sm:text-3xl mt-1.5"
-            style={{ color: '#2c160a' }}
-          >
-            {outlaw.bountyDiamonds}
-            <span style={{ color: '#1a8a8f', marginLeft: '0.25rem' }}>◆</span>
-            <span
-              className="font-pixel text-[8px] tracking-widest ml-1.5"
-              style={{ color: '#6b3a1a' }}
-            >
-              EQ
-            </span>
-          </p>
-          {outlaw.rewardItems.length > 0 && (
-            <ul className="flex flex-wrap justify-center gap-1.5 mt-2.5">
-              {outlaw.rewardItems.map((r) => (
-                <li
-                  key={r.material}
-                  className="font-pixel text-[9px] px-2 py-1 rounded"
-                  style={{
-                    color: '#2c160a',
-                    background: 'rgba(91, 51, 22, 0.12)',
-                    border: '1px solid rgba(91, 51, 22, 0.35)',
-                  }}
-                >
-                  {r.count}× {materialLabel(r.material)}
-                </li>
-              ))}
-            </ul>
-          )}
-          {outlaw.postedBy && (
+        {/* Reward: total cash bounty, only shown when someone has posted one */}
+        {outlaw.bountyTotal > 0 && (
+          <div className="wanted-divider mt-5 pt-3 text-center relative z-10">
             <p
-              className="font-pixel text-[8px] mt-2"
-              style={{ color: '#6b3a1a' }}
+              className="font-pixel text-[9px] tracking-[0.25em]"
+              style={{ color: '#5a2f15' }}
             >
-              posted by {outlaw.postedBy}
+              REWARD
             </p>
-          )}
-        </div>
+            <p className="font-pixel text-lg mt-2" style={{ color: '#2c160a' }}>
+              ${outlaw.bountyTotal.toLocaleString('en-US', { maximumFractionDigits: 0 })}
+            </p>
+          </div>
+        )}
 
         {/* Crimes */}
         <div className="wanted-divider mt-4 pt-3 relative z-10">
@@ -422,7 +382,7 @@ function Poster({
             className="font-pixel text-[8px] italic text-center mt-4 relative z-10"
             style={{ color: '#6b3a1a' }}
           >
-            last seen in {worldLabel(outlaw.lastSeen.world)} at {outlaw.lastSeen.x}, {outlaw.lastSeen.y}, {outlaw.lastSeen.z}
+            last seen in {worldLabel(outlaw.lastSeen.world)} near {outlaw.lastSeen.x}, {outlaw.lastSeen.z}
           </p>
         )}
       </div>

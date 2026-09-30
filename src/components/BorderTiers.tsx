@@ -12,8 +12,10 @@ const BASE_TIERS = [
   { tier: 1, hours: 0.5, blocks: 100, color: 'text-xp', chunks: '~15,800' },
   { tier: 2, hours: 1.5, blocks: 200, color: 'text-xp', chunks: '~31,900' },
   { tier: 3, hours: 3,   blocks: 300, color: 'text-enchant', chunks: '~48,300' },
-  { tier: 4, hours: 5,   blocks: 400, color: 'text-gold', chunks: '~65,000' },
-  { tier: 5, hours: 8,   blocks: 500, color: 'text-redstone', chunks: '~82,000' },
+  // Tiers 4-5 are nominally +400/+500, but FrontierBorder caps any single expansion at 375
+  // until the radius hits 7,000 (then 250), so show what players actually get this early.
+  { tier: 4, hours: 5,   blocks: 375, color: 'text-gold', chunks: '~60,800' },
+  { tier: 5, hours: 8,   blocks: 375, color: 'text-redstone', chunks: '~60,800' },
 ];
 
 const PREVIEW_SIZES = [1, 2, 3, 5, 10];
@@ -42,7 +44,7 @@ export default function BorderTiers() {
 
   const liveActive = status?.today_active_players ?? status?.active_players ?? 0;
   const enabled = status?.scaling?.enabled ?? true;
-  const exponent = status?.scaling?.exponent ?? 1.3;
+  const exponent = status?.scaling?.exponent ?? 0.5;
   const effectiveActive = preview ?? Math.max(liveActive, 1);
   const mult = useMemo(
     () => multiplier(effectiveActive, enabled, exponent),
@@ -107,7 +109,7 @@ export default function BorderTiers() {
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">Tier</th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Playtime</span>
-                <span className="max-md:hidden">Today&apos;s Playtime</span>
+                <span className="max-md:hidden">Daily Playtime</span>
               </th>
               <th className="font-pixel text-gold text-[10px] max-md:text-[9px] text-left py-2 pr-4 max-md:pr-1.5">
                 <span className="md:hidden">Expansion</span>
@@ -144,6 +146,7 @@ export default function BorderTiers() {
       </div>
       <p className="t-text-muted text-[11px] mt-3">
         *Approximate new chunks at starting border (5,000 radius). Larger borders reveal more chunks per expansion.
+        Any one night&apos;s growth is capped at +375 blocks until the radius reaches 7,000, then +250. The border stops at 20,000.
       </p>
     </div>
   );

@@ -39,8 +39,8 @@ const FAST_BOARDS: { key: string; path: string }[] = [
   { key: 'advancements', path: `leaderboard?stat=advancements&limit=${ROSTER_LIMIT}` },
   { key: 'xp_levels', path: `leaderboard?stat=xp_levels&limit=${ROSTER_LIMIT}` },
   { key: 'power_level', path: `leaderboard?stat=power_level&limit=${ROSTER_LIMIT}` },
-  // EssentialsX baltop (PiStatsAPI 1.12.0+) — 404 until it ships to DatHost,
-  // which getJson maps to an empty board.
+  // EssentialsX baltop (StatsAPI economy/baltop). A 404 maps to an empty board
+  // via getJson.
   { key: 'balance', path: `economy/baltop?limit=${ROSTER_LIMIT}` },
   { key: 'peaceful_rep', path: 'reputation/leaderboard/peaceful' },
   { key: 'violence_rep', path: 'reputation/leaderboard/violence' },
@@ -101,13 +101,9 @@ async function fetchBoard(path: string, timeoutMs: number): Promise<Entry[]> {
 // stay on the /events/* tabs). These live under events/... and return a
 // different JSON shape than a plain leaderboard?stat= call, so they're
 // synthesized here like outlaw_rep / commendations rather than in FAST_BOARDS.
-// 503/empty on a server without PiEvents (DatHost today) → []. The page just
-// shows "No players yet." until PiEvents + PiStatsAPI 1.7.0 ship to DatHost.
-//
-// ⚠️ Field names verified against the events handoff, not yet against a live
-// host (DatHost 404s on /api/events/* today). Boss Rush rows expose
-// `total_score`, PvP rows expose `wins`. If the live shape differs, adjust the
-// valueKey here — the rest of the snapshot is unaffected.
+// 503/empty on a server without FrontierEvents → []; the page just shows
+// "No players yet." Boss Rush rows expose `total_score`, PvP rows expose `wins`
+// (verified against the StatsAPI source).
 async function fetchEventBoard(path: string, valueKey: string, timeoutMs: number): Promise<Entry[]> {
   const json = await getJson<{ players?: Record<string, unknown>[] }>(path, timeoutMs);
   const rows = Array.isArray(json?.players) ? json.players : [];
@@ -119,8 +115,9 @@ async function fetchEventBoard(path: string, valueKey: string, timeoutMs: number
   }));
 }
 
-// The outlaw-rep board has no global endpoint; derive it from the wanted board
-// (already ranked by outlaw_rep descending).
+// Outlaw rep: reputation/leaderboard/outlaws exists but is capped at 10 rows, so
+// derive the board from the wanted list instead (already ranked by outlaw_rep
+// descending) for depth.
 async function fetchOutlaw(timeoutMs: number): Promise<Entry[]> {
   const json = await getJson<{
     wanted?: { uuid: string | null; name: string; outlaw_rep: number; tier: string }[];

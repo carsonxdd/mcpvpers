@@ -78,12 +78,14 @@ const medalStyles = ['text-gold glow-gold', 'text-silver glow-silver', 'text-bro
 
 // The Pit difficulty dial (1-5). Each level stacks a flat bump; the × columns are
 // multipliers on the base, the +% columns are added rare/epic upgrade chance.
+// Prod config: damage-per-level 0.00 (mob damage is never scaled), speed-per-level
+// 0.10 (cap 1.75), money-per-level 0.75.
 const PIT_SCALE = [
-  { pit: 1, hp: '2.0×', dmg: '1.5×', money: '1.75×', rare: '+10%', epic: '+5%' },
-  { pit: 2, hp: '3.0×', dmg: '2.0×', money: '2.5×', rare: '+20%', epic: '+10%' },
-  { pit: 3, hp: '4.0×', dmg: '2.5×', money: '3.25×', rare: '+30%', epic: '+15%' },
-  { pit: 4, hp: '5.0×', dmg: '3.0×', money: '4.0×', rare: '+40%', epic: '+20%' },
-  { pit: 5, hp: '6.0×', dmg: '3.5×', money: '4.75×', rare: '+50%', epic: '+25%' },
+  { pit: 1, hp: '2.0×', speed: '1.1×', money: '1.75×', rare: '+10%', epic: '+5%' },
+  { pit: 2, hp: '3.0×', speed: '1.2×', money: '2.5×', rare: '+20%', epic: '+10%' },
+  { pit: 3, hp: '4.0×', speed: '1.3×', money: '3.25×', rare: '+30%', epic: '+15%' },
+  { pit: 4, hp: '5.0×', speed: '1.4×', money: '4.0×', rare: '+40%', epic: '+20%' },
+  { pit: 5, hp: '6.0×', speed: '1.5×', money: '4.75×', rare: '+50%', epic: '+25%' },
 ];
 
 function formatNum(v: number): string {
@@ -168,8 +170,9 @@ export default function BossRushPage() {
             <h1 className="font-pixel text-gold text-2xl sm:text-3xl mb-3 glow-gold">Boss Rush</h1>
           </CloudTitle>
           <p className="relative z-10 t-text-muted text-sm max-w-xl mx-auto mb-10">
-            Six raids: four waves of adds, then the boss. Five form a difficulty ladder, the sixth
-            is a one-on-one duel. Damage, tanking, and healing are all tracked - every role has a board.
+            Six boss raids: waves of adds, then the boss. Five form a difficulty ladder, the sixth is
+            the Champion&apos;s duel - plus the Gauntlet, an endless seventh. Damage, tanking, and
+            healing are all tracked - every role has a board.
           </p>
         </div>
 
@@ -352,8 +355,8 @@ export default function BossRushPage() {
         <div>
           <h2 className="font-pixel text-gold text-lg mb-2 px-1 glow-gold">The Raids</h2>
           <p className="t-text-muted text-sm mb-6 px-1">
-            Tiers 1–5 climb easiest to hardest; the duel stands on its own. Tap a raid for its boss,
-            abilities, and full loot table.
+            Tiers 1–5 climb easiest to hardest; the Champion&apos;s duel is the sixth rung of the key
+            ladder. Tap a raid for its boss, abilities, and full loot table.
           </p>
 
           {/* Raid tiles → detail pages */}
@@ -384,8 +387,9 @@ export default function BossRushPage() {
               <span className="font-pixel text-violet-400/80 text-[10px]">levels 1–5</span>
             </div>
             <p className="t-text-muted text-[11px] mb-4 leading-snug">
-              Staff can crank a raid into the Pit. Each level stacks the same bump - harder fight,
-              bigger pay, better loot. Runs log their Pit level; you&apos;ll see a purple{' '}
+              Staff can crank a raid into the Pit, or pick it yourself with{' '}
+              <code className="text-violet-300">/event key start &lt;raid&gt; [pit]</code>. Each level
+              stacks the same bump - tougher, faster mobs, bigger pay, better loot. Runs log their Pit level; you&apos;ll see a purple{' '}
               <span className="text-violet-300">Pit N</span>{' '}chip on each one in the raid log.
             </p>
             <div className="overflow-x-auto mb-2">
@@ -394,7 +398,7 @@ export default function BossRushPage() {
                   <tr className="t-text-muted">
                     <th className="font-pixel text-[10px] text-left py-1.5 pr-3">Pit</th>
                     <th className="font-pixel text-[10px] text-right py-1.5 px-2">Mob HP</th>
-                    <th className="font-pixel text-[10px] text-right py-1.5 px-2">Damage</th>
+                    <th className="font-pixel text-[10px] text-right py-1.5 px-2">Speed</th>
                     <th className="font-pixel text-[10px] text-right py-1.5 px-2">Money</th>
                     <th className="font-pixel text-[10px] text-right py-1.5 px-2">Rare</th>
                     <th className="font-pixel text-[10px] text-right py-1.5 pl-2">Epic</th>
@@ -405,7 +409,7 @@ export default function BossRushPage() {
                     <tr key={r.pit} className="t-border-20 border-t">
                       <td className="py-1.5 pr-3 font-pixel text-[10px] text-violet-300">Pit {r.pit}</td>
                       <td className="py-1.5 px-2 text-right t-text-dim">{r.hp}</td>
-                      <td className="py-1.5 px-2 text-right t-text-dim">{r.dmg}</td>
+                      <td className="py-1.5 px-2 text-right t-text-dim">{r.speed}</td>
                       <td className="py-1.5 px-2 text-right text-gold">{r.money}</td>
                       <td className="py-1.5 px-2 text-right t-text-muted">{r.rare}</td>
                       <td className="py-1.5 pl-2 text-right t-text-muted">{r.epic}</td>
@@ -414,7 +418,10 @@ export default function BossRushPage() {
                 </tbody>
               </table>
             </div>
-            <p className="t-text-muted text-[10px] mb-4">× columns multiply the base; +% columns add to the rare / epic upgrade chance.</p>
+            <p className="t-text-muted text-[10px] mb-4">
+              × columns multiply the base; +% columns add to the rare / epic upgrade chance. Mob
+              damage isn&apos;t scaled - the Pit gets harder through HP and speed.
+            </p>
             <p className="t-text-muted text-[11px] leading-snug pt-3 t-border-20 border-t">
               At <span className="text-fuchsia-300 font-medium">Pit 1+</span>, won epic rolls come back{' '}
               <span className="text-fuchsia-300">Pitforged</span>{' '}- above-vanilla-cap gear
@@ -436,14 +443,44 @@ export default function BossRushPage() {
             </p>
             <p className="t-text-muted text-[11px] mb-3 leading-snug">
               Starting a run costs money - <span className="t-text-dim">$150 × (Pit + 1)</span>, sunk
-              win or lose, 3 starts a day - and wiping a run at your key&apos;s level{' '}
-              <span className="text-redstone">depletes</span> the key one Pit until you win one back.
-              But joining someone else&apos;s run is always free, and everyone who fights in a clear
-              gets credit at their own level.
+              win or lose, 3 starts a day, 15-minute cooldown between starts. Wipe a run you started at
+              your key&apos;s level and your key <span className="text-redstone">depletes</span> one Pit
+              until you win one back - only the starter&apos;s key is on the line. Joining someone
+              else&apos;s run is always free, and everyone who fights in a clear gets credit at their
+              own level.
+            </p>
+            <p className="t-text-muted text-[11px] mb-3 leading-snug">
+              A key run needs <span className="t-text-dim">3 fighters</span> in the lobby to launch -
+              spectators and disconnected slots don&apos;t count. If fewer than 3 contributors finish,
+              the pool and category money scale down to fighters/3.
             </p>
             <p className="t-text-muted text-[11px] leading-snug">
-              Key runs pay out a bit less than admin events (money ×0.75, loot rolls unchanged) - and
-              like any raid, a wipe pays nothing. Watch chat for the ⚷ broadcast when someone opens a run.
+              Key runs pay out less than admin events (money ×0.35, loot rolls unchanged), and only{' '}
+              <span className="t-text-dim">2 key clears a day pay money</span> - counted per player
+              and per connection; clears after that roll loot only. Money goes only to raiders who
+              contributed (dealt or took damage, killed an add, or healed), and like any raid, a wipe
+              pays nothing. Watch chat for the ⚷ broadcast when someone opens a run.
+            </p>
+          </div>
+
+          {/* The Gauntlet - endless 7th raid (config: boss-rush.raids.gauntlet) */}
+          <div className="mc-panel p-5 mb-4 border-l-2 border-gold/50">
+            <div className="flex items-baseline justify-between gap-2 mb-1 flex-wrap">
+              <h3 className="font-pixel text-gold text-xs">The Gauntlet</h3>
+              <span className="font-pixel text-gold/80 text-[10px]">endless · raid 7</span>
+            </div>
+            <p className="t-text-muted text-[11px] mb-3 leading-snug">
+              No boss at the end - it just keeps going. Every wave compounds on the last (mob HP{' '}
+              <span className="t-text-dim">+6%</span>, damage <span className="t-text-dim">+3%</span>,
+              mob count <span className="t-text-dim">+4%</span>, capped at 45), and a boss drops in
+              every <span className="t-text-dim">5 waves</span>{' '}at 0.6× HP. Every 10 waves the whole
+              server hears about it.
+            </p>
+            <p className="t-text-muted text-[11px] leading-snug">
+              Money banks as you go: <span className="t-text-dim">$100</span>{' '}participation, plus{' '}
+              <span className="t-text-dim">$75 + $25 × (wave − 1)</span>{' '}for each wave cleared,
+              Pit-multiplied. The run always ends in a wipe, but a wipe doesn&apos;t zero what
+              you&apos;ve banked - the raid log shows how far you got.
             </p>
           </div>
 
@@ -487,7 +524,7 @@ export default function BossRushPage() {
           <div className="mc-panel p-5">
             <h3 className="font-pixel t-text-dim text-xs mb-1">Payouts &amp; awards</h3>
             <p className="t-text-muted text-[11px] mb-4">
-              Flat across every raid - the Pit scales them up (+15%/level), and only the loot tables
+              Flat across every raid - the Pit scales them up (+75%/level), and only the loot tables
               scale with difficulty otherwise. <span className="t-text-dim">All of it pays only on a
               clear - a wiped raid pays nothing.</span>
             </p>

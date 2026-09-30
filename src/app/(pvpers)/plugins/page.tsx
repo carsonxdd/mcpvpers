@@ -27,39 +27,41 @@ const dependencyRows: { plugin: string; slug: string; requires: string; optional
     slug: 'reputation',
     requires: '**FrontierTab**',
     optional:
-      'Vault (bounty money, treasury), mcMMO (XP boost for pacifists in war mode), FrontierEvents (event kills don’t count as crimes), FrontierMail (daily-reward overflow → mailbox)',
+      'Vault (bounty money, treasury), mcMMO (XP boost for pacifists in war mode), FrontierEvents (event kills don’t count as crimes), FrontierMail (daily-reward overflow → mailbox), Lands (hazard-rule own-land exception, spawn builders), FrontierAnnouncements (Gazette, weekly shoutout)',
   },
   {
     plugin: 'FrontierShop',
     slug: 'shop',
     requires: '—',
-    optional: 'Vault (**effectively required** — no economy means the shop is read-only)',
+    optional:
+      'Vault (**effectively required** — no economy means the shop is read-only), Lands (land upkeep, debt, town discount), EssentialsX (AFK detection for the dynamic cap)',
   },
   {
     plugin: 'FrontierEvents',
     slug: 'events',
     requires: '—',
-    optional: 'Vault (payouts, wagers), FrontierMail (reward overflow), FrontierGraves (arena grave sweep)',
+    optional:
+      'Vault (payouts, wagers), FrontierMail (reward overflow), FrontierGraves (arena grave sweep), FrontierAnnouncements (Gazette)',
   },
   {
     plugin: 'FrontierStatsAPI',
     slug: 'statsapi',
     requires: '**FrontierTab**',
     optional:
-      'FrontierBorder, FrontierReputation, FrontierEvents, FrontierShop, mcMMO — each adds its routes; missing ones return empty',
+      'FrontierBorder, FrontierReputation, FrontierEvents, FrontierShop, FrontierAnnouncements, mcMMO — each adds its routes; missing ones return empty',
   },
   {
     plugin: 'FrontierBorder',
     slug: 'border',
     requires: '**FrontierTab**',
-    optional: 'Discord webhook for expansion announcements',
+    optional: 'FrontierAnnouncements (Gazette), Discord webhook for expansion announcements',
   },
   {
     plugin: 'FrontierTab',
     slug: 'tab',
     requires: '—',
     optional:
-      'FrontierBorder (border line), FrontierEndLock (End padlock), FrontierEvents (event deaths not counted), FrontierReputation (rep prefix on names)',
+      'FrontierBorder (border line), FrontierEndLock (End padlock), FrontierEvents (event and ring-edge deaths not counted), FrontierReputation (rep prefix on names), FrontierAnnouncements (soft dependency)',
   },
   {
     plugin: 'FrontierGraves',
@@ -71,7 +73,19 @@ const dependencyRows: { plugin: string; slug: string; requires: string; optional
     plugin: 'FrontierMail',
     slug: 'mail',
     requires: '—',
-    optional: '*(is used by Shop, Reputation and Events)*',
+    optional: '*(is used by Reputation and Events — Shop’s market keeps its own mailbox)*',
+  },
+  {
+    plugin: 'FrontierEndLock',
+    slug: 'endlock',
+    requires: '—',
+    optional: 'FrontierAnnouncements (Gazette post when the End opens)',
+  },
+  {
+    plugin: 'FrontierHeads',
+    slug: 'heads',
+    requires: '—',
+    optional: 'FrontierEvents (no heads for event or ring kills)',
   },
   {
     plugin: 'Everything else',
