@@ -110,18 +110,23 @@ export default function EconomyPage() {
             buy — and nothing ever swings below <strong className="t-text">30%</strong> or above{' '}
             <strong className="t-text">140%</strong> of base.
           </p>
-          <h3 className="font-pixel text-enchant text-xs mb-3 glow-enchant uppercase tracking-wider">Steady all day, capped per day</h3>
+          <h3 className="font-pixel text-enchant text-xs mb-3 glow-enchant uppercase tracking-wider">Steady all day, tapered past the cap</h3>
           <p className="t-text-dim text-sm leading-relaxed mb-3">
             Prices hold steady all day — no mid-session surprises — they only move at midnight. The
-            shop also only buys so much of each item per day: hit the{' '}
-            <strong className="t-text">warehouse cap</strong> and it stops buying that item until
-            midnight. Season 2 caps are a lot tighter than Season 1&apos;s, and they grow (up to
-            1.5×) when more people are playing.
+            shop pays full price for each item up to its daily{' '}
+            <strong className="t-text">warehouse cap</strong>. Past that it doesn&apos;t stop
+            buying, it just pays less: <strong className="t-text">50%</strong> of today&apos;s sell
+            price for the next stretch, then <strong className="t-text">25%</strong>, then{' '}
+            <strong className="t-text">10%</strong> for the rest of the day. Those cheap sales
+            don&apos;t fill the warehouse or drag tomorrow&apos;s price down further, and it all
+            resets at midnight. Season 2 caps are a lot tighter than Season 1&apos;s, and they grow
+            (up to 1.5×) when more people are playing.
           </p>
           <p className="t-text-dim text-sm leading-relaxed mb-3">
-            Nobody gets to drain the cap alone: one player, and separately one connection, can
-            sell at most <strong className="t-text">25%</strong> of an item&apos;s daily cap. And
-            the shop only buys from people who&apos;ve played{' '}
+            Nobody gets to drain the cap alone: one player, and separately one connection, gets full
+            price on at most <strong className="t-text">25%</strong> of an item&apos;s daily cap.
+            Past your share, the same 50% → 25% → 10% taper kicks in, even if the warehouse still
+            has room. And the shop only buys from people who&apos;ve played{' '}
             <strong className="t-text">30 active minutes</strong> that week.
           </p>
           <p className="t-text-dim text-sm leading-relaxed">

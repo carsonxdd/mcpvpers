@@ -31,7 +31,7 @@ const roleCards = [
 ];
 
 const claimRows = [
-  { where: 'Your claim', meaning: "Safest area. PvP and theft locked down by Lands, unless you're an Outlaw: any player with PvP on can hit an Outlaw inside any claim, their own included." },
+  { where: 'Your claim', meaning: "Safest area. PvP and theft locked down by Lands, unless you're an Outlaw: any player with PvP on can hit an Outlaw inside any claim, melee or ranged, their own claim included." },
   { where: 'Allied claim', meaning: 'Depends on the trust level the owner gave you.' },
   { where: 'PvP-deny region', meaning: "If a claim or region cancels PvP damage, the rep system never sees the hit. No knockout, no rep, no combat tag. The exception is an Outlaw victim: those hits go through." },
   { where: 'Wilderness', meaning: "The frontier, for everyone who has PvP on (opted-in Pacifists, Outlaws, Lawmen). Knockout, theft GUI, rep awards, and the combat tag all fire here. A Pacifist who never typed /pvp on can't be hit by other players, even out here." },
@@ -115,7 +115,7 @@ const commandsByTier = [
 const faqs = [
   {
     q: 'Can I be killed in my claim?',
-    a: "Not unless you're an Outlaw. Claims protect against PvP unless you explicitly allow it — the whole point is that your home is your home. Outlaws give that up: any player with PvP on can hit an Outlaw inside any claim, their own included.",
+    a: "Not unless you're an Outlaw. Claims protect against PvP unless you explicitly allow it — the whole point is that your home is your home. Outlaws give that up: any player with PvP on can hit an Outlaw inside any claim, melee or ranged, their own claim included.",
   },
   {
     q: "What if I'm a pacifist in the wilderness — can I be killed there?",

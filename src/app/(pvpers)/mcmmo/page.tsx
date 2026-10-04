@@ -34,6 +34,7 @@ const simpleRules: [string, string][] = [
   ['Every action you take levels something.', 'Swing a pick, level Mining. Brew a potion, level Alchemy. The numbers just go up.'],
   ['Passive bonuses kick in immediately.', 'Even at low levels you get small chances at double drops, extra durability, faster XP. Compounds fast.'],
   ['Active abilities unlock at higher levels.', 'Right-click with the right tool to trigger them: Super Breaker, Tree Feller, Serrated Strikes, Berserk, and the rest. Short cooldowns.'],
+  ['Skills go from 1 to 100.', 'Every skill tops out at 100, with ability unlocks spread out along the way.'],
   ['Power Level is the sum of every skill.', 'It’s the bragging-rights number. /mctop power shows the leaderboard.'],
   ['Parties pool XP and grant teleports.', '/party create, then /ptp to a partymate. Useful for friend groups grinding together.'],
   ['mcMMO XP is separate from vanilla XP.', "Killing a zombie levels both Swords (mcMMO) and your vanilla XP bar. They don't compete."],

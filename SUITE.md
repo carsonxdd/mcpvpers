@@ -20,10 +20,10 @@ key is listed on this page.
 
 | Plugin | Ver | One line | Kind |
 |---|---|---|---|
-| **FrontierReputation** | 1.12.0 | Wild West reputation: outlaws, lawmen, bounties, wanted posters, marshals, `/pvp` war mode, daily rewards | Flagship · economy/social |
-| **FrontierShop** | 1.11.0 | Server shop + player market with **daily-ticker pricing**, sign shops, daily deals, black market, custom items | Flagship · economy |
+| **FrontierReputation** | 1.13.0 | Wild West reputation: outlaws, lawmen, bounties, wanted posters, marshals, `/pvp` war mode, daily rewards | Flagship · economy/social |
+| **FrontierShop** | 1.12.0 | Server shop + player market with **daily-ticker pricing**, sign shops, daily deals, black market, custom items | Flagship · economy |
 | **FrontierEvents** | 1.6.1 | Event engine: Boss Rush raids, the Gauntlet, keystone Raid Keys, TDM/FFA/KOTH, duel tournaments with wagers, Colosseum Night, open ring, arenas, kits | Flagship · minigames |
-| **FrontierStatsAPI** | 1.18.0 | Embedded HTTP/JSON API (36 routes) serving every plugin's data to a website or bot | Infrastructure |
+| **FrontierStatsAPI** | 1.19.0 | Embedded HTTP/JSON API (36 routes) serving every plugin's data to a website or bot | Infrastructure |
 | **FrontierBorder** | 2.5.0 | Playtime-gated world border that grows on a daily schedule; sets the server timezone | World |
 | **FrontierTab** | 1.2.2 | Tab-list header/footer with playtime, deaths, session, border, End status | QoL |
 | **FrontierGraves** | 1.1.2 | Permanent graves — keep your inventory on death, claim it later | QoL |
@@ -34,7 +34,7 @@ key is listed on this page.
 | **FrontierNetherLock** | 1.0.0 | Lock the Nether until staff open it | World |
 | **FrontierHeads** | 1.0.1 | Drop the victim's head on PvP kills | PvP |
 | **FrontierBackup** | 1.0.1 | Scheduled zip backups with rotation | Ops |
-| **FrontierAnnouncements** | 1.2.2 | Rotating chat announcements, the Frontier Gazette, Market Day, `/help` menu | Ops |
+| **FrontierAnnouncements** | 1.2.3 | Rotating chat announcements, the Frontier Gazette, Market Day, `/help` menu | Ops |
 
 ## Which plugin needs which
 
@@ -126,7 +126,7 @@ and `market-day.timezone`, Events' `arena-chest.timezone` — so keep those on t
 ---
 
 ## FrontierReputation
-> Wild West reputation, bounties, wanted posters and daily login rewards.  **v1.12.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-reputation) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/reputation)
+> Wild West reputation, bounties, wanted posters and daily login rewards.  **v1.13.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-reputation) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/reputation)
 
 **What it does** — Every player is in one of four states: **Pacifist** (the default — cannot die from PvP, gets knocked out at 1 HP and robbed instead), **Lawman** (a five-tier ladder from Citizen to Marshal, entered by killing an outlaw and taking the badge), **Outlaw** (Drifter to Legend of the Frontier, listed on `/wanted` and bounty-able) or **Retired**. Rep is never negative — three independent pools (outlaw / peaceful / violence) grow from actions, and the lawman ladder needs *both* peaceful and violence rep plus a number of unique commenders, so a pure builder and a pure killer both cap at Citizen. Self-defense is free (a kill within 30 s of being hit by the victim earns no outlaw rep), outlaw-on-outlaw kills are neutral rivalry by default, and there is deliberately no revenge timer — revenge is served through the existing bounty, report, badge and hot-revenge paths. Bounties are cash: anyone but an Outlaw can put their own money on an outlaw with `/bounty place <player> <amount>`, and the killer collects the total. It only moves money between players, so it cannot mint any. The `/donate` reward pool is separate and pays the automatic item reward drops Lawmen get for outlaw kills, under weekly server-wide caps. Players run justice themselves through reports, commendations, denouncements, restitution and pardons, each with anti-abuse caps. A streak-based daily login reward (money + item kits) rounds it out. Tuned for a friend-group server of roughly 10–20 active players.
 
@@ -277,7 +277,7 @@ Legacy `pireputation.*` nodes are still declared, but children only resolve down
 | `states.pacifist.newcomer_protection_hours` | 5 | New players under this playtime are protected (and killing them costs `unprovoked_kill_newcomer`) |
 | `states.pacifist.pvp_opt_in_enabled` | true | Enable `/pvp` warmode for Pacifists/Retired |
 | `states.pacifist.pvp_toggle_cooldown_min` | 30 | Cooldown between `/pvp` toggles |
-| `states.pacifist.outlaw_land_protection_bypass` | true | PvP-effective attackers can hit Outlaw victims even inside PvP-denied claims (stops outlaws bunkering) |
+| `states.pacifist.outlaw_land_protection_bypass` | true | PvP-effective attackers can hit Outlaw victims (melee or projectiles) even inside PvP-denied claims (stops outlaws bunkering) |
 | `states.pacifist.mcmmo_warmode_xp_multiplier` | 1.05 | mcMMO XP × this while PvP-effective (1.0 disables; needs mcMMO) |
 | `states.lawman.auto_retire_after_inactive_days` | 30 | Inactive lawmen become Retired (rep frozen, restored on next fight) |
 | `states.spawn.radius_blocks` | 200 | Spawn-region radius for the spawn-kill override (mc.pvpers.us runs 100) |
@@ -285,6 +285,8 @@ Legacy `pireputation.*` nodes are still declared, but children only resolve down
 | `states.spawn.overworld_only` | true | Spawn override applies only in the overworld |
 | `broadcasts.promotion_cooldown_per_player_min` | 10 | Min minutes between promotion broadcasts for one player |
 | `broadcasts.max_broadcasts_per_minute_server` | 3 | Server-wide broadcast rate cap |
+| `bounties.min_amount` | 250 | Smallest cash bounty; no maximum |
+| `bounties.place_cooldown_hours.{pacifist,retired,lawman}` | 48 / 48 / 0 | Hours between one player's placements |
 | `bounties.bounty_inactive_refund_days` | 30 | Bounties refund if the target is absent this long |
 | `bounties.tracking_compass_cooldown_min` | 10 | Per-player `/bounty track` cooldown |
 | `bounties.tracking_compass_accuracy_blocks` | 100 | Fuzz applied to the tracked position |
@@ -334,7 +336,7 @@ Legacy `pireputation.*` nodes are still declared, but children only resolve down
 ---
 
 ## FrontierShop
-> Server shop and player market GUIs with daily-ticker pricing, deals, a rotating black market and upgradeable custom items.  **v1.11.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-shop) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/shop)
+> Server shop and player market GUIs with daily-ticker pricing, deals, a rotating black market and upgradeable custom items.  **v1.12.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-shop) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/shop)
 
 **What it does** — `/shop` opens a category-based server shop (the shipped catalog has 8 categories and 119 items; mc.pvpers.us runs 200) where every slot is its own terminal (left-click buy 1, shift-left buy a stack, right-click sell 1, shift-right sell everything matching), and `/market` opens a player market for listing your own items at your own price. Prices ride a **daily ticker**: each item has a price index that re-prices *once a day at local midnight* from yesterday's net player flow (clamped 60–140 %), buy and sell both ride the same index so the spread never changes and a dumped item eventually becomes cheap to buy back. Prices never move mid-day; the anti-farm guard is a daily **warehouse cap** (by default the server buys at most `appetite × 5` of each item per day) rather than price-crushing, and only plain, unenchanted, undamaged items sell. On top of the cap: each player (and each connection) may fill only a **share** of it, the cap **scales with active players**, and the warehouse won't buy from you until you've played **30 non-AFK minutes** that week. mc.pvpers.us runs a tighter ticker (warehouse ×1, index 30–140 %, daily moves up to 10 % with a 15 % pull back toward par). On top of that: seeded **daily deals**, `[shop]` **sign shops** on chests, and a buy-only **black market** that opens on fixed weekly windows with per-window stock and rosters that rotate by weekday — selling vanilla contraband you can't normally get in survival (spawn eggs, mob heads, loot-only gear), captured mob spawners, and five tiered custom trinkets plus three consumables that players level up at an **Upgrade Station**.
 
@@ -390,9 +392,12 @@ Legacy `pishop.*` nodes are still declared, but children only resolve downward: 
 | `ticker.pull` | mc.pvpers.us: 0.15 | Daily pull of the index back toward par |
 | `ticker.index-min` | 0.60 | Prices never fall below this fraction of base (mc.pvpers.us runs 0.30) |
 | `ticker.index-max` | 1.40 | …or rise above this |
-| `ticker.warehouse-multiple` | 5 | Server buys `appetite × this` of each item per day, then refuses until midnight (mc.pvpers.us runs 1) |
+| `ticker.warehouse-multiple` | 5 | Server buys `appetite × this` of each item per day, then tapers (mc.pvpers.us runs 1) |
+| `ticker.taper.enabled` | true | Keep buying past the cap/share at a tapering rate (`false` = old hard wall until midnight) |
+| `ticker.taper.rates` | [0.50, 0.25] | Rate for each band of extra units, one allowance wide |
+| `ticker.taper.floor` | 0.10 | Rate for everything after the bands, until midnight |
 | `ticker.default-appetite` | 256 | Appetite used when a catalog item omits it |
-| `player-share` | 0.25 | Share of an item's daily warehouse cap any one player may fill |
+| `player-share` | 0.25 | Share of an item's daily warehouse cap any one player (and connection) may sell at full price; past it the taper applies |
 | `share-per-ip` / `share-ip-exempt` | — | Also count the player share per connection (hashed IP), and the exemptions from that |
 | `dynamic-cap.*` | 1.0× – 1.5× base | Scales the daily warehouse cap with active connections, from a floor of 1.0 × base to a ceiling of 1.5 × base (AFK detection via EssentialsX) |
 | `dynamic-cap.sell-min-minutes` | 30 | Sell gate: non-AFK minutes a player needs this week before the warehouse buys from them |
@@ -591,7 +596,7 @@ Legacy `pishop.*` nodes are still declared, but children only resolve downward: 
 ---
 
 ## FrontierStatsAPI
-> A read-only HTTP/JSON API baked into the server so a website or bot can show live stats without RCON, FTP or a database.  **v1.18.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-statsapi) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/statsapi)
+> A read-only HTTP/JSON API baked into the server so a website or bot can show live stats without RCON, FTP or a database.  **v1.19.0** · Download: [Modrinth](https://modrinth.com/plugin/frontier-statsapi) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/statsapi)
 
 **What it does** — Starts a small HTTP server on its own port and answers `GET` requests with server status, player summaries, leaderboards (playtime with all/week/month windows, deaths, XP, mob kills, blocks and ores mined, distance, advancements, mcMMO power level), per-player advancement and mcMMO skill detail, and everything the other Frontier plugins keep on disk — border, reputation, events/PvP, shop, economy, and the Frontier Gazette feed. Its defining decision is that it reads sibling plugins **off disk, not through their APIs**: FrontierTab's YAML files, SQLite databases opened read-only, EssentialsX userdata — so a sibling being disabled or on an older version degrades a route to an omitted field or a `503`, never a crash. It is cheap by design (one JSON parse per player instead of ~1,100 statistic calls, cached baltop and advancement catalog) and includes a CORS allow-list, per-IP rate limiting and preflight handling. Full route parameters, response shapes and error cases are in the repo's docs/API.md.
 
@@ -1130,7 +1135,7 @@ All player-only. `/trade` tab-completes online players other than yourself.
 ---
 
 ## FrontierAnnouncements
-> Rotating announcements, the Frontier Gazette, Market Day and the /help menu.  **v1.2.2** · Download: [Modrinth](https://modrinth.com/plugin/frontier-announcements) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/announcements)
+> Rotating announcements, the Frontier Gazette, Market Day and the /help menu.  **v1.2.3** · Download: [Modrinth](https://modrinth.com/plugin/frontier-announcements) · [GitHub](https://github.com/carsonxdd/frontier/tree/master/announcements)
 
 **What it does** — Every `interval` seconds the plugin broadcasts the next message from a configured list to everyone online (padded with a blank line above and below so it stands out from chat), then advances to the next one, looping back to the top when the list ends. Two deliberate choices: the timer skips its slot without advancing when nobody is online, so an empty server never burns through the rotation; and any player can opt out for themselves with `/muteannouncements`, a choice that is saved to disk and survives relogs and restarts. It also runs the **Frontier Gazette** — posts from other Frontier plugins (Reputation, Border, EndLock, Events) sent to a Discord webhook and kept as an in-game feed that FrontierStatsAPI serves on `/api/gazette` — plus a weekly **Market Day** window, and a clickable **`/help`** menu (alias `/commands`) listing every command the player can use.
 
