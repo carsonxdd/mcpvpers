@@ -471,7 +471,7 @@ export default function AboutPage() {
             </p>
             <p className="t-text-dim leading-relaxed mb-3">
               <strong className="t-text">The End is locked for Season 2&apos;s first week.</strong>{' '}
-              The portal is findable but sealed until Saturday October 17 at 5 PM Arizona, when it
+              The portal is findable but sealed until Saturday October 10 at 5 PM Arizona, when it
               opens automatically (there&apos;s a daily countdown in chat). After that it&apos;s open:
               elytra, shulkers, end cities, all fair game.
             </p>

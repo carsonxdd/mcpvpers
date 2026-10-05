@@ -99,7 +99,7 @@ export default function Season2Banner() {
               ))}
             </div>
             <div className="font-pixel text-[10px] max-md:text-[8px] uppercase tracking-widest t-text-muted mb-4">
-              Saturday Oct 10 · 5 PM Arizona
+              Sunday Oct 4 · 5 PM Arizona
             </div>
           </>
         )}
