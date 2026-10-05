@@ -18,7 +18,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
 - Occasional shooting stars streak across the night sky in dark mode during clear weather (pixelated comet + fading tail, motion aligned to the tilt)
 - World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages. The tier table is now dynamic — thresholds scale with active player count via the plugin's scaling exponent, and a "Preview" row of buttons (1p / 2p / 3p / 5p / 10p) lets visitors see what the requirements look like at different participation levels
-- Season 2 banner in the home-page hero (`Season2Banner`): autumn stripe, falling pixel leaves, countdown to Sunday Oct 4, 2026 at 5 PM Arizona (`SEASON2_AT`; originally Oct 3), swaps to "Season 2 is live" at zero. Replaced the Season 1 launch countdown (`LaunchCountdown`, now unmounted)
+- Season 2 banner in the home-page hero (`Season2Banner`): autumn stripe, falling pixel leaves, countdown to Monday Oct 5, 2026 at 12 PM Arizona (`SEASON2_AT`; originally Oct 3), swaps to "Season 2 is live" at zero. Replaced the Season 1 launch countdown (`LaunchCountdown`, now unmounted)
 - Live server status (online player count, polled every 30s) below the home-page IP copy, fed by the PiStatsAPI plugin via a server-side proxy — hidden until the launch timestamp passes, then auto-activates without a refresh
 - Live world-border widget on the about page (current radius, weekly playtime, active players, total expansions), fed by the same proxy
 - Leaderboards backed by real player data, split into a **Vanilla** section (Playtime, Deaths, Mob Kills, Blocks Mined, Ores Mined, Distance, Advancements, XP Levels) and a **Plugins** section (Power Level, Peaceful/Outlaw/Violence Rep, Lawmen, Commendations, plus broad **Event Score** and **PvP Wins** totals) via a top `[Vanilla] [Plugins]` toggle, with mc-heads.net player avatars. The granular Boss Rush / PvP role boards live on the `/events/*` tabs; only the broad totals surface here. Served from a warm in-process snapshot (`src/lib/leaderboardSnapshot.ts`) that refreshes in the background, so tab switches are instant and slow upstream calls never sit on a visitor's load. Each tab shows 50 rows, a "Load more" expands to 100, and beyond 100 ranks paginate. Top three ranks are colored gold / silver / bronze. Every player row links through to a full per-player stat profile (`/player/<username>`)
@@ -201,7 +201,7 @@ The 15 in-house plugins are being published as standalone open-source jars (MIT,
 
 ## Season 2: new world on 26.3 (2026-09-24)
 
-Season 2 launched Sunday Oct 4, 2026 at 5 PM Arizona (originally Oct 3; see "Launched Oct 4" below) on a fresh 26.3 (Wilderness Bound) world, so the Dappled Forest generates naturally.
+Season 2 launches Monday Oct 5, 2026 at 12 PM Arizona (originally Oct 3; see "Launch set for Oct 5 noon" below) on a fresh 26.3 (Wilderness Bound) world, so the Dappled Forest generates naturally.
 
 - **Home hero** — `LaunchCountdown` swapped for `Season2Banner` (countdown to `SEASON2_AT` in `src/lib/launch.ts`). `LAUNCH_AT` is untouched because `LiveServerStatus` still gates on it
 - **Border starts at a 5,000-block radius** (Season 1 was 1,750). Updated on `/about#world-border`, the `/map` legend, and the `BorderTiers` new-chunk estimates (now ~15.8k–82k chunks per tier, recomputed for the 5,000 start). The bigger start is mainly for the Nether: at 1/8 scale it opens around 625 blocks each way instead of ~220
@@ -224,7 +224,7 @@ Every page was checked against the live DatHost configs and the plugin source pr
 
 - **Land**: $500 to create a land (includes a 3×3), $25 per extra chunk, **$5**/chunk/day upkeep. An active land that can't pay goes into debt and keeps its chunks; only inactive or 14+ day-debt lands lose chunks, reclaimable free for 30 days (`/upkeep reclaim`). Nations are off
 - **Voice bonus removed** (off for good). Voice chat is still pitched as built in and easy (press V), just unrewarded
-- **Colosseum Night / open ring** live from launch night (Oct 4): same Knight kit for everyone, winner's chest $500 + 4 diamonds + 8 XP bottles + a jackpot roll; ring deaths drop items on the floor, no grave. The site says "ring" (the game's term), not "pit"
+- **Colosseum Night / open ring** live from launch night (Oct 5): same Knight kit for everyone, winner's chest $500 + 4 diamonds + 8 XP bottles + a jackpot roll; ring deaths drop items on the floor, no grave. The site says "ring" (the game's term), not "pit"
 - **Economy**: daily reward $80→$400 after 10 min of play, rolls at midnight Arizona; ticker ±10%/day, 30–140%; sell-back ~19% median with per-player 25% share and a 30-min weekly activity gate; market sales pay straight to balance; key runs 0.35× with 2 paid clears/day
 - **Reputation**: any robbery = Wanted, logout bodies replace the combat-log penalty, Outlaws can be hit inside claims, commend cooldown 6 h, pardon floor 30% + unrepaid robbery, clean play 2.0/hr, newcomer kill +75, Lawman rank table, `/denounce`
 - **Cash bounties** (plugin branch `s2/cash-bounties`, StatsAPI 1.19.0): `/bounty place <player> <amount>` by anyone but Outlaws, $250 min, 48 h cooldown for Pacifists/Retired. `/wanted` posters show the `bounty_total` cash field; `reward_items` is gone. Lawman reward drops stay items, funded by the `/donate` "reward pool"
@@ -233,12 +233,12 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - **Stats proxy** (`src/app/api/stats/[...path]/route.ts`) no longer uses Next's fetch cache, which kept serving Season 1 numbers while prod was down. It keeps its own in-memory cache: fresh 30 s, last-good body for at most 5 min during an outage, then 502 so the live widgets hide
 - News post 20 corrected in place; post 21 ("Final Numbers Before Launch") lists what changed for players
 
-### Launched Oct 4 (2026-10-04)
+### Launch set for Oct 5 noon (2026-10-04)
 
-- Season 2 went live a day late: `SEASON2_AT` is Sunday Oct 4, 2026, 5 PM Arizona (`2026-10-05T00:00:00Z`), so the banner shows "Season 2 is live". (A same-day commit briefly pushed it to Oct 10 and the End to Oct 17; both were reverted.)
+- Final date: `SEASON2_AT` is Monday Oct 5, 2026, 12 PM Arizona (`2026-10-05T19:00:00Z`); the banner caption matches. (Same-day commits briefly had it at Oct 10, then Sunday Oct 4 at 5 PM; the End's move to Oct 17 was reverted.)
 - The End unlock stays **Saturday Oct 10, 5 PM Arizona**, which matches the plugin's `unlock-at`
 - `GazetteFeed` drops entries stamped before `SEASON2_AT`, so the pre-launch test posts are hidden and the feed starts empty at launch. This is site-side only: the entries still exist in the plugin's store
-- News post 22 announces the launch. Posts 19–21 keep their original Oct 3 wording as history
+- News post 22 announces the Monday-noon launch. Posts 19–21 keep their original Oct 3 wording as history
 - `/news` redesign: the newest post is featured, older posts sit on a month-grouped timeline, and long posts fold after two paragraphs (`src/components/news/NewsBody.tsx`)
 
 ### Spawn market replaces Market Day (2026-10-04)
