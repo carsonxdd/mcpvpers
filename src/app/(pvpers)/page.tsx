@@ -79,7 +79,7 @@ const parts = [
   {
     title: 'Trader',
     description:
-      'Run a sign shop, work the /market, or set up a stall at spawn on market day. Buy low when the ticker dips.',
+      'Run a sign shop, work the /market, or earn a stall at the spawn market. Buy low when the ticker dips.',
     href: '/economy',
     cta: 'How money works',
   },
@@ -113,9 +113,9 @@ const talkRewards = [
     description: 'Lands with 2 or more active members get 10–30% off the daily upkeep.',
   },
   {
-    title: 'Market Day',
+    title: 'Build a stall at spawn',
     description:
-      'Saturdays 7:00–7:55 PM Arizona, anyone can put up a stall at the market next to spawn (/warp market). Then head to the colosseum for Colosseum Night.',
+      'The market is part of spawn now, open all the time. Keep a Peaceful reputation and stay off the wanted board, then ask staff for build permission and put up your own stall.',
   },
 ];
 

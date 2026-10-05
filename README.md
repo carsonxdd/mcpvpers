@@ -241,6 +241,12 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - News post 22 announces the launch. Posts 19–21 keep their original Oct 3 wording as history
 - `/news` redesign: the newest post is featured, older posts sit on a month-grouped timeline, and long posts fold after two paragraphs (`src/components/news/NewsBody.tsx`)
 
+### Spawn market replaces Market Day (2026-10-04)
+
+- Market Day (Saturdays 7:00–7:55) is gone. The market is now a permanent area inside spawn, and players with a Peaceful reputation who are off the wanted board can ask staff for build permission to put up a stall
+- Home ("Trader" card, "Build a stall at spawn" tile), `/about` (Play a part list, commands list, Gazette triggers), `plugins.json`, and the FrontierAnnouncements `market-day.*` row in `frontier-suite.ts` / `SUITE.md` (now "off on mc.pvpers.us") are updated
+- News post 23 advertises the stalls. Older posts still mention Market Day as history
+
 ## Getting Started
 
 ```bash

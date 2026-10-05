@@ -1,5 +1,12 @@
 [
   {
+    "id": 23,
+    "date": "2026-10-04",
+    "title": "Build a Stall at the Spawn Market",
+    "tags": ["Event"],
+    "body": "Market Day is gone. In its place, the market is part of spawn now, and it is open all the time.\n\nGood citizens get to build there. If you have kept a Peaceful reputation and stayed off the wanted board, ask staff for build permission and put up your own stall. Stock it, put a sign on it, and you have a storefront every new player walks past on their way out of spawn.\n\nSpawn rules cover the market too: no PvP and no fire, so nobody can torch your stall.\n\nNo stall yet? /market still lets you list items for other players any time, and /shop buys and sells the basics."
+  },
+  {
     "id": 22,
     "date": "2026-10-04",
     "title": "Season 2 Is Live",

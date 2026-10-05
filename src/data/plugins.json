@@ -113,7 +113,7 @@
   },
   {
     "name": "FrontierAnnouncements",
-    "description": "In-house. Rotating chat tips with a per-player mute, the /help menu (also /commands), the Frontier Gazette, and Market Day on Saturday evenings.",
+    "description": "In-house. Rotating chat tips with a per-player mute, the /help menu (also /commands), the Frontier Gazette, and an optional weekly Market Day (off on mc.pvpers.us, where the market is a permanent stall area at spawn).",
     "icon": "megaphone",
     "inHouse": true,
     "href": "/plugins/announcements"

@@ -1292,7 +1292,7 @@ export const plugins: FrontierPlugin[] = [
       { key: 'prefix', def: '"&8[&6Server&8] &f"', what: 'Prepended to every broadcast; `&` colour codes are translated' },
       { key: 'messages', def: '20-entry example list', what: 'Sent in order, one per interval, looping. `&` colour codes are translated; the prefix is added automatically. Empty list = nothing is sent (mc.pvpers.us runs 28)' },
       { key: 'gazette.*', def: 'mc.pvpers.us: on, with a role ping', what: 'The Frontier Gazette: Discord webhook, in-game feed, which triggers post, and `gazette.timezone`' },
-      { key: 'market-day.*', def: 'mc.pvpers.us: Saturdays 19:00–19:55', what: 'The weekly Market Day window and `market-day.timezone` (America/Phoenix on mc.pvpers.us)' },
+      { key: 'market-day.*', def: 'mc.pvpers.us: off (the market is a permanent stall area at spawn)', what: 'The weekly Market Day window and `market-day.timezone` (America/Phoenix on mc.pvpers.us)' },
       { key: 'help.*', def: '—', what: 'The `/help` menu' },
     ],
     notes: [

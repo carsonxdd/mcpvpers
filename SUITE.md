@@ -1174,7 +1174,7 @@ All player-only. `/trade` tab-completes online players other than yourself.
 | `prefix` | `"&8[&6Server&8] &f"` | Prepended to every broadcast; `&` colour codes are translated |
 | `messages` | 20-entry example list | Sent in order, one per interval, looping. `&` colour codes are translated; the prefix is added automatically. Empty list = nothing is sent (mc.pvpers.us runs 28) |
 | `gazette.*` | mc.pvpers.us: on, with a role ping | The Frontier Gazette: Discord webhook, in-game feed, which triggers post, and `gazette.timezone` |
-| `market-day.*` | mc.pvpers.us: Saturdays 19:00–19:55 | The weekly Market Day window and `market-day.timezone` (America/Phoenix on mc.pvpers.us) |
+| `market-day.*` | mc.pvpers.us: off (the market is a permanent stall area at spawn) | The weekly Market Day window and `market-day.timezone` (America/Phoenix on mc.pvpers.us) |
 | `help.*` | — | The `/help` menu |
 
 **Good to know**
