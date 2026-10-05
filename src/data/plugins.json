@@ -92,7 +92,7 @@
   },
   {
     "name": "FrontierEndLock",
-    "description": "In-house. Keeps the End closed so nobody solos the Dragon in week one. It opens on its own on Saturday, Oct 10 at 5 PM Arizona, with countdown broadcasts on the way.",
+    "description": "In-house. Keeps the End closed so nobody solos the Dragon in week one. It opens on its own on Saturday, Oct 17 at 5 PM Arizona, with countdown broadcasts on the way.",
     "icon": "lock",
     "inHouse": true,
     "href": "/plugins/endlock"

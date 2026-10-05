@@ -7,6 +7,11 @@
 // rendered as text (React escapes it), never as HTML. `{enabled: false}`, an
 // empty feed, an older PiStatsAPI (404) or an unreachable host all hide the
 // section.
+//
+// Entries stamped before SEASON2_AT are dropped so pre-launch posts don't
+// show: the feed starts empty at launch and fills from there.
+
+import { SEASON2_AT } from '@/lib/launch';
 
 const UPSTREAM = process.env.PISTATS_URL ?? 'http://stained.dathost.net:17249';
 const REVALIDATE_SECONDS = 60;
@@ -34,7 +39,7 @@ async function fetchGazette(): Promise<GazetteEntry[]> {
     if (!res.ok) return [];
     const data = (await res.json()) as GazetteResponse;
     if (!data.enabled || !Array.isArray(data.entries)) return [];
-    return data.entries;
+    return data.entries.filter((e) => e.timestamp >= SEASON2_AT);
   } catch {
     return [];
   }

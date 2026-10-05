@@ -1077,7 +1077,7 @@ export const plugins: FrontierPlugin[] = [
     oneLine: 'Lock the End until a scheduled date (or until staff open it)',
     what: [
       'Locks the End so a fresh survival server can reach the Dragon fight together instead of one player rushing it in week one. While locked, players without bypass cannot enter an End portal, place End portal frames, or push Eyes of Ender into frames.',
-      'The lock can open **automatically on a schedule** (`unlock-at`), with daily countdown broadcasts and final warnings before it fires; staff can still flip it by hand. Unlocking broadcasts a decorated "The End Has Been Unlocked!" banner. The lock state persists in `config.yml` and the End starts locked on a fresh install. On mc.pvpers.us the End is locked and opens on its own on **Saturday, October 10 at 5 PM Arizona**.',
+      'The lock can open **automatically on a schedule** (`unlock-at`), with daily countdown broadcasts and final warnings before it fires; staff can still flip it by hand. Unlocking broadcasts a decorated "The End Has Been Unlocked!" banner. The lock state persists in `config.yml` and the End starts locked on a fresh install. On mc.pvpers.us the End is locked and opens on its own on **Saturday, October 17 at 5 PM Arizona**.',
     ],
     requires: 'Paper 26.3+, Java 25+',
     optional: 'FrontierAnnouncements (Gazette post when the End opens).',
@@ -1099,7 +1099,7 @@ export const plugins: FrontierPlugin[] = [
     configReload: '`/endlock reload` — for the lock itself, use `/endlock on|off` rather than editing',
     config: [
       { key: 'locked', def: 'true', what: 'Whether the End is currently locked. Written by `/endlock on|off` and again on shutdown' },
-      { key: 'unlock-at', def: '—', what: 'Scheduled automatic unlock (`yyyy-MM-ddTHH:mm`, set with `/endlock schedule`). mc.pvpers.us: 2026-10-10 17:00' },
+      { key: 'unlock-at', def: '—', what: 'Scheduled automatic unlock (`yyyy-MM-ddTHH:mm`, set with `/endlock schedule`). mc.pvpers.us: 2026-10-17 17:00' },
       { key: 'timezone', def: '—', what: 'Zone `unlock-at` and the announcement times are read in (mc.pvpers.us runs `America/Phoenix`)' },
       { key: 'announce.daily-time', def: '—', what: 'Time of day for the daily countdown broadcast' },
       { key: 'announce.final-warnings-minutes', def: '—', what: 'Minutes before the unlock at which final warnings go out' },
