@@ -18,7 +18,7 @@ Website for the mc.pvpers.us Vanilla+ Minecraft server. Built with Next.js, Type
 - Weather-aware UI — header, clouds, and background shift to moody gray tones during rain (light mode)
 - Occasional shooting stars streak across the night sky in dark mode during clear weather (pixelated comet + fading tail, motion aligned to the tilt)
 - World border expansion system explained across home (teaser), about (full tier table with new-chunk estimates), and BlueMap (legend) pages. The tier table is now dynamic — thresholds scale with active player count via the plugin's scaling exponent, and a "Preview" row of buttons (1p / 2p / 3p / 5p / 10p) lets visitors see what the requirements look like at different participation levels
-- Season 2 banner in the home-page hero (`Season2Banner`): autumn stripe, falling pixel leaves, countdown to Monday Oct 5, 2026 at 12 PM Arizona (`SEASON2_AT`; originally Oct 3), swaps to "Season 2 is live" at zero. Replaced the Season 1 launch countdown (`LaunchCountdown`, now unmounted)
+- Season 2 banner in the home-page hero (`Season2Banner`): autumn stripe, falling pixel leaves, countdown to Thursday Oct 15, 2026 at 12 PM Arizona (`SEASON2_AT`; was Oct 3, then Oct 5), swaps to "Season 2 is live" at zero. Replaced the Season 1 launch countdown (`LaunchCountdown`, now unmounted)
 - Live server status (online player count, polled every 30s) below the home-page IP copy, fed by the PiStatsAPI plugin via a server-side proxy — hidden until the launch timestamp passes, then auto-activates without a refresh
 - Live world-border widget on the about page (current radius, weekly playtime, active players, total expansions), fed by the same proxy
 - Leaderboards backed by real player data, split into a **Vanilla** section (Playtime, Deaths, Mob Kills, Blocks Mined, Ores Mined, Distance, Advancements, XP Levels) and a **Plugins** section (Power Level, Peaceful/Outlaw/Violence Rep, Lawmen, Commendations, plus broad **Event Score** and **PvP Wins** totals) via a top `[Vanilla] [Plugins]` toggle, with mc-heads.net player avatars. The granular Boss Rush / PvP role boards live on the `/events/*` tabs; only the broad totals surface here. Served from a warm in-process snapshot (`src/lib/leaderboardSnapshot.ts`) that refreshes in the background, so tab switches are instant and slow upstream calls never sit on a visitor's load. Each tab shows 50 rows, a "Load more" expands to 100, and beyond 100 ranks paginate. Top three ranks are colored gold / silver / bronze. Every player row links through to a full per-player stat profile (`/player/<username>`)
@@ -201,11 +201,11 @@ The 15 in-house plugins are being published as standalone open-source jars (MIT,
 
 ## Season 2: new world on 26.3 (2026-09-24)
 
-Season 2 launches Monday Oct 5, 2026 at 12 PM Arizona (originally Oct 3; see "Launch set for Oct 5 noon" below) on a fresh 26.3 (Wilderness Bound) world, so the Dappled Forest generates naturally.
+Season 2 launches Thursday Oct 15, 2026 at 12 PM Arizona (was Oct 3, then Oct 5; see "Launch moved to Thursday Oct 15" below) on a fresh 26.3 (Wilderness Bound) world, so the Dappled Forest generates naturally.
 
 - **Home hero** — `LaunchCountdown` swapped for `Season2Banner` (countdown to `SEASON2_AT` in `src/lib/launch.ts`). `LAUNCH_AT` is untouched because `LiveServerStatus` still gates on it
 - **Border starts at a 5,000-block radius** (Season 1 was 1,750). Updated on `/about#world-border`, the `/map` legend, and the `BorderTiers` new-chunk estimates (now ~15.8k–82k chunks per tier, recomputed for the 5,000 start). The bigger start is mainly for the Nether: at 1/8 scale it opens around 625 blocks each way instead of ~220
-- **The End is locked for Season 2's first week** — sealed until Saturday Oct 10. `/about` Nether & End expander updated; Season 1's dragon-night unlock kept as history
+- **The End is locked for Season 2's first week** — sealed until Thursday Oct 22, 5 PM Arizona (was Sat Oct 10). `/about` Nether & End expander updated; Season 1's dragon-night unlock kept as history
 - **News** — Season 2 announcement post (id 19), plus the 26.3 update post (id 18) and a new `Version Update` tag color on `/news`
 
 ### Season 2 "Homestead": guardrails + RP push
@@ -232,6 +232,13 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - **Boss Rush**: Pit scales HP + speed (not damage), +75% money/level, the Gauntlet is documented
 - **Stats proxy** (`src/app/api/stats/[...path]/route.ts`) no longer uses Next's fetch cache, which kept serving Season 1 numbers while prod was down. It keeps its own in-memory cache: fresh 30 s, last-good body for at most 5 min during an outage, then 502 so the live widgets hide
 - News post 20 corrected in place; post 21 ("Final Numbers Before Launch") lists what changed for players
+
+### Launch moved to Thursday Oct 15 (2026-10-13)
+
+- `SEASON2_AT` is now Thursday Oct 15, 2026, 12 PM Arizona (`2026-10-15T19:00:00Z`); the banner caption matches
+- The End unlock moved to **Thursday Oct 22, 5 PM Arizona** on `/about`, `plugins.json` and the FrontierEndLock section of `frontier-suite.ts` / `SUITE.md` (`unlock-at` 2026-10-22 17:00). The plugin on the server has to be rescheduled to match (`/endlock schedule 2026-10-22T17:00`)
+- Because `GazetteFeed` filters on `SEASON2_AT`, Gazette entries from Oct 5–15 are now hidden too
+- News post 24 announces the new dates. Post 22 keeps its Monday Oct 5 wording as history
 
 ### Launch set for Oct 5 noon (2026-10-04)
 
