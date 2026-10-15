@@ -577,7 +577,27 @@ html[data-season] .site-header::after {
   animation: forest-ray-shimmer 7s ease-in-out infinite;
 }
 
+/* Oak forest fireflies (dark mode) */
+@keyframes firefly-drift {
+  0%   { transform: translate(0, 0); opacity: 0; }
+  15%  { opacity: 1; }
+  50%  { transform: translate(18px, -26px); opacity: 0.35; }
+  80%  { opacity: 1; }
+  100% { transform: translate(-10px, -48px); opacity: 0; }
+}
+
+.firefly {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: #E8FF8A;
+  box-shadow: 0 0 6px 2px rgba(210, 255, 110, 0.55);
+  opacity: 0;
+  animation: firefly-drift 9s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .firefly { display: none; }
   .season-leaf { display: none; }
   .season-fade-in { animation: none; }
   .forest-ray { animation: none; }

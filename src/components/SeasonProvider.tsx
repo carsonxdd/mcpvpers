@@ -25,9 +25,12 @@ function readOverride(): SeasonOverride {
 
 const SeasonContext = createContext<{
   season: Season | null;
+  // The default look on the pvpers routes (no season) gets the oak forest.
+  // False on tenant/platform routes, which keep the plain legacy backdrop.
+  forest: boolean;
   override: SeasonOverride;
   cycle: () => void;
-}>({ season: null, override: 'auto', cycle: () => {} });
+}>({ season: null, forest: false, override: 'auto', cycle: () => {} });
 
 export function useSeason() {
   return useContext(SeasonContext);
@@ -41,7 +44,9 @@ export default function SeasonProvider({ children }: { children: React.ReactNode
   const pathname = usePathname();
 
   // null on tenant/platform routes → no data-season → legacy look.
-  const season = mounted && isSeasonalPath(pathname) ? resolveSeason(override) : null;
+  const seasonal = mounted && isSeasonalPath(pathname);
+  const season = seasonal ? resolveSeason(override) : null;
+  const forest = seasonal && season === null;
 
   useEffect(() => {
     if (!mounted) return; // keep the pre-paint attribute until we know better
@@ -60,5 +65,5 @@ export default function SeasonProvider({ children }: { children: React.ReactNode
     });
   }, []);
 
-  return <SeasonContext.Provider value={{ season, override, cycle }}>{children}</SeasonContext.Provider>;
+  return <SeasonContext.Provider value={{ season, forest, override, cycle }}>{children}</SeasonContext.Provider>;
 }

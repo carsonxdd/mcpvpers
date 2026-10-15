@@ -268,6 +268,12 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - Shared depth tokens (bevels, layered shadows, recessed slots, lifting link panels, pressable pills) apply site-wide including tenant sites. In light mode, bright accent text (`text-gold/silver/diamond/xp`) gets a darkened outline for readability; add `no-text-outline` to opt a subtree out.
 - Not built yet: winter/spring/summer, a season-aware cloud palette, scroll-reveal. Details are in `.claude/CLAUDE.md`.
 
+### Vanilla oak woods as the default backdrop (2026-10-14)
+
+- With the season toggle on **off** (or any calendar season that isn't enabled), the pvpers pages now get the same scroll descent in a vanilla Minecraft style: blocky leaf-cell canopies, oak and birch logs, a stepped grass floor with tall grass, ferns, flowers, mushrooms, a sheep/pig/cow/chicken, and fireflies at night. Tenant and platform routes still get the plain legacy backdrop.
+- The painter moved into a shared engine, `components/seasons/ForestScene.tsx`; each look is just a `ForestTheme` (palettes, sprites, layer layout). Autumn lives in `Scenery.tsx`, vanilla in `OakVanilla.tsx`.
+- Changes that apply to both looks: the far woods open onto a lake (sky, hazy far shore, water with reflections and glints). Branches are now wood ending in leaf clusters, there are fewer of them, and trunks are thicker. Layer speeds are matched so the canopy never shows sky gaps mid-scroll, and the floor recedes as grass or leaf litter instead of showing a dirt cross-section.
+
 ## Getting Started
 
 ```bash

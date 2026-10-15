@@ -116,7 +116,8 @@ export default function ParallaxBackground() {
   const [scrollY, setScrollY] = useState(0);
   const { theme } = useTheme();
   const { weather } = useWeather();
-  const { season } = useSeason();
+  const { season, forest } = useSeason();
+  const scenic = season !== null || forest;
   const isRaining = weather === 'rain' || weather === 'thunderstorm';
   const isLight = theme === 'light';
 
@@ -257,7 +258,7 @@ export default function ParallaxBackground() {
         className="absolute w-full bottom-0"
         style={{
           // Seasonal scenes stay anchored to the viewport; the legacy terrain drifts down.
-          transform: season ? undefined : `translateY(${scrollY * 0.1}px)`,
+          transform: scenic ? undefined : `translateY(${scrollY * 0.1}px)`,
           opacity: isLight ? 1 : 0,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -286,7 +287,7 @@ export default function ParallaxBackground() {
       <div
         className="absolute w-full bottom-0"
         style={{
-          transform: season ? undefined : `translateY(${scrollY * 0.08}px)`,
+          transform: scenic ? undefined : `translateY(${scrollY * 0.08}px)`,
           opacity: isLight ? 0 : 1,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -311,7 +312,7 @@ export default function ParallaxBackground() {
       />
 
       {/* Seasonal scenery: above the overlay so it isn't washed out, fixed so it never scrolls away */}
-      {season && <Scenery season={season} dark={!isLight} />}
+      {scenic && <Scenery season={season} dark={!isLight} />}
     </div>
   );
 }
