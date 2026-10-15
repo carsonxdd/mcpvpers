@@ -7,10 +7,11 @@ import type { ForestTheme, LayerCfg, Sprite } from './ForestScene';
    saplings and stumps, a campfire, an arctic fox, a wolf and a snow golem.
    Cold pale light by day, moonbeams by night, no fireflies.                 */
 
-const SNOW = '#F8FBFF';
-const SNOW_SHADE = '#D4E0EC';
+export const SNOW = '#F8FBFF';
+export const SNOW_SHADE = '#D4E0EC';
 
-const SPR: Record<string, Sprite> = {
+// Exported for the Christmas theme, which decorates this same taiga.
+export const WINTER_SPRITES: Record<string, Sprite> = {
   snowRock: {
     rows: ['..WWWW..', '.WSWWSW.', 'SSSSSsSS', 'SsSSSSSS', 'dddddddd'],
     pal: { W: SNOW, S: '#8A8E96', s: '#A8ACB4', d: '#5E626A' },
@@ -114,7 +115,7 @@ const PAL_FRONT: string[][] = [
   ['#0E281E', '#163A28', '#204A32', '#2C5C3E', '#3A6E4A'],
 ];
 
-const LAYERS: LayerCfg[] = [
+export const WINTER_LAYERS: LayerCfg[] = [
   { // far — misty spruce over the frozen lake
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
     r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [20, 38], trunkW: [6, 9], frameW: 0, birchChance: 0.15,
@@ -142,8 +143,8 @@ const LAYERS: LayerCfg[] = [
 
 export const WINTER: ForestTheme = {
   travel: 1.42,
-  layers: LAYERS,
-  sprites: SPR,
+  layers: WINTER_LAYERS,
+  sprites: WINTER_SPRITES,
   interior: ['#C8D4E0', '#B4C2D0', '#A0B0C0', '#8C9EB0', '#7A8CA0', '#6A7C90'],
   lake: {
     sky: ['#C0D4E8', '#CADBEC', '#D6E2F0', '#E2EAF4'],

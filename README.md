@@ -295,6 +295,15 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - Fix: the season toggle no longer causes a hydration error when it's set to anything other than Auto.
 - Still to do: rain is still rain in winter, there's no season-aware cloud palette yet, and scroll-reveal isn't built.
 
+### Holiday backdrops: Halloween, Christmas, Easter (2026-10-15)
+
+- Three holidays override the calendar season for a short window (Arizona dates): **Halloween** Oct 20–31, **Christmas** Dec 1–26, and **Easter** from Palm Sunday through Easter Monday (computed each year by `easterSunday` in `src/lib/seasons.ts`). They also sit in the header toggle after winter, so the cycle is auto, spring, summer, autumn, winter, Halloween, Christmas, Easter, off. Their toggle icons are a jack o'lantern, a present and a painted egg.
+- **Halloween** (`seasons/HalloweenWoods.ts`): near-black dark oak and purple crowns with a few orange trees, pale birches and a dusk lake under an orange-to-violet sky. The floor has jack o'lanterns, gravestones, bones, dead bushes, purple mushrooms and a bubbling cauldron, with a zombie, skeleton, witch, spider and black cat. Bats flap across the sky, and orange will-o'-wisps replace the fireflies at night.
+- **Christmas** (`seasons/ChristmasTaiga.ts`): the winter taiga, decorated. Baubles hang on the near spruces, and the snow has presents, candy canes, a red-nosed reindeer, a snowman in a Santa hat and the campfire. Golden fairy lights drift through the trees at night.
+- **Easter** (`seasons/EasterMeadow.ts`): the spring grove with lavender trees added. Painted eggs, baskets, daffodils and chicks are hidden in the grass, with a white rabbit out hunting. Pastel petals fall.
+- Engine: a new opt-in `ForestTheme.ornaments` scatters baubles on foliage in the mid and front layers. `SeasonParticles` kinds can now `fly` in from the left edge and `flap` between frames. The other themes render exactly as before.
+- The pre-paint script in `layout.tsx` duplicates the holiday windows and the Easter calculation. Keep it in sync with `seasons.ts`.
+
 ## Getting Started
 
 ```bash

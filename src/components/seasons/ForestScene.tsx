@@ -74,6 +74,8 @@ export interface ForestTheme {
   lake?: { sky: string[]; shore: string[]; reflection: string; water: string[]; frozen?: boolean };
   // Optional: snow (shadow → bright) settles on every crown, branch and log open to the sky.
   snow?: string[];
+  // Optional: baubles hung on the crowns of the nearer layers (one colour per bauble).
+  ornaments?: string[];
   bark: { main: string[]; hazy: string[]; birch: string[]; birchMark: string };
   logGrain: boolean;     // vertical log grain + straight trunks (vanilla) vs. gnarled bark with a flared base
   light: LightTheme;
@@ -177,6 +179,31 @@ function dustSnow(ctx: CanvasRenderingContext2D, theme: ForestTheme, cfg: LayerC
       if (!at(x, y) || (y > 0 && at(x, y - 1))) continue;
       const d = 1 + deep + (rnd() < 0.55 ? 1 : 0) + (rnd() < 0.2 ? 1 : 0);
       for (let k = 0; k < d && at(x, y + k); k++) dot(ctx, x, y + k, snow[Math.max(0, snow.length - 1 - k)]);
+    }
+  }
+}
+
+// Baubles: scattered on a jittered grid, only where the pixel and the one
+// below it are both foliage (never on snow caps, bark or a crown's edge).
+// Skips the hazy far layer, where they'd read as noise.
+function hangOrnaments(ctx: CanvasRenderingContext2D, theme: ForestTheme, cfg: LayerCfg, W: number, H: number, rnd: Rnd) {
+  const orn = theme.ornaments;
+  if (!orn || cfg.hazyTrunks) return;
+  const hex = (c: string) => parseInt(c.slice(1), 16);
+  const leaf = new Set(cfg.crownPals.flat().map(hex));
+  const src = ctx.getImageData(0, 0, W, H).data;
+  const at = (x: number, y: number) => {
+    if (x < 0 || x >= W || y < 0 || y >= H) return false;
+    const o = (y * W + x) * 4;
+    return src[o + 3] === 255 && leaf.has((src[o] << 16) | (src[o + 1] << 8) | src[o + 2]);
+  };
+  const gap = cfg.cell > 0 ? cfg.cell * 2 : 6;
+  for (let gy = 0; gy < H; gy += gap) {
+    for (let gx = 0; gx < W; gx += gap) {
+      if (rnd() > 0.4) continue;
+      const x = gx + Math.floor(rnd() * gap);
+      const y = gy + Math.floor(rnd() * gap);
+      if (at(x, y) && at(x, y + 1)) dot(ctx, x, y, pick(rnd, orn));
     }
   }
 }
@@ -346,7 +373,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   canvas.height = H;
   canvas.style.width = `${W * px}px`;
   canvas.style.height = `${H * px}px`;
-  const ctx = canvas.getContext('2d', { willReadFrequently: (cfg.interior && !!theme.lake) || !!theme.snow });
+  const ctx = canvas.getContext('2d', { willReadFrequently: (cfg.interior && !!theme.lake) || !!theme.snow || !!theme.ornaments });
   const geo: LayerGeo = { top: 0, px, W, H, groundTop: H, edges: new Array(W).fill(H), canopyBottom: 0, lake: null };
   if (!ctx) return geo;
   const rnd = mulberry32(cfg.seed);
@@ -452,6 +479,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   }
 
   dustSnow(ctx, theme, cfg, W, H, rnd);
+  hangOrnaments(ctx, theme, cfg, W, H, rnd);
 
   // Forest floor + clutter + the odd animal
   const edges = drawGround(ctx, cfg, W, H, groundTop, rnd);

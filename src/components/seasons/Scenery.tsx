@@ -6,6 +6,9 @@ import OakVanilla from './OakVanilla';
 import { SPRING } from './SpringBloom';
 import { SUMMER } from './SummerWoods';
 import { WINTER } from './WinterTaiga';
+import { HALLOWEEN } from './HalloweenWoods';
+import { CHRISTMAS } from './ChristmasTaiga';
+import { EASTER } from './EasterMeadow';
 
 /* ───────────────────────── Autumn forest descent ─────────────────────────
    Painted by ForestScene (shared with the vanilla oak woods and the other
@@ -120,7 +123,10 @@ const AUTUMN: ForestTheme = {
   veil: 'rgba(247, 238, 223, 0.26)',
 };
 
-const THEMES: Record<Season, ForestTheme> = { spring: SPRING, summer: SUMMER, autumn: AUTUMN, winter: WINTER };
+const THEMES: Record<Season, ForestTheme> = {
+  spring: SPRING, summer: SUMMER, autumn: AUTUMN, winter: WINTER,
+  halloween: HALLOWEEN, christmas: CHRISTMAS, easter: EASTER,
+};
 
 // `season` is null on the default look, which gets the vanilla oak woods.
 export default function Scenery({ season, dark, raining }: { season: Season | null; dark: boolean; raining: boolean }) {

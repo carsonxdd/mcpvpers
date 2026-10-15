@@ -11,7 +11,8 @@ const tulip = (petal: string, shade: string): Sprite => ({
   pal: { P: petal, p: shade, g: '#3B7A2A' },
 });
 
-const SPR: Record<string, Sprite> = {
+// Exported for the Easter theme, which builds on this grove.
+export const SPRING_SPRITES: Record<string, Sprite> = {
   ...OAK_SPRITES,
   petals: {
     rows: ['..P...p..', '.pPp.PPp.', 'PpgPpPgpP'],
@@ -79,7 +80,7 @@ const PAL_FRONT: string[][] = [
   ['#9C3E70', '#BE5890', '#DA78AC', '#EE9EC6', '#FAC4DC'],
 ];
 
-const LAYERS: LayerCfg[] = [
+export const SPRING_LAYERS: LayerCfg[] = [
   { // far — hazy pink and green treetops over the lake
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
     r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [20, 38], trunkW: [7, 10], frameW: 0, birchChance: 0.15,
@@ -107,8 +108,8 @@ const LAYERS: LayerCfg[] = [
 
 export const SPRING: ForestTheme = {
   travel: 1.42,
-  layers: LAYERS,
-  sprites: SPR,
+  layers: SPRING_LAYERS,
+  sprites: SPRING_SPRITES,
   interior: ['#C8D8C4', '#B4CAB2', '#A0BAA0', '#8CA88E', '#7A967C', '#6A866C'],
   lake: {
     sky: ['#B0D6F2', '#BEDDF2', '#CCE2F0', '#E2E2EE'],

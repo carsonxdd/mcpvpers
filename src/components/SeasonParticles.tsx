@@ -33,14 +33,24 @@ interface Kind {
   sway: Range;
   opacity: Range;
   canopy: boolean;        // fall out of the canopy (hidden above it) vs. from the sky
+  fly?: boolean;          // enter from the left edge across the upper sky instead of falling
+  flap?: number;          // cycle through `shapes` every this many frames (wing beats)
 }
 
+const SNOW: Kind = {
+  shapes: [[[1]], [[1, 1], [1, 1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
+  count: [28, 70], cells: [[2, 3], [2, 3]],
+  speed: [0.45, 1.1], drift: [0.05, 0.25], sway: [0.2, 0.6], opacity: [0.55, 0.95], canopy: false,
+};
+
+const PETALS: Kind = {
+  shapes: [[[0, 1, 1], [1, 1, 0]], [[1, 1], [1, 0]]],
+  count: [10, 26], cells: [[2, 3], [3, 4]],
+  speed: [0.25, 0.5], drift: [0.25, 0.5], sway: [0.4, 0.9], opacity: [0.65, 0.95], canopy: true,
+};
+
 const KINDS: Record<Season, Kind> = {
-  spring: { // blossom petals on the breeze
-    shapes: [[[0, 1, 1], [1, 1, 0]], [[1, 1], [1, 0]]],
-    count: [10, 26], cells: [[2, 3], [3, 4]],
-    speed: [0.25, 0.5], drift: [0.25, 0.5], sway: [0.4, 0.9], opacity: [0.65, 0.95], canopy: true,
-  },
+  spring: PETALS, // blossom petals on the breeze
   summer: { // pollen and seed fluff hanging in the warm air
     shapes: [[[1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
     count: [8, 18], cells: [[2, 2], [2, 3]],
@@ -52,11 +62,19 @@ const KINDS: Record<Season, Kind> = {
     count: [9, 22], cells: [[3, 4], [4, 5]],
     speed: [0.3, 0.7], drift: [0.12, 0.32], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
   },
-  winter: { // snow, from the sky down through the trees
-    shapes: [[[1]], [[1, 1], [1, 1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
-    count: [28, 70], cells: [[2, 3], [2, 3]],
-    speed: [0.45, 1.1], drift: [0.05, 0.25], sway: [0.2, 0.6], opacity: [0.55, 0.95], canopy: false,
+  winter: SNOW, // snow, from the sky down through the trees
+  halloween: { // bats flapping across the sky
+    shapes: [
+      [[1, 0, 0, 0, 0, 0, 1], [1, 1, 0, 1, 0, 1, 1], [1, 1, 1, 1, 1, 1, 1], [0, 0, 1, 2, 1, 0, 0]],
+      [[0, 0, 0, 1, 0, 0, 0], [0, 1, 1, 1, 1, 1, 0], [1, 1, 1, 2, 1, 1, 1], [1, 0, 0, 0, 0, 0, 1]],
+    ],
+    vein: '#FF5A2A', // eyes
+    count: [4, 9], cells: [[2, 3], [3, 4]],
+    speed: [-0.12, 0.12], drift: [0.7, 1.5], sway: [0.4, 1.1], opacity: [0.85, 1], canopy: false,
+    fly: true, flap: 9,
   },
+  christmas: SNOW,
+  easter: PETALS,
 };
 
 const within = ([a, b]: Range) => a + Math.random() * (b - a);
@@ -95,9 +113,10 @@ export default function SeasonParticles() {
       return line > -30 ? line - 10 - Math.random() * 50 : -(Math.random() * 160) - 30;
     };
 
+    // Flyers cross the upper sky from the left edge.
     const make = (anywhere: boolean): Flake => ({
-      x: Math.random() * canvas.width,
-      y: spawnY(anywhere),
+      x: kind.fly && !anywhere ? -40 - Math.random() * 400 : Math.random() * canvas.width,
+      y: kind.fly ? Math.random() * canvas.height * 0.55 : spawnY(anywhere),
       shape: kind.shapes[Math.floor(Math.random() * kind.shapes.length)],
       cell: Math.round(within(cells)),
       speed: within(kind.speed),
@@ -131,7 +150,8 @@ export default function SeasonParticles() {
         const ox = Math.floor(f.x);
         const oy = Math.floor(f.y);
         ctx.globalAlpha = f.opacity * emerge;
-        f.shape.forEach((row, r) => {
+        const shape = kind.flap ? kind.shapes[Math.floor((frame + f.phase * 10) / kind.flap) % kind.shapes.length] : f.shape;
+        shape.forEach((row, r) => {
           row.forEach((v, c) => {
             if (!v) return;
             ctx.fillStyle = v === 2 && kind.vein ? kind.vein : f.color;

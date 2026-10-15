@@ -54,8 +54,38 @@ const ICONS: Record<Season, string[]> = {
     '...A....',
     '........',
   ],
+  halloween: [ // jack o'lantern
+    '...GG...',
+    '.AAAAAA.',
+    'AAKAAKAA',
+    'AKKAAKKA',
+    'AAAAAAAA',
+    'AKAKKAKA',
+    '.AKKKKA.',
+    '..AAAA..',
+  ],
+  christmas: [ // present
+    '..Y..Y..',
+    '...YY...',
+    'AAAYYAAA',
+    'AAAYYAAA',
+    'YYYYYYYY',
+    'AAAYYAAA',
+    'AAAYYAAA',
+    'AAAYYAAA',
+  ],
+  easter: [ // painted egg
+    '...AA...',
+    '..AAAA..',
+    '.AAAAAA.',
+    '.YYYYYY.',
+    '.AAAAAA.',
+    '.PAPAPA.',
+    '..AAAA..',
+    '...AA...',
+  ],
 };
-const FIXED: Record<string, string> = { Y: '#FFE066', B: '#8B5A2B' };
+const FIXED: Record<string, string> = { Y: '#FFE066', B: '#8B5A2B', G: '#4A8A2A', K: '#2A1408', P: '#F49AC1' };
 
 function SeasonIcon({ season, color }: { season: Season; color: string }) {
   return (

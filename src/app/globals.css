@@ -259,6 +259,150 @@ html.dark[data-season='winter'] {
   --c-panel-bg: rgba(26, 34, 56, 0.8);
 }
 
+/* Halloween — haunted woods at dusk (holiday windows live in lib/seasons.ts) */
+html[data-season='halloween'] {
+  --s-accent: #FF7A1A;
+  --s-accent-2: #6A2C91;
+  --s-accent-3: #FFB347;
+  --s-accent-4: #8BD346;
+  --s-sky-1: #2E2350;
+  --s-sky-2: #4A2E66;
+  --s-sky-3: #7A3E72;
+  --s-sky-4: #C0606A;
+  --s-sky-5: #F0965A;
+  --s-ground-top: #3A2E1E;
+  --s-hill: #241C14;
+  --s-dirt: #1A120C;
+  --s-night-sky-1: #0A0614;
+  --s-night-sky-2: #140C22;
+  --s-night-hill: #120A1A;
+  --s-overlay-rgb: 246, 234, 222;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='halloween'] {
+  --c-bg: #F6ECE0;
+  --c-bg-light: #EEDFCC;
+  --c-bg-lighter: #E4D0B8;
+  --c-surface: #FFF9F2;
+  --c-surface-light: #F4E8DA;
+  --c-border: #D8C2A8;
+  --c-border-light: #BCA084;
+  --c-text: #2A1626;
+  --c-text-dim: #54384A;
+  --c-text-muted: #86687A;
+  --c-panel-bg: rgba(255, 249, 242, 0.88);
+}
+
+html.dark[data-season='halloween'] {
+  --c-bg: #120C1A;
+  --c-bg-light: #1A1224;
+  --c-bg-lighter: #24182F;
+  --c-surface: #22162C;
+  --c-surface-light: #2C1E38;
+  --c-border: #44305A;
+  --c-border-light: #5A4070;
+  --c-panel-bg: rgba(34, 22, 44, 0.82);
+}
+
+/* Christmas — decorated taiga */
+html[data-season='christmas'] {
+  --s-accent: #E0303A;
+  --s-accent-2: #1E7A3A;
+  --s-accent-3: #FFD24A;
+  --s-accent-4: #FFFFFF;
+  --s-sky-1: #6E9AC4;
+  --s-sky-2: #88AED2;
+  --s-sky-3: #A8C4DE;
+  --s-sky-4: #C8DAEC;
+  --s-sky-5: #E6EEF6;
+  --s-ground-top: #F4F8FC;
+  --s-hill: #C8D6E4;
+  --s-dirt: #8A9AAC;
+  --s-night-sky-1: #0A1020;
+  --s-night-sky-2: #101830;
+  --s-night-hill: #141E34;
+  --s-overlay-rgb: 240, 244, 250;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='christmas'] {
+  --c-bg: #F2F5F8;
+  --c-bg-light: #E4EAF0;
+  --c-bg-lighter: #D4DEE8;
+  --c-surface: #FFFDFB;
+  --c-surface-light: #F2F0EE;
+  --c-border: #D4CCC8;
+  --c-border-light: #B8A8A4;
+  --c-text: #1E1A1C;
+  --c-text-dim: #463A3E;
+  --c-text-muted: #7A6A6E;
+  --c-panel-bg: rgba(255, 253, 251, 0.88);
+}
+
+html.dark[data-season='christmas'] {
+  --c-bg: #0E1618;
+  --c-bg-light: #142024;
+  --c-bg-lighter: #1A2A2E;
+  --c-surface: #18262A;
+  --c-surface-light: #203236;
+  --c-border: #2E4A44;
+  --c-border-light: #3E5E56;
+  --c-panel-bg: rgba(24, 38, 42, 0.82);
+}
+
+/* Easter — pastel meadow */
+html[data-season='easter'] {
+  --s-accent: #A47ADE;
+  --s-accent-2: #6E9AE0;
+  --s-accent-3: #FFE48A;
+  --s-accent-4: #F49AC1;
+  --s-sky-1: #6AAAE8;
+  --s-sky-2: #84BAEE;
+  --s-sky-3: #A8CEF4;
+  --s-sky-4: #D2E2F6;
+  --s-sky-5: #EEE0F4;
+  --s-ground-top: #7CC04A;
+  --s-hill: #5A9A34;
+  --s-dirt: #5C402B;
+  --s-night-sky-1: #14122C;
+  --s-night-sky-2: #1C1A34;
+  --s-night-hill: #181A30;
+  --s-overlay-rgb: 250, 244, 255;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='easter'] {
+  --c-bg: #F7F2FC;
+  --c-bg-light: #EEE6F8;
+  --c-bg-lighter: #E2D6F2;
+  --c-surface: #FDFBFF;
+  --c-surface-light: #F4EEFA;
+  --c-border: #D8C8EC;
+  --c-border-light: #BCA6DC;
+  --c-text: #241A32;
+  --c-text-dim: #4A3C5E;
+  --c-text-muted: #7A6C8E;
+  --c-panel-bg: rgba(253, 251, 255, 0.86);
+}
+
+html.dark[data-season='easter'] {
+  --c-bg: #16142A;
+  --c-bg-light: #1E1B34;
+  --c-bg-lighter: #28243E;
+  --c-surface: #24203A;
+  --c-surface-light: #2E2946;
+  --c-border: #463E64;
+  --c-border-light: #5A5078;
+  --c-panel-bg: rgba(36, 32, 58, 0.8);
+}
+
 * {
   box-sizing: border-box;
 }
