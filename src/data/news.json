@@ -1,170 +1,212 @@
 [
   {
-    "id": 24,
-    "date": "2026-10-13",
-    "title": "Season 2 Moves to Thursday Oct 15",
-    "tags": ["Event"],
-    "body": "New date: Season 2 opens Thursday October 15 at 12 PM Arizona. The countdown on the home page is set to it.\n\nThe End stays locked for the first week and opens on its own the following Thursday, October 22 at 5 PM Arizona, with a countdown in chat on the way.\n\nNothing else changes: the fresh 26.3 world with the Dappled Forest at spawn, the 5,000-block border, the shop on day one, land upkeep, opt-in PvP, the spawn market, and Colosseum Night every night at 8 PM Arizona starting launch night.\n\nThe Frontier Gazette on this page starts fresh at launch. Anything posted before then was us testing.\n\nThursday, noon Arizona. See you out there."
-  },
-  {
-    "id": 23,
-    "date": "2026-10-04",
-    "title": "Build a Stall at the Spawn Market",
-    "tags": ["Event"],
-    "body": "Market Day is gone. In its place, the market is part of spawn now, and it is open all the time.\n\nGood citizens get to build there. If you have kept a Peaceful reputation and stayed off the wanted board, ask staff for build permission and put up your own stall. Stock it, put a sign on it, and you have a storefront every new player walks past on their way out of spawn.\n\nSpawn rules cover the market too: no PvP and no fire, so nobody can torch your stall.\n\nNo stall yet? /market still lets you list items for other players any time, and /shop buys and sells the basics."
-  },
-  {
-    "id": 22,
-    "date": "2026-10-04",
-    "title": "Season 2 Starts Monday at Noon",
-    "tags": ["Event"],
-    "body": "Season 2 opens Monday October 5 at 12 PM Arizona. That's the final date, and the countdown on the home page is set to it.\n\nEverything in the last few posts holds: the fresh 26.3 world with the Dappled Forest at spawn, the 5,000-block border, the shop on day one, land upkeep, opt-in PvP and Colosseum Night every night at 8 PM Arizona, starting launch night.\n\nThe End stays locked for the first week. It opens on its own on Saturday October 10 at 5 PM Arizona.\n\nThe Frontier Gazette on this page is cleared and starts fresh at launch. Anything you saw on it before was us testing.\n\nMonday, noon Arizona. See you out there."
-  },
-  {
-    "id": 21,
-    "date": "2026-09-30",
-    "title": "Season 2: Final Numbers Before Launch",
-    "tags": ["Rule Change", "Plugin Update"],
-    "body": "A few things changed after the Homestead post went up, and a couple of things on the site were just wrong. The post and every page are fixed now. Here's what's different.\n\nLand. Starting a land costs $500 (that includes your first 3×3), and extra chunks are $25 each. You start with $300, so your first land takes a little saving, or a friend's land to join. Upkeep is $5 per chunk per day, not $1. The good news: if you're still playing and your land bank runs dry, your land goes into debt instead of losing chunks. Only abandoned lands shrink, and the owner gets 30 days to reclaim them for free with /upkeep reclaim.\n\nNo voice bonus. The +50% login bonus for being on voice chat is gone. Voice chat itself isn't going anywhere: it's on the server and in both modpacks. Press V to check your mic and go talk to your neighbors. It's still the best part of the server.\n\nMoney. Daily login rewards run $80 on day 1 up to $400 at a 14-day streak, and they pay out after your first 10 minutes of play that day. Raid Key runs pay 0.35× and only your first 2 clears a day pay money. Selling to /shop pays a third of the buy price at best and usually less, and each player can only sell a quarter of an item's daily cap. Market sales pay straight to your balance, even when you're offline.\n\nOutlaws. Any robbery puts you on the wanted board. Outlaws can be attacked inside claims, their own included. Combat-logging now leaves your body behind for 5 minutes with everything you were carrying, free for anyone to loot. Bounties are cash now: anyone but an Outlaw can put money on a wanted player with /bounty place <player> <amount> ($250 minimum), and whoever brings them in takes the total. The reputation page has all of it.\n\nColosseum Night is on from launch night: 8 PM Arizona, everyone in the same Knight kit, winner takes a chest with $500, 4 diamonds, 8 XP bottles and a jackpot roll. The Frontier Gazette starts posting to Discord launch morning.\n\nSaturday October 3, 5 PM Arizona. See you out there."
-  },
-  {
-    "id": 20,
-    "date": "2026-09-24",
-    "title": "Season 2: Homestead — What's Changing",
-    "body": "Season 2 has a name: Homestead. Season 1 was a lot of land-grabbing and a lot of looking over your shoulder. This season is about settling in: build something, keep it running, and actually talk to your neighbors. Here's everything new beyond the bigger border.\n\nThe shop is open day one. /shop buys and sells 200 items. Left-click buys one, shift-click buys a stack, right-click sells one, shift-right-click sells everything that matches. Prices don't change during the day. At midnight each item re-prices based on how much everyone bought and sold the day before, so if people dump something, it gets cheap to buy back. The shop only buys so much of each item per day, and only clean, unenchanted, undamaged stuff. For better prices, list items on /market and sell to other players at your own price (5% goes to tax).\n\nLand costs money now. Starting a land costs $500, which covers your first 3×3, and each chunk after that is $25. Every land then pays $5 per chunk per day out of its own land bank, collected at 9 PM Arizona. A 9-chunk base costs $315 a week. Put money in with /lands bank deposit <amount> and check what you owe with /upkeep. New lands get 2 days before the first payment, and owners get a warning 20 hours before a collection the bank can't cover. If the bank can't pay and you're still playing, the land goes into debt instead: it keeps every chunk, can't claim more until the debt is paid, and deposits go to the debt first (/upkeep debt shows it). A land nobody has played in 14 days, or one that owes more than 14 days of upkeep, loses its newest chunks, and anything on them is unprotected. That means lootable and griefable. The owner can take them back free within 30 days with /upkeep reclaim if nobody else claimed them first. Your own balance is never touched. Upkeep is there so abandoned claims don't lock up the map forever.\n\nPvP is opt-in, for real this time. Last season some people teleported to others and killed them point blank, and a few geared players made it miserable to leave your land. That's not the server we want. Season 2 has in-game guardrails: other players can't hit or shoot you unless you've typed /pvp on (except in the colosseum ring), for 5 seconds after any teleport you can't hit or be hit, and other players can't attack you within 100 blocks of spawn. If you want a fight, opt in or head to the colosseum.\n\nColosseum Night. Every night at 8 PM Arizona the colosseum runs a PvP event, with the mode rotating from night to night. Everyone fights in the same Knight kit and gets their own gear back after. The winner takes a chest: $500, 4 diamonds, 8 XP bottles and a jackpot roll. The ring is also a PvP zone any time there's no event: step in and PvP is on for you, whether or not you've typed /pvp on (walking in asks you to confirm). Kills in the ring never affect anyone's rep, but outside events a death there drops your items on the ring floor for the taking, with no grave. It's the one place where fighting is the point.\n\nSpawn is protected. You spawn in a huge Dappled Forest, and it's there for everyone to use. Meet people, trade, set up shop, hang out. Nobody can claim land at spawn and fire doesn't spread or burn there, so nobody gets to torch it on day one.\n\nFlying and walking through land. Elytra flight works over every land for everyone. Walking into someone's land is always allowed and owners can't turn it off. Land wars are disabled this season. Your claims are safe from capture. Your chests, doors and builds are still locked to your trusted players.\n\nTalk to people. We'd love this season to have more roleplay, like running a trading post, playing sheriff, or feuding with the next town over. None of it is required, and nobody gets punished for keeping to themselves. Instead we're adding reasons to talk, all live from day one: Simple Voice Chat built into the server and both modpacks, a Sunday shoutout in Discord and in-game for the most-commended players (so /commend the people who made your week), lawman and outlaw titles next to your name in chat and Tab, up to 30% off land upkeep for towns with more active members, and Market Day every Saturday at 7 PM Arizona next to spawn (/warp market). The biggest moments get written up in the Frontier Gazette. Press V to set up your mic. The home page has the full list.\n\nThe one rule is still the one rule: don't cheat. Everything above is the server doing the enforcing so staff doesn't have to. Saturday October 3, 5 PM Arizona.",
-    "tags": ["Event", "Rule Change", "Plugin Update"]
-  },
-  {
-    "id": 19,
-    "date": "2026-09-24",
-    "title": "Season 2 — New World, Saturday Oct 3",
-    "body": "Season 2 starts Saturday October 3 at 5 PM Arizona. It's a brand new world, generated fresh on 26.3, so the Dappled Forest shows up naturally out in the wild instead of only at a warp.\n\nThe big change: the border starts at a 5,000-block radius, up from 1,750. That fixes the Nether. The Nether border runs at 1/8 scale, so last season it opened at barely 220 blocks each way, which was way too cramped. This time it starts around 625 each way. The border still grows every night at 9 PM based on how much everyone plays, same tiers as before.\n\nThe End is locked for the first week. The portal's findable, but it stays sealed until Saturday October 10.\n\nTo get ready: make sure your CurseForge profile is on 26.3 (see the last post if you haven't moved it over yet). Countdown's on the home page.",
-    "tags": ["Event", "Map Expansion"]
-  },
-  {
-    "id": 18,
-    "date": "2026-09-19",
-    "title": "We're on 26.3 — Come See the Dappled Forest",
-    "body": "The server is updated to Minecraft 26.3 (Wilderness Bound). Hop on at mc.pvpers.us, you'll need a 26.3 client to connect.\n\nFirst stop: /warp dappledforest. That drops you in the new autumn biome, poplar trees, shelf mushrooms, and all the orange you could want. While you're there, try out the new wool and concrete slabs and stairs (all 16 colors, and the wool ones muffle sound). Also new: cushions you can actually sit on, straw beds that skip the night without moving your spawn, and abandoned camps with loot scattered around the wild.\n\nMoving your modpack to 26.3 in CurseForge: click on your pvpers profile, then the three dots next to Play, and hit Clone As. Make sure you select the new 26.3 version. Your old profile stays put as a backup.\n\nHeads up: cloning resets the RAM you set, so go back into Profile Options and set it again. The QoL pack wants 8–10 GB (8192–10240 MB). If you're on FPS Boost, 4 GB still works, but give it more if you've got it.\n\nLast thing: Simple Voice Chat is in both packs, so use it. Press V to open the voice menu, set your mic, and talk to whoever's nearby. It's more fun than typing in chat.",
-    "tags": ["Version Update", "Event"]
-  },
-  {
-    "id": 17,
-    "date": "2026-06-14",
-    "title": "Shop Tuning — Selling Pays Less",
-    "body": "The server store just got a rebalance. Selling raw goods to the shop now pays about half of what it did before — buy prices haven't changed, so the gap between what you pay and what you get back is wider.\n\nWhy: the old sell rates were pumping too much money into the economy and feeding inflation. Trimming the payouts keeps cash worth something. If you want top dollar for your loot, the player market (/market) is still the place to set your own price.",
-    "tags": ["Plugin Update", "Rule Change"]
-  },
-  {
-    "id": 16,
-    "date": "2026-06-14",
-    "title": "Survivors Rewarded — Totems Handed Out, Death Counts Wiped",
-    "body": "Stayin' alive finally paid off. We tallied up everyone with at least three hours on the trail and handed a Totem of Undying to the five with the fewest deaths: chevyfps, sunnynomoney, 1ckyv1cky, proxerr, and zombiecasino. Wear 'em well.\n\nWith that settled, every player's death count has been wiped back to zero — fresh slate for the leaderboards. The Deaths board on the site now starts over from here, so the next round of survivors is anyone's to win.",
-    "tags": ["Event"]
-  },
-  {
     "id": 1,
-    "date": "2026-05-19",
-    "title": "Launch is this Saturday — May 23, 5pm Arizona",
-    "body": "We flip the switch Saturday May 23rd at 5pm Arizona time. Hop on, claim some land, start poking around.\n\nThe world border opens at the starting radius and grows weekly based on combined playtime — the more we play, the more world we get. See the Reputation and About pages for how border + rep work at launch.\n\nThe End is locked. The portal's findable, but you can't enter it yet — we're saving the dragon for the group.",
-    "tags": ["Event"]
+    "date": "2026-05-10",
+    "title": "Pre-Launch Polls Are Open",
+    "body": "Help shape the server before it goes live — polls are open at /polls. Vote on stuff that's still up in the air. We'll close them at launch and bake the results in.",
+    "tags": [
+      "Event"
+    ]
   },
   {
     "id": 2,
     "date": "2026-05-19",
-    "title": "Dragon Fight Planned — Saturday May 30",
-    "body": "We're planning to take down the Ender Dragon together on Saturday May 30th, one week after launch. If that night doesn't work for everyone, we'll move it.\n\nThe End stays locked until then. Bring beds, blocks, bows.",
-    "tags": ["Event"]
+    "title": "Launch is this Saturday — May 23, 5pm Arizona",
+    "body": "We flip the switch Saturday May 23rd at 5pm Arizona time. Hop on, claim some land, start poking around.\n\nThe world border opens at the starting radius and grows weekly based on combined playtime — the more we play, the more world we get. See the Reputation and About pages for how border + rep work at launch.\n\nThe End is locked. The portal's findable, but you can't enter it yet — we're saving the dragon for the group.",
+    "tags": [
+      "Event"
+    ]
   },
   {
     "id": 3,
-    "date": "2026-05-10",
-    "title": "Pre-Launch Polls Are Open",
-    "body": "Help shape the server before it goes live — polls are open at /polls. Vote on stuff that's still up in the air. We'll close them at launch and bake the results in.",
-    "tags": ["Event"]
+    "date": "2026-05-19",
+    "title": "Dragon Fight Planned — Saturday May 30",
+    "body": "We're planning to take down the Ender Dragon together on Saturday May 30th, one week after launch. If that night doesn't work for everyone, we'll move it.\n\nThe End stays locked until then. Bring beds, blocks, bows.",
+    "tags": [
+      "Event"
+    ]
   },
   {
     "id": 4,
     "date": "2026-05-23",
     "title": "Day One — Everything the Frontier Launched With",
     "body": "The server is live. For the record, here's everything that shipped on day one.\n\nThe reputation system: everyone starts as a Pacifist — you can't die to PvP in the wild. Instead you get knocked out, and the attacker can rob you of one hotbar stack. Kill peaceful players and you go on the wanted board; hunt outlaws, take the deputy badge, and climb the lawman ladder from Citizen to Marshal. Bounties are real escrowed items, /report files complaints, /commend rewards good neighbors, and the wanted posters live right here on the site.\n\nDying drops your stuff into a grave with your head on it — graves never despawn, and your XP comes back when you open yours. PvP kills can drop the victim's head. There's offline mail (/mail, /mailbox), item delivery (/senditem), and scam-proof trading (/trade).\n\nThe world border starts small and grows with combined playtime — the more we play, the more world we get. Land claims (/lands), mcMMO skills, proximity voice chat, and the live map round it out. The End is locked until we take the dragon together.",
-    "tags": ["Event", "Plugin Update"]
+    "tags": [
+      "Event",
+      "Plugin Update"
+    ]
   },
   {
     "id": 5,
     "date": "2026-05-27",
     "title": "Grief Doesn't Pay — Block Logging Is On",
     "body": "Every block placed or broken on the server is now logged and reversible (CoreProtect). If someone torches your base, it gets rolled back and the log says exactly who did it. Griefing is now a guaranteed-loss move.\n\nBonus: land claims now show up on the live map at map.pvpers.us, so you can see who's settled where.",
-    "tags": ["Plugin Update"]
+    "tags": [
+      "Plugin Update"
+    ]
   },
   {
     "id": 6,
     "date": "2026-05-30",
     "title": "The Dragon Is Dead — The End Is Open",
     "body": "We did it. The Ender Dragon went down on group night, and the End is now permanently unlocked — elytra, shulkers, end cities, all of it is fair game.\n\nThe portal's where you left it. Bring blocks.",
-    "tags": ["Event"]
+    "tags": [
+      "Event"
+    ]
   },
   {
     "id": 7,
     "date": "2026-05-30",
     "title": "Reputation Update — Warmode, Bunker-Busting, Faster Commends",
     "body": "Big reputation patch. The headline: /pvp warmode. Pacifists and Retired players can now opt into PvP with /pvp on. The default got safer too — if you haven't opted in, you can neither deal nor take PvP damage in the wild. Opted-in pacifists keep their knockout protection but can earn violence rep toward the lawman ladder, and as a perk, warmode players grind mcMMO 5% faster.\n\nOutlaws can no longer hide in PvP-off claims. If you're wanted, your claim won't save you — bounty hunters can reach you anywhere. Everyone else keeps full claim protection.\n\nCommends got friendlier: the per-recipient cooldown dropped from 7 days to 12 hours (since tuned down further to 6), and /commend list shows every commendation you've received — who gave it, why, and when.",
-    "tags": ["Plugin Update", "Rule Change"]
+    "tags": [
+      "Plugin Update",
+      "Rule Change"
+    ]
   },
   {
     "id": 8,
     "date": "2026-05-30",
     "title": "Quality of Life — Shorter Commands",
     "body": "Dropped the 'pi' prefix from commands across the board. /pitab is now /tab (so /tab hide to clean up your tab list), and there's a new /graves command that lists every grave you've got waiting. Everything you already had still works the same — stats, playtime, and graves all carried over untouched.",
-    "tags": ["Plugin Update"]
+    "tags": [
+      "Plugin Update"
+    ]
   },
   {
     "id": 9,
     "date": "2026-06-01",
     "title": "The Border Now Grows Every Night at 9 PM",
     "body": "Border expansion is now a nightly event: once a day at 9 PM Arizona, the border grows based on everyone's combined playtime from the previous day. Play more, get more world — and now you can actually watch it happen.\n\nWe also fixed the scaling math. The old formula punished busy nights so hard that the border was pinned to the minimum +100 no matter how much everyone played. Group playtime actually counts now — big nights mean big expansions.",
-    "tags": ["Map Expansion", "Plugin Update"]
+    "tags": [
+      "Map Expansion",
+      "Plugin Update"
+    ]
   },
   {
     "id": 10,
     "date": "2026-06-13",
     "title": "The Pit Opens — Boss Rush Raids & the PvP Arena",
     "body": "A colosseum now stands about 650 blocks from spawn, and it's running events. Type /event to open the hub.\n\nBoss Rush: party up against six raids — from the Zombie King up through Korrin Brakkus, the Undefeated. Waves of armored mobs trickle in, then the boss. You get limited lives, role kits (tank, healer, dps, ranged, trapper, berserker), placeable cobwebs and barricades for crowd control, and a payout split by performance — top damage, best tank, best support all earn bonuses.\n\nWant it harder? Raids run at a Pit level (1–5): mobs hit harder and have way more health, but payouts and loot chances climb with it. Clear a raid and everyone rolls loot — common, rare on a lucky roll, and a shot at an epic (top-3 scorers get better odds): named armor and weapons, Fortune and Silk Touch picks, even a fishing rod if the right boss falls. Run it at Pit 1 or higher and won epics come back PITFORGED: enchants past the vanilla cap, found nowhere else in the game. One rule: it's clear or nothing — wipe the raid and there's no payout and no loot.\n\nPvP is live too: Team Deathmatch and Free-For-All with kits, fort barricades you can build and enemies can siege, kill payouts, win pools, and an MVP bonus. Anyone can spectate a running event with /event spectate.\n\nEvery event runs in a gear mode: [KIT] (green — gear provided, your inventory is vaulted and fully restored, zero risk), [BYOG] (gold — bring your own gear, but deaths never drop it), or [HARDCORE] (red — the real-stakes mode: die and your inventory drops where you fell, free for anyone to grab). Own-gear events make you click through a warning before joining, so nobody gets surprised. Arena fights never touch your reputation — no murders, no bounties, no knockouts from event kills.",
-    "tags": ["Event", "Plugin Update"]
+    "tags": [
+      "Event",
+      "Plugin Update"
+    ]
   },
   {
     "id": 11,
     "date": "2026-06-13",
     "title": "Money Hits the Frontier — /shop and /market",
     "body": "The Frontier has an economy now. Everyone gets $100 to start — check your pocket with /bal, see who's rich with /baltop, pay people with /pay.\n\n/shop opens the server store: 104 items across 7 categories — and prices move like a stock ticker. Once a day at midnight, every item re-prices off what the server actually traded: dump a mountain of iron and tomorrow iron pays less (and costs less to buy back — buy and sell move together). Quiet items drift back toward normal, and nothing ever swings past 60%–140% of base. Prices hold steady all day, so what you see is what you get until midnight. The shop also only buys so much of each item per day — hit the warehouse cap and it stops buying until tomorrow. One catch: only clean items sell. Renamed, enchanted, or damaged gear won't vendor — you can't cash out event loot.\n\n/market is the player-to-player side: browse what people are selling, or hold a stack and type /market sell <price> to list it. Sellers pay a small fee, and if you're offline when it sells, the money lands in your mailbox.\n\nWhere does money come from? Events. Boss Rush clears and PvP matches both pay out — participation, kills, wins, and MVP bonuses. Fight, earn, spend.",
-    "tags": ["Plugin Update", "Rule Change"]
+    "tags": [
+      "Plugin Update",
+      "Rule Change"
+    ]
   },
   {
     "id": 12,
     "date": "2026-06-13",
     "title": "Frontier Housekeeping",
     "body": "Endermen can no longer steal blocks. They'll still teleport around being creepy, but your builds are safe — and creepers still work, so don't get cocky.\n\nReputation now completely ignores arena combat: kills in events don't make you a murderer, don't trigger bounties, and players who opted out of PvP can still fight in the colosseum.\n\nPlus the usual round of fixes and new in-game announcements pointing at all of the above.",
-    "tags": ["Plugin Update", "Rule Change"]
+    "tags": [
+      "Plugin Update",
+      "Rule Change"
+    ]
   },
   {
     "id": 13,
     "date": "2026-06-13",
     "title": "Raid Keys — Start Your Own Raids",
     "body": "You don't need an admin to raid anymore. Every player now carries a Raid Key — type /event key at the colosseum to open your key board.\n\nYour key starts at Pit 0 with the first raid unlocked. Clear a raid and the next one opens; clear all six at a level and your key levels up to the next Pit — tougher mobs, bigger payouts, better loot, all the way to Pit 5. Everyone who fights in a clear gets credit on their own key, so you can be carried by stronger friends and still make progress.\n\nThe catch: starting a run costs money ($150 at Pit 0, climbing with the Pit), win or lose — and if you wipe a run at your key's level, the key DEPLETES a Pit until you win one back a level down. You get 3 starts a day. Joining someone else's run? Always free, unlimited. Watch chat for the ⚷ broadcast when someone opens a run.\n\nKey runs pay out a bit less than admin events — and like any raid, a wipe pays nothing — but they're yours to start whenever the arena's open. Bring a party.",
-    "tags": ["Event", "Plugin Update"]
+    "tags": [
+      "Event",
+      "Plugin Update"
+    ]
   },
   {
     "id": 14,
     "date": "2026-06-13",
     "title": "Daily Login Rewards Are Live",
     "body": "Log in each day and get paid. Your first join of the day drops cash plus a haul of loot straight into your inventory — no command needed, it just lands a few seconds after you spawn.\n\nThe catch: it's a streak. Show up two days in a row and the payout climbs; day 1 starts at $100 and grows to $500 by a 14-day streak. Miss a day and the streak resets to 1, so keep it going. Hit a milestone day and you'll get bonus loot — and the whole server hears about it.\n\nRun /daily anytime to check your current streak, your best streak, and what tomorrow pays.",
-    "tags": ["Plugin Update"]
+    "tags": [
+      "Plugin Update"
+    ]
   },
   {
     "id": 15,
     "date": "2026-06-13",
     "title": "The Site Caught Up — Economy, Events & Deeper Profiles",
     "body": "The website got a big update to match everything now live on the server. A few things worth a click:\n\nThere's a new Economy page that lays out how money works — the shop's daily price ticker, the player market, and where cash comes from and goes. The Events hub has full Boss Rush raid pages (every boss, Pit levels, and the loot tables) plus a PvP Arena page with payouts and live boards.\n\nPlayer profiles go a lot deeper now: click any name on the leaderboards to see that player's advancements, mcMMO skills, reputation, and event stats. The leaderboards themselves are split into Vanilla and Plugins sections with new boards — Balance, Power Level, Event Score, PvP Wins, and more.\n\nWe also tidied the navigation into a handful of menus instead of a wall of tabs, and every page is now linked in the footer. Have a look around.",
-    "tags": ["Site Update"]
+    "tags": [
+      "Site Update"
+    ]
+  },
+  {
+    "id": 16,
+    "date": "2026-06-14",
+    "title": "Survivors Rewarded — Totems Handed Out, Death Counts Wiped",
+    "body": "Stayin' alive finally paid off. We tallied up everyone with at least three hours on the trail and handed a Totem of Undying to the five with the fewest deaths: chevyfps, sunnynomoney, 1ckyv1cky, proxerr, and zombiecasino. Wear 'em well.\n\nWith that settled, every player's death count has been wiped back to zero — fresh slate for the leaderboards. The Deaths board on the site now starts over from here, so the next round of survivors is anyone's to win.",
+    "tags": [
+      "Event"
+    ]
+  },
+  {
+    "id": 17,
+    "date": "2026-06-14",
+    "title": "Shop Tuning — Selling Pays Less",
+    "body": "The server store just got a rebalance. Selling raw goods to the shop now pays about half of what it did before — buy prices haven't changed, so the gap between what you pay and what you get back is wider.\n\nWhy: the old sell rates were pumping too much money into the economy and feeding inflation. Trimming the payouts keeps cash worth something. If you want top dollar for your loot, the player market (/market) is still the place to set your own price.",
+    "tags": [
+      "Plugin Update",
+      "Rule Change"
+    ]
+  },
+  {
+    "id": 18,
+    "date": "2026-09-19",
+    "title": "We're on 26.3 — Come See the Dappled Forest",
+    "body": "The server is updated to Minecraft 26.3 (Wilderness Bound). Hop on at mc.pvpers.us, you'll need a 26.3 client to connect.\n\nFirst stop: /warp dappledforest. That drops you in the new autumn biome, poplar trees, shelf mushrooms, and all the orange you could want. While you're there, try out the new wool and concrete slabs and stairs (all 16 colors, and the wool ones muffle sound). Also new: cushions you can actually sit on, straw beds that skip the night without moving your spawn, and abandoned camps with loot scattered around the wild.\n\nMoving your modpack to 26.3 in CurseForge: click on your pvpers profile, then the three dots next to Play, and hit Clone As. Make sure you select the new 26.3 version. Your old profile stays put as a backup.\n\nHeads up: cloning resets the RAM you set, so go back into Profile Options and set it again. The QoL pack wants 8–10 GB (8192–10240 MB). If you're on FPS Boost, 4 GB still works, but give it more if you've got it.\n\nLast thing: Simple Voice Chat is in both packs, so use it. Press V to open the voice menu, set your mic, and talk to whoever's nearby. It's more fun than typing in chat.",
+    "tags": [
+      "Version Update",
+      "Event"
+    ]
+  },
+  {
+    "id": 19,
+    "date": "2026-09-24",
+    "title": "Coming Up: Season 2, a New World on Thursday Oct 15",
+    "body": "Coming up: Season 2 opens Thursday October 15 at 12 PM Arizona. It's a brand new world, generated fresh on 26.3, so the Dappled Forest shows up naturally out in the wild instead of only at a warp.\n\nThe big change: the border starts at a 5,000-block radius, up from 1,750. That fixes the Nether. The Nether border runs at 1/8 scale, so last season it opened at barely 220 blocks each way, which was way too cramped. This time it starts around 625 each way. The border still grows every night at 9 PM based on how much everyone plays, same tiers as before.\n\nThe End is locked for the first week. The portal's findable, but it stays sealed until Thursday October 22 at 5 PM Arizona, when it opens on its own.\n\nTo get ready: make sure your CurseForge profile is on 26.3 (see the last post if you haven't moved it over yet). The countdown's on the home page.",
+    "tags": [
+      "Event",
+      "Map Expansion"
+    ]
+  },
+  {
+    "id": 20,
+    "date": "2026-09-24",
+    "title": "Season 2: Homestead — What's Changing",
+    "body": "Season 2 has a name: Homestead. Season 1 was a lot of land-grabbing and a lot of looking over your shoulder. This season is about settling in: build something, keep it running, and actually talk to your neighbors. Here's everything new beyond the bigger border. It all goes live Thursday October 15 at 12 PM Arizona.\n\nThe shop is open day one. /shop buys and sells 200 items. Left-click buys one, shift-click buys a stack, right-click sells one, shift-right-click sells everything that matches. Prices don't change during the day. At midnight each item re-prices based on how much everyone bought and sold the day before, so if people dump something, it gets cheap to buy back. Selling pays a third of the buy price at best and usually less, each player can only sell a quarter of an item's daily cap, and the shop only takes clean, unenchanted, undamaged stuff. For better prices, list items on /market and sell to other players at your own price (5% goes to tax). Market sales pay straight to your balance, even when you're offline.\n\nMoney. You start with $300. Daily login rewards run $80 on day 1 up to $400 at a 14-day streak, and they pay out after your first 10 minutes of play that day. Raid Key runs pay 0.35× and only your first 2 clears a day pay money.\n\nLand costs money now. Starting a land costs $500, which covers your first 3×3, and each chunk after that is $25. Every land then pays $5 per chunk per day out of its own land bank, collected at 9 PM Arizona. A 9-chunk base costs $315 a week. Put money in with /lands bank deposit <amount> and check what you owe with /upkeep. New lands get 2 days before the first payment, and owners get a warning 20 hours before a collection the bank can't cover. If the bank can't pay and you're still playing, the land goes into debt instead: it keeps every chunk, can't claim more until the debt is paid, and deposits go to the debt first (/upkeep debt shows it). Only abandoned lands shrink. A land nobody has played in 14 days, or one that owes more than 14 days of upkeep, loses its newest chunks, and anything on them is unprotected, which means lootable and griefable. The owner can take them back free within 30 days with /upkeep reclaim if nobody else claimed them first. Your own balance is never touched.\n\nPvP is opt-in, for real this time. Last season some people teleported to others and killed them point blank, and a few geared players made it miserable to leave your land. That's not the server we want. Other players can't hit or shoot you unless you've typed /pvp on (except in the colosseum ring), for 5 seconds after any teleport you can't hit or be hit, and other players can't attack you within 100 blocks of spawn. If you want a fight, opt in or head to the colosseum.\n\nOutlaws. Any robbery puts you on the wanted board. Outlaws can be attacked inside claims, their own included. Combat-logging leaves your body behind for 5 minutes with everything you were carrying, free for anyone to loot. Bounties are cash: anyone but an Outlaw can put money on a wanted player with /bounty place <player> <amount> ($250 minimum), and whoever brings them in takes the total. The reputation page has all of it.\n\nColosseum Night. Every night at 8 PM Arizona, starting launch night, the colosseum runs a PvP event, with the mode rotating from night to night. Everyone fights in the same Knight kit and gets their own gear back after. The winner takes a chest: $500, 4 diamonds, 8 XP bottles and a jackpot roll. The ring is also a PvP zone any time there's no event: step in and PvP is on for you, whether or not you've typed /pvp on (walking in asks you to confirm). Kills in the ring never affect anyone's rep, but outside events a death there drops your items on the ring floor for the taking, with no grave.\n\nSpawn is protected. You spawn in a huge Dappled Forest, and it's there for everyone to use. Meet people, trade, hang out. Nobody can claim land at spawn and fire doesn't spread or burn there. The market is part of spawn too, with player stalls (more in the Oct 4 post).\n\nFlying and walking through land. Elytra flight works over every land for everyone. Walking into someone's land is always allowed and owners can't turn it off. Land wars are disabled this season, so your claims are safe from capture. Your chests, doors and builds are still locked to your trusted players.\n\nTalk to people. We'd love this season to have more roleplay, like running a trading post, playing sheriff, or feuding with the next town over. None of it is required, and nobody gets punished for keeping to themselves. Instead we're adding reasons to talk, all live from day one: Simple Voice Chat built into the server and both modpacks (press V to set up your mic), a Sunday shoutout in Discord and in-game for the most-commended players (so /commend the people who made your week), lawman and outlaw titles next to your name in chat and Tab, up to 30% off land upkeep for towns with more active members, and the spawn market. The biggest moments get written up in the Frontier Gazette, which starts posting to Discord launch morning. The home page has the full list.\n\nThe one rule is still the one rule: don't cheat. Everything above is the server doing the enforcing so staff doesn't have to. Thursday October 15, noon Arizona.",
+    "tags": [
+      "Event",
+      "Rule Change",
+      "Plugin Update"
+    ]
+  },
+  {
+    "id": 21,
+    "date": "2026-10-04",
+    "title": "Build a Stall at the Spawn Market",
+    "body": "The market is part of spawn now, and it is open all the time. It replaces the weekly Market Day we had planned.\n\nGood citizens get to build there. If you have kept a Peaceful reputation and stayed off the wanted board, ask staff for build permission and put up your own stall. Stock it, put a sign on it, and you have a storefront every new player walks past on their way out of spawn.\n\nSpawn rules cover the market too: no PvP and no fire, so nobody can torch your stall.\n\nNo stall yet? /market still lets you list items for other players any time, and /shop buys and sells the basics.",
+    "tags": [
+      "Event"
+    ]
+  },
+  {
+    "id": 22,
+    "date": "2026-10-13",
+    "title": "Season 2 Opens Thursday Oct 15 at Noon",
+    "body": "It's final: Season 2 opens Thursday October 15 at 12 PM Arizona, and the countdown on the home page is set to it. This replaces the earlier launch dates you may have seen (Saturday October 3, then Monday October 5).\n\nThe End stays locked for the first week and opens on its own the following Thursday, October 22 at 5 PM Arizona, with a countdown in chat on the way.\n\nEverything else holds: the fresh 26.3 world with the Dappled Forest at spawn, the 5,000-block border, the shop on day one, land upkeep, opt-in PvP, the spawn market, and Colosseum Night every night at 8 PM Arizona starting launch night.\n\nThe Frontier Gazette on this page starts fresh at launch. Anything posted before then was us testing.\n\nThursday, noon Arizona. See you out there.",
+    "tags": [
+      "Event"
+    ]
   }
 ]
