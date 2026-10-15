@@ -47,8 +47,8 @@ export default function RootLayout({
                 if (!skip) {
                   const o = localStorage.getItem('mc-season');
                   const m = new Date(Date.now() - 7 * 3600 * 1000).getUTCMonth();
-                  const cal = m >= 8 && m <= 10 ? 'autumn' : null; // only autumn is enabled
-                  const s = o === 'off' ? null : (o === 'autumn' ? 'autumn' : (!o || o === 'auto' ? cal : null));
+                  const cal = m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter';
+                  const s = o === 'off' ? null : (['spring', 'summer', 'autumn', 'winter'].indexOf(o) >= 0 ? o : cal);
                   if (s) document.documentElement.setAttribute('data-season', s);
                 }
               } catch(e) {}

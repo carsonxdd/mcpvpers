@@ -61,6 +61,7 @@ export interface LayerCfg {
   soil: string[];        // sparse specks in the floor
   clutter: { gap: [number, number]; kinds: string[] } | null;
   fauna?: string[];      // placed once each on the floor
+  conifer?: number;      // chance a canopy crown is a tiered spruce instead of a round crown
   seed: number;
 }
 
@@ -70,7 +71,9 @@ export interface ForestTheme {
   sprites: Record<string, Sprite>;
   interior: string[];    // top → floor (hazy distant woods; unused when `lake` is set)
   // Optional: the far layer opens onto a lake instead — sky, a hazy far shore, water.
-  lake?: { sky: string[]; shore: string[]; reflection: string; water: string[] };
+  lake?: { sky: string[]; shore: string[]; reflection: string; water: string[]; frozen?: boolean };
+  // Optional: snow (shadow → bright) settles on every crown, branch and log open to the sky.
+  snow?: string[];
   bark: { main: string[]; hazy: string[]; birch: string[]; birchMark: string };
   logGrain: boolean;     // vertical log grain + straight trunks (vanilla) vs. gnarled bark with a flared base
   light: LightTheme;
@@ -124,6 +127,57 @@ function drawCrown(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
     const x = cx + Math.cos(a) * rad * 1.2;
     const y = cy + Math.sin(a) * rad;
     dot(ctx, x, y, rnd() < 0.6 ? pal[pal.length - 1] : pal[0]);
+  }
+}
+
+// Spruce: tiers that widen towards the base, each with a lit top and a dark
+// underside. The tip sits where a round crown's top would (cy - r).
+function drawSpruce(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, pal: string[], rnd: Rnd, darkBias: number, cell: number) {
+  const unit = cell > 0 ? cell : 1;
+  const top = -r;
+  const h = r * 2.6;
+  const tiers = r >= 12 ? 4 : 3;
+  const ox = Math.round(cx) - Math.floor(unit / 2);
+  const oy = Math.round(cy);
+  for (let my = Math.floor(top / unit) * unit; my <= top + h; my += unit) {
+    const tt = (my + unit / 2 - top) / h;
+    if (tt < 0 || tt > 1) continue;
+    const f = (tt * tiers) % 1;
+    const hw = r * 0.95 * (0.18 + 0.82 * tt) * (0.5 + 0.5 * f) + 0.5;
+    for (let mx = -Math.ceil(hw / unit) * unit; mx <= hw; mx += unit) {
+      if (Math.abs(mx + unit / 2) > hw + (rnd() - 0.5) * unit) continue;
+      const base = 2 - (mx / hw) * 0.9 + (0.4 - f) * 1.4 - darkBias + (rnd() - 0.5) * 0.8;
+      for (let y = 0; y < unit; y++) {
+        for (let x = 0; x < unit; x++) {
+          let s = base + (rnd() - 0.5) * (cell > 0 ? 1.2 : 0.9);
+          if (cell >= 4 && y === unit - 1) s -= 0.5;
+          dot(ctx, ox + mx + x, oy + my + y, pal[clamp(Math.round(s), 0, pal.length - 1)]);
+        }
+      }
+    }
+  }
+}
+
+// Snow settles on the top few pixels of anything leafy or woody with nothing
+// of the tree above it. Reads the painted canvas once, before the floor.
+function dustSnow(ctx: CanvasRenderingContext2D, theme: ForestTheme, cfg: LayerCfg, W: number, H: number, rnd: Rnd) {
+  const snow = theme.snow;
+  if (!snow) return;
+  const hex = (c: string) => parseInt(c.slice(1), 16);
+  const hold = new Set([...cfg.crownPals.flat(), ...theme.bark.main, ...theme.bark.hazy, ...theme.bark.birch].map(hex));
+  const src = ctx.getImageData(0, 0, W, H).data;
+  const at = (x: number, y: number) => {
+    if (y >= H) return false;
+    const o = (y * W + x) * 4;
+    return src[o + 3] === 255 && hold.has((src[o] << 16) | (src[o + 1] << 8) | src[o + 2]);
+  };
+  const deep = cfg.cell > 0 ? 1 : 0;
+  for (let x = 0; x < W; x++) {
+    for (let y = 0; y < H; y++) {
+      if (!at(x, y) || (y > 0 && at(x, y - 1))) continue;
+      const d = 1 + deep + (rnd() < 0.55 ? 1 : 0) + (rnd() < 0.2 ? 1 : 0);
+      for (let k = 0; k < d && at(x, y + k); k++) dot(ctx, x, y + k, snow[Math.max(0, snow.length - 1 - k)]);
+    }
   }
 }
 
@@ -292,7 +346,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   canvas.height = H;
   canvas.style.width = `${W * px}px`;
   canvas.style.height = `${H * px}px`;
-  const ctx = canvas.getContext('2d', { willReadFrequently: cfg.interior && !!theme.lake });
+  const ctx = canvas.getContext('2d', { willReadFrequently: (cfg.interior && !!theme.lake) || !!theme.snow });
   const geo: LayerGeo = { top: 0, px, W, H, groundTop: H, edges: new Array(W).fill(H), canopyBottom: 0, lake: null };
   if (!ctx) return geo;
   const rnd = mulberry32(cfg.seed);
@@ -390,10 +444,14 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
     let x = -rnd() * cfg.r[1];
     while (x < W + cfg.r[1]) {
       const r = cfg.r[0] + Math.floor(rnd() * (cfg.r[1] - cfg.r[0] + 1));
-      drawCrown(ctx, Math.round(x + r), Math.round(cyBase + (rnd() - 0.5) * r * 0.6), r, pick(rnd, cfg.crownPals), rnd, k * 0.5, cfg.cell);
+      // Only draws from rnd when conifers are on, so existing themes keep their layout.
+      const crown = cfg.conifer && rnd() < cfg.conifer ? drawSpruce : drawCrown;
+      crown(ctx, Math.round(x + r), Math.round(cyBase + (rnd() - 0.5) * r * 0.6), r, pick(rnd, cfg.crownPals), rnd, k * 0.5, cfg.cell);
       x += r * 1.3 + rnd() * r * 0.35;
     }
   }
+
+  dustSnow(ctx, theme, cfg, W, H, rnd);
 
   // Forest floor + clutter + the odd animal
   const edges = drawGround(ctx, cfg, W, H, groundTop, rnd);

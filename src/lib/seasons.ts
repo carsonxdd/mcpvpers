@@ -4,9 +4,9 @@
 export type Season = 'spring' | 'summer' | 'autumn' | 'winter';
 export type SeasonOverride = 'auto' | 'off' | Season;
 
-// Seasons that actually have CSS tokens + scenery shipped. Others fall back to
-// the legacy look until their art lands, so they're skipped by calendar + toggle.
-export const ENABLED_SEASONS: Season[] = ['autumn'];
+// Seasons that have CSS tokens + scenery shipped. Any left out fall back to
+// the default look and are skipped by calendar + toggle.
+export const ENABLED_SEASONS: Season[] = ['spring', 'summer', 'autumn', 'winter'];
 
 export const SEASON_STORAGE_KEY = 'mc-season';
 

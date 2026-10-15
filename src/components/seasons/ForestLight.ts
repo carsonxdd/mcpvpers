@@ -173,6 +173,7 @@ export function createRig(
 ): LightRig {
   const { vw, vh, mobile, raysTop, raysH } = opts;
   const L = theme.light;
+  const lakeTheme = theme.lake;
   const r = mulberry32(99);
 
   const lctx = geos.map((g, i) => {
@@ -538,7 +539,7 @@ export function createRig(
 
         // Ripple highlights drifting across the whole lake, faintly there in any light
         ctx.globalAlpha = 0.06 + 0.16 * sunK + 0.08 * moonK;
-        for (const rp of ripples) {
+        for (const rp of lakeTheme?.frozen ? [] : ripples) {
           const span = far.W + rp.len;
           const x = ((((rp.x + t * rp.v) % span) + span) % span) - rp.len;
           ctx.fillRect(Math.round(x), rp.y, rp.len, 1);

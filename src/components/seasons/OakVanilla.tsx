@@ -10,7 +10,8 @@ import ForestScene, { type ForestTheme, type LayerCfg, type Sprite } from './For
    grass-block floor with tall grass, ferns, flowers, mushrooms and a few
    farm animals; green-gold fireflies and a cool moon glade at night.       */
 
-const SPR: Record<string, Sprite> = {
+// Shared with the seasonal themes (flowers, grass, farm animals).
+export const OAK_SPRITES: Record<string, Sprite> = {
   tallGrass: {
     rows: ['.g...g..', '.g..g..g', 'g.g.g.g.', '.gGgGg.g', '..GgGgG.', '...GgG..'],
     pal: { g: '#6CB43C', G: '#3F7A22' },
@@ -155,7 +156,7 @@ const LAYERS: LayerCfg[] = [
 const VANILLA: ForestTheme = {
   travel: 1.42,
   layers: LAYERS,
-  sprites: SPR,
+  sprites: OAK_SPRITES,
   interior: ['#A9CDB0', '#94BE9C', '#7EAC88', '#6A9876', '#588464', '#4A7256'],
   lake: {
     sky: ['#B4DAF2', '#BEDFF3', '#C9E5F2', '#D4EAF0'],

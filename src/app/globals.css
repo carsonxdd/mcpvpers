@@ -115,6 +115,150 @@ html.dark[data-season='autumn'] {
   --c-panel-bg: rgba(42, 32, 56, 0.8);
 }
 
+/* Spring — cherry blossom */
+html[data-season='spring'] {
+  --s-accent: #E8649A;
+  --s-accent-2: #B8407A;
+  --s-accent-3: #F4AFCB;
+  --s-accent-4: #7CC04A;
+  --s-sky-1: #5AA0E6;
+  --s-sky-2: #72B0EC;
+  --s-sky-3: #9CCAF2;
+  --s-sky-4: #C8E0F4;
+  --s-sky-5: #F4DCE8;
+  --s-ground-top: #6CB43C;
+  --s-hill: #4E8C2A;
+  --s-dirt: #5C402B;
+  --s-night-sky-1: #12122A;
+  --s-night-sky-2: #1A1830;
+  --s-night-hill: #16182C;
+  --s-overlay-rgb: 252, 240, 246;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='spring'] {
+  --c-bg: #FBF1F5;
+  --c-bg-light: #F5E4EC;
+  --c-bg-lighter: #EDD4E0;
+  --c-surface: #FFFAFC;
+  --c-surface-light: #F8EBF1;
+  --c-border: #E4C4D4;
+  --c-border-light: #CFA4BA;
+  --c-text: #2E1A24;
+  --c-text-dim: #5A3A4A;
+  --c-text-muted: #8A6A7A;
+  --c-panel-bg: rgba(255, 250, 252, 0.86);
+}
+
+html.dark[data-season='spring'] {
+  --c-bg: #1A1524;
+  --c-bg-light: #221B2E;
+  --c-bg-lighter: #2C2338;
+  --c-surface: #281F34;
+  --c-surface-light: #33293F;
+  --c-border: #4A3B5A;
+  --c-border-light: #5E4C70;
+  --c-panel-bg: rgba(40, 31, 52, 0.8);
+}
+
+/* Summer — high sun, deep greens */
+html[data-season='summer'] {
+  --s-accent: #F2B705;
+  --s-accent-2: #2E8B3A;
+  --s-accent-3: #FFD23F;
+  --s-accent-4: #58B042;
+  --s-sky-1: #2E86E0;
+  --s-sky-2: #3E96EA;
+  --s-sky-3: #62B2F4;
+  --s-sky-4: #90CCF8;
+  --s-sky-5: #C4E6FA;
+  --s-ground-top: #4E9A2A;
+  --s-hill: #356E1E;
+  --s-dirt: #4A3018;
+  --s-night-sky-1: #0A1428;
+  --s-night-sky-2: #10202E;
+  --s-night-hill: #0E1E1E;
+  --s-overlay-rgb: 244, 248, 232;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='summer'] {
+  --c-bg: #F4F8E8;
+  --c-bg-light: #E8F0D6;
+  --c-bg-lighter: #DCE8C4;
+  --c-surface: #FDFFF6;
+  --c-surface-light: #F0F6E0;
+  --c-border: #CCDCA8;
+  --c-border-light: #AEC484;
+  --c-text: #1E2A12;
+  --c-text-dim: #44542E;
+  --c-text-muted: #6E7E56;
+  --c-panel-bg: rgba(253, 255, 246, 0.86);
+}
+
+html.dark[data-season='summer'] {
+  --c-bg: #101C1A;
+  --c-bg-light: #16241F;
+  --c-bg-lighter: #1E2E28;
+  --c-surface: #1C2A25;
+  --c-surface-light: #25362F;
+  --c-border: #34503F;
+  --c-border-light: #44654F;
+  --c-panel-bg: rgba(28, 42, 37, 0.8);
+}
+
+/* Winter — snowy taiga */
+html[data-season='winter'] {
+  --s-accent: #5AAEE8;
+  --s-accent-2: #2E6EA8;
+  --s-accent-3: #BFE4FF;
+  --s-accent-4: #FFFFFF;
+  --s-sky-1: #7FA6CC;
+  --s-sky-2: #94B6D6;
+  --s-sky-3: #B0C8E0;
+  --s-sky-4: #CCDCEC;
+  --s-sky-5: #E6EEF6;
+  --s-ground-top: #F4F8FC;
+  --s-hill: #C8D6E4;
+  --s-dirt: #8A9AAC;
+  --s-night-sky-1: #0A1020;
+  --s-night-sky-2: #101830;
+  --s-night-hill: #141E34;
+  --s-overlay-rgb: 238, 244, 250;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='winter'] {
+  --c-bg: #EEF4FA;
+  --c-bg-light: #E0EAF4;
+  --c-bg-lighter: #D0DEEC;
+  --c-surface: #FAFCFF;
+  --c-surface-light: #EAF1F8;
+  --c-border: #C4D4E4;
+  --c-border-light: #9EB4CC;
+  --c-text: #162232;
+  --c-text-dim: #3A4A60;
+  --c-text-muted: #687A90;
+  --c-panel-bg: rgba(250, 252, 255, 0.86);
+}
+
+html.dark[data-season='winter'] {
+  --c-bg: #0E1424;
+  --c-bg-light: #141C30;
+  --c-bg-lighter: #1C263C;
+  --c-surface: #1A2238;
+  --c-surface-light: #232D46;
+  --c-border: #34425E;
+  --c-border-light: #465676;
+  --c-panel-bg: rgba(26, 34, 56, 0.8);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -520,7 +664,7 @@ html:not(.dark) :is(.text-gold, .text-silver, .text-diamond, .text-xp, .text-sea
 }
 
 .season-stripe {
-  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), #FFAA00, #CD7F32, var(--s-accent-2, #B5451B));
+  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), var(--s-accent-3, #FFAA00), var(--s-accent-4, #CD7F32), var(--s-accent-2, #B5451B));
 }
 
 /* Header depth + a thin seasonal accent edge */
@@ -535,7 +679,7 @@ html[data-season] .site-header::after {
   right: 0;
   bottom: -1px;
   height: 2px;
-  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), #FFAA00, #CD7F32, var(--s-accent-2, #B5451B));
+  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), var(--s-accent-3, #FFAA00), var(--s-accent-4, #CD7F32), var(--s-accent-2, #B5451B));
   pointer-events: none;
 }
 

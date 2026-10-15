@@ -263,10 +263,10 @@ Every page was checked against the live DatHost configs and the plugin source pr
 
 ### Seasonal visuals: autumn forest + depth system (2026-10-14)
 
-- `<html data-season="autumn">` (calendar-driven, Sep–Nov Arizona time; header leaf toggle cycles auto / autumn / off, stored in localStorage `mc-season`) re-tints the sky, terrain, surfaces and header/footer accents via `--s-*` CSS vars. **No `data-season` = the legacy look**, which is how tenant (`/s/*`) and platform routes stay untouched. Only autumn is enabled so far (`ENABLED_SEASONS` in `src/lib/seasons.ts`).
+- `<html data-season="autumn">` (calendar-driven, Sep–Nov Arizona time; header leaf toggle cycles auto / autumn / off, stored in localStorage `mc-season`) re-tints the sky, terrain, surfaces and header/footer accents via `--s-*` CSS vars. **No `data-season` = the legacy look**, which is how tenant (`/s/*`) and platform routes stay untouched. Only autumn was enabled at first; see "Spring, summer and winter" below.
 - `components/seasons/Scenery.tsx` paints a procedural pixel forest (far / mid / front canopy layers, trunks, forest floor, sun shafts) onto small canvases and descends through it as you scroll: treetops under the clouds at the top of the page, trunks and the forest floor at the bottom. Scroll handling is ref-based (no React re-renders). `SeasonParticles.tsx` adds falling pixel leaves.
 - Shared depth tokens (bevels, layered shadows, recessed slots, lifting link panels, pressable pills) apply site-wide including tenant sites. In light mode, bright accent text (`text-gold/silver/diamond/xp`) gets a darkened outline for readability; add `no-text-outline` to opt a subtree out.
-- Not built yet: winter/spring/summer, a season-aware cloud palette, scroll-reveal. Details are in `.claude/CLAUDE.md`.
+- Not built yet at the time: winter/spring/summer (since added), a season-aware cloud palette, scroll-reveal.
 
 ### Vanilla oak woods as the default backdrop (2026-10-14)
 
@@ -283,6 +283,17 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - Rain dims the sunlight and thins out the fireflies. Under reduced motion the lighting is one still frame, and phones run at about 30 fps with fewer effects.
 - Trunks are thicker, especially in vanilla. Distant vanilla trunks are a faded oak brown instead of gray-green.
 - Autumn's falling leaves are bigger (16–20 px on desktop). They only show below the canopy, so none fall over open sky at the top of the page.
+
+### Spring, summer and winter (2026-10-15)
+
+- All four seasons are enabled and follow the Arizona calendar: spring is Mar–May, summer Jun–Aug, autumn Sep–Nov and winter Dec–Feb. The header toggle cycles auto, spring, summer, autumn, winter, off, and its pixel icon changes with the season (blossom, sun, leaf, snowflake).
+- **Spring** (`seasons/SpringBloom.ts`): cherry blossom crowns mixed with fresh green oaks, dark cherry logs and pink petals scattered through the grass. The floor has tulips, lilacs and bluets, with rabbits, a lamb, sheep and chickens. Falling blossom petals and a few early fireflies.
+- **Summer** (`seasons/SummerWoods.ts`): deep green dark-oak woods, golden sun shafts and a deep blue lake. The floor has sunflowers, berry bushes, melons and wheat, plus a fox. Pollen floats in the air, and summer has the most fireflies of any season.
+- **Winter** (`seasons/WinterTaiga.ts`): spruce woods with snow on every exposed treetop and branch, a frozen lake and a snowy floor. Look for snowy saplings and stumps, a campfire, an arctic fox, a wolf and a snow golem. Snow falls from the sky, and there are no fireflies.
+- Three optional engine features support winter: `conifer` (tiered spruce crowns), `snow` (settles on anything open to the sky) and `lake.frozen` (no ripples). Autumn and the vanilla woods render exactly as before.
+- Each season has its own sky, light and dark surfaces, and header and footer accents (`--s-accent-3/4` drive the stripe gradient).
+- Fix: the season toggle no longer causes a hydration error when it's set to anything other than Auto.
+- Still to do: rain is still rain in winter, there's no season-aware cloud palette yet, and scroll-reveal isn't built.
 
 ## Getting Started
 

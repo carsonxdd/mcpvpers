@@ -3,10 +3,14 @@
 import type { Season } from '@/lib/seasons';
 import ForestScene, { type ForestTheme, type LayerCfg, type Sprite } from './ForestScene';
 import OakVanilla from './OakVanilla';
+import { SPRING } from './SpringBloom';
+import { SUMMER } from './SummerWoods';
+import { WINTER } from './WinterTaiga';
 
 /* ───────────────────────── Autumn forest descent ─────────────────────────
-   Painted by ForestScene (shared with the vanilla oak woods); this file is
-   just autumn's palettes, sprites and layer layout.                          */
+   Painted by ForestScene (shared with the vanilla oak woods and the other
+   seasons, whose themes live in their own files); this file holds autumn's
+   palettes, sprites and layer layout, and picks the theme per season.     */
 
 const SPR: Record<string, Sprite> = {
   mushroom: {
@@ -116,9 +120,10 @@ const AUTUMN: ForestTheme = {
   veil: 'rgba(247, 238, 223, 0.26)',
 };
 
+const THEMES: Record<Season, ForestTheme> = { spring: SPRING, summer: SUMMER, autumn: AUTUMN, winter: WINTER };
+
 // `season` is null on the default look, which gets the vanilla oak woods.
 export default function Scenery({ season, dark, raining }: { season: Season | null; dark: boolean; raining: boolean }) {
   if (season === null) return <OakVanilla key="oak" dark={dark} raining={raining} />;
-  if (season !== 'autumn') return null;
-  return <ForestScene key="autumn" theme={AUTUMN} dark={dark} raining={raining} />;
+  return <ForestScene key={season} theme={THEMES[season]} dark={dark} raining={raining} />;
 }

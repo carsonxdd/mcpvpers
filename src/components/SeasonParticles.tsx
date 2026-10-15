@@ -2,13 +2,14 @@
 
 import { useEffect, useRef } from 'react';
 import { useSeason } from './SeasonProvider';
-import { SEASON_META } from '@/lib/seasons';
+import { SEASON_META, type Season } from '@/lib/seasons';
 import { canopyLine } from './seasons/ForestLight';
 
-interface Leaf {
+interface Flake {
   x: number;
   y: number;
-  cell: number; // px per leaf-pixel (4–5 → 16–20px leaves; 3–4 on mobile)
+  shape: number[][];
+  cell: number; // px per bitmap pixel
   speed: number;
   drift: number;
   phase: number;
@@ -18,33 +19,67 @@ interface Leaf {
   opacity: number;
 }
 
-// 4×4 leaf bitmap: 1 = body, 2 = vein (darker). Drawn at `cell` px per pixel.
-const LEAF: number[][] = [
-  [0, 1, 1, 0],
-  [1, 1, 2, 1],
-  [1, 2, 1, 1],
-  [0, 1, 1, 0],
-];
+type Range = [number, number];
 
-// Falling autumn leaves. Structure mirrors RainCanvas: pooled particles
-// recycled off-screen, pixelated rects, mobile cap + reduced-motion read once
-// when the season turns on.
+// Per-season look. Bitmaps: 1 = body, 2 = vein (`vein` colour).
+interface Kind {
+  shapes: number[][][];
+  vein?: string;
+  stem?: string;          // one pixel off the bottom-left (leaf stalk)
+  count: [number, number]; // mobile, desktop
+  cells: [Range, Range];  // mobile, desktop
+  speed: Range;
+  drift: Range;
+  sway: Range;
+  opacity: Range;
+  canopy: boolean;        // fall out of the canopy (hidden above it) vs. from the sky
+}
+
+const KINDS: Record<Season, Kind> = {
+  spring: { // blossom petals on the breeze
+    shapes: [[[0, 1, 1], [1, 1, 0]], [[1, 1], [1, 0]]],
+    count: [10, 26], cells: [[2, 3], [3, 4]],
+    speed: [0.25, 0.5], drift: [0.25, 0.5], sway: [0.4, 0.9], opacity: [0.65, 0.95], canopy: true,
+  },
+  summer: { // pollen and seed fluff hanging in the warm air
+    shapes: [[[1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
+    count: [8, 18], cells: [[2, 2], [2, 3]],
+    speed: [0.05, 0.16], drift: [0.04, 0.14], sway: [0.3, 0.7], opacity: [0.45, 0.8], canopy: true,
+  },
+  autumn: { // falling leaves
+    shapes: [[[0, 1, 1, 0], [1, 1, 2, 1], [1, 2, 1, 1], [0, 1, 1, 0]]],
+    vein: 'rgba(60, 25, 8, 0.55)', stem: '#5A3A1E',
+    count: [9, 22], cells: [[3, 4], [4, 5]],
+    speed: [0.3, 0.7], drift: [0.12, 0.32], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
+  },
+  winter: { // snow, from the sky down through the trees
+    shapes: [[[1]], [[1, 1], [1, 1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
+    count: [28, 70], cells: [[2, 3], [2, 3]],
+    speed: [0.45, 1.1], drift: [0.05, 0.25], sway: [0.2, 0.6], opacity: [0.55, 0.95], canopy: false,
+  },
+};
+
+const within = ([a, b]: Range) => a + Math.random() * (b - a);
+
+// Seasonal particles. Structure mirrors RainCanvas: pooled particles recycled
+// off-screen, pixelated rects, mobile cap + reduced-motion read once when the
+// season turns on.
 export default function SeasonParticles() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const { season } = useSeason();
-  const active = season === 'autumn';
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas || !active) return;
+    if (!canvas || !season) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const kind = KINDS[season];
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 9 : 22;
-    const cells = isMobile ? [3, 4] : [4, 5];
-    const palette = SEASON_META.autumn.particles;
+    const count = kind.count[isMobile ? 0 : 1];
+    const cells = kind.cells[isMobile ? 0 : 1];
+    const palette = SEASON_META[season].particles;
 
     const resize = () => {
       canvas.width = window.innerWidth;
@@ -53,59 +88,60 @@ export default function SeasonParticles() {
     resize();
     window.addEventListener('resize', resize);
 
-    // New leaves drop out of the canopy when it's on screen, else from above the top edge.
+    // Canopy kinds drop out of the canopy when it's on screen, else from above the top edge.
     const spawnY = (anywhere: boolean) => {
-      const line = canopyLine.y;
+      const line = kind.canopy ? canopyLine.y : -Infinity;
       if (anywhere) return Math.max(0, line) + Math.random() * (canvas.height - Math.max(0, line));
       return line > -30 ? line - 10 - Math.random() * 50 : -(Math.random() * 160) - 30;
     };
 
-    const make = (anywhere: boolean): Leaf => ({
+    const make = (anywhere: boolean): Flake => ({
       x: Math.random() * canvas.width,
       y: spawnY(anywhere),
-      cell: cells[Math.random() < 0.5 ? 0 : 1],
-      speed: 0.3 + Math.random() * 0.4,
-      drift: 0.12 + Math.random() * 0.2,
+      shape: kind.shapes[Math.floor(Math.random() * kind.shapes.length)],
+      cell: Math.round(within(cells)),
+      speed: within(kind.speed),
+      drift: within(kind.drift),
       phase: Math.random() * Math.PI * 2,
-      swayAmp: 0.3 + Math.random() * 0.5,
+      swayAmp: within(kind.sway),
       swayRate: 0.012 + Math.random() * 0.01,
       color: palette[Math.floor(Math.random() * palette.length)],
-      opacity: 0.6 + Math.random() * 0.35,
+      opacity: within(kind.opacity),
     });
 
-    const leaves: Leaf[] = Array.from({ length: count }, () => make(true));
+    const flakes: Flake[] = Array.from({ length: count }, () => make(true));
     let frame = 0;
     let raf = 0;
 
     const animate = () => {
       frame++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-      for (let i = 0; i < leaves.length; i++) {
-        const l = leaves[i];
-        l.y += l.speed;
-        l.x += l.drift + Math.sin(frame * l.swayRate + l.phase) * l.swayAmp;
-        const size = 4 * l.cell;
-        if (l.y > canvas.height + size || l.x > canvas.width + size) {
-          leaves[i] = make(false);
+      for (let i = 0; i < flakes.length; i++) {
+        const f = flakes[i];
+        f.y += f.speed;
+        f.x += f.drift + Math.sin(frame * f.swayRate + f.phase) * f.swayAmp;
+        const size = f.shape.length * f.cell;
+        if (f.y > canvas.height + size || f.x > canvas.width + size) {
+          flakes[i] = make(false);
           continue;
         }
-        // Hidden above the canopy line, fading in as they fall out of it.
-        const emerge = Math.min(1, (l.y - canopyLine.y) / 80);
+        // Canopy kinds are hidden above the canopy line and fade in as they fall out of it.
+        const emerge = kind.canopy ? Math.min(1, (f.y - canopyLine.y) / 80) : 1;
         if (emerge <= 0) continue;
-        const ox = Math.floor(l.x);
-        const oy = Math.floor(l.y);
-        ctx.globalAlpha = l.opacity * emerge;
-        for (let r = 0; r < 4; r++) {
-          for (let c = 0; c < 4; c++) {
-            const v = LEAF[r][c];
-            if (!v) continue;
-            ctx.fillStyle = v === 2 ? 'rgba(60, 25, 8, 0.55)' : l.color;
-            ctx.fillRect(ox + c * l.cell, oy + r * l.cell, l.cell, l.cell);
-          }
+        const ox = Math.floor(f.x);
+        const oy = Math.floor(f.y);
+        ctx.globalAlpha = f.opacity * emerge;
+        f.shape.forEach((row, r) => {
+          row.forEach((v, c) => {
+            if (!v) return;
+            ctx.fillStyle = v === 2 && kind.vein ? kind.vein : f.color;
+            ctx.fillRect(ox + c * f.cell, oy + r * f.cell, f.cell, f.cell);
+          });
+        });
+        if (kind.stem) {
+          ctx.fillStyle = kind.stem;
+          ctx.fillRect(ox - f.cell, oy + (f.shape.length - 1) * f.cell, f.cell, f.cell);
         }
-        // stem
-        ctx.fillStyle = '#5A3A1E';
-        ctx.fillRect(ox - l.cell, oy + 3 * l.cell, l.cell, l.cell);
       }
       ctx.globalAlpha = 1;
       raf = requestAnimationFrame(animate);
@@ -117,9 +153,9 @@ export default function SeasonParticles() {
       window.removeEventListener('resize', resize);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
     };
-  }, [active]);
+  }, [season]);
 
-  if (!active) return null;
+  if (!season) return null;
 
   return (
     <canvas

@@ -1,7 +1,10 @@
 'use client';
 
+import { useSyncExternalStore } from 'react';
 import { useSeason } from './SeasonProvider';
-import { SEASON_META, seasonForDate, type SeasonOverride } from '@/lib/seasons';
+
+const subscribeNoop = () => () => {};
+import { SEASON_META, seasonForDate, type Season, type SeasonOverride } from '@/lib/seasons';
 
 function label(override: SeasonOverride): string {
   if (override === 'auto') return 'Season: Auto';
@@ -9,25 +12,71 @@ function label(override: SeasonOverride): string {
   return `Season: ${SEASON_META[override].label}`;
 }
 
-// Pixel-art leaf drawn from rects, matching the other pixel sprites.
-function LeafIcon({ color }: { color: string }) {
+// 8×8 pixel icons, one per season. 'A' = accent colour; other letters are fixed.
+const ICONS: Record<Season, string[]> = {
+  spring: [ // blossom
+    '...AA...',
+    '..AAAA..',
+    'AA.AA.AA',
+    'AAAYYAAA',
+    '.AAYYAA.',
+    '..A..A..',
+    '.AA..AA.',
+    '........',
+  ],
+  summer: [ // sun
+    'A..AA..A',
+    '..AAAA..',
+    '.AAAAAA.',
+    'AAAAAAAA',
+    'AAAAAAAA',
+    '.AAAAAA.',
+    '..AAAA..',
+    'A..AA..A',
+  ],
+  autumn: [ // leaf
+    '........',
+    '....AA..',
+    '...AAAA.',
+    '..AAAAA.',
+    '..AAAA..',
+    '..BAA...',
+    '.B......',
+    '........',
+  ],
+  winter: [ // snowflake
+    '...A....',
+    '.A.A.A..',
+    '..AAA...',
+    'AAAAAAA.',
+    '..AAA...',
+    '.A.A.A..',
+    '...A....',
+    '........',
+  ],
+};
+const FIXED: Record<string, string> = { Y: '#FFE066', B: '#8B5A2B' };
+
+function SeasonIcon({ season, color }: { season: Season; color: string }) {
   return (
     <svg width="16" height="16" viewBox="0 0 8 8" shapeRendering="crispEdges" aria-hidden="true">
-      <rect x="4" y="1" width="2" height="1" fill={color} />
-      <rect x="3" y="2" width="4" height="1" fill={color} />
-      <rect x="2" y="3" width="5" height="1" fill={color} />
-      <rect x="2" y="4" width="4" height="1" fill={color} />
-      <rect x="2" y="5" width="3" height="1" fill={color} />
-      <rect x="1" y="6" width="1" height="1" fill="#8B5A2B" />
-      <rect x="2" y="5" width="1" height="1" fill="#8B5A2B" />
+      {ICONS[season].flatMap((row, y) =>
+        [...row].map((c, x) => (c === '.' ? null : <rect key={`${x}-${y}`} x={x} y={y} width="1" height="1" fill={c === 'A' ? color : FIXED[c]} />)),
+      )}
     </svg>
   );
 }
 
 export default function SeasonToggle() {
-  const { override, cycle } = useSeason();
+  const season = useSeason();
+  // The override comes from localStorage; render as Auto until hydrated so SSR matches.
+  const mounted = useSyncExternalStore(subscribeNoop, () => true, () => false);
+  const override = mounted ? season.override : 'auto';
+  const { cycle } = season;
   const text = label(override);
-  const color = override === 'off' ? 'currentColor' : SEASON_META[override === 'auto' ? seasonForDate(new Date()) : override].accent;
+  // Off shows the leaf in the text colour; Auto shows the current calendar season.
+  const shown: Season = override === 'off' ? 'autumn' : override === 'auto' ? seasonForDate(new Date()) : override;
+  const color = override === 'off' ? 'currentColor' : SEASON_META[shown].accent;
 
   return (
     <button
@@ -36,7 +85,7 @@ export default function SeasonToggle() {
       title={text}
       aria-label={text}
     >
-      <LeafIcon color={color} />
+      <SeasonIcon season={shown} color={color} />
     </button>
   );
 }
