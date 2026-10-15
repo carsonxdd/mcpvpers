@@ -254,6 +254,20 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - Home ("Trader" card, "Build a stall at spawn" tile), `/about` (Play a part list, commands list, Gazette triggers), `plugins.json`, and the FrontierAnnouncements `market-day.*` row in `frontier-suite.ts` / `SUITE.md` (now "off on mc.pvpers.us") are updated
 - News post 23 advertises the stalls. Older posts still mention Market Day as history
 
+
+### News page cleanup (2026-10-14)
+
+- `src/data/news.json` renumbered chronologically (ids 1–22, oldest first). Earlier README notes that cite post numbers 19–24 refer to the old numbering.
+- The Sep 24 posts now say Season 2 opens Thursday Oct 15 (noon Arizona) and the End opens Thursday Oct 22, 5 PM. "Homestead" carries the final numbers ($500/$25/$5 land, $300 start, shop sells at a third, cash bounties, etc.); the Sep 30 "final numbers" post was folded into it.
+- The two launch-date-slip posts (Mon Oct 5, Thu Oct 15) were merged into one ("Season 2 Opens Thursday Oct 15 at Noon"). The stall post no longer says Market Day "is gone".
+
+### Seasonal visuals: autumn forest + depth system (2026-10-14)
+
+- `<html data-season="autumn">` (calendar-driven, Sep–Nov Arizona time; header leaf toggle cycles auto / autumn / off, stored in localStorage `mc-season`) re-tints the sky, terrain, surfaces and header/footer accents via `--s-*` CSS vars. **No `data-season` = the legacy look**, which is how tenant (`/s/*`) and platform routes stay untouched. Only autumn is enabled so far (`ENABLED_SEASONS` in `src/lib/seasons.ts`).
+- `components/seasons/Scenery.tsx` paints a procedural pixel forest (far / mid / front canopy layers, trunks, forest floor, sun shafts) onto small canvases and descends through it as you scroll: treetops under the clouds at the top of the page, trunks and the forest floor at the bottom. Scroll handling is ref-based (no React re-renders). `SeasonParticles.tsx` adds falling pixel leaves.
+- Shared depth tokens (bevels, layered shadows, recessed slots, lifting link panels, pressable pills) apply site-wide including tenant sites. In light mode, bright accent text (`text-gold/silver/diamond/xp`) gets a darkened outline for readability; add `no-text-outline` to opt a subtree out.
+- Not built yet: winter/spring/summer, a season-aware cloud palette, scroll-reveal. Details are in `.claude/CLAUDE.md`.
+
 ## Getting Started
 
 ```bash

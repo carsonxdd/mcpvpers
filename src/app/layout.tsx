@@ -3,6 +3,8 @@ import './globals.css';
 import ParallaxBackground from '@/components/ParallaxBackground';
 import ParticleCanvas from '@/components/ParticleCanvas';
 import RainCanvas from '@/components/RainCanvas';
+import SeasonParticles from '@/components/SeasonParticles';
+import SeasonProvider from '@/components/SeasonProvider';
 import ThemeProvider from '@/components/ThemeProvider';
 import WeatherProvider from '@/components/WeatherProvider';
 
@@ -37,18 +39,34 @@ export default function RootLayout({
                 if (t === 'light') document.documentElement.classList.remove('dark');
                 else if (!t && window.matchMedia('(prefers-color-scheme: light)').matches) document.documentElement.classList.remove('dark');
               } catch(e) {}
+              try {
+                // Seasons: pvpers routes only (keep in sync with lib/seasons.ts)
+                const p = location.pathname;
+                const skip = ['/s/', '/dashboard', '/login', '/get-started', '/legal', '/api']
+                  .some(function (x) { return p === x.replace(/\\/$/, '') || p.indexOf(x) === 0; });
+                if (!skip) {
+                  const o = localStorage.getItem('mc-season');
+                  const m = new Date(Date.now() - 7 * 3600 * 1000).getUTCMonth();
+                  const cal = m >= 8 && m <= 10 ? 'autumn' : null; // only autumn is enabled
+                  const s = o === 'off' ? null : (o === 'autumn' ? 'autumn' : (!o || o === 'auto' ? cal : null));
+                  if (s) document.documentElement.setAttribute('data-season', s);
+                }
+              } catch(e) {}
             `,
           }}
         />
       </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>
-          <WeatherProvider>
-            <ParallaxBackground />
-            <RainCanvas />
-            <ParticleCanvas />
-            {children}
-          </WeatherProvider>
+          <SeasonProvider>
+            <WeatherProvider>
+              <ParallaxBackground />
+              <RainCanvas />
+              <SeasonParticles />
+              <ParticleCanvas />
+              {children}
+            </WeatherProvider>
+          </SeasonProvider>
         </ThemeProvider>
       </body>
     </html>

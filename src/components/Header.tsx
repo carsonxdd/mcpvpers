@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import ThemeToggle from './ThemeToggle';
 import WeatherToggle from './WeatherToggle';
+import SeasonToggle from './SeasonToggle';
 import { useWeather } from './WeatherProvider';
 import { useTheme } from './ThemeProvider';
 
@@ -81,7 +82,7 @@ export default function Header() {
 
   return (
     <header
-      className={`fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b transition-all duration-[1500ms] ${
+      className={`site-header fixed top-0 left-0 right-0 z-40 backdrop-blur-md border-b transition-all duration-[1500ms] ${
         isRaining ? '' : 't-bg-90 t-border-50'
       }`}
       style={isRaining ? {
@@ -157,6 +158,7 @@ export default function Header() {
         <div className="flex items-center gap-2 max-md:gap-1">
           <ServerStatus light={isRaining} />
           <WeatherToggle />
+          <SeasonToggle />
           <ThemeToggle />
           <button
             onClick={() => setIsOpen(!isOpen)}

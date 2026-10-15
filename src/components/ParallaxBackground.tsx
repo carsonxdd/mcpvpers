@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useTheme } from './ThemeProvider';
 import { useWeather } from './WeatherProvider';
 import ShootingStars from './ShootingStars';
+import Scenery from './seasons/Scenery';
+import { useSeason } from './SeasonProvider';
 
 /* Minecraft-style connected cloud — flat rectangular block shapes */
 function Cloud({ x, y, width, dark }: { x: number; y: number; width: number; dark?: boolean }) {
@@ -114,6 +116,7 @@ export default function ParallaxBackground() {
   const [scrollY, setScrollY] = useState(0);
   const { theme } = useTheme();
   const { weather } = useWeather();
+  const { season } = useSeason();
   const isRaining = weather === 'rain' || weather === 'thunderstorm';
   const isLight = theme === 'light';
 
@@ -136,7 +139,7 @@ export default function ParallaxBackground() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(180deg, #3B8BE0 0%, #4A98E8 15%, #6BB5F5 35%, #8DC8FA 55%, #A8D8FF 75%, #4A7A28 93%, #3B6820 95%, #4A3018 97%, #3A2410 100%)',
+          background: 'linear-gradient(180deg, var(--s-sky-1, #3B8BE0) 0%, var(--s-sky-2, #4A98E8) 15%, var(--s-sky-3, #6BB5F5) 35%, var(--s-sky-4, #8DC8FA) 55%, var(--s-sky-5, #A8D8FF) 75%, var(--s-ground-top, #4A7A28) 93%, var(--s-hill, #3B6820) 95%, var(--s-dirt, #4A3018) 97%, var(--s-dirt, #3A2410) 100%)',
           opacity: isLight ? 1 : 0,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -146,7 +149,7 @@ export default function ParallaxBackground() {
       <div
         className="absolute inset-0"
         style={{
-          background: 'linear-gradient(180deg, #0f0f23 0%, #1a1a2e 30%, #1a1a2e 100%)',
+          background: 'linear-gradient(180deg, var(--s-night-sky-1, #0f0f23) 0%, var(--s-night-sky-2, #1a1a2e) 30%, var(--s-night-sky-2, #1a1a2e) 100%)',
           opacity: isLight ? 0 : 1,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -201,7 +204,9 @@ export default function ParallaxBackground() {
           right: '14%',
           transform: celestialTransform,
           opacity: moonOpacity,
-          transition: 'opacity 1.5s ease-in-out',
+          // Harvest moon in autumn
+          filter: season === 'autumn' ? 'sepia(0.9) saturate(2.4) hue-rotate(-15deg)' : 'none',
+          transition: 'opacity 1.5s ease-in-out, filter 1.5s ease-in-out',
         }}
       >
         <PixelMoon />
@@ -251,7 +256,8 @@ export default function ParallaxBackground() {
       <div
         className="absolute w-full bottom-0"
         style={{
-          transform: `translateY(${scrollY * 0.1}px)`,
+          // Seasonal scenes stay anchored to the viewport; the legacy terrain drifts down.
+          transform: season ? undefined : `translateY(${scrollY * 0.1}px)`,
           opacity: isLight ? 1 : 0,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -269,10 +275,10 @@ export default function ParallaxBackground() {
                L1180,70 L1180,55 L1190,55 L1190,45 L1200,45 L1200,40 L1210,40 L1210,45 L1220,45 L1220,55 L1230,55 L1230,70
                L1320,70 L1320,60 L1330,60 L1330,48 L1340,48 L1340,42 L1350,42 L1350,48 L1360,48 L1360,60 L1370,60 L1370,70
                L1440,70 L1440,100 Z"
-            fill="#3A6E1E"
+            fill="var(--s-hill, #3A6E1E)"
           />
-          <rect x="0" y="70" width="1440" height="5" fill="#4A7A28" />
-          <rect x="0" y="75" width="1440" height="25" fill="#3E2A14" />
+          <rect x="0" y="70" width="1440" height="5" fill="var(--s-ground-top, #4A7A28)" />
+          <rect x="0" y="75" width="1440" height="25" fill="var(--s-dirt, #3E2A14)" />
         </svg>
       </div>
 
@@ -280,7 +286,7 @@ export default function ParallaxBackground() {
       <div
         className="absolute w-full bottom-0"
         style={{
-          transform: `translateY(${scrollY * 0.08}px)`,
+          transform: season ? undefined : `translateY(${scrollY * 0.08}px)`,
           opacity: isLight ? 0 : 1,
           transition: 'opacity 1.5s ease-in-out',
         }}
@@ -288,7 +294,7 @@ export default function ParallaxBackground() {
         <svg viewBox="0 0 1440 120" className="w-full" preserveAspectRatio="none" style={{ height: '120px' }}>
           <path
             d="M0,120 L0,80 L60,80 L60,70 L120,70 L120,60 L200,60 L200,50 L280,50 L280,60 L360,60 L360,70 L440,70 L440,50 L520,50 L520,40 L600,40 L600,50 L680,50 L680,70 L760,70 L760,55 L840,55 L840,45 L920,45 L920,55 L1000,55 L1000,70 L1080,70 L1080,60 L1160,60 L1160,70 L1240,70 L1240,55 L1320,55 L1320,70 L1440,70 L1440,120 Z"
-            fill="#141428"
+            fill="var(--s-night-hill, #141428)"
           />
         </svg>
       </div>
@@ -298,11 +304,14 @@ export default function ParallaxBackground() {
         className="absolute inset-0"
         style={{
           background: isLight
-            ? 'linear-gradient(180deg, rgba(232,244,236,0) 0%, rgba(232,244,236,0.15) 50%, rgba(232,244,236,0.7) 80%, rgba(232,244,236,0.95) 92%)'
+            ? 'linear-gradient(180deg, rgba(var(--s-overlay-rgb, 232, 244, 236), 0) 0%, rgba(var(--s-overlay-rgb, 232, 244, 236), var(--s-overlay-mid, 0.15)) 50%, rgba(var(--s-overlay-rgb, 232, 244, 236), var(--s-overlay-low, 0.7)) 80%, rgba(var(--s-overlay-rgb, 232, 244, 236), var(--s-overlay-bottom, 0.95)) 92%)'
             : 'radial-gradient(ellipse at 50% 0%, rgba(78,167,255,0.03) 0%, transparent 60%)',
           transition: 'background 1.5s ease-in-out',
         }}
       />
+
+      {/* Seasonal scenery: above the overlay so it isn't washed out, fixed so it never scrolls away */}
+      {season && <Scenery season={season} dark={!isLight} />}
     </div>
   );
 }

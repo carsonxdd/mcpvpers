@@ -15,6 +15,7 @@
   --color-sky-mid: #4A6FA5;
   --color-redstone: #FF4444;
   --color-diamond: #4EEAF0;
+  --color-season: var(--s-accent, #FFAA00);
   --font-pixel: 'Minecraft', 'Press Start 2P', monospace;
   --font-body: 'Nunito', system-ui, sans-serif;
 }
@@ -46,6 +47,72 @@ html.dark {
   --c-text-dim: #A0A0B8;
   --c-text-muted: #6E6E88;
   --c-panel-bg: rgba(37, 37, 64, 0.8);
+}
+
+/* ── Depth tokens (shared with tenant sites) ── */
+:root {
+  --bevel: inset 1px 1px 0 rgba(255, 255, 255, 0.7), inset -1px -1px 0 rgba(0, 0, 0, 0.1);
+  --slot-inset: inset 2px 2px 0 rgba(0, 0, 0, 0.1), inset -1px -1px 0 rgba(255, 255, 255, 0.6);
+  --shadow-1: 0 2px 0 rgba(0, 0, 0, 0.08), 0 2px 8px rgba(0, 0, 0, 0.08);
+  --shadow-2: 0 4px 0 rgba(0, 0, 0, 0.1), 0 8px 18px rgba(0, 0, 0, 0.14);
+  --shadow-3: 0 4px 0 rgba(0, 0, 0, 0.18), 0 12px 28px rgba(0, 0, 0, 0.25);
+}
+
+html.dark {
+  --bevel: inset 1px 1px 0 rgba(255, 255, 255, 0.08), inset -1px -1px 0 rgba(0, 0, 0, 0.35);
+  --slot-inset: inset 2px 2px 0 rgba(0, 0, 0, 0.4), inset -1px -1px 0 rgba(255, 255, 255, 0.05);
+  --shadow-1: 0 2px 0 rgba(0, 0, 0, 0.3), 0 2px 10px rgba(0, 0, 0, 0.25);
+  --shadow-2: 0 4px 0 rgba(0, 0, 0, 0.35), 0 8px 20px rgba(0, 0, 0, 0.4);
+  --shadow-3: 0 4px 0 rgba(0, 0, 0, 0.45), 0 12px 30px rgba(0, 0, 0, 0.55);
+}
+
+/* ── Seasons ──
+   Set by SeasonProvider / the pre-paint script as <html data-season>. No
+   attribute = legacy look (tenant + platform routes). Every var() consumer
+   carries today's value as its fallback. */
+html[data-season='autumn'] {
+  --s-accent: #D2691E;
+  --s-accent-2: #B5451B;
+  --s-sky-1: #3F7FC4;
+  --s-sky-2: #5E93D1;
+  --s-sky-3: #8FB0D6;
+  --s-sky-4: #E9C79A;
+  --s-sky-5: #F4C98B;
+  --s-ground-top: #B5651D;
+  --s-hill: #7A5A1E;
+  --s-dirt: #4A2E14;
+  --s-night-sky-1: #140E22;
+  --s-night-sky-2: #1A1424;
+  --s-night-hill: #1C1426;
+  --s-overlay-rgb: 247, 238, 223;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='autumn'] {
+  --c-bg: #F7EEDF;
+  --c-bg-light: #EFE2CC;
+  --c-bg-lighter: #E6D5B8;
+  --c-surface: #FFFBF3;
+  --c-surface-light: #F6ECDA;
+  --c-border: #DCC9A6;
+  --c-border-light: #C4AC84;
+  --c-text: #2E2012;
+  --c-text-dim: #5A4630;
+  --c-text-muted: #8A7558;
+  --c-panel-bg: rgba(255, 251, 243, 0.86);
+}
+
+html.dark[data-season='autumn'] {
+  --c-bg: #1A1424;
+  --c-bg-light: #231B30;
+  --c-bg-lighter: #2D233C;
+  --c-surface: #2A2038;
+  --c-surface-light: #352A46;
+  --c-border: #483A5E;
+  --c-border-light: #5A4A74;
+  --c-panel-bg: rgba(42, 32, 56, 0.8);
 }
 
 * {
@@ -165,22 +232,28 @@ body {
   backdrop-filter: blur(12px);
   border: 1px solid var(--c-border);
   border-radius: 8px;
-  transition: background 1.5s ease-in-out, border-color 1.5s ease-in-out, box-shadow 1.5s ease-in-out;
+  box-shadow: var(--bevel), var(--shadow-1);
+  transition: background 1.5s ease-in-out, border-color 1.5s ease-in-out, box-shadow 0.25s ease, transform 0.25s ease;
 }
 
-html:not(.dark) .mc-panel {
-  box-shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+/* Link panels lift on hover/focus; tap feedback via :active. */
+a.mc-panel:hover,
+a.mc-panel:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--bevel), var(--shadow-2);
 }
 
-html:not(.dark) .mc-panel:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+a.mc-panel:active {
+  transform: translateY(0);
+  box-shadow: var(--bevel), var(--shadow-1);
 }
 
-/* Inventory slot */
+/* Inventory slot — recessed like the real thing */
 .inventory-slot {
   background: var(--c-surface);
   border: 1px solid var(--c-border);
   border-radius: 6px;
+  box-shadow: var(--slot-inset);
   transition: border-color 1.5s ease-in-out, background 1.5s ease-in-out;
 }
 
@@ -200,6 +273,7 @@ html:not(.dark) .mc-panel:hover {
   color: white;
   pointer-events: none;
   z-index: 50;
+  box-shadow: var(--shadow-3);
 }
 
 /* Pill button */
@@ -213,6 +287,7 @@ html:not(.dark) .mc-panel:hover {
   cursor: pointer;
   color: var(--c-text-dim);
   background: var(--c-surface-light);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.25), inset -1px -1px 0 rgba(0, 0, 0, 0.2), 0 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .mc-pill:hover,
@@ -225,6 +300,8 @@ html:not(.dark) .mc-panel:hover {
 
 .mc-pill:active {
   background: var(--c-border-light);
+  transform: translateY(2px);
+  box-shadow: inset -1px -1px 0 rgba(255, 255, 255, 0.2), inset 1px 1px 0 rgba(0, 0, 0, 0.25);
 }
 
 .mc-pill-active {
@@ -256,6 +333,20 @@ html.dark .glow-silver { text-shadow: 0 0 20px rgba(194,203,212,0.3), 0 0 40px r
 html.dark .glow-bronze { text-shadow: 0 0 20px rgba(205,127,50,0.3), 0 0 40px rgba(205,127,50,0.1); }
 html.dark .glow-xp    { text-shadow: 0 0 20px rgba(126,252,32,0.3), 0 0 40px rgba(126,252,32,0.1); }
 html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
+
+/* Light mode: bright accent text (gold, silver, diamond, xp green) is
+   unreadable on white/parchment, so give it a darkened 1px outline. Applies to
+   every use of these utilities site-wide (incl. tenants); dark surfaces that
+   are theme-agnostic opt out below. Add `no-text-outline` to opt a subtree out. */
+html:not(.dark) :is(.text-gold, .text-silver, .text-diamond, .text-xp, .text-season):not(:where(.mc-tooltip, .wanted-paper, .no-text-outline) *) {
+  --_o: color-mix(in srgb, currentColor 35%, #1a0f00);
+  text-shadow:
+    -1px 0 0 var(--_o),
+    1px 0 0 var(--_o),
+    0 -1px 0 var(--_o),
+    0 1px 0 var(--_o),
+    0 2px 3px rgba(0, 0, 0, 0.12);
+}
 
 /* Gradient border effect */
 .gradient-border { position: relative; }
@@ -429,9 +520,68 @@ html.dark .glow-enchant { text-shadow: 0 0 20px rgba(167,139,250,0.3); }
 }
 
 .season-stripe {
-  background: linear-gradient(90deg, #B5451B, #D2691E, #FFAA00, #CD7F32, #B5451B);
+  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), #FFAA00, #CD7F32, var(--s-accent-2, #B5451B));
+}
+
+/* Header depth + a thin seasonal accent edge */
+.site-header {
+  box-shadow: var(--shadow-2);
+}
+
+html[data-season] .site-header::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--s-accent-2, #B5451B), var(--s-accent, #D2691E), #FFAA00, #CD7F32, var(--s-accent-2, #B5451B));
+  pointer-events: none;
+}
+
+/* Footer: inner top shadow + a pixel grass edge tinted by season */
+.site-footer {
+  box-shadow: inset 0 4px 8px rgba(0, 0, 0, 0.08);
+}
+
+.site-footer::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -4px;
+  height: 4px;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--s-ground-top, var(--color-grass)) 0 12px,
+    color-mix(in srgb, var(--s-ground-top, var(--color-grass)) 80%, black) 12px 24px
+  );
+}
+
+@keyframes season-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.season-fade-in {
+  animation: season-fade-in 1.5s ease-in-out both;
+}
+
+@keyframes forest-ray-shimmer {
+  0%, 100% { opacity: 0.55; }
+  50% { opacity: 1; }
+}
+
+.forest-ray {
+  animation: forest-ray-shimmer 7s ease-in-out infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .season-leaf { display: none; }
+  .season-fade-in { animation: none; }
+  .forest-ray { animation: none; }
+  a.mc-panel:hover,
+  a.mc-panel:focus-visible { transform: none; }
+  .mc-pill:active { transform: none; }
 }
