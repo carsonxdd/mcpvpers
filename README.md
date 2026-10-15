@@ -233,6 +233,11 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - **Stats proxy** (`src/app/api/stats/[...path]/route.ts`) no longer uses Next's fetch cache, which kept serving Season 1 numbers while prod was down. It keeps its own in-memory cache: fresh 30 s, last-good body for at most 5 min during an outage, then 502 so the live widgets hide
 - News post 20 corrected in place; post 21 ("Final Numbers Before Launch") lists what changed for players
 
+### Player profiles start fresh for Season 2 (2026-10-15)
+
+- `/api/player-profile/[uuid]` drops Boss Rush **recent runs**, **recent loot** and **recent earnings** (payouts) stamped before `SEASON2_AT`, so every player's raid log starts empty at launch. Site-side only, like `GazetteFeed`: the rows still exist in the plugin's `stats.db`, and removing the filter brings them back
+- Lifetime Boss Rush totals (events, clears, total earned) are untouched. Zero them in game with `/event statedit reset` if needed
+
 ### Launch moved to Thursday Oct 15 (2026-10-13)
 
 - `SEASON2_AT` is now Thursday Oct 15, 2026, 12 PM Arizona (`2026-10-15T19:00:00Z`); the banner caption matches

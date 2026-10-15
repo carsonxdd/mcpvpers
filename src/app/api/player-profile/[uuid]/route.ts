@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getSnapshot, rowFor } from '@/lib/leaderboardSnapshot';
 import { getEventsSnapshot, eventRowFor, type EventEntry } from '@/lib/eventsSnapshot';
 import { getPvpSnapshot, pvpRowFor, PVP_BOARDS } from '@/lib/pvpSnapshot';
+import { SEASON2_AT } from '@/lib/launch';
 
 export const runtime = 'nodejs';
 
@@ -248,6 +249,15 @@ export async function GET(
       : null,
     getJson<{ listings: MarketListing[] }>('shop/market'),
   ]);
+  // Season 2 starts the raid log and recent earnings fresh: runs, loot and
+  // payouts stamped before launch are dropped here (site-side only, same as
+  // GazetteFeed — the rows still exist in the plugin's stats.db). Lifetime
+  // totals (events, clears, total_money) are left as they are.
+  if (events) {
+    if (Array.isArray(events.recent_runs)) events.recent_runs = events.recent_runs.filter((r) => r.ended_at >= SEASON2_AT);
+    if (Array.isArray(events.recent_loot)) events.recent_loot = events.recent_loot.filter((l) => l.at >= SEASON2_AT);
+    if (Array.isArray(events.recent_payouts)) events.recent_payouts = events.recent_payouts.filter((p) => p.at >= SEASON2_AT);
+  }
   const nameLower = player.name.toLowerCase();
   const marketListings = Array.isArray(market?.listings)
     ? market.listings.filter((l) => l.seller?.toLowerCase() === nameLower)
