@@ -67,14 +67,14 @@ const PAL_FRONT: string[][] = [
 const LAYERS: LayerCfg[] = [
   { // far — hazy treetops, dim interior, thin distant trunks
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
-    r: [9, 14], cell: 0, crownPals: PAL_FAR, trunkGap: [16, 30], trunkW: [4, 6], frameW: 0, birchChance: 0.15,
+    r: [9, 14], cell: 0, crownPals: PAL_FAR, trunkGap: [18, 34], trunkW: [6, 9], frameW: 0, birchChance: 0.15,
     hazyTrunks: true, interior: true, clusters: 0,
     litter: ['#8A5A2C', '#A8702E', '#B98238', '#9A6A30'], litterDepth: 5, floor: ['#8E6236', '#9A6C3A', '#86603A'], soil: ['#5A3A22', '#4A2E1C'],
     clutter: null, seed: 7,
   },
   { // mid
     px: 6, crownTopVh: 0.75, heightVh: 1.5, bandVh: 0.34, groundVh: 1.2, speed: 0.8333,
-    r: [11, 17], cell: 0, crownPals: PAL_MID, trunkGap: [24, 46], trunkW: [6, 8], frameW: 0, birchChance: 0.25,
+    r: [11, 17], cell: 0, crownPals: PAL_MID, trunkGap: [28, 52], trunkW: [8, 11], frameW: 0, birchChance: 0.25,
     hazyTrunks: false, interior: false, clusters: 0.4,
     litter: ['#7A3A14', '#A8501C', '#C9701E', '#D9962A', '#8A5A24'], litterDepth: 5, floor: ['#8A421A', '#9A5220', '#7E4A20', '#A8601E'], soil: ['#3A2210', '#2A180C'],
     clutter: { gap: [26, 50], kinds: ['mushroom', 'rock', 'pumpkin', 'mound', 'mushroomBrown', 'bracken'] }, seed: 21,
@@ -98,7 +98,6 @@ const AUTUMN: ForestTheme = {
     shore: ['#C4946A', '#B8885E', '#CEA274', '#DDB88A'],
     reflection: '#B8A08A',
     water: ['#AACADA', '#9ABED2', '#8CB2CA', '#80A8C2'],
-    glint: '#FFF6E6',
   },
   bark: {
     main: ['#8A5A30', '#5E3C1E', '#3E2814'],
@@ -107,14 +106,19 @@ const AUTUMN: ForestTheme = {
     birchMark: '#3A342A',
   },
   logGrain: false,
-  ray: { light: 'rgba(255, 226, 160, 0.5)', dark: 'rgba(255, 226, 160, 0.3)', tail: 'rgba(255, 210, 140, 0.18)' },
+  light: {
+    sun: '255, 222, 160',
+    moon: '255, 214, 165', // harvest moon
+    glint: { day: '255, 240, 210', night: '255, 226, 186' },
+    fly: { core: '#FFF2B8', glow: '255, 214, 120', perLayer: [8, 11, 6] },
+  },
   shade: ['rgba(40, 20, 8, 0.1)', 'rgba(40, 20, 8, 0.4)'],
   veil: 'rgba(247, 238, 223, 0.26)',
 };
 
 // `season` is null on the default look, which gets the vanilla oak woods.
-export default function Scenery({ season, dark }: { season: Season | null; dark: boolean }) {
-  if (season === null) return <OakVanilla key="oak" dark={dark} />;
+export default function Scenery({ season, dark, raining }: { season: Season | null; dark: boolean; raining: boolean }) {
+  if (season === null) return <OakVanilla key="oak" dark={dark} raining={raining} />;
   if (season !== 'autumn') return null;
-  return <ForestScene key="autumn" theme={AUTUMN} dark={dark} />;
+  return <ForestScene key="autumn" theme={AUTUMN} dark={dark} raining={raining} />;
 }

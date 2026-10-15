@@ -8,7 +8,7 @@ import ForestScene, { type ForestTheme, type LayerCfg, type Sprite } from './For
    leaf/grass "blocks" so it reads as Minecraft, while keeping autumn's
    lighting, haze, sun shafts and deepening shade. Oak + birch logs, a
    grass-block floor with tall grass, ferns, flowers, mushrooms and a few
-   farm animals; fireflies at night.                                        */
+   farm animals; green-gold fireflies and a cool moon glade at night.       */
 
 const SPR: Record<string, Sprite> = {
   tallGrass: {
@@ -127,16 +127,16 @@ const PAL_FRONT: string[][] = [
 ];
 
 const LAYERS: LayerCfg[] = [
-  { // far — hazy blue-green treetops, airy interior, thin distant trunks
+  { // far — hazy blue-green treetops, airy interior, distant oak trunks
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
-    r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [16, 30], trunkW: [4, 6], frameW: 0, birchChance: 0.2,
+    r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [20, 38], trunkW: [7, 10], frameW: 0, birchChance: 0.2,
     hazyTrunks: true, interior: true, clusters: 0,
     litter: ['#7FAE6A', '#8CBA74', '#76A462'], litterDepth: 3, floor: ['#7AA46A', '#6E9A62', '#80A870'], soil: ['#6E6A58', '#5E5A4C'],
     clutter: null, seed: 7,
   },
   { // mid
     px: 6, crownTopVh: 0.75, heightVh: 1.5, bandVh: 0.34, groundVh: 1.2, speed: 0.8333,
-    r: [11, 17], cell: 4, crownPals: PAL_MID, trunkGap: [24, 46], trunkW: [6, 8], frameW: 0, birchChance: 0.3,
+    r: [11, 17], cell: 4, crownPals: PAL_MID, trunkGap: [30, 56], trunkW: [9, 12], frameW: 0, birchChance: 0.3,
     hazyTrunks: false, interior: false, clusters: 0.4,
     litter: ['#4E8C2A', '#5C9E32', '#6AAE3A', '#589832'], litterDepth: 3, floor: ['#4A8428', '#438026', '#52902E', '#4E7E2C'], soil: ['#6B4A32', '#5C402B', '#79553A'],
     clutter: { gap: [10, 28], kinds: ['tallGrass', 'tallGrass', 'fern', 'poppy', 'dandelion', 'mushroomRed', 'rock', 'bush'] },
@@ -144,7 +144,7 @@ const LAYERS: LayerCfg[] = [
   },
   { // front — big, saturated, with the floor in the foreground
     px: 9, crownTopVh: 0.9, heightVh: 1.68, bandVh: 0.38, groundVh: 1.48, speed: 1.0,
-    r: [14, 22], cell: 5, crownPals: PAL_FRONT, trunkGap: [36, 64], trunkW: [8, 10], frameW: 15, birchChance: 0.25,
+    r: [14, 22], cell: 5, crownPals: PAL_FRONT, trunkGap: [40, 70], trunkW: [11, 14], frameW: 18, birchChance: 0.25,
     hazyTrunks: false, interior: false, clusters: 0.6,
     litter: ['#4A8A28', '#5AA032', '#6CB43C', '#7CBD42', '#529430'], litterDepth: 3, floor: ['#3F7A22', '#468626', '#3A7020', '#4C8A2A'], soil: ['#5C402B', '#4E3624', '#6B4A32'],
     clutter: { gap: [6, 18], kinds: ['tallGrass', 'tallGrass', 'fern', 'poppy', 'dandelion', 'cornflower', 'oxeye', 'allium', 'bush', 'mushroomRed', 'mushroomBrown', 'rock', 'tallGrass'] },
@@ -162,44 +162,25 @@ const VANILLA: ForestTheme = {
     shore: ['#86AA94', '#7C9F8A', '#91B49D', '#A4C2AC'],
     reflection: '#8DB2B2',
     water: ['#A2CFE8', '#93C4E2', '#84B8DA', '#78ADD2'],
-    glint: '#ECF8FF',
   },
   bark: {
     main: ['#7A5A36', '#5E4428', '#3E2C1A'],
-    hazy: ['#7E8E7C', '#6A7A68', '#586856'],
+    hazy: ['#958676', '#7D6F62', '#665A50'], // oak, faded by distance (not green)
     birch: ['#ECECE4', '#D8D8CE', '#B0B0A4'],
     birchMark: '#2E2E2A',
   },
   logGrain: true,
-  ray: { light: 'rgba(255, 248, 205, 0.5)', dark: 'rgba(220, 255, 200, 0.22)', tail: 'rgba(255, 240, 190, 0.16)' },
+  light: {
+    sun: '255, 244, 200',
+    moon: '185, 210, 255',
+    glint: { day: '255, 252, 232', night: '214, 228, 255' },
+    fly: { core: '#F2FFB0', glow: '196, 255, 120', perLayer: [12, 16, 9] },
+  },
   shade: ['rgba(8, 28, 12, 0.08)', 'rgba(8, 28, 12, 0.38)'],
   veil: 'rgba(240, 248, 240, 0.24)',
 };
 
-// Night-time fireflies drifting between the trunks.
-const FIREFLIES = Array.from({ length: 16 }, (_, i) => ({
-  left: (i * 37.7 + 11) % 100,
-  top: 42 + ((i * 23.3) % 46),
-  delay: (i * 1.7) % 9,
-  dur: 8 + (i % 5) * 1.6,
-}));
-
-export default function OakVanilla({ dark }: { dark: boolean }) {
-  return (
-    <ForestScene theme={VANILLA} dark={dark}>
-      <div
-        className="absolute inset-0 pointer-events-none overflow-hidden"
-        style={{ opacity: dark ? 1 : 0, transition: 'opacity 1.5s ease-in-out' }}
-        aria-hidden="true"
-      >
-        {FIREFLIES.map((f, i) => (
-          <span
-            key={i}
-            className="firefly"
-            style={{ left: `${f.left}%`, top: `${f.top}%`, animationDelay: `${f.delay}s`, animationDuration: `${f.dur}s` }}
-          />
-        ))}
-      </div>
-    </ForestScene>
-  );
+// Fireflies, sun shafts and lake glitter come from the engine (ForestLight) via `light`.
+export default function OakVanilla({ dark, raining }: { dark: boolean; raining: boolean }) {
+  return <ForestScene theme={VANILLA} dark={dark} raining={raining} />;
 }

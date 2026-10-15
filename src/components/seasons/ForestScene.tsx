@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { canopyLine, clamp, createRig, mulberry32, smooth, type LayerGeo, type LightRig, type LightTheme, type Rnd } from './ForestLight';
 
 /* ───────────────────────── Forest descent engine ─────────────────────────
    Shared by the autumn forest and the vanilla oak woods. At the top of the
@@ -8,23 +9,13 @@ import { useEffect, useRef } from 'react';
    Scrolling carries you down through the canopy, past the trunks and onto the
    forest floor. Three parallax layers (far / mid / front) are painted once
    onto small canvases (seeded, so it's the same forest every time), then only
-   CSS-translated on scroll — no per-scroll React renders.
+   CSS-translated on scroll — no per-scroll React renders. The animated light
+   (shafts, lake glitter, fireflies) is drawn on top by ForestLight.
 
    World units: "vh" = viewport heights. A layer's translateY at scroll
    progress p (0..1) is -p * theme.travel * vh * speed.                        */
 
-type Rnd = () => number;
-function mulberry32(seed: number): Rnd {
-  let a = seed;
-  return () => {
-    a |= 0; a = (a + 0x6d2b79f5) | 0;
-    let t = Math.imul(a ^ (a >>> 15), 1 | a);
-    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
 const pick = <T,>(r: Rnd, a: T[]): T => a[Math.floor(r() * a.length)];
-const clamp = (v: number, lo: number, hi: number) => Math.max(lo, Math.min(hi, v));
 
 function dot(ctx: CanvasRenderingContext2D, x: number, y: number, c: string, w = 1, h = 1) {
   ctx.fillStyle = c;
@@ -79,10 +70,10 @@ export interface ForestTheme {
   sprites: Record<string, Sprite>;
   interior: string[];    // top → floor (hazy distant woods; unused when `lake` is set)
   // Optional: the far layer opens onto a lake instead — sky, a hazy far shore, water.
-  lake?: { sky: string[]; shore: string[]; reflection: string; water: string[]; glint: string };
+  lake?: { sky: string[]; shore: string[]; reflection: string; water: string[] };
   bark: { main: string[]; hazy: string[]; birch: string[]; birchMark: string };
   logGrain: boolean;     // vertical log grain + straight trunks (vanilla) vs. gnarled bark with a flared base
-  ray: { light: string; dark: string; tail: string };
+  light: LightTheme;
   shade: [string, string];
   veil: string;          // light-mode wash so text stays readable
 }
@@ -183,8 +174,8 @@ function drawTrunk(ctx: CanvasRenderingContext2D, theme: ForestTheme, x: number,
 }
 
 // Seen between the far trunks: pale sky down to a blocky, hazy far shore,
-// then water (shore reflection, sky-lit bands, glints) down to our floor.
-function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme['lake']>, W: number, top: number, bottom: number, rnd: Rnd) {
+// then water (shore reflection, sky-lit bands) down to our floor.
+function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme['lake']>, W: number, top: number, bottom: number, rnd: Rnd): number {
   const waterTop = bottom - Math.round((bottom - top) * 0.26);
   const band = (pal: string[], t: number) => pal[clamp(Math.floor(t * (pal.length - 1) + (rnd() - 0.5) * 0.9), 0, pal.length - 1)];
 
@@ -214,11 +205,32 @@ function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme[
       dot(ctx, x, y, d < refl && rnd() < 0.8 ? lake.reflection : band(lake.water, t));
     }
   }
-  const glints = Math.floor((W * (bottom - waterTop)) / 50);
-  for (let k = 0; k < glints; k++) {
-    const y = waterTop + 2 + Math.floor(rnd() * (bottom - waterTop - 2));
-    dot(ctx, Math.floor(rnd() * W), y, lake.glint, 2 + Math.floor(rnd() * 5), 1);
+  // No painted glints: the ripples and sparkle are animated by ForestLight.
+  return waterTop;
+}
+
+// Which painted pixels are still water once trunks, crowns and floor are on
+// top — the lake light is clipped to this so nothing in front of it glows.
+function waterMask(canvas: HTMLCanvasElement, lake: NonNullable<ForestTheme['lake']>, top: number, bottom: number) {
+  const W = canvas.width;
+  const H = canvas.height;
+  const mask = document.createElement('canvas');
+  mask.width = W;
+  mask.height = H;
+  const src = canvas.getContext('2d');
+  const dst = mask.getContext('2d');
+  if (!src || !dst) return mask;
+  const water = new Set([...lake.water, lake.reflection].map((c) => parseInt(c.slice(1), 16)));
+  const d = src.getImageData(0, 0, W, H).data;
+  const out = dst.createImageData(W, H);
+  for (let y = Math.max(0, top); y < Math.min(H, bottom); y++) {
+    for (let x = 0; x < W; x++) {
+      const o = (y * W + x) * 4;
+      if (d[o + 3] === 255 && water.has((d[o] << 16) | (d[o + 1] << 8) | d[o + 2])) out.data[o + 3] = 255;
+    }
   }
+  dst.putImageData(out, 0, 0);
+  return mask;
 }
 
 // A branch from the trunk edge (x0, y0) up to (x1, y1). Vanilla grows logs
@@ -272,7 +284,7 @@ function drawGround(ctx: CanvasRenderingContext2D, cfg: LayerCfg, W: number, H: 
   return edges;
 }
 
-function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg, vw: number, vh: number, scale: number) {
+function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg, vw: number, vh: number, scale: number): LayerGeo {
   const px = Math.max(2, Math.round(cfg.px * scale));
   const W = Math.ceil(vw / px) + 2;
   const H = Math.ceil((cfg.heightVh * vh) / px);
@@ -280,8 +292,9 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   canvas.height = H;
   canvas.style.width = `${W * px}px`;
   canvas.style.height = `${H * px}px`;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return 0;
+  const ctx = canvas.getContext('2d', { willReadFrequently: cfg.interior && !!theme.lake });
+  const geo: LayerGeo = { top: 0, px, W, H, groundTop: H, edges: new Array(W).fill(H), canopyBottom: 0, lake: null };
+  if (!ctx) return geo;
   const rnd = mulberry32(cfg.seed);
 
   const topPad = cfg.r[1] + 2;
@@ -292,8 +305,9 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
 
   // Dim interior behind the trunks (far layer only): hazy light at the top,
   // deeper towards the floor, dithered.
+  let waterTop = -1;
   if (cfg.interior && theme.lake) {
-    paintLake(ctx, theme.lake, W, Math.floor(interiorTop), groundTop + 2, rnd);
+    waterTop = paintLake(ctx, theme.lake, W, Math.floor(interiorTop), groundTop + 2, rnd);
   } else if (cfg.interior) {
     const steps = theme.interior;
     for (let y = Math.floor(interiorTop); y < H; y++) {
@@ -404,29 +418,37 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
     });
   }
 
+  geo.groundTop = groundTop;
+  geo.edges = edges;
+  geo.canopyBottom = canopyBottom;
+  if (waterTop >= 0 && theme.lake) {
+    geo.lake = { waterTop, bottom: groundTop + 2, mask: waterMask(canvas, theme.lake, waterTop, groundTop + 2) };
+  }
   // Where the canvas top should sit so the highest crowns land on crownTopVh.
-  return cfg.crownTopVh * vh - topPad * px;
+  geo.top = cfg.crownTopVh * vh - topPad * px;
+  return geo;
 }
 
-const smooth = (a: number, b: number, v: number) => {
-  const t = clamp((v - a) / (b - a), 0, 1);
-  return t * t * (3 - 2 * t);
-};
+const NIGHT_FILTER = 'brightness(0.42) saturate(0.8)';
 
-const RAYS = [
-  { left: 6, w: 110, rot: 16, delay: 0 },
-  { left: 24, w: 70, rot: 20, delay: 1.2 },
-  { left: 43, w: 150, rot: 14, delay: 2.4 },
-  { left: 63, w: 90, rot: 19, delay: 0.6 },
-  { left: 82, w: 120, rot: 15, delay: 1.8 },
-];
-
-export default function ForestScene({ theme, dark, children }: { theme: ForestTheme; dark: boolean; children?: React.ReactNode }) {
+export default function ForestScene({ theme, dark, raining = false }: { theme: ForestTheme; dark: boolean; raining?: boolean }) {
   const wraps = useRef<(HTMLDivElement | null)[]>([]);
   const canvases = useRef<(HTMLCanvasElement | null)[]>([]);
+  const lights = useRef<(HTMLCanvasElement | null)[]>([]);
+  const lakeRef = useRef<HTMLCanvasElement>(null);
+  const shaftsRef = useRef<HTMLCanvasElement>(null);
+  const frontShaftsRef = useRef<HTMLCanvasElement>(null);
   const raysRef = useRef<HTMLDivElement>(null);
   const raysWrap = useRef<HTMLDivElement>(null);
   const shadeRef = useRef<HTMLDivElement>(null);
+  // Read by the light loop each frame, so theme/weather flips don't repaint the forest.
+  const env = useRef({ dark, raining });
+  const redraw = useRef<() => void>(() => {});
+
+  useEffect(() => {
+    env.current = { dark, raining };
+    redraw.current();
+  }, [dark, raining]);
 
   useEffect(() => {
     const { layers, travel } = theme;
@@ -436,8 +458,16 @@ export default function ForestScene({ theme, dark, children }: { theme: ForestTh
     let maxScroll = 1;
     let p = 0;
     let raf = 0;
+    let loop = 0;
     let resizeTimer: ReturnType<typeof setTimeout> | undefined;
+    let geos: LayerGeo[] = [];
+    let rig: LightRig | null = null;
+    let mobile = false;
+    let night = env.current.dark ? 1 : 0;
+    let wet = env.current.raining ? 1 : 0;
+    let last = performance.now();
 
+    const raysFade = () => smooth(0.12, 0.38, p) * (1 - smooth(0.85, 1, p) * 0.4);
     const apply = () => {
       raf = 0;
       layers.forEach((cfg, i) => {
@@ -447,7 +477,8 @@ export default function ForestScene({ theme, dark, children }: { theme: ForestTh
       // Shafts live under the canopy: travel with the mid layer, and only fade in
       // once the descent starts so they never show over open sky.
       if (raysWrap.current) raysWrap.current.style.transform = `translate3d(0, ${-p * travel * vh * layers[1].speed}px, 0)`;
-      if (raysRef.current) raysRef.current.style.opacity = String(smooth(0.12, 0.38, p) * (1 - smooth(0.85, 1, p) * 0.4));
+      canopyLine.y = (layers[1].crownTopVh + layers[1].bandVh) * vh - p * travel * vh * layers[1].speed;
+      if (raysRef.current) raysRef.current.style.opacity = String(raysFade());
       if (shadeRef.current) shadeRef.current.style.opacity = String(smooth(0.2, 1, p));
     };
     const schedule = () => { if (!raf) raf = requestAnimationFrame(apply); };
@@ -457,26 +488,62 @@ export default function ForestScene({ theme, dark, children }: { theme: ForestTh
       p = reduceMotion ? 0 : clamp(window.scrollY / maxScroll, 0, 1);
     };
 
+    const drawLight = (t: number, dt: number) => {
+      rig?.draw({
+        t, dt, night, wet, raysFade: raysFade(),
+        offsets: layers.map((cfg, i) => (geos[i]?.top ?? 0) - p * travel * vh * cfg.speed),
+      });
+    };
+
     const paintAll = () => {
       vw = window.innerWidth;
       vh = window.innerHeight;
-      const scale = vw < 768 ? 0.67 : 1;
+      mobile = vw < 768;
+      const scale = mobile ? 0.67 : 1;
+      geos = [];
       layers.forEach((cfg, i) => {
         const canvas = canvases.current[i];
         const wrap = wraps.current[i];
         if (!canvas || !wrap) return;
-        wrap.style.top = `${paintLayer(canvas, theme, cfg, vw, vh, scale)}px`;
+        geos[i] = paintLayer(canvas, theme, cfg, vw, vh, scale);
+        wrap.style.top = `${geos[i].top}px`;
       });
       // Rays start halfway down the mid canopy band.
+      const raysTop = (layers[1].crownTopVh + layers[1].bandVh * 0.5) * vh;
+      const raysH = 1.4 * vh;
       if (raysWrap.current) {
-        raysWrap.current.style.top = `${(layers[1].crownTopVh + layers[1].bandVh * 0.5) * vh}px`;
-        raysWrap.current.style.height = `${1.4 * vh}px`;
+        raysWrap.current.style.top = `${raysTop}px`;
+        raysWrap.current.style.height = `${raysH}px`;
       }
+      rig = geos.length === layers.length
+        ? createRig(theme, geos, { light: lights.current, lake: lakeRef.current, shafts: shaftsRef.current, frontShafts: frontShaftsRef.current }, { vw, vh, mobile, raysTop, raysH })
+        : null;
       measure();
       schedule();
+      if (reduceMotion) drawLight(12, 0);
     };
 
     paintAll();
+
+    // Reduced motion: one still frame per change. Otherwise animate (≈30fps on phones).
+    redraw.current = () => {
+      if (!reduceMotion) return;
+      night = env.current.dark ? 1 : 0;
+      wet = env.current.raining ? 1 : 0;
+      drawLight(12, 0);
+    };
+    const frame = (now: number) => {
+      loop = requestAnimationFrame(frame);
+      if (mobile && now - last < 30) return;
+      const dt = Math.min(0.1, (now - last) / 1000);
+      last = now;
+      // Ease with the 1.5s theme crossfade / weather change.
+      const step = dt / 1.5;
+      night += clamp((env.current.dark ? 1 : 0) - night, -step, step);
+      wet += clamp((env.current.raining ? 1 : 0) - wet, -step, step);
+      drawLight(now / 1000, dt);
+    };
+    if (!reduceMotion) loop = requestAnimationFrame(frame);
 
     const onScroll = () => { measure(); schedule(); };
     const onResize = () => {
@@ -495,9 +562,14 @@ export default function ForestScene({ theme, dark, children }: { theme: ForestTh
       ro?.disconnect();
       clearTimeout(resizeTimer);
       if (raf) cancelAnimationFrame(raf);
+      if (loop) cancelAnimationFrame(loop);
+      redraw.current = () => {};
+      canopyLine.y = -Infinity;
     };
   }, [theme]);
 
+  // The night dim goes on each painted canvas, not the whole scene, so the
+  // light canvases stacked between them stay bright.
   const layerEl = (i: number) => (
     <div
       key={i}
@@ -505,58 +577,47 @@ export default function ForestScene({ theme, dark, children }: { theme: ForestTh
       className="absolute left-0 will-change-transform"
       style={{ top: 0 }}
     >
-      <canvas ref={(el) => { canvases.current[i] = el; }} style={{ display: 'block', imageRendering: 'pixelated' }} />
+      <canvas
+        ref={(el) => { canvases.current[i] = el; }}
+        style={{ display: 'block', imageRendering: 'pixelated', filter: dark ? NIGHT_FILTER : 'none', transition: 'filter 1.5s ease-in-out' }}
+      />
+      {i === 0 && (
+        <canvas ref={lakeRef} className="absolute left-0 top-0" style={{ imageRendering: 'pixelated', mixBlendMode: 'screen' }} />
+      )}
+      <canvas
+        ref={(el) => { lights.current[i] = el; }}
+        className="absolute left-0 top-0"
+        style={{ imageRendering: 'pixelated', mixBlendMode: 'screen' }}
+      />
+      {/* Nearer shafts, falling in front of the front trees */}
+      {i === 2 && (
+        <canvas ref={frontShaftsRef} className="absolute left-0 forest-shafts" style={{ mixBlendMode: 'screen' }} />
+      )}
     </div>
   );
 
   return (
-    <>
-      <div
-        className="absolute inset-0 pointer-events-none season-fade-in"
-        style={{
-          filter: dark ? 'brightness(0.42) saturate(0.8)' : 'none',
-          transition: 'filter 1.5s ease-in-out',
-        }}
-        aria-hidden="true"
-      >
-        {layerEl(0)}
-        {layerEl(1)}
+    <div className="absolute inset-0 pointer-events-none season-fade-in" aria-hidden="true">
+      {layerEl(0)}
+      {layerEl(1)}
 
-        {/* Sun shafts between the mid and front layers */}
-        <div ref={raysWrap} className="absolute inset-x-0 overflow-hidden will-change-transform">
-          <div ref={raysRef} className="absolute inset-0" style={{ opacity: 0, mixBlendMode: 'screen' }}>
-          {RAYS.map((r, i) => (
-            <div
-              key={i}
-              className="forest-ray absolute"
-              style={{
-                left: `${r.left}%`,
-                top: '-10%',
-                width: `${r.w}px`,
-                height: '150%',
-                transform: `rotate(${r.rot}deg)`,
-                transformOrigin: 'top center',
-                background: `linear-gradient(180deg, transparent 0%, ${dark ? theme.ray.dark : theme.ray.light} 14%, ${theme.ray.tail} 60%, transparent 100%)`,
-                filter: 'blur(8px)',
-                animationDelay: `${r.delay}s`,
-              }}
-            />
-          ))}
-          </div>
+      {/* Sun shafts between the mid and front layers */}
+      <div ref={raysWrap} className="absolute inset-x-0 overflow-hidden will-change-transform">
+        <div ref={raysRef} className="absolute inset-0" style={{ opacity: 0, mixBlendMode: 'screen' }}>
+          <canvas ref={shaftsRef} className="absolute left-0 top-0 forest-shafts" />
         </div>
-
-        {layerEl(2)}
-
-        {/* Deeper = darker */}
-        <div
-          ref={shadeRef}
-          className="absolute inset-0"
-          style={{ background: `linear-gradient(180deg, ${theme.shade[0]}, ${theme.shade[1]})`, opacity: 0 }}
-        />
-        {/* Veil in light mode so text over the forest stays readable */}
-        {!dark && <div className="absolute inset-0" style={{ background: theme.veil }} />}
       </div>
-      {children}
-    </>
+
+      {layerEl(2)}
+
+      {/* Deeper = darker */}
+      <div
+        ref={shadeRef}
+        className="absolute inset-0"
+        style={{ background: `linear-gradient(180deg, ${theme.shade[0]}, ${theme.shade[1]})`, opacity: 0 }}
+      />
+      {/* Veil in light mode so text over the forest stays readable */}
+      {!dark && <div className="absolute inset-0" style={{ background: theme.veil }} />}
+    </div>
   );
 }

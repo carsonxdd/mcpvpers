@@ -274,6 +274,16 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - The painter moved into a shared engine, `components/seasons/ForestScene.tsx`; each look is just a `ForestTheme` (palettes, sprites, layer layout). Autumn lives in `Scenery.tsx`, vanilla in `OakVanilla.tsx`.
 - Changes that apply to both looks: the far woods open onto a lake (sky, hazy far shore, water with reflections and glints). Branches are now wood ending in leaf clusters, there are fewer of them, and trunks are thicker. Layer speeds are matched so the canopy never shows sky gaps mid-scroll, and the floor recedes as grass or leaf litter instead of showing a dirt cross-section.
 
+### Forest lighting (2026-10-14)
+
+- New `components/seasons/ForestLight.ts` animates light over both forests (autumn and vanilla), replacing the static CSS sun rays and CSS fireflies.
+- **Sun shafts** come in two depths: behind the front trees and in front of them. Each shaft fades in and out on its own, all of them sway with a shared wind, and passing clouds dim the sunlight together. Dust shows only inside a beam, and light flickers on the floor where the shafts land. At night they turn into faint moonbeams.
+- **Lake**: a shimmering glitter path under the sun (a narrower, cooler glade under the moon at night), twinkling glints, drifting ripples and a bright shoreline. The light is clipped to the visible water, so trunks and grass in front of the lake stay unlit. The old painted, static glints are gone.
+- **Fireflies** (night only) appear at all three depths. They wander and flash, and a wave of flashes sweeps across the woods every 31 s. They light nearby trees in stepped, Minecraft-style light levels, throw a pool of light on the floor below, and reflect in the lake. Autumn's are amber.
+- Rain dims the sunlight and thins out the fireflies. Under reduced motion the lighting is one still frame, and phones run at about 30 fps with fewer effects.
+- Trunks are thicker, especially in vanilla. Distant vanilla trunks are a faded oak brown instead of gray-green.
+- Autumn's falling leaves are bigger (16–20 px on desktop). They only show below the canopy, so none fall over open sky at the top of the page.
+
 ## Getting Started
 
 ```bash

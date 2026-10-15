@@ -312,7 +312,7 @@ export default function ParallaxBackground() {
       />
 
       {/* Seasonal scenery: above the overlay so it isn't washed out, fixed so it never scrolls away */}
-      {scenic && <Scenery season={season} dark={!isLight} />}
+      {scenic && <Scenery season={season} dark={!isLight} raining={isRaining} />}
     </div>
   );
 }

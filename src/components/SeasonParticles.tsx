@@ -3,11 +3,12 @@
 import { useEffect, useRef } from 'react';
 import { useSeason } from './SeasonProvider';
 import { SEASON_META } from '@/lib/seasons';
+import { canopyLine } from './seasons/ForestLight';
 
 interface Leaf {
   x: number;
   y: number;
-  cell: number; // px per leaf-pixel (2 or 3 → 8–12px leaves)
+  cell: number; // px per leaf-pixel (4–5 → 16–20px leaves; 3–4 on mobile)
   speed: number;
   drift: number;
   phase: number;
@@ -41,7 +42,8 @@ export default function SeasonParticles() {
     if (!ctx) return;
 
     const isMobile = window.innerWidth < 768;
-    const count = isMobile ? 10 : 26;
+    const count = isMobile ? 9 : 22;
+    const cells = isMobile ? [3, 4] : [4, 5];
     const palette = SEASON_META.autumn.particles;
 
     const resize = () => {
@@ -51,10 +53,17 @@ export default function SeasonParticles() {
     resize();
     window.addEventListener('resize', resize);
 
+    // New leaves drop out of the canopy when it's on screen, else from above the top edge.
+    const spawnY = (anywhere: boolean) => {
+      const line = canopyLine.y;
+      if (anywhere) return Math.max(0, line) + Math.random() * (canvas.height - Math.max(0, line));
+      return line > -30 ? line - 10 - Math.random() * 50 : -(Math.random() * 160) - 30;
+    };
+
     const make = (anywhere: boolean): Leaf => ({
       x: Math.random() * canvas.width,
-      y: anywhere ? Math.random() * canvas.height : -(Math.random() * 160) - 30,
-      cell: Math.random() < 0.5 ? 2 : 3,
+      y: spawnY(anywhere),
+      cell: cells[Math.random() < 0.5 ? 0 : 1],
       speed: 0.3 + Math.random() * 0.4,
       drift: 0.12 + Math.random() * 0.2,
       phase: Math.random() * Math.PI * 2,
@@ -80,9 +89,12 @@ export default function SeasonParticles() {
           leaves[i] = make(false);
           continue;
         }
+        // Hidden above the canopy line, fading in as they fall out of it.
+        const emerge = Math.min(1, (l.y - canopyLine.y) / 80);
+        if (emerge <= 0) continue;
         const ox = Math.floor(l.x);
         const oy = Math.floor(l.y);
-        ctx.globalAlpha = l.opacity;
+        ctx.globalAlpha = l.opacity * emerge;
         for (let r = 0; r < 4; r++) {
           for (let c = 0; c < 4; c++) {
             const v = LEAF[r][c];
