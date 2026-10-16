@@ -328,6 +328,16 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - A **Calendar** list in the picker shows the next theme changes with dates (Arizona time), from `seasonSchedule()` in `src/lib/seasons.ts`. Entries that won't show under the current settings are faded.
 - **Halloween** now runs **Oct 21 – Nov 2** (was Oct 20–31). Christmas and Easter are unchanged.
 
+### Five more holidays (2026-10-15)
+
+- The Holidays group now has eight themes, in calendar order. New windows (Arizona dates): **New Year** Dec 30 – Jan 1, **Valentine's** Feb 10–14, **St. Patrick's** Mar 14–17, **Fourth of July** Jul 1–5, and **Thanksgiving** Monday – Sunday of the week with the fourth Thursday of November (`thanksgivingDay` in `src/lib/seasons.ts`). In the rare years when Palm Sunday falls on Mar 15–17, St. Patrick's wins and Easter starts the day after.
+- **New Year** (`seasons/NewYearTaiga.ts`): the winter taiga with gold and silver baubles, firework rockets, lanterns, a cake and confetti in the snow, gold sparkles at night. Confetti falls, and rain turns to snow like winter.
+- **Valentine's** (`seasons/ValentineGrove.ts`): the spring grove with rose-red crowns, red and pink baubles, roses, rose bushes, heart topiaries, love letters and pink sheep. Hearts drift down; pink fireflies at night.
+- **St. Patrick's** (`seasons/CloverGlen.ts`): the summer woods in emerald, with clover patches, a cauldron of gold, emerald ore, a green hat, frogs and a green sheep. Four-leaf clovers fall.
+- **Fourth of July** (`seasons/IndependenceWoods.ts`): the summer woods with red, white and blue baubles, flags, firework rockets and a picnic blanket. Red, white and blue confetti falls.
+- **Thanksgiving** (`seasons/HarvestWoods.ts`): the autumn woods with turkeys, a chicken and a cow, cornucopias, pies, corn stalks, pumpkins and hay. Autumn leaves fall.
+- Autumn moved out of `Scenery.tsx` into `seasons/AutumnWoods.ts` (unchanged), and summer now exports its sprites and layers, so the holidays can build on them.
+
 ## Getting Started
 
 ```bash

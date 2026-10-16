@@ -403,6 +403,246 @@ html.dark[data-season='easter'] {
   --c-panel-bg: rgba(36, 32, 58, 0.8);
 }
 
+/* New Year — midnight taiga, gold and silver */
+html[data-season='newyear'] {
+  --s-accent: #E8B830;
+  --s-accent-2: #5A6AB8;
+  --s-accent-3: #FFE48A;
+  --s-accent-4: #E8E8F4;
+  --s-sky-1: #5A7EB4;
+  --s-sky-2: #7092C2;
+  --s-sky-3: #94AED4;
+  --s-sky-4: #BCCCE4;
+  --s-sky-5: #E2E6F2;
+  --s-ground-top: #F4F8FC;
+  --s-hill: #C8D6E4;
+  --s-dirt: #8A9AAC;
+  --s-night-sky-1: #080C1C;
+  --s-night-sky-2: #0E1428;
+  --s-night-hill: #121A30;
+  --s-overlay-rgb: 240, 242, 250;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='newyear'] {
+  --c-bg: #F2F3F8;
+  --c-bg-light: #E6E8F2;
+  --c-bg-lighter: #D8DCEA;
+  --c-surface: #FDFDFF;
+  --c-surface-light: #F0F0F6;
+  --c-border: #D4D2C8;
+  --c-border-light: #B8B094;
+  --c-text: #1A1C2A;
+  --c-text-dim: #40445A;
+  --c-text-muted: #70748A;
+  --c-panel-bg: rgba(253, 253, 255, 0.88);
+}
+
+html.dark[data-season='newyear'] {
+  --c-bg: #0C0F1E;
+  --c-bg-light: #12162A;
+  --c-bg-lighter: #1A1F36;
+  --c-surface: #181C32;
+  --c-surface-light: #20263E;
+  --c-border: #3A3A50;
+  --c-border-light: #54506A;
+  --c-panel-bg: rgba(24, 28, 50, 0.82);
+}
+
+/* Valentine's — rose grove */
+html[data-season='valentines'] {
+  --s-accent: #E8406A;
+  --s-accent-2: #A81E44;
+  --s-accent-3: #FFB6C8;
+  --s-accent-4: #FFFFFF;
+  --s-sky-1: #6AA0E0;
+  --s-sky-2: #84B0E6;
+  --s-sky-3: #A8C6EE;
+  --s-sky-4: #D4DCF0;
+  --s-sky-5: #F6D8E4;
+  --s-ground-top: #6CB43C;
+  --s-hill: #4E8C2A;
+  --s-dirt: #5C402B;
+  --s-night-sky-1: #1A0E22;
+  --s-night-sky-2: #22122A;
+  --s-night-hill: #1E1228;
+  --s-overlay-rgb: 252, 238, 244;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='valentines'] {
+  --c-bg: #FCEFF3;
+  --c-bg-light: #F7E0E8;
+  --c-bg-lighter: #F0CEDA;
+  --c-surface: #FFF9FB;
+  --c-surface-light: #F9E8EE;
+  --c-border: #EAC0CE;
+  --c-border-light: #D69AAE;
+  --c-text: #301620;
+  --c-text-dim: #5E3442;
+  --c-text-muted: #8E6474;
+  --c-panel-bg: rgba(255, 249, 251, 0.86);
+}
+
+html.dark[data-season='valentines'] {
+  --c-bg: #1C1018;
+  --c-bg-light: #26161F;
+  --c-bg-lighter: #301C28;
+  --c-surface: #2C1A25;
+  --c-surface-light: #372230;
+  --c-border: #563248;
+  --c-border-light: #6E405C;
+  --c-panel-bg: rgba(44, 26, 37, 0.8);
+}
+
+/* St. Patrick's — clover glen */
+html[data-season='stpatricks'] {
+  --s-accent: #2EB84A;
+  --s-accent-2: #1E7A32;
+  --s-accent-3: #F4C430;
+  --s-accent-4: #A8E68A;
+  --s-sky-1: #3A8CDE;
+  --s-sky-2: #4E9CE6;
+  --s-sky-3: #74B6F0;
+  --s-sky-4: #A0D0F4;
+  --s-sky-5: #D0ECF0;
+  --s-ground-top: #4EAA34;
+  --s-hill: #367A24;
+  --s-dirt: #4A3018;
+  --s-night-sky-1: #0A1424;
+  --s-night-sky-2: #0E1E2A;
+  --s-night-hill: #0C1E1A;
+  --s-overlay-rgb: 240, 250, 238;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='stpatricks'] {
+  --c-bg: #EEF8EC;
+  --c-bg-light: #DFF0DC;
+  --c-bg-lighter: #CEE6CA;
+  --c-surface: #FAFFF8;
+  --c-surface-light: #EAF6E6;
+  --c-border: #BEDCB4;
+  --c-border-light: #96C28A;
+  --c-text: #122A16;
+  --c-text-dim: #34543A;
+  --c-text-muted: #607E64;
+  --c-panel-bg: rgba(250, 255, 248, 0.86);
+}
+
+html.dark[data-season='stpatricks'] {
+  --c-bg: #0C1C14;
+  --c-bg-light: #12261B;
+  --c-bg-lighter: #183022;
+  --c-surface: #162C20;
+  --c-surface-light: #1E382A;
+  --c-border: #2C5238;
+  --c-border-light: #3A6A48;
+  --c-panel-bg: rgba(22, 44, 32, 0.8);
+}
+
+/* Fourth of July — summer woods in red, white and blue */
+html[data-season='july4'] {
+  --s-accent: #D8303A;
+  --s-accent-2: #2A4AA8;
+  --s-accent-3: #FFFFFF;
+  --s-accent-4: #4A6AD8;
+  --s-sky-1: #2A7ED8;
+  --s-sky-2: #3A8EE4;
+  --s-sky-3: #5EAAF0;
+  --s-sky-4: #8CC6F6;
+  --s-sky-5: #C4E2FA;
+  --s-ground-top: #4E9A2A;
+  --s-hill: #356E1E;
+  --s-dirt: #4A3018;
+  --s-night-sky-1: #08102A;
+  --s-night-sky-2: #0E1834;
+  --s-night-hill: #0E1A24;
+  --s-overlay-rgb: 244, 246, 252;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='july4'] {
+  --c-bg: #F2F4FA;
+  --c-bg-light: #E4E8F4;
+  --c-bg-lighter: #D4DAEC;
+  --c-surface: #FDFDFF;
+  --c-surface-light: #EEF0F8;
+  --c-border: #CCD2E6;
+  --c-border-light: #A6B0D0;
+  --c-text: #141A30;
+  --c-text-dim: #3A4260;
+  --c-text-muted: #687090;
+  --c-panel-bg: rgba(253, 253, 255, 0.86);
+}
+
+html.dark[data-season='july4'] {
+  --c-bg: #0C1226;
+  --c-bg-light: #121A32;
+  --c-bg-lighter: #1A223E;
+  --c-surface: #18203A;
+  --c-surface-light: #202A48;
+  --c-border: #344064;
+  --c-border-light: #46547C;
+  --c-panel-bg: rgba(24, 32, 58, 0.8);
+}
+
+/* Thanksgiving — harvest woods */
+html[data-season='thanksgiving'] {
+  --s-accent: #C8762A;
+  --s-accent-2: #8A4A1E;
+  --s-accent-3: #E8B84A;
+  --s-accent-4: #A8501C;
+  --s-sky-1: #4A7EB8;
+  --s-sky-2: #6490C4;
+  --s-sky-3: #92ACCA;
+  --s-sky-4: #E2C092;
+  --s-sky-5: #F0C482;
+  --s-ground-top: #A8601E;
+  --s-hill: #74521C;
+  --s-dirt: #4A2E14;
+  --s-night-sky-1: #160E1A;
+  --s-night-sky-2: #1E141E;
+  --s-night-hill: #20161C;
+  --s-overlay-rgb: 248, 238, 222;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='thanksgiving'] {
+  --c-bg: #F8EEDC;
+  --c-bg-light: #F0E2C8;
+  --c-bg-lighter: #E8D4B2;
+  --c-surface: #FFFAF0;
+  --c-surface-light: #F6EAD4;
+  --c-border: #DEC6A0;
+  --c-border-light: #C6A87C;
+  --c-text: #301E0E;
+  --c-text-dim: #5C422A;
+  --c-text-muted: #8C7254;
+  --c-panel-bg: rgba(255, 250, 240, 0.86);
+}
+
+html.dark[data-season='thanksgiving'] {
+  --c-bg: #1C1410;
+  --c-bg-light: #261C16;
+  --c-bg-lighter: #30241C;
+  --c-surface: #2C2018;
+  --c-surface-light: #382A20;
+  --c-border: #54402E;
+  --c-border-light: #6C523C;
+  --c-panel-bg: rgba(44, 32, 24, 0.8);
+}
+
 /* Biomes — toggle-only looks, never picked by the calendar */
 /* Birch forest — pale trunks, lime light */
 html[data-season='birch'] {

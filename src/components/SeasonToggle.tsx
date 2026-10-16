@@ -68,6 +68,56 @@ const ICONS: Record<Season, string[]> = {
     '...A....',
     '........',
   ],
+  newyear: [ // firework burst
+    'R..A..P.',
+    '.R.A.P..',
+    '..RWP...',
+    'AAWWWAA.',
+    '..PWR...',
+    '.P.A.R..',
+    'P..A..R.',
+    '........',
+  ],
+  valentines: [ // heart
+    '........',
+    '.AA.AA..',
+    'AWAAAAA.',
+    'AAAAAAA.',
+    '.AAAAA..',
+    '..AAA...',
+    '...A....',
+    '........',
+  ],
+  stpatricks: [ // four-leaf clover
+    '.AA.AA..',
+    'AAAGAAA.',
+    'AAAGAAA.',
+    '.GGGGG..',
+    'AAAGAAA.',
+    'AAAGAAA.',
+    '.AA.AAG.',
+    '.......G',
+  ],
+  july4: [ // flag
+    'NWNWAAAA',
+    'WNWNWWWW',
+    'NWNWAAAA',
+    'WWWWWWWW',
+    'AAAAAAAA',
+    'WWWWWWWW',
+    'AAAAAAAA',
+    '........',
+  ],
+  thanksgiving: [ // turkey
+    '.AOA....',
+    'AOYOA...',
+    'OYAYO.BB',
+    'AOYOA.BK',
+    '.ABBBBBR',
+    '..BBBBB.',
+    '...Y.Y..',
+    '..YY.YY.',
+  ],
   halloween: [ // jack o'lantern
     '...GG...',
     '.AAAAAA.',
@@ -151,7 +201,7 @@ const OAK_ICON = [
 ];
 const FIXED: Record<string, string> = {
   Y: '#FFE066', B: '#8B5A2B', G: '#4A8A2A', K: '#2A1408', P: '#F49AC1',
-  W: '#ECECE4', R: '#C8262A', O: '#B8641E', o: '#8A4414',
+  W: '#ECECE4', R: '#C8262A', O: '#B8641E', o: '#8A4414', N: '#2A3A8A',
 };
 
 // season null = the plain oak woods.
@@ -228,7 +278,7 @@ export default function SeasonToggle() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   // Recomputed on open so a page left up past midnight shows the right "now".
-  const schedule = useMemo(() => (open ? seasonSchedule().slice(0, 8) : []), [open]);
+  const schedule = useMemo(() => (open ? seasonSchedule().slice(0, 12) : []), [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -289,7 +339,7 @@ export default function SeasonToggle() {
             on={auto}
             onChange={toggleAuto}
             label="Change with the calendar"
-            hint="Follows the seasons and switches for Halloween, Christmas and Easter."
+            hint="Follows the seasons and switches for holidays, from New Year's to Christmas."
           />
           <Switch
             on={auto || holidays}

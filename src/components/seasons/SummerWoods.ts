@@ -7,7 +7,8 @@ import { OAK_SPRITES } from './OakVanilla';
    floor, a fox and the farm animals out in the heat, and the most fireflies
    of any season once it gets dark.                                          */
 
-const SPR: Record<string, Sprite> = {
+// Exported for St. Patrick's and the Fourth of July, which build on these woods.
+export const SUMMER_SPRITES: Record<string, Sprite> = {
   ...OAK_SPRITES,
   sunflower: {
     rows: [
@@ -70,7 +71,7 @@ const PAL_FRONT: string[][] = [
   ['#265C12', '#387618', '#50921E', '#6EAE28', '#90C834'],
 ];
 
-const LAYERS: LayerCfg[] = [
+export const SUMMER_LAYERS: LayerCfg[] = [
   { // far — warm haze over the lake
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
     r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [18, 34], trunkW: [7, 10], frameW: 0, birchChance: 0.1,
@@ -98,8 +99,8 @@ const LAYERS: LayerCfg[] = [
 
 export const SUMMER: ForestTheme = {
   travel: 1.42,
-  layers: LAYERS,
-  sprites: SPR,
+  layers: SUMMER_LAYERS,
+  sprites: SUMMER_SPRITES,
   interior: ['#A4C894', '#8EB880', '#78A66C', '#64925A', '#527E4A', '#446C3E'],
   lake: {
     sky: ['#88C6F2', '#9CD0F2', '#B0DAF2', '#C6E4F0'],

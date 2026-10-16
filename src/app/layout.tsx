@@ -56,12 +56,19 @@ export default function RootLayout({
                   const k = Math.floor((a + 11 * h + 22 * l) / 451);
                   const n = h + l - 7 * k + 114;
                   const fromEaster = (Date.UTC(y, m, d) - Date.UTC(y, Math.floor(n / 31) - 1, (n % 31) + 1)) / 864e5;
-                  const hol = (m === 9 && d >= 21) || (m === 10 && d <= 2) ? 'halloween'
+                  // Thanksgiving: fourth Thursday of November
+                  const tg = 1 + ((4 - new Date(Date.UTC(y, 10, 1)).getUTCDay() + 7) % 7) + 21;
+                  const hol = (m === 11 && d >= 30) || (m === 0 && d === 1) ? 'newyear'
+                    : m === 1 && d >= 10 && d <= 14 ? 'valentines'
+                    : m === 2 && d >= 14 && d <= 17 ? 'stpatricks'
+                    : m === 6 && d >= 1 && d <= 5 ? 'july4'
+                    : (m === 9 && d >= 21) || (m === 10 && d <= 2) ? 'halloween'
+                    : m === 10 && Math.abs(d - tg) <= 3 ? 'thanksgiving'
                     : m === 11 && d <= 26 ? 'christmas'
                     : fromEaster >= -7 && fromEaster <= 1 ? 'easter' : null;
                   const cal = hol
                     || (m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter');
-                  const all = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter', 'birch', 'darkforest', 'jungle', 'desert'];
+                  const all = ['spring', 'summer', 'autumn', 'winter', 'newyear', 'valentines', 'stpatricks', 'easter', 'july4', 'halloween', 'thanksgiving', 'christmas', 'birch', 'darkforest', 'jungle', 'desert'];
                   const picked = o === 'off' || all.indexOf(o) >= 0;
                   // A manual pick keeps holidays only when "Holidays still take over" is on
                   const s = !picked ? cal

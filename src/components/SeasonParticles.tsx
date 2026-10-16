@@ -49,6 +49,20 @@ const PETALS: Kind = {
   speed: [0.25, 0.5], drift: [0.25, 0.5], sway: [0.4, 0.9], opacity: [0.65, 0.95], canopy: true,
 };
 
+const LEAVES: Kind = {
+  shapes: [[[0, 1, 1, 0], [1, 1, 2, 1], [1, 2, 1, 1], [0, 1, 1, 0]]],
+  vein: 'rgba(60, 25, 8, 0.55)', stem: '#5A3A1E',
+  count: [9, 22], cells: [[3, 4], [4, 5]],
+  speed: [0.3, 0.7], drift: [0.12, 0.32], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
+};
+
+// Paper strips and squares tumbling down from the sky
+const CONFETTI: Kind = {
+  shapes: [[[1, 1]], [[1], [1]], [[1]]],
+  count: [14, 34], cells: [[2, 3], [3, 4]],
+  speed: [0.35, 0.8], drift: [-0.15, 0.15], sway: [0.3, 0.9], opacity: [0.7, 1], canopy: false,
+};
+
 const KINDS: Record<Season, Kind> = {
   spring: PETALS, // blossom petals on the breeze
   summer: { // pollen and seed fluff hanging in the warm air
@@ -56,12 +70,7 @@ const KINDS: Record<Season, Kind> = {
     count: [8, 18], cells: [[2, 2], [2, 3]],
     speed: [0.05, 0.16], drift: [0.04, 0.14], sway: [0.3, 0.7], opacity: [0.45, 0.8], canopy: true,
   },
-  autumn: { // falling leaves
-    shapes: [[[0, 1, 1, 0], [1, 1, 2, 1], [1, 2, 1, 1], [0, 1, 1, 0]]],
-    vein: 'rgba(60, 25, 8, 0.55)', stem: '#5A3A1E',
-    count: [9, 22], cells: [[3, 4], [4, 5]],
-    speed: [0.3, 0.7], drift: [0.12, 0.32], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
-  },
+  autumn: LEAVES, // falling leaves
   winter: SNOW, // snow, from the sky down through the trees
   halloween: { // bats flapping across the sky
     shapes: [
@@ -75,6 +84,21 @@ const KINDS: Record<Season, Kind> = {
   },
   christmas: SNOW,
   easter: PETALS,
+  newyear: CONFETTI,
+  valentines: { // hearts drifting out of the canopy
+    shapes: [[[1, 1, 0, 1, 1], [1, 2, 1, 1, 1], [0, 1, 1, 1, 0], [0, 0, 1, 0, 0]]],
+    vein: 'rgba(255, 255, 255, 0.6)', // highlight
+    count: [8, 18], cells: [[2, 3], [2, 3]],
+    speed: [0.25, 0.55], drift: [0.05, 0.25], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
+  },
+  stpatricks: { // four-leaf clovers out of the canopy
+    shapes: [[[1, 1, 0, 1, 1], [1, 1, 2, 1, 1], [0, 2, 2, 2, 0], [1, 1, 2, 1, 1], [1, 1, 0, 1, 1]]],
+    vein: 'rgba(10, 50, 20, 0.45)', stem: '#2A6A22',
+    count: [7, 16], cells: [[2, 3], [2, 3]],
+    speed: [0.25, 0.55], drift: [0.08, 0.26], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
+  },
+  july4: CONFETTI,
+  thanksgiving: LEAVES,
   birch: { // pale pollen drifting between the trunks
     shapes: [[[1]], [[1, 1]]],
     count: [8, 18], cells: [[2, 2], [2, 3]],
