@@ -9,6 +9,10 @@ import { WINTER } from './WinterTaiga';
 import { HALLOWEEN } from './HalloweenWoods';
 import { CHRISTMAS } from './ChristmasTaiga';
 import { EASTER } from './EasterMeadow';
+import { BIRCH } from './BirchForest';
+import { DARK_FOREST } from './DarkForest';
+import { JUNGLE } from './JungleWoods';
+import { DESERT } from './DesertFringe';
 
 /* ───────────────────────── Autumn forest descent ─────────────────────────
    Painted by ForestScene (shared with the vanilla oak woods and the other
@@ -126,6 +130,7 @@ const AUTUMN: ForestTheme = {
 const THEMES: Record<Season, ForestTheme> = {
   spring: SPRING, summer: SUMMER, autumn: AUTUMN, winter: WINTER,
   halloween: HALLOWEEN, christmas: CHRISTMAS, easter: EASTER,
+  birch: BIRCH, darkforest: DARK_FOREST, jungle: JUNGLE, desert: DESERT,
 };
 
 // `season` is null on the default look, which gets the vanilla oak woods.

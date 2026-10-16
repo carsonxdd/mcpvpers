@@ -298,7 +298,7 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - Three optional engine features support winter: `conifer` (tiered spruce crowns), `snow` (settles on anything open to the sky) and `lake.frozen` (no ripples). Autumn and the vanilla woods render exactly as before.
 - Each season has its own sky, light and dark surfaces, and header and footer accents (`--s-accent-3/4` drive the stripe gradient).
 - Fix: the season toggle no longer causes a hydration error when it's set to anything other than Auto.
-- Still to do: rain is still rain in winter, there's no season-aware cloud palette yet, and scroll-reveal isn't built.
+- Still to do: there's no season-aware cloud palette yet, and scroll-reveal isn't built. (Winter snow landed later; see below.)
 
 ### Holiday backdrops: Halloween, Christmas, Easter (2026-10-15)
 
@@ -308,6 +308,17 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - **Easter** (`seasons/EasterMeadow.ts`): the spring grove with lavender trees added. Painted eggs, baskets, daffodils and chicks are hidden in the grass, with a white rabbit out hunting. Pastel petals fall.
 - Engine: a new opt-in `ForestTheme.ornaments` scatters baubles on foliage in the mid and front layers. `SeasonParticles` kinds can now `fly` in from the left edge and `flap` between frames. The other themes render exactly as before.
 - The pre-paint script in `layout.tsx` duplicates the holiday windows and the Easter calculation. Keep it in sync with `seasons.ts`.
+
+### Biomes, random far views and snow (2026-10-15)
+
+- **Four biomes** join the header toggle after Easter. The calendar never picks them. Each has its own site colours, toggle icon and particles.
+  - **Birch Forest** (`seasons/BirchForest.ts`): almost every trunk a birch log under light lime crowns, with lily of the valley, peonies, rabbits and sheep. Pollen drifts in the air.
+  - **Dark Forest** (`seasons/DarkForest.ts`): packed dark-oak logs under a dim canopy, with giant red and brown mushrooms, mossy rocks, rose bushes and plenty of fireflies. Glowing spores hang in the air.
+  - **Jungle** (`seasons/JungleWoods.ts`): huge 2×2 logs with vines hanging off the leaves, bamboo, large ferns, melons, a parrot, an ocelot and a panda. Green leaves fall.
+  - **Desert** (`seasons/DesertFringe.ts`): flat acacia crowns over sand, cacti, dead bushes, sandstone, a camel and a desert rabbit. Sand blows across the screen.
+- **Random far views.** Each page load rolls what the far layer looks out onto: a **lake**, a **river** winding out of the far woods, or **mountains** (two ranges with snowcaps). The desert swaps the peaks for banded badlands mesas, and the jungle favours the river. The river keeps the lake's glitter and ripples. Force a view with `?vista=lake|river|mountains`.
+- **Snow.** In winter and at Christmas, rain falls as pixel snowflakes, and a thunderstorm becomes a sideways blizzard.
+- Engine: new opt-in `LayerCfg.crownWide` (acacia), `LayerCfg.vines`, `ForestTheme.vista` (`kinds`, `rock`, `peak`, `mesa`) and `LightTheme.sunGain`. Existing themes keep their trees and floors; only the far view changes.
 
 ## Getting Started
 

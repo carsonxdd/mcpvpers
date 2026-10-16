@@ -60,7 +60,7 @@ export default function RootLayout({
                     : m === 11 && d <= 26 ? 'christmas'
                     : fromEaster >= -7 && fromEaster <= 1 ? 'easter'
                     : m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter';
-                  const all = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter'];
+                  const all = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter', 'birch', 'darkforest', 'jungle', 'desert'];
                   const s = o === 'off' ? null : (all.indexOf(o) >= 0 ? o : cal);
                   if (s) document.documentElement.setAttribute('data-season', s);
                 }

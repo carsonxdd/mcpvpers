@@ -3,6 +3,11 @@
 import { useEffect, useRef } from 'react';
 import { useWeather } from './WeatherProvider';
 import { useTheme } from './ThemeProvider';
+import { useSeason } from './SeasonProvider';
+import type { Season } from '@/lib/seasons';
+
+// Seasons where "rain" falls as snow (a thunderstorm becomes a blizzard).
+const SNOWY: Season[] = ['winter', 'christmas'];
 
 interface RainDrop {
   x: number;
@@ -11,6 +16,9 @@ interface RainDrop {
   vx: number;
   length: number;
   opacity: number;
+  snow: boolean;
+  size: number;   // snowflake side (px)
+  phase: number;  // snowflake sway
 }
 
 export default function RainCanvas() {
@@ -19,6 +27,9 @@ export default function RainCanvas() {
   const animFrameRef = useRef<number>(0);
   const { weather } = useWeather();
   const { theme } = useTheme();
+  const { season } = useSeason();
+  const snowy = season !== null && SNOWY.includes(season);
+  const snowRef = useRef(snowy);
   const weatherRef = useRef(weather);
   const themeRef = useRef(theme);
   const targetCountRef = useRef(0);
@@ -29,6 +40,10 @@ export default function RainCanvas() {
   }, [theme]);
 
   useEffect(() => {
+    snowRef.current = snowy;
+  }, [snowy]);
+
+  useEffect(() => {
     weatherRef.current = weather;
     const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
     const reduceMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -37,17 +52,18 @@ export default function RainCanvas() {
       spawnBatchRef.current = 0;
       return;
     }
+    // Snow falls slower, so fewer flakes fill the screen as densely.
     if (weather === 'rain') {
-      targetCountRef.current = isMobile ? 180 : 450;
+      targetCountRef.current = snowy ? (isMobile ? 110 : 280) : isMobile ? 180 : 450;
       spawnBatchRef.current = isMobile ? 12 : 30;
     } else if (weather === 'thunderstorm') {
-      targetCountRef.current = isMobile ? 280 : 800;
+      targetCountRef.current = snowy ? (isMobile ? 200 : 560) : isMobile ? 280 : 800;
       spawnBatchRef.current = isMobile ? 20 : 50;
     } else {
       targetCountRef.current = 0;
       spawnBatchRef.current = 0;
     }
-  }, [weather]);
+  }, [weather, snowy]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -66,6 +82,19 @@ export default function RainCanvas() {
 
     function createDrop(startAtTop = true): RainDrop {
       const isStorm = weatherRef.current === 'thunderstorm';
+      if (snowRef.current) {
+        // Pixel flakes: drift and sway; a storm is a sideways blizzard.
+        const size = Math.random() < 0.25 ? 4 : Math.random() < 0.6 ? 3 : 2;
+        return {
+          x: Math.random() * (canvas!.width + 300) - 300,
+          y: startAtTop ? -(Math.random() * 200) : Math.random() * canvas!.height,
+          speed: (isStorm ? 2.2 + Math.random() * 2 : 0.8 + Math.random() * 1.2) * (size / 3 + 0.4),
+          vx: isStorm ? 2.5 + Math.random() * 2.5 : 0.2 + Math.random() * 0.6,
+          length: size,
+          opacity: 0.55 + Math.random() * 0.4,
+          snow: true, size, phase: Math.random() * Math.PI * 2,
+        };
+      }
       return {
         x: Math.random() * (canvas!.width + 200) - 100,
         y: startAtTop ? -(Math.random() * 200) : Math.random() * canvas!.height,
@@ -77,6 +106,7 @@ export default function RainCanvas() {
           : 1 + Math.random() * 1,  // 1-2
         length: 6 + Math.random() * 2, // 6-8px tall
         opacity: 0.3 + Math.random() * 0.4, // 0.3-0.7
+        snow: false, size: 2, phase: 0,
       };
     }
 
@@ -102,6 +132,19 @@ export default function RainCanvas() {
 
         // Update speed/wind if weather changed (storm upgrade/downgrade)
         const isStorm = weatherRef.current === 'thunderstorm';
+        if (d.snow) {
+          d.phase += 0.03;
+          d.y += d.speed;
+          d.x += d.vx + Math.sin(d.phase) * 0.5;
+          if (d.y > canvas.height + 10 || d.x > canvas.width + 50) {
+            if (target === 0) drops.splice(i, 1);
+            else drops[i] = createDrop(true);
+            continue;
+          }
+          ctx.fillStyle = isDark ? `rgba(225, 235, 250, ${d.opacity})` : `rgba(255, 255, 255, ${d.opacity})`;
+          ctx.fillRect(Math.floor(d.x), Math.floor(d.y), d.size, d.size);
+          continue;
+        }
         if (isStorm && d.speed < 8) {
           d.speed = 8 + Math.random() * 6;
           d.vx = 2 + Math.random() * 2;

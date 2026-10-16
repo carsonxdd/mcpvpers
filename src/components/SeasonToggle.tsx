@@ -84,8 +84,51 @@ const ICONS: Record<Season, string[]> = {
     '..AAAA..',
     '...AA...',
   ],
+  birch: [ // birch sapling: leaves over a marked white log
+    '..AAAA..',
+    '.AAAAAA.',
+    '.AAAAAA.',
+    '..AAAA..',
+    '...WW...',
+    '...KW...',
+    '...WK...',
+    '...WW...',
+  ],
+  darkforest: [ // red mushroom
+    '..RRRR..',
+    '.RWRRRR.',
+    'RRRRRWRR',
+    'RWRRRRRR',
+    '...WW...',
+    '...WW...',
+    '..AWWA..',
+    '.AAAAAA.',
+  ],
+  jungle: [ // cocoa pod hanging off a leaf
+    'AAAA....',
+    '.AAAA...',
+    '..AAAB..',
+    '....B...',
+    '...OOO..',
+    '..OoOOO.',
+    '..OOOoO.',
+    '...OOO..',
+  ],
+  desert: [ // cactus on sand
+    '...GG...',
+    '...GG..G',
+    'G..GG..G',
+    'G..GGGGG',
+    'GGGGG...',
+    '...GG...',
+    '...GG...',
+    'AAAAAAAA',
+  ],
 };
-const FIXED: Record<string, string> = { Y: '#FFE066', B: '#8B5A2B', G: '#4A8A2A', K: '#2A1408', P: '#F49AC1' };
+const FIXED: Record<string, string> = {
+  Y: '#FFE066', B: '#8B5A2B', G: '#4A8A2A', K: '#2A1408', P: '#F49AC1',
+  W: '#ECECE4', R: '#C8262A', O: '#B8641E', o: '#8A4414',
+};
 
 function SeasonIcon({ season, color }: { season: Season; color: string }) {
   return (

@@ -69,6 +69,7 @@ export interface LightTheme {
   moon: string;                       // shafts by night
   glint: { day: string; night: string };
   fly: { core: string; glow: string; perLayer: [number, number, number] };
+  sunGain?: number;                   // scales the daytime shafts/glitter (dense canopy < 1)
 }
 
 // What paintLayer reports back about a painted layer, in that layer's canvas pixels.
@@ -288,7 +289,7 @@ export function createRig(
   function draw(fr: LightFrame) {
     const { t, dt, night, wet, offsets } = fr;
     const cloud = 0.62 + 0.38 * smooth(0.2, 0.8, noise(t * 0.045 + 17));
-    const sunK = (1 - night) * (1 - wet * 0.85) * cloud;
+    const sunK = (1 - night) * (1 - wet * 0.85) * cloud * (L.sunGain ?? 1);
     const moonK = night * (1 - wet * 0.8);
     const beamK = sunK + moonK * 0.42;
     const beam = mix(sunRgb, moonRgb, night);

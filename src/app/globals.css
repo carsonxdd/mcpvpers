@@ -403,6 +403,199 @@ html.dark[data-season='easter'] {
   --c-panel-bg: rgba(36, 32, 58, 0.8);
 }
 
+/* Biomes — toggle-only looks, never picked by the calendar */
+/* Birch forest — pale trunks, lime light */
+html[data-season='birch'] {
+  --s-accent: #9CC43A;
+  --s-accent-2: #5E8A2A;
+  --s-accent-3: #E4F0A0;
+  --s-accent-4: #F4F4EC;
+  --s-sky-1: #4A96E2;
+  --s-sky-2: #62A6EA;
+  --s-sky-3: #8CC0F2;
+  --s-sky-4: #B8D8F4;
+  --s-sky-5: #DCEAF0;
+  --s-ground-top: #74B43E;
+  --s-hill: #548C2C;
+  --s-dirt: #5C402B;
+  --s-night-sky-1: #10162A;
+  --s-night-sky-2: #161E30;
+  --s-night-hill: #141C2A;
+  --s-overlay-rgb: 246, 250, 238;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='birch'] {
+  --c-bg: #F4F7EC;
+  --c-bg-light: #E8EEDC;
+  --c-bg-lighter: #DAE4CA;
+  --c-surface: #FCFDF8;
+  --c-surface-light: #F0F4E6;
+  --c-border: #CED8B8;
+  --c-border-light: #AEBC92;
+  --c-text: #1E2614;
+  --c-text-dim: #445034;
+  --c-text-muted: #727E60;
+  --c-panel-bg: rgba(252, 253, 248, 0.86);
+}
+
+html.dark[data-season='birch'] {
+  --c-bg: #121A16;
+  --c-bg-light: #18221C;
+  --c-bg-lighter: #202C24;
+  --c-surface: #1E2A22;
+  --c-surface-light: #26342A;
+  --c-border: #3A4C3E;
+  --c-border-light: #4C6050;
+  --c-panel-bg: rgba(30, 42, 34, 0.8);
+}
+
+/* Dark forest — dim canopy, giant mushrooms */
+html[data-season='darkforest'] {
+  --s-accent: #6AB85A;
+  --s-accent-2: #C8262A;
+  --s-accent-3: #9AE07A;
+  --s-accent-4: #8A5A3A;
+  --s-sky-1: #3A6E9A;
+  --s-sky-2: #4A7EA6;
+  --s-sky-3: #6A96B4;
+  --s-sky-4: #8EACBE;
+  --s-sky-5: #B0C2C4;
+  --s-ground-top: #2E5A1E;
+  --s-hill: #1E4214;
+  --s-dirt: #3A2A1A;
+  --s-night-sky-1: #080E10;
+  --s-night-sky-2: #0E1618;
+  --s-night-hill: #0C1410;
+  --s-overlay-rgb: 236, 242, 232;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='darkforest'] {
+  --c-bg: #EEF2EA;
+  --c-bg-light: #E0E8DA;
+  --c-bg-lighter: #D0DCC8;
+  --c-surface: #F9FBF6;
+  --c-surface-light: #EBF0E4;
+  --c-border: #C4D0B8;
+  --c-border-light: #A2B294;
+  --c-text: #16200E;
+  --c-text-dim: #3A4A2E;
+  --c-text-muted: #66745A;
+  --c-panel-bg: rgba(249, 251, 246, 0.88);
+}
+
+html.dark[data-season='darkforest'] {
+  --c-bg: #0C1410;
+  --c-bg-light: #121C16;
+  --c-bg-lighter: #18241C;
+  --c-surface: #16221A;
+  --c-surface-light: #1E2C22;
+  --c-border: #2E4234;
+  --c-border-light: #3E5444;
+  --c-panel-bg: rgba(22, 34, 26, 0.84);
+}
+
+/* Jungle — vines, deep greens, humid light */
+html[data-season='jungle'] {
+  --s-accent: #3CB44A;
+  --s-accent-2: #C8782A;
+  --s-accent-3: #8AD64A;
+  --s-accent-4: #E8C83A;
+  --s-sky-1: #2A86D6;
+  --s-sky-2: #3A96DE;
+  --s-sky-3: #62B0E6;
+  --s-sky-4: #94CCE8;
+  --s-sky-5: #C8E4DE;
+  --s-ground-top: #3E9A2A;
+  --s-hill: #2A7420;
+  --s-dirt: #5A3E22;
+  --s-night-sky-1: #08141A;
+  --s-night-sky-2: #0E1C22;
+  --s-night-hill: #0C1A16;
+  --s-overlay-rgb: 238, 248, 236;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='jungle'] {
+  --c-bg: #EEF6EC;
+  --c-bg-light: #E0EEDC;
+  --c-bg-lighter: #CEE2C8;
+  --c-surface: #F9FDF7;
+  --c-surface-light: #EAF4E6;
+  --c-border: #BCD6B4;
+  --c-border-light: #96BA8C;
+  --c-text: #12220E;
+  --c-text-dim: #34502C;
+  --c-text-muted: #607C56;
+  --c-panel-bg: rgba(249, 253, 247, 0.86);
+}
+
+html.dark[data-season='jungle'] {
+  --c-bg: #0C1612;
+  --c-bg-light: #121E18;
+  --c-bg-lighter: #18281E;
+  --c-surface: #16241C;
+  --c-surface-light: #1E3024;
+  --c-border: #2C4836;
+  --c-border-light: #3C5C46;
+  --c-panel-bg: rgba(22, 36, 28, 0.82);
+}
+
+/* Desert — acacia fringe, sand, mesas */
+html[data-season='desert'] {
+  --s-accent: #E0A040;
+  --s-accent-2: #B8582A;
+  --s-accent-3: #F0D08A;
+  --s-accent-4: #6E9A2E;
+  --s-sky-1: #3C8CDA;
+  --s-sky-2: #56A0E2;
+  --s-sky-3: #86BCE8;
+  --s-sky-4: #BCD8E8;
+  --s-sky-5: #F0E2C4;
+  --s-ground-top: #E4CC8E;
+  --s-hill: #D2B274;
+  --s-dirt: #B8925A;
+  --s-night-sky-1: #0E0E20;
+  --s-night-sky-2: #18162A;
+  --s-night-hill: #1E1A26;
+  --s-overlay-rgb: 250, 244, 230;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='desert'] {
+  --c-bg: #FAF3E4;
+  --c-bg-light: #F2E6CE;
+  --c-bg-lighter: #E8D6B4;
+  --c-surface: #FFFCF4;
+  --c-surface-light: #F6EDDA;
+  --c-border: #E0CCA4;
+  --c-border-light: #C8AE80;
+  --c-text: #2E2210;
+  --c-text-dim: #5A4628;
+  --c-text-muted: #8A7450;
+  --c-panel-bg: rgba(255, 252, 244, 0.86);
+}
+
+html.dark[data-season='desert'] {
+  --c-bg: #1A1614;
+  --c-bg-light: #221C18;
+  --c-bg-lighter: #2C2420;
+  --c-surface: #2A221C;
+  --c-surface-light: #342A22;
+  --c-border: #4E4032;
+  --c-border-light: #625040;
+  --c-panel-bg: rgba(42, 34, 28, 0.8);
+}
+
 * {
   box-sizing: border-box;
 }

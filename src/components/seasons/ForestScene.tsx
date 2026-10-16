@@ -62,8 +62,15 @@ export interface LayerCfg {
   clutter: { gap: [number, number]; kinds: string[] } | null;
   fauna?: string[];      // placed once each on the floor
   conifer?: number;      // chance a canopy crown is a tiered spruce instead of a round crown
+  crownWide?: number;    // stretch crowns sideways (acacia's flat tops); 1 = round
+  vines?: string[];      // hang vine strands off the underside of the foliage (jungle)
   seed: number;
 }
+
+// What the far layer looks out onto between its trunks. Each mount rolls one
+// from the theme's `vista.kinds`, so the same season shows a different view.
+export type Vista = 'lake' | 'river' | 'mountains';
+export const VISTAS: Vista[] = ['lake', 'river', 'mountains'];
 
 export interface ForestTheme {
   travel: number;
@@ -72,6 +79,10 @@ export interface ForestTheme {
   interior: string[];    // top → floor (hazy distant woods; unused when `lake` is set)
   // Optional: the far layer opens onto a lake instead — sky, a hazy far shore, water.
   lake?: { sky: string[]; shore: string[]; reflection: string; water: string[]; frozen?: boolean };
+  // Optional: which far views this theme can roll (default: all of VISTAS) and
+  // the mountain colours. `rock` is shadow → lit; `peak` caps the high ground
+  // (null = bare peaks); `mesa` swaps the peaks for flat-topped, banded mesas.
+  vista?: { kinds?: Vista[]; rock?: string[]; peak?: string[] | null; mesa?: string[] };
   // Optional: snow (shadow → bright) settles on every crown, branch and log open to the sky.
   snow?: string[];
   // Optional: baubles hung on the crowns of the nearer layers (one colour per bauble).
@@ -87,8 +98,8 @@ export interface ForestTheme {
 // Pixel-art crown: lit from the top-left, speckled, ragged edge. With `cell`
 // set, the crown is assembled from square leaf blocks instead (each block
 // textured per pixel, with the odd see-through gap like vanilla leaves).
-function drawCrown(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, pal: string[], rnd: Rnd, darkBias: number, cell: number) {
-  const rx = r * 1.25;
+function drawCrown(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: number, pal: string[], rnd: Rnd, darkBias: number, cell: number, wide = 1) {
+  const rx = r * 1.25 * wide;
   if (cell > 0) {
     const cols = Math.ceil(rx / cell);
     const rows = Math.ceil(r / cell);
@@ -126,7 +137,7 @@ function drawCrown(ctx: CanvasRenderingContext2D, cx: number, cy: number, r: num
   for (let k = 0; k < sparkles; k++) {
     const a = rnd() * Math.PI * 2;
     const rad = Math.sqrt(rnd()) * r * 0.85;
-    const x = cx + Math.cos(a) * rad * 1.2;
+    const x = cx + Math.cos(a) * rad * 1.2 * wide;
     const y = cy + Math.sin(a) * rad;
     dot(ctx, x, y, rnd() < 0.6 ? pal[pal.length - 1] : pal[0]);
   }
@@ -208,6 +219,112 @@ function hangOrnaments(ctx: CanvasRenderingContext2D, theme: ForestTheme, cfg: L
   }
 }
 
+// Vines: strands dropping from the underside of the foliage (a leaf pixel
+// with open air below), with the odd leaf sprouting off the side. Reads the
+// canopy before anything else is laid over it; a strand stops on the next leaf.
+function hangVines(ctx: CanvasRenderingContext2D, cfg: LayerCfg, W: number, groundTop: number, rnd: Rnd) {
+  const vines = cfg.vines;
+  if (!vines) return;
+  const hex = (c: string) => parseInt(c.slice(1), 16);
+  const leaf = new Set(cfg.crownPals.flat().map(hex));
+  const H = Math.max(1, groundTop - 6);
+  const src = ctx.getImageData(0, 0, W, H).data;
+  const at = (x: number, y: number) => {
+    if (y >= H) return false;
+    const o = (y * W + x) * 4;
+    return src[o + 3] === 255 && leaf.has((src[o] << 16) | (src[o + 1] << 8) | src[o + 2]);
+  };
+  const unit = cfg.cell > 0 ? Math.max(2, cfg.cell >> 1) : 1;
+  for (let x = 0; x < W; x += unit) {
+    for (let y = 0; y < H - 1; y++) {
+      if (!at(x, y) || at(x, y + 1) || rnd() > 0.16) continue;
+      const len = 4 + Math.floor(rnd() * rnd() * 40);
+      for (let k = 1; k <= len && y + k < H && !at(x, y + k); k++) {
+        dot(ctx, x, y + k, vines[(k >> 1) % vines.length]);
+        if (rnd() < 0.18) dot(ctx, x + (rnd() < 0.5 ? -1 : 1), y + k, vines[0]);
+      }
+    }
+  }
+}
+
+// Tint helpers for the far view (mountains are hazed towards the sky colour).
+const toRgb = (c: string) => [1, 3, 5].map((i) => parseInt(c.slice(i, i + 2), 16));
+const toHex = (v: number[]) => `#${v.map((n) => clamp(Math.round(n), 0, 255).toString(16).padStart(2, '0')).join('')}`;
+const mixHex = (a: string, b: string, t: number) => {
+  const A = toRgb(a);
+  const B = toRgb(b);
+  return toHex(A.map((v, i) => v + (B[i] - v) * t));
+};
+const shadeHex = (c: string, f: number) => toHex(toRgb(c).map((v) => v * f));
+
+const DEFAULT_ROCK = ['#4E5A6A', '#5E6A7A', '#74808E', '#8E9AA6'];
+const DEFAULT_PEAK = ['#D2DCE8', '#E8EEF6', '#F6F9FC'];
+
+// A blocky ridge line: the tallest of a few peaks (or flat mesas) per column,
+// stepped every 2px like distant blocks. Heights in px above the horizon.
+function ridge(W: number, n: number, lo: number, hi: number, rnd: Rnd, mesa: boolean): number[] {
+  const peaks = Array.from({ length: n }, () => ({
+    x: rnd() * W, h: lo + rnd() * (hi - lo), s: 0.45 + rnd() * 0.6, w: 8 + rnd() * 26,
+  }));
+  const out: number[] = [];
+  let jitter = 0;
+  for (let x = 0; x < W; x += 2) {
+    let h = 0;
+    for (const p of peaks) {
+      const d = Math.abs(x - p.x);
+      h = Math.max(h, mesa ? (d < p.w ? p.h : p.h - (d - p.w) * 2.5) : p.h - d * p.s);
+    }
+    jitter = clamp(jitter + (rnd() - 0.5) * 1.6, -2, 2);
+    const v = Math.max(1, Math.round((h + (mesa ? 0 : jitter)) / 2) * 2);
+    out.push(v, v);
+  }
+  return out.slice(0, W);
+}
+
+// Two ranges standing on the horizon: a pale far one, hazed into the sky, and
+// a nearer, darker one. Faces turned left (towards the sun) are lit. Peaks
+// above the snowline get caps; mesas are banded instead.
+function paintRanges(ctx: CanvasRenderingContext2D, theme: ForestTheme, W: number, top: number, horizon: number, rnd: Rnd) {
+  const v = theme.vista ?? {};
+  const sky = theme.lake!.sky[theme.lake!.sky.length - 1];
+  const rock = v.rock ?? DEFAULT_ROCK;
+  const peak = v.peak === undefined ? DEFAULT_PEAK : v.peak;
+  const mesa = v.mesa;
+  const room = horizon - top;
+  const ranges = [
+    { h: ridge(W, Math.max(3, Math.round(W / 70)), room * 0.4, room * 0.7, rnd, !!mesa), haze: 0.38 },
+    { h: ridge(W, Math.max(3, Math.round(W / 55)), room * 0.14, room * 0.38, rnd, !!mesa), haze: 0.12 },
+  ];
+  for (const { h, haze } of ranges) {
+    const pal = rock.map((c) => mixHex(c, sky, haze));
+    const caps = peak?.map((c) => mixHex(c, sky, haze * 0.6));
+    const bands = mesa?.map((c) => mixHex(c, sky, haze));
+    const snowline = room * 0.3 + (rnd() - 0.5) * 4;
+    for (let x = 0; x < W; x++) {
+      const crest = horizon - h[x];
+      const lit = h[Math.min(W - 1, x + 2)] >= h[Math.max(0, x - 2)];
+      for (let y = crest; y < horizon; y++) {
+        const depth = y - crest;
+        const alt = horizon - y;
+        let c: string;
+        if (bands) {
+          const b = bands[Math.max(0, Math.floor(alt / 3 + Math.sin(x * 0.05) * 0.6)) % bands.length];
+          c = lit ? b : shadeHex(b, 0.82);
+          if (depth === 0) c = shadeHex(b, 1.08);
+        } else if (caps && alt > snowline + Math.sin(x * 0.4) * 2 + (rnd() - 0.5) * 3) {
+          c = caps[lit ? caps.length - 1 : 0];
+          if (lit && depth > 1 && rnd() < 0.15) c = caps[Math.max(0, caps.length - 2)];
+        } else {
+          const base = lit ? pal.length - 1 : 1;
+          const s = base - depth * 0.04 + (rnd() - 0.5) * 1.1;
+          c = pal[clamp(Math.round(s), 0, pal.length - 1)];
+        }
+        dot(ctx, x, y, c);
+      }
+    }
+  }
+}
+
 function drawTrunk(ctx: CanvasRenderingContext2D, theme: ForestTheme, x: number, y0: number, y1: number, w: number, birch: boolean, hazy: boolean, rnd: Rnd) {
   const bark = birch ? theme.bark.birch : hazy ? theme.bark.hazy : theme.bark.main;
   const mark = birch ? theme.bark.birchMark : bark[2];
@@ -255,8 +372,13 @@ function drawTrunk(ctx: CanvasRenderingContext2D, theme: ForestTheme, x: number,
 }
 
 // Seen between the far trunks: pale sky down to a blocky, hazy far shore,
-// then water (shore reflection, sky-lit bands) down to our floor.
-function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme['lake']>, W: number, top: number, bottom: number, rnd: Rnd): number {
+// then one of three views down to our floor —
+//   lake:      water all the way (shore reflection, sky-lit bands)
+//   river:     a meadow with a river winding out of the far woods towards us
+//   mountains: two ranges behind the far shore, meadow below
+// Returns the water's top row, or -1 when there's no water to light.
+function paintVista(ctx: CanvasRenderingContext2D, theme: ForestTheme, cfg: LayerCfg, kind: Vista, W: number, top: number, bottom: number, rnd: Rnd): number {
+  const lake = theme.lake!;
   const waterTop = bottom - Math.round((bottom - top) * 0.26);
   const band = (pal: string[], t: number) => pal[clamp(Math.floor(t * (pal.length - 1) + (rnd() - 0.5) * 0.9), 0, pal.length - 1)];
 
@@ -264,6 +386,7 @@ function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme[
     const t = (y - top) / Math.max(1, waterTop - top);
     for (let x = 0; x < W; x++) dot(ctx, x, y, band(lake.sky, t));
   }
+  if (kind === 'mountains') paintRanges(ctx, theme, W, top, waterTop, rnd);
 
   // Far shore treeline: heights step every 2px, like distant blocks.
   const shoreH: number[] = [];
@@ -277,16 +400,49 @@ function paintLake(ctx: CanvasRenderingContext2D, lake: NonNullable<ForestTheme[
     shoreH.push(h);
   }
 
+  const rows = Math.max(1, bottom - waterTop);
+  if (kind === 'lake') {
+    for (let y = waterTop; y < bottom; y++) {
+      const d = y - waterTop;
+      const t = d / rows;
+      for (let x = 0; x < W; x++) {
+        // Treeline reflection, shorter and broken up by ripples.
+        const refl = shoreH[x >> 1] * 0.5;
+        dot(ctx, x, y, d < refl && rnd() < 0.8 ? lake.reflection : band(lake.water, t));
+      }
+    }
+    // No painted glints: the ripples and sparkle are animated by ForestLight.
+    return waterTop;
+  }
+
+  // Meadow from the far shore down to our floor, hazed towards the horizon.
+  const sky = lake.sky[lake.sky.length - 1];
+  for (let y = waterTop; y < bottom; y++) {
+    const haze = 0.4 * (1 - (y - waterTop) / rows);
+    const floor = cfg.floor.map((c) => mixHex(c, sky, haze));
+    const litter = cfg.litter.map((c) => mixHex(c, sky, haze));
+    for (let x = 0; x < W; x++) dot(ctx, x, y, rnd() < 0.3 ? pick(rnd, litter) : pick(rnd, floor));
+  }
+  if (kind === 'mountains') return -1;
+
+  // River: comes out of the far woods as a thread and widens towards us,
+  // swinging side to side, with a darker muddy lip along both banks.
+  const phase = rnd() * Math.PI * 2;
+  const c0 = 0.3 + rnd() * 0.4;
+  const lip = shadeHex(cfg.floor[0], 0.78);
   for (let y = waterTop; y < bottom; y++) {
     const d = y - waterTop;
-    const t = d / Math.max(1, bottom - waterTop);
-    for (let x = 0; x < W; x++) {
-      // Treeline reflection, shorter and broken up by ripples.
-      const refl = shoreH[x >> 1] * 0.5;
-      dot(ctx, x, y, d < refl && rnd() < 0.8 ? lake.reflection : band(lake.water, t));
+    const t = d / rows;
+    const cx = W * (c0 + 0.18 * Math.sin(phase + t * 3.4) * (0.35 + t));
+    const hw = 1 + t * t * W * 0.1;
+    for (let x = Math.floor(cx - hw - 2); x <= Math.ceil(cx + hw + 2); x++) {
+      if (x < 0 || x >= W) continue;
+      const e = Math.abs(x + 0.5 - cx) - hw;
+      if (e > 1.2) continue;
+      if (e > 0) dot(ctx, x, y, lip);
+      else dot(ctx, x, y, d < shoreH[x >> 1] * 0.35 && rnd() < 0.8 ? lake.reflection : band(lake.water, t));
     }
   }
-  // No painted glints: the ripples and sparkle are animated by ForestLight.
   return waterTop;
 }
 
@@ -365,7 +521,7 @@ function drawGround(ctx: CanvasRenderingContext2D, cfg: LayerCfg, W: number, H: 
   return edges;
 }
 
-function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg, vw: number, vh: number, scale: number): LayerGeo {
+function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg, vw: number, vh: number, scale: number, vista: Vista): LayerGeo {
   const px = Math.max(2, Math.round(cfg.px * scale));
   const W = Math.ceil(vw / px) + 2;
   const H = Math.ceil((cfg.heightVh * vh) / px);
@@ -373,7 +529,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   canvas.height = H;
   canvas.style.width = `${W * px}px`;
   canvas.style.height = `${H * px}px`;
-  const ctx = canvas.getContext('2d', { willReadFrequently: (cfg.interior && !!theme.lake) || !!theme.snow || !!theme.ornaments });
+  const ctx = canvas.getContext('2d', { willReadFrequently: (cfg.interior && !!theme.lake) || !!theme.snow || !!theme.ornaments || !!cfg.vines });
   const geo: LayerGeo = { top: 0, px, W, H, groundTop: H, edges: new Array(W).fill(H), canopyBottom: 0, lake: null };
   if (!ctx) return geo;
   const rnd = mulberry32(cfg.seed);
@@ -388,7 +544,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   // deeper towards the floor, dithered.
   let waterTop = -1;
   if (cfg.interior && theme.lake) {
-    waterTop = paintLake(ctx, theme.lake, W, Math.floor(interiorTop), groundTop + 2, rnd);
+    waterTop = paintVista(ctx, theme, cfg, vista, W, Math.floor(interiorTop), groundTop + 2, rnd);
   } else if (cfg.interior) {
     const steps = theme.interior;
     for (let y = Math.floor(interiorTop); y < H; y++) {
@@ -460,7 +616,7 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
       const cx = Math.round(t.x + t.w / 2 + side * (t.w / 2 + r * 2.2));
       const fromX = side < 0 ? t.x : t.x + t.w - 1;
       drawLimb(ctx, theme, fromX, cy + r * 1.8, cx, cy, Math.max(2, Math.round(t.w / 3)), t.bark);
-      drawCrown(ctx, cx, Math.round(cy), r, pick(rnd, cfg.crownPals), rnd, 0.6, cfg.cell);
+      drawCrown(ctx, cx, Math.round(cy), r, pick(rnd, cfg.crownPals), rnd, 0.6, cfg.cell, cfg.crownWide);
     }
   }
 
@@ -468,16 +624,18 @@ function paintLayer(canvas: HTMLCanvasElement, theme: ForestTheme, cfg: LayerCfg
   // top row forms the silhouette. Lower rows are shaded a little darker.
   for (let k = 2; k >= 0; k--) {
     const cyBase = topPad + cfg.r[1] + k * bandStep;
+    const wide = cfg.crownWide ?? 1;
     let x = -rnd() * cfg.r[1];
     while (x < W + cfg.r[1]) {
       const r = cfg.r[0] + Math.floor(rnd() * (cfg.r[1] - cfg.r[0] + 1));
       // Only draws from rnd when conifers are on, so existing themes keep their layout.
       const crown = cfg.conifer && rnd() < cfg.conifer ? drawSpruce : drawCrown;
-      crown(ctx, Math.round(x + r), Math.round(cyBase + (rnd() - 0.5) * r * 0.6), r, pick(rnd, cfg.crownPals), rnd, k * 0.5, cfg.cell);
-      x += r * 1.3 + rnd() * r * 0.35;
+      crown(ctx, Math.round(x + r * wide), Math.round(cyBase + (rnd() - 0.5) * r * 0.6), r, pick(rnd, cfg.crownPals), rnd, k * 0.5, cfg.cell, wide);
+      x += (r * 1.3 + rnd() * r * 0.35) * wide;
     }
   }
 
+  hangVines(ctx, cfg, W, groundTop, rnd);
   dustSnow(ctx, theme, cfg, W, H, rnd);
   hangOrnaments(ctx, theme, cfg, W, H, rnd);
 
@@ -538,6 +696,11 @@ export default function ForestScene({ theme, dark, raining = false }: { theme: F
 
   useEffect(() => {
     const { layers, travel } = theme;
+    // Rolled once per mount, so a resize repaints the same view. `?vista=` forces one.
+    const kinds = theme.vista?.kinds ?? VISTAS;
+    let vista = kinds[Math.floor(Math.random() * kinds.length)];
+    const forced = new URLSearchParams(window.location.search).get('vista') as Vista | null;
+    if (forced && VISTAS.includes(forced)) vista = forced;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     let vw = window.innerWidth;
     let vh = window.innerHeight;
@@ -591,7 +754,7 @@ export default function ForestScene({ theme, dark, raining = false }: { theme: F
         const canvas = canvases.current[i];
         const wrap = wraps.current[i];
         if (!canvas || !wrap) return;
-        geos[i] = paintLayer(canvas, theme, cfg, vw, vh, scale);
+        geos[i] = paintLayer(canvas, theme, cfg, vw, vh, scale, vista);
         wrap.style.top = `${geos[i].top}px`;
       });
       // Rays start halfway down the mid canopy band.

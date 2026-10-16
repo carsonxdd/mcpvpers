@@ -1,14 +1,21 @@
 // Pure + client-safe. Seasons only apply to the original pvpers routes; tenant
 // sites (/s/*) and the platform pages keep the legacy look (no data-season).
 
-// The four calendar seasons plus three holidays that take over for a short
-// window around the day itself (see `holidayForDate`).
-export type Season = 'spring' | 'summer' | 'autumn' | 'winter' | 'halloween' | 'christmas' | 'easter';
+// The four calendar seasons, three holidays that take over for a short
+// window around the day itself (see `holidayForDate`), and four biomes that
+// never come from the calendar — they're only picked from the toggle.
+export type Season =
+  | 'spring' | 'summer' | 'autumn' | 'winter'
+  | 'halloween' | 'christmas' | 'easter'
+  | 'birch' | 'darkforest' | 'jungle' | 'desert';
 export type SeasonOverride = 'auto' | 'off' | Season;
 
 // Seasons that have CSS tokens + scenery shipped. Any left out fall back to
 // the default look and are skipped by calendar + toggle.
-export const ENABLED_SEASONS: Season[] = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter'];
+export const ENABLED_SEASONS: Season[] = [
+  'spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter',
+  'birch', 'darkforest', 'jungle', 'desert',
+];
 
 export const SEASON_STORAGE_KEY = 'mc-season';
 
@@ -20,6 +27,10 @@ export const SEASON_META: Record<Season, { label: string; accent: string; partic
   halloween: { label: 'Halloween', accent: '#FF7A1A', particles: ['#1A1024', '#24162E', '#3A2648'] }, // bats
   christmas: { label: 'Christmas', accent: '#E0303A', particles: ['#FFFFFF', '#F4F8FF', '#DCEBFA'] },
   easter: { label: 'Easter', accent: '#B48AE8', particles: ['#D8C2F4', '#FFE48A', '#F7B6D2', '#B8EAC8'] },
+  birch: { label: 'Birch Forest', accent: '#B8D85A', particles: ['#C8E070', '#E4F0A0', '#A8C84A'] },
+  darkforest: { label: 'Dark Forest', accent: '#7AC86A', particles: ['#9AE07A', '#C8F0A0', '#6AB85A'] }, // spores
+  jungle: { label: 'Jungle', accent: '#3CB44A', particles: ['#3C9A2A', '#56B436', '#2A7A22', '#74C442'] },
+  desert: { label: 'Desert', accent: '#E8B860', particles: ['#E8D0A0', '#DCC08A', '#F0DEB8'] }, // blown sand
 };
 
 const AZ_OFFSET_MS = -7 * 60 * 60 * 1000; // Arizona is UTC-7 year-round
@@ -84,7 +95,10 @@ export function resolveSeason(override: SeasonOverride, now: Date = new Date()):
   return ENABLED_SEASONS.includes(s) ? s : null;
 }
 
-const ALL_SEASONS: readonly string[] = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter'];
+const ALL_SEASONS: readonly string[] = [
+  'spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter',
+  'birch', 'darkforest', 'jungle', 'desert',
+];
 
 export function parseOverride(raw: string | null): SeasonOverride {
   if (raw === 'off' || raw === 'auto') return raw;

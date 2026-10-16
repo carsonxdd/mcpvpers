@@ -75,6 +75,27 @@ const KINDS: Record<Season, Kind> = {
   },
   christmas: SNOW,
   easter: PETALS,
+  birch: { // pale pollen drifting between the trunks
+    shapes: [[[1]], [[1, 1]]],
+    count: [8, 18], cells: [[2, 2], [2, 3]],
+    speed: [0.06, 0.18], drift: [0.05, 0.16], sway: [0.3, 0.7], opacity: [0.45, 0.8], canopy: true,
+  },
+  darkforest: { // spore-blossom motes, barely sinking
+    shapes: [[[1]], [[0, 1, 0], [1, 1, 1], [0, 1, 0]]],
+    count: [8, 20], cells: [[2, 2], [2, 3]],
+    speed: [0.02, 0.1], drift: [-0.06, 0.06], sway: [0.2, 0.5], opacity: [0.4, 0.85], canopy: true,
+  },
+  jungle: { // green leaves out of the canopy
+    shapes: [[[0, 1, 1, 0], [1, 1, 2, 1], [1, 2, 1, 1], [0, 1, 1, 0]]],
+    vein: 'rgba(20, 50, 10, 0.5)', stem: '#3A5A1E',
+    count: [7, 16], cells: [[3, 4], [4, 5]],
+    speed: [0.3, 0.6], drift: [0.05, 0.2], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
+  },
+  desert: { // sand blown in from the left
+    shapes: [[[1]], [[1, 1]]],
+    count: [10, 26], cells: [[2, 2], [2, 3]],
+    speed: [-0.05, 0.12], drift: [1.2, 2.6], sway: [0.1, 0.4], opacity: [0.35, 0.7], canopy: false, fly: true,
+  },
 };
 
 const within = ([a, b]: Range) => a + Math.random() * (b - a);
