@@ -325,7 +325,7 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - The header season button now opens a **theme picker** instead of cycling. Themes are grouped as Seasons, Holidays, Biomes and Classic (Oak Woods, the old "off" look). The button icon shows whatever theme is active.
 - **Change with the calendar** (on by default) is the auto setting: the site follows the seasons and switches to each holiday during its window. Picking a theme turns it off and keeps your pick. Turning it off without picking keeps the current theme.
 - **Holidays still take over** (off by default): with a manual pick (or Oak Woods), Halloween, Christmas and Easter still show during their windows. Stored in localStorage `mc-season-holidays`; the pick itself stays in `mc-season`, so existing choices carry over.
-- A **Calendar** list in the picker shows the next theme changes with dates (Arizona time), from `seasonSchedule()` in `src/lib/seasons.ts`. Entries that won't show under the current settings are faded.
+- A **Calendar** list in the picker shows every theme change over the next year with dates (Arizona time), from `seasonSchedule()` in `src/lib/seasons.ts`. Entries that won't show under the current settings are faded.
 - **Halloween** now runs **Oct 21 – Nov 2** (was Oct 20–31). Christmas and Easter are unchanged.
 
 ### Five more holidays (2026-10-15)

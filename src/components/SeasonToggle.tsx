@@ -308,7 +308,7 @@ export default function SeasonToggle() {
   const wrapRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   // Recomputed on open so a page left up past midnight shows the right "now".
-  const schedule = useMemo(() => (open ? seasonSchedule().slice(0, 12) : []), [open]);
+  const schedule = useMemo(() => (open ? seasonSchedule() : []), [open]);
 
   useEffect(() => {
     if (!open) return;
