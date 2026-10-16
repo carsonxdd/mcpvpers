@@ -56,15 +56,17 @@ export function easterSunday(year: number): number {
 }
 
 // Holiday windows (Arizona dates, inclusive):
-//   Halloween  Oct 20 – Oct 31
+//   Halloween  Oct 21 – Nov 2
 //   Christmas  Dec 1 – Dec 26
 //   Easter     Palm Sunday – Easter Monday
+export const HOLIDAYS: Season[] = ['halloween', 'christmas', 'easter'];
+
 export function holidayForDate(d: Date): Season | null {
   const az = new Date(d.getTime() + AZ_OFFSET_MS);
   const y = az.getUTCFullYear();
   const month = az.getUTCMonth();
   const day = az.getUTCDate();
-  if (month === 9 && day >= 20) return 'halloween';
+  if ((month === 9 && day >= 21) || (month === 10 && day <= 2)) return 'halloween';
   if (month === 11 && day <= 26) return 'christmas';
   const fromEaster = (Date.UTC(y, month, day) - easterSunday(y)) / DAY_MS;
   if (fromEaster >= -7 && fromEaster <= 1) return 'easter';
@@ -89,11 +91,43 @@ export function isSeasonalPath(pathname: string): boolean {
   return !NON_SEASONAL_PREFIXES.some((p) => pathname === p.replace(/\/$/, '') || pathname.startsWith(p));
 }
 
-export function resolveSeason(override: SeasonOverride, now: Date = new Date()): Season | null {
+// `holidays`: with a manual pick (or Off), let holiday windows still take over.
+export function resolveSeason(override: SeasonOverride, holidays = false, now: Date = new Date()): Season | null {
+  if (override !== 'auto' && holidays) {
+    const h = holidayForDate(now);
+    if (h && ENABLED_SEASONS.includes(h)) return h;
+  }
   if (override === 'off') return null;
   const s = override === 'auto' ? seasonForDate(now) : override;
   return ENABLED_SEASONS.includes(s) ? s : null;
 }
+
+export type ScheduleRun = { season: Season; start: { m: number; d: number }; end: { m: number; d: number }; current: boolean };
+
+// What auto mode shows over the next `days` days, collapsed into runs of the
+// same season. Walks Arizona calendar days so it always agrees with seasonForDate.
+export function seasonSchedule(now: Date = new Date(), days = 366): ScheduleRun[] {
+  const az = new Date(now.getTime() + AZ_OFFSET_MS);
+  const day0 = Date.UTC(az.getUTCFullYear(), az.getUTCMonth(), az.getUTCDate());
+  const runs: ScheduleRun[] = [];
+  for (let i = 0; i < days; i++) {
+    const t = day0 + i * DAY_MS;
+    const s = seasonForDate(new Date(t - AZ_OFFSET_MS + DAY_MS / 2)); // Arizona noon
+    const md = { m: new Date(t).getUTCMonth(), d: new Date(t).getUTCDate() };
+    const last = runs[runs.length - 1];
+    if (last && last.season === s) last.end = md;
+    else runs.push({ season: s, start: md, end: md, current: i === 0 });
+  }
+  return runs;
+}
+
+export const SEASON_GROUPS: { label: string; seasons: Season[] }[] = [
+  { label: 'Seasons', seasons: ['spring', 'summer', 'autumn', 'winter'] },
+  { label: 'Holidays', seasons: ['halloween', 'christmas', 'easter'] },
+  { label: 'Biomes', seasons: ['birch', 'darkforest', 'jungle', 'desert'] },
+];
+
+export const SEASON_HOLIDAYS_KEY = 'mc-season-holidays';
 
 const ALL_SEASONS: readonly string[] = [
   'spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter',
@@ -105,6 +139,3 @@ export function parseOverride(raw: string | null): SeasonOverride {
   if (raw && ALL_SEASONS.includes(raw)) return raw as Season;
   return 'auto';
 }
-
-// Toggle order: auto → each enabled season → off → auto.
-export const OVERRIDE_CYCLE: SeasonOverride[] = ['auto', ...ENABLED_SEASONS, 'off'];

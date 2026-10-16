@@ -56,12 +56,17 @@ export default function RootLayout({
                   const k = Math.floor((a + 11 * h + 22 * l) / 451);
                   const n = h + l - 7 * k + 114;
                   const fromEaster = (Date.UTC(y, m, d) - Date.UTC(y, Math.floor(n / 31) - 1, (n % 31) + 1)) / 864e5;
-                  const cal = m === 9 && d >= 20 ? 'halloween'
+                  const hol = (m === 9 && d >= 21) || (m === 10 && d <= 2) ? 'halloween'
                     : m === 11 && d <= 26 ? 'christmas'
-                    : fromEaster >= -7 && fromEaster <= 1 ? 'easter'
-                    : m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter';
+                    : fromEaster >= -7 && fromEaster <= 1 ? 'easter' : null;
+                  const cal = hol
+                    || (m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter');
                   const all = ['spring', 'summer', 'autumn', 'winter', 'halloween', 'christmas', 'easter', 'birch', 'darkforest', 'jungle', 'desert'];
-                  const s = o === 'off' ? null : (all.indexOf(o) >= 0 ? o : cal);
+                  const picked = o === 'off' || all.indexOf(o) >= 0;
+                  // A manual pick keeps holidays only when "Holidays still take over" is on
+                  const s = !picked ? cal
+                    : hol && localStorage.getItem('mc-season-holidays') === '1' ? hol
+                    : o === 'off' ? null : o;
                   if (s) document.documentElement.setAttribute('data-season', s);
                 }
               } catch(e) {}
