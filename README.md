@@ -238,6 +238,13 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - `/api/player-profile/[uuid]` drops Boss Rush **recent runs**, **recent loot** and **recent earnings** (payouts) stamped before `SEASON2_AT`, so every player's raid log starts empty at launch. Site-side only, like `GazetteFeed`: the rows still exist in the plugin's `stats.db`, and removing the filter brings them back
 - Lifetime Boss Rush totals (events, clears, total earned) are untouched. Zero them in game with `/event statedit reset` if needed
 
+### Launch moved to Saturday Oct 17, End to Oct 24 (2026-10-16)
+
+- `SEASON2_AT` is now Saturday Oct 17, 2026, 5 PM Arizona (`2026-10-18T00:00:00Z`); the banner caption matches
+- The End unlock moved to **Saturday Oct 24, 5 PM Arizona** on `/about`, `plugins.json` and the FrontierEndLock section of `frontier-suite.ts` / `SUITE.md` (`unlock-at` 2026-10-24 17:00). The plugin on the server has to be rescheduled to match (`/endlock schedule 2026-10-24T17:00`)
+- Because `GazetteFeed` and the player-profile route filter on `SEASON2_AT`, anything stamped before Oct 17 5 PM is hidden
+- News: the Sep 24 posts carry the new dates, and the date-change post (id 22) now announces Saturday Oct 17 / End Oct 24. "Homestead" says the Gazette starts posting at launch (was "launch morning", which no longer fits a 5 PM launch)
+
 ### Launch moved to Thursday Oct 15 (2026-10-13)
 
 - `SEASON2_AT` is now Thursday Oct 15, 2026, 12 PM Arizona (`2026-10-15T19:00:00Z`); the banner caption matches
