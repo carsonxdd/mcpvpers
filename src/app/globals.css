@@ -643,6 +643,150 @@ html.dark[data-season='thanksgiving'] {
   --c-panel-bg: rgba(44, 32, 24, 0.8);
 }
 
+/* Lunar New Year — lantern-lit taiga, red and gold */
+html[data-season='lunarnewyear'] {
+  --s-accent: #D8202A;
+  --s-accent-2: #8A1218;
+  --s-accent-3: #F4C430;
+  --s-accent-4: #F05A40;
+  --s-sky-1: #7FA2C8;
+  --s-sky-2: #96B2D2;
+  --s-sky-3: #B6C6DC;
+  --s-sky-4: #DCD4DC;
+  --s-sky-5: #F2DED4;
+  --s-ground-top: #F4F8FC;
+  --s-hill: #C8D6E4;
+  --s-dirt: #8A9AAC;
+  --s-night-sky-1: #140A14;
+  --s-night-sky-2: #1E1020;
+  --s-night-hill: #1E1424;
+  --s-overlay-rgb: 250, 240, 236;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='lunarnewyear'] {
+  --c-bg: #FAF0EC;
+  --c-bg-light: #F2E2DC;
+  --c-bg-lighter: #EAD2CA;
+  --c-surface: #FFFAF8;
+  --c-surface-light: #F6EAE4;
+  --c-border: #E2C8BC;
+  --c-border-light: #CCA290;
+  --c-text: #2A1212;
+  --c-text-dim: #5A3430;
+  --c-text-muted: #8A6460;
+  --c-panel-bg: rgba(255, 250, 248, 0.88);
+}
+
+html.dark[data-season='lunarnewyear'] {
+  --c-bg: #1A0E10;
+  --c-bg-light: #241416;
+  --c-bg-lighter: #2E1A1C;
+  --c-surface: #2C1618;
+  --c-surface-light: #381E20;
+  --c-border: #5A2E2E;
+  --c-border-light: #74403C;
+  --c-panel-bg: rgba(44, 22, 24, 0.82);
+}
+
+/* Cinco de Mayo — desert fiesta */
+html[data-season='cincodemayo'] {
+  --s-accent: #E8407A;
+  --s-accent-2: #2EA84A;
+  --s-accent-3: #F4C430;
+  --s-accent-4: #3A8AE8;
+  --s-sky-1: #3C8CDA;
+  --s-sky-2: #56A0E2;
+  --s-sky-3: #86BCE8;
+  --s-sky-4: #C4D4E6;
+  --s-sky-5: #F4DCC8;
+  --s-ground-top: #E4CC8E;
+  --s-hill: #D2B274;
+  --s-dirt: #B8925A;
+  --s-night-sky-1: #120C22;
+  --s-night-sky-2: #1C142C;
+  --s-night-hill: #221A28;
+  --s-overlay-rgb: 252, 242, 236;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='cincodemayo'] {
+  --c-bg: #FCF2EC;
+  --c-bg-light: #F6E4D8;
+  --c-bg-lighter: #ECD4C2;
+  --c-surface: #FFFBF6;
+  --c-surface-light: #F8ECE2;
+  --c-border: #E6CCB4;
+  --c-border-light: #D0A88A;
+  --c-text: #2E1A18;
+  --c-text-dim: #5C3C34;
+  --c-text-muted: #8C6C60;
+  --c-panel-bg: rgba(255, 251, 246, 0.86);
+}
+
+html.dark[data-season='cincodemayo'] {
+  --c-bg: #1C1418;
+  --c-bg-light: #261A20;
+  --c-bg-lighter: #302228;
+  --c-surface: #2C1E24;
+  --c-surface-light: #38282E;
+  --c-border: #563E44;
+  --c-border-light: #6E5058;
+  --c-panel-bg: rgba(44, 30, 36, 0.8);
+}
+
+/* Minecraft's birthday — party in the oak woods */
+html[data-season='mcbirthday'] {
+  --s-accent: #5AB84A;
+  --s-accent-2: #3A8AE8;
+  --s-accent-3: #F4C430;
+  --s-accent-4: #E8304A;
+  --s-sky-1: #2E86E0;
+  --s-sky-2: #3E96EA;
+  --s-sky-3: #62B2F4;
+  --s-sky-4: #90CCF8;
+  --s-sky-5: #C4E6FA;
+  --s-ground-top: #5AA02E;
+  --s-hill: #3E7A22;
+  --s-dirt: #6B4A32;
+  --s-night-sky-1: #0A1428;
+  --s-night-sky-2: #10202E;
+  --s-night-hill: #0E1E1E;
+  --s-overlay-rgb: 244, 248, 240;
+  --s-overlay-mid: 0.12;
+  --s-overlay-low: 0.45;
+  --s-overlay-bottom: 0.7;
+}
+
+html:not(.dark)[data-season='mcbirthday'] {
+  --c-bg: #F2F8EC;
+  --c-bg-light: #E4F0DA;
+  --c-bg-lighter: #D6E8C8;
+  --c-surface: #FCFFF8;
+  --c-surface-light: #EEF6E4;
+  --c-border: #C8DCB0;
+  --c-border-light: #A4C08A;
+  --c-text: #1A2614;
+  --c-text-dim: #3E5030;
+  --c-text-muted: #6A7C5A;
+  --c-panel-bg: rgba(252, 255, 248, 0.86);
+}
+
+html.dark[data-season='mcbirthday'] {
+  --c-bg: #101A14;
+  --c-bg-light: #16221A;
+  --c-bg-lighter: #1E2C22;
+  --c-surface: #1C2A20;
+  --c-surface-light: #243428;
+  --c-border: #344E3A;
+  --c-border-light: #46644C;
+  --c-panel-bg: rgba(28, 42, 32, 0.8);
+}
+
 /* Biomes — toggle-only looks, never picked by the calendar */
 /* Birch forest — pale trunks, lime light */
 html[data-season='birch'] {

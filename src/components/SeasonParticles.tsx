@@ -97,6 +97,13 @@ const KINDS: Record<Season, Kind> = {
     count: [7, 16], cells: [[2, 3], [2, 3]],
     speed: [0.25, 0.55], drift: [0.08, 0.26], sway: [0.3, 0.8], opacity: [0.6, 0.95], canopy: true,
   },
+  lunarnewyear: { // red and gold paper scraps from spent firecrackers
+    shapes: [[[1, 1]], [[1], [1]], [[1, 1], [1, 1]]],
+    count: [10, 24], cells: [[2, 3], [2, 3]],
+    speed: [0.3, 0.7], drift: [-0.1, 0.2], sway: [0.3, 0.9], opacity: [0.7, 1], canopy: false,
+  },
+  cincodemayo: CONFETTI,
+  mcbirthday: CONFETTI,
   july4: CONFETTI,
   thanksgiving: LEAVES,
   birch: { // pale pollen drifting between the trunks

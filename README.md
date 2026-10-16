@@ -338,6 +338,15 @@ Every page was checked against the live DatHost configs and the plugin source pr
 - **Thanksgiving** (`seasons/HarvestWoods.ts`): the autumn woods with turkeys, a chicken and a cow, cornucopias, pies, corn stalks, pumpkins and hay. Autumn leaves fall.
 - Autumn moved out of `Scenery.tsx` into `seasons/AutumnWoods.ts` (unchanged), and summer now exports its sprites and layers, so the holidays can build on them.
 
+### Lunar New Year, Cinco de Mayo and Minecraft's birthday (2026-10-15)
+
+- Eleven holidays now. New windows (Arizona dates): **Lunar New Year** from the eve to three days after (late Jan / Feb; wins over Valentine's when they overlap), **Cinco de Mayo** May 1–5, and **Minecraft's birthday** May 16–18 (first public release May 17, 2009).
+- Lunar New Year is lunisolar, so its dates come from a table in `src/lib/seasons.ts` (`lunarNewYear`, mirrored in the pre-paint script in `layout.tsx`) covering **2026–2040**. Extend both before 2041 or the holiday stops showing up.
+- **Lunar New Year** (`seasons/LanternTaiga.ts`): the winter taiga with red and gold baubles, plum blossom crowns, paper lanterns, firecracker strings, mandarin trees, red envelopes and a lion-dance head. Red and gold paper falls; rain turns to snow.
+- **Cinco de Mayo** (`seasons/FiestaFringe.ts`): the desert fringe with papel-picado baubles, pink-blossom crowns, flowering cacti, marigolds, piñatas, sombreros, maracas, a guitar and a llama. Confetti falls.
+- **Minecraft's birthday** (`seasons/BirthdayWoods.ts`): the classic oak woods with party baubles, the cake, presents, TNT, a diamond block, a crafting table, a chest, a jukebox and creepers in party hats. Confetti falls.
+- `DesertFringe.ts` now exports `DESERT_SPRITES`/`DESERT_LAYERS`, and `OakVanilla.tsx` exports `OAK_LAYERS`/`VANILLA`, so holidays can build on them.
+
 ## Getting Started
 
 ```bash

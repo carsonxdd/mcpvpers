@@ -6,7 +6,7 @@ import type { ForestTheme, LayerCfg, Sprite } from './ForestScene';
    bushes and sandstone, a camel and a desert rabbit. The far view is an
    oasis (lake or river) or banded badlands mesas. Hot sun, few fireflies. */
 
-const SPR: Record<string, Sprite> = {
+export const DESERT_SPRITES: Record<string, Sprite> = {
   cactus: {
     rows: ['.GgG.', '.GgGs', 'sGgG.', '.GgG.', '.GgGs', '.GgG.', 'sGgG.', '.GgG.', '.GgG.', '.GgGs', '.GgG.', '.GgG.'],
     pal: { G: '#3E7A26', g: '#2A5A1A', s: '#E8E0B0' },
@@ -71,7 +71,7 @@ const PAL_FRONT: string[][] = [
 ];
 const SAND_LIT = ['#E8D3A0', '#DCC48C', '#F0DEB0', '#D4BA80'];
 
-const LAYERS: LayerCfg[] = [
+export const DESERT_LAYERS: LayerCfg[] = [
   { // far — hazy acacia line over the dunes
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
     r: [8, 12], cell: 3, crownPals: PAL_FAR, trunkGap: [24, 46], trunkW: [5, 7], frameW: 0, birchChance: 0,
@@ -99,8 +99,8 @@ const LAYERS: LayerCfg[] = [
 
 export const DESERT: ForestTheme = {
   travel: 1.42,
-  layers: LAYERS,
-  sprites: SPR,
+  layers: DESERT_LAYERS,
+  sprites: DESERT_SPRITES,
   interior: ['#F0E2C0', '#E8D6B0', '#E0CCA2', '#D8C296', '#D0B88A', '#C8AE80'],
   lake: { // an oasis
     sky: ['#9CCCEC', '#B4D6EA', '#D0E0E2', '#ECE4CC'],

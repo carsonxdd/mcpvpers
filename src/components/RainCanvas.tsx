@@ -7,7 +7,7 @@ import { useSeason } from './SeasonProvider';
 import type { Season } from '@/lib/seasons';
 
 // Seasons where "rain" falls as snow (a thunderstorm becomes a blizzard).
-const SNOWY: Season[] = ['winter', 'christmas', 'newyear'];
+const SNOWY: Season[] = ['winter', 'christmas', 'newyear', 'lunarnewyear'];
 
 interface RainDrop {
   x: number;

@@ -58,9 +58,15 @@ export default function RootLayout({
                   const fromEaster = (Date.UTC(y, m, d) - Date.UTC(y, Math.floor(n / 31) - 1, (n % 31) + 1)) / 864e5;
                   // Thanksgiving: fourth Thursday of November
                   const tg = 1 + ((4 - new Date(Date.UTC(y, 10, 1)).getUTCDay() + 7) % 7) + 21;
+                  // Lunar New Year: table for 2026-2040 (days after Dec 31)
+                  const ln = [48, 37, 26, 44, 34, 23, 42, 31, 50, 39, 28, 46, 35, 24, 43][y - 2026];
+                  const fromLny = ln ? (Date.UTC(y, m, d) - Date.UTC(y, 0, ln)) / 864e5 : NaN;
                   const hol = (m === 11 && d >= 30) || (m === 0 && d === 1) ? 'newyear'
+                    : fromLny >= -1 && fromLny <= 3 ? 'lunarnewyear'
                     : m === 1 && d >= 10 && d <= 14 ? 'valentines'
                     : m === 2 && d >= 14 && d <= 17 ? 'stpatricks'
+                    : m === 4 && d >= 1 && d <= 5 ? 'cincodemayo'
+                    : m === 4 && d >= 16 && d <= 18 ? 'mcbirthday'
                     : m === 6 && d >= 1 && d <= 5 ? 'july4'
                     : (m === 9 && d >= 21) || (m === 10 && d <= 2) ? 'halloween'
                     : m === 10 && Math.abs(d - tg) <= 3 ? 'thanksgiving'
@@ -68,7 +74,7 @@ export default function RootLayout({
                     : fromEaster >= -7 && fromEaster <= 1 ? 'easter' : null;
                   const cal = hol
                     || (m >= 2 && m <= 4 ? 'spring' : m >= 5 && m <= 7 ? 'summer' : m >= 8 && m <= 10 ? 'autumn' : 'winter');
-                  const all = ['spring', 'summer', 'autumn', 'winter', 'newyear', 'valentines', 'stpatricks', 'easter', 'july4', 'halloween', 'thanksgiving', 'christmas', 'birch', 'darkforest', 'jungle', 'desert'];
+                  const all = ['spring', 'summer', 'autumn', 'winter', 'newyear', 'lunarnewyear', 'valentines', 'stpatricks', 'easter', 'cincodemayo', 'mcbirthday', 'july4', 'halloween', 'thanksgiving', 'christmas', 'birch', 'darkforest', 'jungle', 'desert'];
                   const picked = o === 'off' || all.indexOf(o) >= 0;
                   // A manual pick keeps holidays only when "Holidays still take over" is on
                   const s = !picked ? cal

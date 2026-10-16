@@ -127,7 +127,7 @@ const PAL_FRONT: string[][] = [
   ['#345E1C', '#487824', '#5E922C', '#78AC38', '#94C44A'],
 ];
 
-const LAYERS: LayerCfg[] = [
+export const OAK_LAYERS: LayerCfg[] = [
   { // far — hazy blue-green treetops, airy interior, distant oak trunks
     px: 4, crownTopVh: 0.6, heightVh: 1.4, bandVh: 0.3, groundVh: 1.02, speed: 0.6667,
     r: [9, 14], cell: 3, crownPals: PAL_FAR, trunkGap: [20, 38], trunkW: [7, 10], frameW: 0, birchChance: 0.2,
@@ -153,9 +153,9 @@ const LAYERS: LayerCfg[] = [
   },
 ];
 
-const VANILLA: ForestTheme = {
+export const VANILLA: ForestTheme = {
   travel: 1.42,
-  layers: LAYERS,
+  layers: OAK_LAYERS,
   sprites: OAK_SPRITES,
   interior: ['#A9CDB0', '#94BE9C', '#7EAC88', '#6A9876', '#588464', '#4A7256'],
   lake: {
